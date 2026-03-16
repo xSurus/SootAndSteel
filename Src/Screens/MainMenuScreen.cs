@@ -1,8 +1,9 @@
 using System.Collections.Generic;
-using System.Linq;
+using Gamelab.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 using FontStashSharp;
 
 
@@ -10,7 +11,11 @@ namespace Gamelab.Screens;
 
 public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
 {
+    private const string MainMenuBackgroundAsset = "placeholder_main_menu_background";
+    private const string MainMenuSongAsset = "placeholder_main_menu_theme";
     protected Texture2D bgTexture;
+    private MainMenuPanel mainMenuPanel;
+    private Song mainMenuSong;
 
     class ExampleData
     {
@@ -23,18 +28,16 @@ public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
     {
         base.LoadContent();
 
-        bgTexture = new Texture2D(GraphicsDevice, 1, 1);
-        bgTexture.SetData([Color.White]);
+        TryLoadBackgroundTexture();
+        mainMenuPanel = new MainMenuPanel(Game, GraphicsDevice, StartGame, Game.Exit);
+        TryStartMainMenuMusic();
 
         LoadExampleData();
     }
 
     protected override void Update(GameTime gameTime, KeyboardState keyboard, Dictionary<int, GamePadState> gamePads)
     {
-        if (keyboard.IsKeyDown(Keys.Escape) || gamePads.Values.Any(gp => gp.Buttons.Back == ButtonState.Pressed))
-        {
-            Game.Exit();
-        }
+        mainMenuPanel.Update(gameTime);
 
         if (Game.IsDebug && keyboard.IsKeyDown(Keys.F5))
         {
@@ -56,7 +59,11 @@ public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
         spriteBatch.Draw(bgTexture, new Rectangle(0, 0, virtualScreenSize.X, virtualScreenSize.Y), Color.White);
 
         SpriteFontBase font = Game.fontSystem.GetFont(exampleData.size);
-        spriteBatch.DrawString(font, "Press \u242F to Exit", exampleData.position, Color.Black);
+        mainMenuPanel.Draw(
+            spriteBatch,
+            virtualScreenSize,
+            Game.fontSystem.GetFont(96),
+            Game.fontSystem.GetFont(52));
 
         spriteBatch.End();
 
@@ -76,5 +83,48 @@ public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
         };
 
         Game.jsonLoader.SaveJson("example2.json", newExampleData);
+    }
+
+    private void StartGame()
+    {
+        MediaPlayer.Stop();
+        Game.SwitchToScreen(new GameplayScene(Game));
+    }
+
+    private void TryStartMainMenuMusic()
+    {
+        try
+        {
+            if (MediaPlayer.State == MediaState.Playing)
+            {
+                MediaPlayer.IsRepeating = true;
+                Game.SetMusicVolume(Game.MusicVolume);
+                return;
+            }
+
+            // Requires this song to be added to Content.mgcb and built as a Song.
+            mainMenuSong = Game.Content.Load<Song>(MainMenuSongAsset);
+            MediaPlayer.IsRepeating = true;
+            Game.SetMusicVolume(Game.MusicVolume);
+            MediaPlayer.Play(mainMenuSong);
+        }
+        catch
+        {
+            // Keep the menu usable even when music asset is not added yet.
+        }
+    }
+
+    private void TryLoadBackgroundTexture()
+    {
+        try
+        {
+            bgTexture = Game.Content.Load<Texture2D>(MainMenuBackgroundAsset);
+        }
+        catch
+        {
+            // Fallback keeps menu usable when the texture is missing from content.
+            bgTexture = new Texture2D(GraphicsDevice, 1, 1);
+            bgTexture.SetData([Color.White]);
+        }
     }
 }

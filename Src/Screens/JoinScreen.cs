@@ -103,7 +103,7 @@ public class JoinScreen(GamelabGame game) : AbstractGameScreen(game)
     {
         foreach (PlayerConfiguration config in Game.playerManager.Configs)
         {
-            config.Input.Update();
+            config.Input.Update(gameTime);
         }
         
         for (int i = 0; i < GamePad.MaximumGamePadCount; i++)
@@ -125,7 +125,7 @@ public class JoinScreen(GamelabGame game) : AbstractGameScreen(game)
             bool keyboardExists = Game.playerManager.Configs.Any(c => c.Input is KeyboardInputProvider);
             if (!keyboardExists)
             {
-                Game.playerManager.JoinPlayer(new KeyboardInputProvider(Keys.W, Keys.S, Keys.A, Keys.D, Keys.E));
+                Game.playerManager.JoinPlayer(new KeyboardInputProvider(Keys.W, Keys.S, Keys.A, Keys.D, Keys.Space));
             }
         }
         
@@ -144,7 +144,7 @@ public class JoinScreen(GamelabGame game) : AbstractGameScreen(game)
             bool startPressed = Game.playerManager.Configs.Any(c => c.Input.IsStartJustPressed());
             if (startPressed)
             {
-                Game.SwitchToScreen(new GameplayScene(Game));
+                Game.SwitchToScreen(new MainMenuScreen(Game));
                 return;
             }
         }

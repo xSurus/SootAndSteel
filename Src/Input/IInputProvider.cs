@@ -8,5 +8,9 @@ public interface IInputProvider
     bool IsActionJustPressed();
     bool IsActionHeld();
     bool IsStartJustPressed();
-    void Update();
+    bool IsUpJustPressed();
+    bool IsDownJustPressed();
+    bool IsLeftJustPressed();
+    bool IsRightJustPressed();
+    void Update(GameTime gameTime);
 }

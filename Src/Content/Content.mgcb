@@ -20,3 +20,13 @@
 #begin Data/example.json
 /copy:Data/example.json
 
+#begin placeholder_main_menu_background.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:placeholder_main_menu_background.png
+
+#begin placeholder_main_menu_theme.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/build:placeholder_main_menu_theme.mp3
+
