@@ -37,6 +37,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Aether.Physics2D.MG" Version="2.2.0" />
     <PackageReference Include="Contentless" Version="4.2.0" />
     <PackageReference Include="FontStashSharp.MonoGame" Version="1.5.4" />
     <PackageReference Include="MonoGame.Extended" Version="5.3.1" />

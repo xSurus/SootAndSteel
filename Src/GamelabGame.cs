@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using FontStashSharp;
+using Gamelab.Players;
 using Gamelab.Screens;
 using Gamelab.Utils;
 using Gamelab.Utils.Logging;
@@ -24,6 +25,7 @@ public class GamelabGame : Game
     public readonly GraphicsDeviceManager graphics;
     public readonly ScreenManager screenManager;
     public readonly FontSystem fontSystem = new();
+    public readonly PlayerManager playerManager = new();
 
     /// <summary>
     /// The directory where the compiled content files are available during runtime
@@ -40,7 +42,7 @@ public class GamelabGame : Game
     public bool IsDebug => runMode == RunMode.Debug;
     public bool IsRelease => runMode == RunMode.Release;
 
-    private GamelabGameScreen nextScreen;
+    private AbstractGameScreen nextScreen;
     private string screenshotPath;
 
     public bool IsRunning => screenManager.ActiveScreen != null;
@@ -93,7 +95,7 @@ public class GamelabGame : Game
         var fontBytes = File.ReadAllBytes(fontPath);
         fontSystem.AddFont(fontBytes);
 
-        screenManager.ShowScreen(new MainMenuScreen(this));
+        screenManager.ShowScreen(new JoinScreen(this));
         logger.Info("Game initialized");
     }
 
@@ -125,12 +127,12 @@ public class GamelabGame : Game
     /// Switch to the specified screen on the next update. Not transitioning immediately allows the current screen to finish its update and draw cycle, which can help avoid issues with switching screens in the middle of their logic.
     /// </summary>
     /// <param name="screen">The screen to switch to.</param>
-    public void SwitchToScreen(GamelabGameScreen screen)
+    public void SwitchToScreen(AbstractGameScreen screen)
     {
         nextScreen = screen;
     }
 
-    protected void SwitchToScreenImmediately(GamelabGameScreen screen)
+    protected void SwitchToScreenImmediately(AbstractGameScreen screen)
     {
         screenManager.ReplaceScreen(screen);
     }
