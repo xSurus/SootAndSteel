@@ -8,6 +8,7 @@ using Gamelab.Utils;
 using Gamelab.Utils.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Media;
 using MonoGame.Extended.Screens;
 
 namespace Gamelab;
@@ -46,6 +47,7 @@ public class GamelabGame : Game
     public bool IsRelease => runMode == RunMode.Release;
     public bool IsDebugOverlayEnabled { get; private set; } = true;
 
+    public float MusicVolume { get; private set; } = 0.3f;
     private AbstractGameScreen nextScreen;
     private string screenshotPath;
 
@@ -177,6 +179,12 @@ public class GamelabGame : Game
         }
 
         texture.Dispose();
+    }
+
+    public void SetMusicVolume(float volume)
+    {
+        MusicVolume = Math.Clamp(volume, 0f, 1f);
+        MediaPlayer.Volume = MusicVolume;
     }
 
      public void ToggleDebugOverlay()

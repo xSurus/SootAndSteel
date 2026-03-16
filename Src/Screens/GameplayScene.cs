@@ -74,7 +74,7 @@ public class GameplayScene(GamelabGame game) : AbstractGameScreen(game)
         {
             foreach (Player player in players)
             {
-                player.Input.Update();
+                player.Input.Update(gameTime);
                 player.Update();
             }
 
