@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.IO;
 using FontStashSharp;
 using Gamelab.Players;
 using Gamelab.Screens;
+using Gamelab.Services;
 using Gamelab.Utils;
 using Gamelab.Utils.Logging;
 using Microsoft.Xna.Framework;
@@ -24,6 +25,8 @@ public class GamelabGame : Game
     private readonly Logger logger = new("Game");
     public readonly GraphicsDeviceManager graphics;
     public readonly ScreenManager screenManager;
+    public readonly ServiceManager serviceManager;
+    public readonly DebugOverlayService debugOverlayService;
     public readonly FontSystem fontSystem = new();
     public readonly PlayerManager playerManager = new();
 
@@ -41,6 +44,7 @@ public class GamelabGame : Game
     public RunMode runMode { get; private set; }
     public bool IsDebug => runMode == RunMode.Debug;
     public bool IsRelease => runMode == RunMode.Release;
+    public bool IsDebugOverlayEnabled { get; private set; } = true;
 
     private AbstractGameScreen nextScreen;
     private string screenshotPath;
@@ -60,6 +64,9 @@ public class GamelabGame : Game
         uncompiledContentDir = IsDebug ? Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", Content.RootDirectory) : null;
 
         jsonLoader = new(this, "Data");
+        serviceManager = new ServiceManager();
+        debugOverlayService = new DebugOverlayService();
+        serviceManager.Add(debugOverlayService);
 
         screenManager = new ScreenManager();
         Components.Add(screenManager);
@@ -94,6 +101,7 @@ public class GamelabGame : Game
         var fontPath = Path.Combine(contentDir, "promptfont.ttf");
         var fontBytes = File.ReadAllBytes(fontPath);
         fontSystem.AddFont(fontBytes);
+        serviceManager.InitializeAll(this);
 
         screenManager.ShowScreen(new JoinScreen(this));
         logger.Info("Game initialized");
@@ -107,6 +115,7 @@ public class GamelabGame : Game
             nextScreen = null;
         }
 
+        serviceManager.UpdateAll(gameTime);
         base.Update(gameTime);
     }
 
@@ -115,6 +124,7 @@ public class GamelabGame : Game
         GraphicsDevice.Clear(Color.Black);
 
         base.Draw(gameTime);
+        serviceManager.DrawAll();
 
         if (!string.IsNullOrEmpty(screenshotPath))
         {
@@ -168,4 +178,21 @@ public class GamelabGame : Game
 
         texture.Dispose();
     }
+
+     public void ToggleDebugOverlay()
+    {
+        IsDebugOverlayEnabled = !IsDebugOverlayEnabled;
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            serviceManager.ShutdownAll();
+        }
+
+        base.Dispose(disposing);
+    }
+
+
 }

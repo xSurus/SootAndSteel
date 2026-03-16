@@ -14,6 +14,7 @@ public abstract class AbstractGameScreen(GamelabGame game) : GameScreen(game)
     protected ViewportAdapter viewportAdapter;
     protected SpriteBatch spriteBatch;
     protected Point virtualScreenSize = new(1920, 1080);
+    protected KeyboardState previousKeyboardState;
     public int NumFramesDrawn { get; private set; }
 
     public new GamelabGame Game => (GamelabGame)base.Game;
@@ -32,6 +33,12 @@ public abstract class AbstractGameScreen(GamelabGame game) : GameScreen(game)
     public override void Update(GameTime gameTime)
     {
         var keyboard = Keyboard.GetState();
+        bool toggleDebugOverlayRequested = keyboard.IsKeyDown(Keys.F3) && previousKeyboardState.IsKeyUp(Keys.F3);
+        if (toggleDebugOverlayRequested)
+        {
+            Game.ToggleDebugOverlay();
+        }
+
         var gamePads = new Dictionary<int, GamePadState>();
         for (int i = 0; i < GamePad.MaximumGamePadCount; i++)
         {
@@ -47,6 +54,7 @@ public abstract class AbstractGameScreen(GamelabGame game) : GameScreen(game)
         }
 
         Update(gameTime, keyboard, gamePads);
+        previousKeyboardState = keyboard;
     }
 
     protected virtual void Update(GameTime gameTime, KeyboardState keyboard, Dictionary<int, GamePadState> gamePads)
@@ -57,7 +65,6 @@ public abstract class AbstractGameScreen(GamelabGame game) : GameScreen(game)
     {
         NumFramesDrawn++;
     }
-
     public class Factory
     {
         public string name;
