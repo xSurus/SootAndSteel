@@ -59,8 +59,8 @@ public class CICD
         CheckGraphics();
     }
 
-    [Test, TestCaseSource(typeof(GamelabGameScreen), nameof(GamelabGameScreen.GetScreenFactories)), NonParallelizable, Order(2)]
-    public void TestScreen(GamelabGameScreen.Factory screenFactory)
+    [Test, TestCaseSource(typeof(AbstractGameScreen), nameof(AbstractGameScreen.GetScreenFactories)), NonParallelizable, Order(2)]
+    public void TestScreen(AbstractGameScreen.Factory screenFactory)
     {
         WaitForGameToStart();
         CheckGraphics();
@@ -162,7 +162,7 @@ public class CICD
         AssertTimeout(() => File.Exists(path), 2, "Saving screenshot");
     }
 
-    private void AssertPerformance(GamelabGameScreen screen, double loadTimeout = 3, double measuringTime = 5, double minFps = 30)
+    private void AssertPerformance(AbstractGameScreen screen, double loadTimeout = 3, double measuringTime = 5, double minFps = 30)
     {
         var name = screen.GetType().Name;
         TestContext.Out.WriteLine($"Measuring performance of {name}...");

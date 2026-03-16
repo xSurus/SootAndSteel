@@ -56,7 +56,7 @@ public static class Program
             Thread.Yield();
         }
 
-        var screenFactories = GamelabGameScreen.GetScreenFactories();
+        var screenFactories = AbstractGameScreen.GetScreenFactories();
         foreach (var screenFactory in screenFactories)
         {
             var screen = screenFactory.Instantiate(game);

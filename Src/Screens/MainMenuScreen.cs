@@ -8,7 +8,7 @@ using FontStashSharp;
 
 namespace Gamelab.Screens;
 
-public class MainMenuScreen(GamelabGame game) : GamelabGameScreen(game)
+public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
 {
     protected Texture2D bgTexture;
 
