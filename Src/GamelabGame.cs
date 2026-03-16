@@ -65,6 +65,7 @@ public class GamelabGame : Game
 
     protected override void Initialize()
     {
+        Myra.MyraEnvironment.Game = this;
         base.Initialize();
 
         //TODO: Replace with actual game name
