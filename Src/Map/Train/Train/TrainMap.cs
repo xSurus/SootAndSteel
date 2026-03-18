@@ -9,32 +9,27 @@ namespace Gamelab.Map.Train;
 
 public class TrainMap
 {
-    private int Width { get; }
-    private int Height { get; }
-    public int TileSize { get; }
+    public int Width => GamelabGame.Instance.GameplayConfig.TrainWidth;
+    public int Height => GamelabGame.Instance.GameplayConfig.TrainHeight;
+    public int TileSize => GamelabGame.Instance.GameplayConfig.TrainTileSize;
     private TileCell[,] grid;
     private Vector2 trainPosition;
     private Texture2D tileTexture;
-    private readonly World physicsWorld;
-    private float pixelsPerMeter;
+    private World physicsWorld;
+    private float PixelsPerMeter => GamelabGame.Instance.GameplayConfig.PixelsPerMeter;
     private List<Body> boundaryWalls = [];
 
-    public TrainMap(int width, int height, int tileSize, GraphicsDevice graphicsDevice, World world,
-        float pixelsPerMeter)
+    public TrainMap(GraphicsDevice graphicsDevice, World world)
     {
-        Width = width;
-        Height = height;
-        TileSize = tileSize;
         physicsWorld = world;
-        this.pixelsPerMeter = pixelsPerMeter;
 
-        tileTexture = new Texture2D(graphicsDevice, tileSize, tileSize);
-        Color[] data = new Color[tileSize * tileSize];
+        tileTexture = new Texture2D(graphicsDevice, TileSize, TileSize);
+        Color[] data = new Color[TileSize * TileSize];
         for (int i = 0; i < data.Length; i++)
         {
-            int x = i % tileSize;
-            int y = i / tileSize;
-            bool isBorder = x == 0 || y == 0 || x == tileSize - 1 || y == tileSize - 1;
+            int x = i % TileSize;
+            int y = i / TileSize;
+            bool isBorder = x == 0 || y == 0 || x == TileSize - 1 || y == TileSize - 1;
             data[i] = isBorder ? Color.DarkGray : Color.Gray;
         }
 
@@ -51,7 +46,7 @@ public class TrainMap
             for (int y = 0; y < Height; y++)
             {
                 Vector2 worldPos = new Vector2(x * TileSize, y * TileSize);
-                grid[x, y] = new TileCell(x, y, worldPos, physicsWorld, pixelsPerMeter, TileSize);
+                grid[x, y] = new TileCell(x, y, worldPos, physicsWorld, PixelsPerMeter, TileSize);
             }
         }
     }
@@ -81,10 +76,10 @@ public class TrainMap
 
         boundaryWalls.Clear();
 
-        float simLeft = trainPosition.X / pixelsPerMeter;
-        float simTop = trainPosition.Y / pixelsPerMeter;
-        float simRight = (trainPosition.X + (Width * TileSize)) / pixelsPerMeter;
-        float simBottom = (trainPosition.Y + (Height * TileSize)) / pixelsPerMeter;
+        float simLeft = trainPosition.X / PixelsPerMeter;
+        float simTop = trainPosition.Y / PixelsPerMeter;
+        float simRight = (trainPosition.X + (Width * TileSize)) / PixelsPerMeter;
+        float simBottom = (trainPosition.Y + (Height * TileSize)) / PixelsPerMeter;
 
         var topWall = physicsWorld.CreateEdge(new Vector2(simLeft, simTop), new Vector2(simRight, simTop));
         var bottomWall = physicsWorld.CreateEdge(new Vector2(simLeft, simBottom), new Vector2(simRight, simBottom));

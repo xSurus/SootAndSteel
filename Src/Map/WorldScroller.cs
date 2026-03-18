@@ -1,4 +1,3 @@
-using Gamelab.Config;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -6,17 +5,14 @@ namespace Gamelab.Map;
 
 public class WorldScroller
 {
-    private readonly GameplayConfig gameplayConfig;
     public float TrainSpeed { get; set; }
-    private float scrollOffset = 0f;
+    private float scrollOffset;
     private Texture2D backgroundTexture;
-    private int screenWidth;
-    private int screenHeight;
+    private readonly int screenWidth;
+    private readonly int screenHeight;
 
-    public WorldScroller(GraphicsDevice graphicsDevice, int screenWidth, int screenHeight, GameplayConfig gameplayConfig)
+    public WorldScroller(GraphicsDevice graphicsDevice, int screenWidth, int screenHeight)
     {
-        this.gameplayConfig = gameplayConfig;
-        TrainSpeed = gameplayConfig.WorldScrollerDefaultSpeed;
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
         CreateBackgroundTexture(graphicsDevice);
@@ -24,22 +20,22 @@ public class WorldScroller
 
     private void CreateBackgroundTexture(GraphicsDevice graphicsDevice)
     {
-        int textureWidth = gameplayConfig.WorldScrollerPatternWidthPixels;
+        var config = GamelabGame.Instance.GameplayConfig;
+        int textureWidth = config.WorldScrollerPatternWidthPixels;
         int textureHeight = screenHeight;
         backgroundTexture = new Texture2D(graphicsDevice, textureWidth, textureHeight);
-
         Color[] data = new Color[textureWidth * textureHeight];
-        Color baseColor = new Color(gameplayConfig.WorldScrollerBaseColorR, gameplayConfig.WorldScrollerBaseColorG,
-            gameplayConfig.WorldScrollerBaseColorB);
-        Color stripeColor = new Color(gameplayConfig.WorldScrollerStripeColorR, gameplayConfig.WorldScrollerStripeColorG,
-            gameplayConfig.WorldScrollerStripeColorB);
+        Color baseColor = new Color(config.WorldScrollerBaseColorR, config.WorldScrollerBaseColorG,
+            config.WorldScrollerBaseColorB);
+        Color stripeColor = new Color(config.WorldScrollerStripeColorR, config.WorldScrollerStripeColorG,
+            config.WorldScrollerStripeColorB);
 
         for (int y = 0; y < textureHeight; y++)
         {
             for (int x = 0; x < textureWidth; x++)
             {
                 int index = y * textureWidth + x;
-                if (x % gameplayConfig.WorldScrollerStripeSpacingPixels < gameplayConfig.WorldScrollerStripeThicknessPixels)
+                if (x % config.WorldScrollerStripeSpacingPixels < config.WorldScrollerStripeThicknessPixels)
                 {
                     data[index] = stripeColor;
                 }

@@ -1,5 +1,4 @@
 using System;
-using Gamelab.Config;
 
 namespace Gamelab.Map.Train.State;
 
@@ -7,8 +6,8 @@ public class TrainState
 {
     public event Action<TrainSpeedSetting> OnSpeedChanged;
     private TrainSpeedSetting currentSpeed = TrainSpeedSetting.Default;
-    public float ActualSpeed;
-    public float AccelerationRate { get; set; }
+    public float actualSpeed;
+    private float AccelerationRate => GamelabGame.Instance.GameplayConfig.TrainAccelerationRate;
 
     public TrainSpeedSetting CurrentSpeed
     {
@@ -23,27 +22,25 @@ public class TrainState
         }
     }
 
-    public int CoalAmount { get; set; }
+    public float CoalAmount { get; set; }
     public float Temperature { get; set; } = 20f;
     public bool IsCoalOvenBurning { get; set; } = true;
 
-    public TrainState(GameplayConfig config)
+    public TrainState()
     {
-        currentSpeed = TrainSpeedSetting.Default;
-        ActualSpeed = currentSpeed.TargetSpeed;
-        AccelerationRate = config.TrainAccelerationRate;
-        CoalAmount = config.TrainInitialCoalAmount;
+        actualSpeed = currentSpeed.TargetSpeed;
+        CoalAmount = GamelabGame.Instance.GameplayConfig.TrainInitialCoalAmount;
     }
 
     public void Update(float deltaTime)
     {
-        if (ActualSpeed < currentSpeed.TargetSpeed)
+        if (actualSpeed < currentSpeed.TargetSpeed)
         {
-            ActualSpeed = Math.Min(ActualSpeed + AccelerationRate * deltaTime, currentSpeed.TargetSpeed);
+            actualSpeed = Math.Min(actualSpeed + AccelerationRate * deltaTime, currentSpeed.TargetSpeed);
         }
-        else if (ActualSpeed > currentSpeed.TargetSpeed)
+        else if (actualSpeed > currentSpeed.TargetSpeed)
         {
-            ActualSpeed = Math.Max(ActualSpeed - AccelerationRate * deltaTime, currentSpeed.TargetSpeed);
+            actualSpeed = Math.Max(actualSpeed - AccelerationRate * deltaTime, currentSpeed.TargetSpeed);
         }
     }
 

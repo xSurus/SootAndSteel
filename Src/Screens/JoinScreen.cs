@@ -123,7 +123,7 @@ public class JoinScreen(GamelabGame game) : AbstractGameScreen(game)
             {
                 if (!Game.playerManager.IsControllerJoined(i))
                 {
-                    Game.playerManager.JoinPlayer(new GamePadInputProvider(i, Game.GameplayConfig));
+                    Game.playerManager.JoinPlayer(new GamePadInputProvider(i));
                 }
             }
         }
@@ -133,8 +133,7 @@ public class JoinScreen(GamelabGame game) : AbstractGameScreen(game)
             bool keyboardExists = Game.playerManager.Configs.Any(c => c.Input is KeyboardInputProvider);
             if (!keyboardExists)
             {
-                Game.playerManager.JoinPlayer(new KeyboardInputProvider(Keys.W, Keys.S, Keys.A, Keys.D, Keys.Space,
-                    Game.GameplayConfig));
+                Game.playerManager.JoinPlayer(new KeyboardInputProvider(Keys.W, Keys.S, Keys.A, Keys.D, Keys.Space));
             }
         }
 
