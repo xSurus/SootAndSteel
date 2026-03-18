@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using FontStashSharp;
+using Gamelab.Assets;
 using Gamelab.Players;
 using Gamelab.Screens;
 using Gamelab.Services;
@@ -10,6 +11,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
 using MonoGame.Extended.Screens;
+using Myra;
 
 namespace Gamelab;
 
@@ -40,6 +42,7 @@ public class GamelabGame : Game
     /// ONLY FOR DEBUG: The directory where the uncompiled content files are available.
     /// </summary>
     public readonly string uncompiledContentDir;
+
     public readonly JsonLoader jsonLoader;
 
     public RunMode runMode { get; private set; }
@@ -63,7 +66,9 @@ public class GamelabGame : Game
         Content.RootDirectory = "Content";
 
         contentDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Content.RootDirectory);
-        uncompiledContentDir = IsDebug ? Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", Content.RootDirectory) : null;
+        uncompiledContentDir = IsDebug
+            ? Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", Content.RootDirectory)
+            : null;
 
         jsonLoader = new(this, "Data");
         serviceManager = new ServiceManager();
@@ -76,7 +81,7 @@ public class GamelabGame : Game
 
     protected override void Initialize()
     {
-        Myra.MyraEnvironment.Game = this;
+        MyraEnvironment.Game = this;
         base.Initialize();
 
         //TODO: Replace with actual game name
@@ -98,6 +103,7 @@ public class GamelabGame : Game
             graphics.PreferredBackBufferHeight = displayMode.Height;
             graphics.IsFullScreen = true;
         }
+
         graphics.ApplyChanges();
 
         var fontPath = Path.Combine(contentDir, "promptfont.ttf");
@@ -105,6 +111,7 @@ public class GamelabGame : Game
         fontSystem.AddFont(fontBytes);
         serviceManager.InitializeAll(this);
 
+        AssetManager.LoadContent(graphics.GraphicsDevice);
         screenManager.ShowScreen(new JoinScreen(this));
         logger.Info("Game initialized");
     }
@@ -187,7 +194,7 @@ public class GamelabGame : Game
         MediaPlayer.Volume = MusicVolume;
     }
 
-     public void ToggleDebugOverlay()
+    public void ToggleDebugOverlay()
     {
         IsDebugOverlayEnabled = !IsDebugOverlayEnabled;
     }
@@ -199,8 +206,7 @@ public class GamelabGame : Game
             serviceManager.ShutdownAll();
         }
 
+        AssetManager.UnloadContent();
         base.Dispose(disposing);
     }
-
-
 }

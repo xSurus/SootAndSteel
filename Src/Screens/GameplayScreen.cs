@@ -1,40 +1,45 @@
 using System;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using System.Linq;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+using Gamelab.Map;
 using Gamelab.Players;
+using Gamelab.Stations;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using nkast.Aether.Physics2D.Dynamics;
 
 namespace Gamelab.Screens;
 
-public class GameplayScene(GamelabGame game) : AbstractGameScreen(game)
+public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
 {
     private List<Player> players;
-    private Texture2D playerTexture;
     private World world;
     private const float PixelsPerMeter = Player.PixelsPerMeter;
+    private TrainMap trainMap;
+    private WorldScroller worldScroller;
 
     public override void LoadContent()
     {
         base.LoadContent();
         world = new World(Vector2.Zero);
-        int textureSize = 128;
-        playerTexture = new Texture2D(GraphicsDevice, textureSize, textureSize);
-        Color[] data = new Color[textureSize * textureSize];
-        Vector2 center = new Vector2(textureSize / 2f);
-        float radius = textureSize / 2f;
 
-        for (int y = 0; y < textureSize; y++) {
-            for (int x = 0; x < textureSize; x++) {
-                float distance = Vector2.Distance(new Vector2(x, y), center);
-                data[y * textureSize + x] = distance <= radius ? Color.White : Color.Transparent;
-            }
-        }
-        playerTexture.SetData(data);
+        int tileSize = 80;
+        int trainWidth = 8;
+        int trainHeight = 6;
 
-        // Distribute players around the center
+        trainMap = new TrainMap(trainWidth, trainHeight, tileSize, GraphicsDevice, world, PixelsPerMeter);
+
+        Vector2 trainPosition = new Vector2(
+            (virtualScreenSize.X - trainWidth * tileSize) / 2f,
+            (virtualScreenSize.Y - trainHeight * tileSize) / 2f
+        );
+        trainMap.SetPosition(trainPosition);
+        trainMap.PlaceObject(1, 1, new CoalResource());
+        trainMap.PlaceObject(6, 1, new CoalOven());
+        trainMap.PlaceObject(3, 2, new Counter());
+
+        worldScroller = new WorldScroller(GraphicsDevice, virtualScreenSize.X, virtualScreenSize.Y);
+        worldScroller.TrainSpeed = 150f;
+
         var spawnPositions = new Vector2[]
         {
             new Vector2(virtualScreenSize.X / 2f - 100, virtualScreenSize.Y / 2f - 100),
@@ -48,19 +53,11 @@ public class GameplayScene(GamelabGame game) : AbstractGameScreen(game)
         {
             Vector2 pixelPos = spawnPositions[config.PlayerIndex % spawnPositions.Length];
             Body playerBody = world.CreateCircle(24f / PixelsPerMeter, 3f, pixelPos / PixelsPerMeter, BodyType.Dynamic);
-            playerBody.LinearDamping = 20f; 
+            playerBody.LinearDamping = 20f;
             playerBody.FixedRotation = true;
-            
-            players.Add(new Player(config.PlayerIndex, playerBody, config.Input));
+
+            players.Add(new Player(config.PlayerIndex, playerBody, config.Input, trainMap));
         }
-        
-        float worldWidth = virtualScreenSize.X / PixelsPerMeter;
-        float worldHeight = virtualScreenSize.Y / PixelsPerMeter;
-        
-        world.CreateEdge(new Vector2(0, 0), new Vector2(worldWidth, 0));
-        world.CreateEdge(new Vector2(0, worldHeight), new Vector2(worldWidth, worldHeight));
-        world.CreateEdge(new Vector2(0, 0), new Vector2(0, worldHeight));
-        world.CreateEdge(new Vector2(worldWidth, 0), new Vector2(worldWidth, worldHeight));
     }
 
     private float accumulator = 0f;
@@ -69,12 +66,13 @@ public class GameplayScene(GamelabGame game) : AbstractGameScreen(game)
     protected override void Update(GameTime gameTime, KeyboardState keyboard, Dictionary<int, GamePadState> gamePads)
     {
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-        accumulator += Math.Min(dt, 0.25f); 
+        worldScroller.Update(dt);
+        trainMap.Update(dt);
+        accumulator += Math.Min(dt, 0.25f);
         while (accumulator >= FixedTimeStep)
         {
             foreach (Player player in players)
             {
-                player.Input.Update(gameTime);
                 player.Update();
             }
 
@@ -86,18 +84,22 @@ public class GameplayScene(GamelabGame game) : AbstractGameScreen(game)
     public override void Draw(GameTime gameTime)
     {
         spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
+        worldScroller.Draw(spriteBatch);
+        trainMap.Draw(spriteBatch);
+
         foreach (Player player in players)
         {
-            player.Draw(spriteBatch, playerTexture);
+            player.Draw(spriteBatch);
         }
-        
+
         spriteBatch.End();
         base.Draw(gameTime);
     }
 
     public override void UnloadContent()
     {
-        playerTexture?.Dispose();
+        trainMap?.Dispose();
+        worldScroller?.Dispose();
         base.UnloadContent();
     }
 }

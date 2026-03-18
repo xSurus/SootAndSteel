@@ -1,15 +1,16 @@
 using System;
+using Gamelab.Assets;
 using Gamelab.Input;
+using Gamelab.Items;
+using Gamelab.Map;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using nkast.Aether.Physics2D.Dynamics;
 
 namespace Gamelab.Players;
 
-// REMOVED: controllerIndex from constructor as it's now inside the InputProvider
-public class Player(int playerIndex, Body body, IInputProvider input)
+public class Player(int playerIndex, Body body, IInputProvider input, TrainMap map)
 {
     public int PlayerIndex { get; set; } = playerIndex;
     public IInputProvider Input { get; private set; } = input;
@@ -18,29 +19,64 @@ public class Player(int playerIndex, Body body, IInputProvider input)
     private const float MaxVelocity = 5f;
     public float Radius { get; private set; } = 24f;
     public Vector2 Position => Body.Position * PixelsPerMeter;
+    public Item HeldItem { get; set; }
+    private TrainMap trainMap = map;
     public Vector2 LookDirection => new Vector2((float)Math.Cos(Body.Rotation), (float)Math.Sin(Body.Rotation));
-    
+
     private const float LerpFactor = 0.8f;
-    
+
     public void Update()
     {
         Vector2 movement = Input.GetMovement();
-        
+
         if (movement != Vector2.Zero)
         {
             Body.Rotation = (float)Math.Atan2(movement.Y, movement.X);
         }
-        
+
         Vector2 targetVelocity = movement * MaxVelocity;
         Body.LinearVelocity = Vector2.Lerp(Body.LinearVelocity, targetVelocity, LerpFactor);
+
+        if (Input.IsActionJustPressed())
+        {
+            TryInteract();
+        }
     }
 
-    public void Draw(SpriteBatch spriteBatch, Texture2D texture)
+    private void TryInteract()
     {
+        Vector2 pixelPosition = Body.Position * PixelsPerMeter;
+        Vector2 targetPoint = pixelPosition + (LookDirection * 40f);
+        Rectangle trainBounds = trainMap.GetBounds();
+        if (trainBounds.Contains(targetPoint))
+        {
+            int gridX = (int)((targetPoint.X - trainBounds.X) / trainMap.TileSize);
+            int gridY = (int)((targetPoint.Y - trainBounds.Y) / trainMap.TileSize);
+            TileCell targetCell = trainMap.GetTile(gridX, gridY);
+            targetCell?.TileObject?.Interact(this);
+        }
+    }
+
+    public void Draw(SpriteBatch spriteBatch)
+    {
+        Texture2D texture = AssetManager.PlayerTexture;
         float scale = (Radius * 2) / texture.Width;
         Vector2 origin = new Vector2(texture.Width / 2f, texture.Height / 2f);
         spriteBatch.Draw(texture, Position, null, Color.White, Body.Rotation, origin, scale, SpriteEffects.None, 0f);
         DrawVisionCone(spriteBatch);
+        DrawHeldItem(spriteBatch);
+    }
+
+    private void DrawHeldItem(SpriteBatch spriteBatch)
+    {
+        if (HeldItem != null)
+        {
+            Vector2 itemOffset = LookDirection * (Radius * 1.5f);
+            Vector2 itemPosition = Position + itemOffset;
+            int itemSize = (int)(Radius * 0.8f);
+
+            HeldItem.Draw(spriteBatch, itemPosition - new Vector2(itemSize / 2f), itemSize);
+        }
     }
 
     private void DrawVisionCone(SpriteBatch spriteBatch)

@@ -4,7 +4,6 @@ using FontStashSharp;
 using Gamelab.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace Gamelab.UI;
 
@@ -28,15 +27,12 @@ public class MainMenuPanel
 
     public void Update(GameTime gameTime)
     {
-        foreach (var player in game.playerManager.Configs)
-        {
-            player.Input.Update(gameTime);
-        }
         menuList.Update(game.playerManager.Configs);
         HandleVolumeInput();
     }
 
-    public void Draw(SpriteBatch spriteBatch, Point virtualScreenSize, SpriteFontBase titleFont, SpriteFontBase buttonFont)
+    public void Draw(SpriteBatch spriteBatch, Point virtualScreenSize, SpriteFontBase titleFont,
+        SpriteFontBase buttonFont)
     {
         // Keep menu controls lower so they don't cover key parts of the background image.
         var panelRect = new Rectangle(
@@ -79,7 +75,7 @@ public class MainMenuPanel
         foreach (PlayerConfiguration player in game.playerManager.Configs)
         {
             int pIndex = player.PlayerIndex;
-            
+
             if (!menuList.PlayerSelections.TryGetValue(pIndex, out int selectedIndex))
             {
                 continue;
@@ -105,7 +101,7 @@ public class MainMenuPanel
     {
         Vector2 labelSize = buttonFont.MeasureString(label);
         Vector2 labelPosition = new(panelRect.Center.X - labelSize.X / 2f, yPosition);
-        
+
         bool isSelectedByAnyone = menuList.PlayerSelections.ContainsValue(itemIndex);
         Color color = isSelectedByAnyone ? Color.Gold * 0.95f : Color.White * 0.92f;
 
@@ -131,7 +127,7 @@ public class MainMenuPanel
                     playerPos = new Vector2(labelPosition.X + labelSize.X + 60, yPosition);
                 else if (playerIndex == 3)
                     playerPos = new Vector2(labelPosition.X + labelSize.X + 140, yPosition);
-                
+
                 spriteBatch.DrawString(buttonFont, pText, playerPos, Color.White);
             }
         }
