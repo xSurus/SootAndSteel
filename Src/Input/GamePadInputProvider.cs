@@ -1,9 +1,10 @@
+using Gamelab.Config;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace Gamelab.Input;
 
-public class GamePadInputProvider(int controllerIndex) : AbstractInputProvider
+public class GamePadInputProvider(int controllerIndex, GameplayConfig gameplayConfig) : AbstractInputProvider(gameplayConfig)
 {
     private GamePadState currentGamePadState;
     private GamePadState previousGamePadState;

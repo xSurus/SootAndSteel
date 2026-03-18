@@ -16,38 +16,18 @@ public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
     private MainMenuPanel mainMenuPanel;
     private Song mainMenuSong;
 
-    class ExampleData
-    {
-        public int size;
-        public Vector2 position;
-    }
-
-    private ExampleData exampleData;
-
     public override void LoadContent()
     {
         base.LoadContent();
 
         TryLoadBackgroundTexture();
-        mainMenuPanel = new MainMenuPanel(Game, GraphicsDevice, StartGame, Game.Exit);
+        mainMenuPanel = new MainMenuPanel(Game, GraphicsDevice, StartGame, Game.Exit, Game.GameplayConfig);
         TryStartMainMenuMusic();
-
-        LoadExampleData();
     }
 
     protected override void Update(GameTime gameTime, KeyboardState keyboard, Dictionary<int, GamePadState> gamePads)
     {
         mainMenuPanel.Update(gameTime);
-
-        if (Game.IsDebug && keyboard.IsKeyDown(Keys.F5))
-        {
-            LoadExampleData();
-        }
-
-        if (Game.IsDebug && keyboard.IsKeyDown(Keys.F12))
-        {
-            SaveExampleData();
-        }
     }
 
     public override void Draw(GameTime gameTime)
@@ -58,7 +38,6 @@ public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
         // Rendering is done in the virtual screen space
         spriteBatch.Draw(bgTexture, new Rectangle(0, 0, virtualScreenSize.X, virtualScreenSize.Y), Color.White);
 
-        SpriteFontBase font = Game.fontSystem.GetFont(exampleData.size);
         mainMenuPanel.Draw(
             spriteBatch,
             virtualScreenSize,
@@ -68,22 +47,6 @@ public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
         spriteBatch.End();
 
         base.Draw(gameTime);
-    }
-
-    protected void LoadExampleData()
-    {
-        exampleData = Game.jsonLoader.LoadJson<ExampleData>("example.json");
-    }
-
-    protected void SaveExampleData()
-    {
-        var newExampleData = new ExampleData
-        {
-            size = 42,
-            position = new Vector2(100, 100),
-        };
-
-        Game.jsonLoader.SaveJson("example2.json", newExampleData);
     }
 
     private void StartGame()

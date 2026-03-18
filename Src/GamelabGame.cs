@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using FontStashSharp;
 using Gamelab.Assets;
+using Gamelab.Config;
 using Gamelab.Players;
 using Gamelab.Screens;
 using Gamelab.Services;
@@ -44,6 +45,7 @@ public class GamelabGame : Game
     public readonly string uncompiledContentDir;
 
     public readonly JsonLoader jsonLoader;
+    public GameplayConfig GameplayConfig { get; private set; } = new();
 
     public RunMode runMode { get; private set; }
     public bool IsDebug => runMode == RunMode.Debug;
@@ -109,6 +111,7 @@ public class GamelabGame : Game
         var fontPath = Path.Combine(contentDir, "promptfont.ttf");
         var fontBytes = File.ReadAllBytes(fontPath);
         fontSystem.AddFont(fontBytes);
+        LoadGameplayConfig();
         serviceManager.InitializeAll(this);
 
         AssetManager.LoadContent(graphics.GraphicsDevice);
@@ -192,6 +195,21 @@ public class GamelabGame : Game
     {
         MusicVolume = Math.Clamp(volume, 0f, 1f);
         MediaPlayer.Volume = MusicVolume;
+    }
+
+    public void LoadGameplayConfig()
+    {
+        try
+        {
+            GameplayConfig = jsonLoader.LoadJson<GameplayConfig>("gameplay.json") ?? new GameplayConfig();
+            logger.Info("Loaded gameplay config from Data/gameplay.json");
+        }
+        catch (Exception ex)
+        {
+            GameplayConfig = new GameplayConfig();
+            logger.Warning("Failed to load Data/gameplay.json, using defaults.");
+            logger.Exception("Gameplay config load error", ex);
+        }
     }
 
     public void ToggleDebugOverlay()

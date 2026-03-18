@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Gamelab.Config;
 using Gamelab.Map;
 using Gamelab.Players;
 using Gamelab.Stations;
@@ -13,18 +14,20 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
 {
     private List<Player> players;
     private World world;
-    private const float PixelsPerMeter = Player.PixelsPerMeter;
+    private GameplayConfig gameplayConfig;
+    private float PixelsPerMeter => gameplayConfig.PixelsPerMeter;
     private TrainMap trainMap;
     private WorldScroller worldScroller;
 
     public override void LoadContent()
     {
         base.LoadContent();
+        gameplayConfig = Game.GameplayConfig;
         world = new World(Vector2.Zero);
 
-        int tileSize = 80;
-        int trainWidth = 8;
-        int trainHeight = 6;
+        int tileSize = gameplayConfig.TrainTileSize;
+        int trainWidth = gameplayConfig.TrainWidth;
+        int trainHeight = gameplayConfig.TrainHeight;
 
         trainMap = new TrainMap(trainWidth, trainHeight, tileSize, GraphicsDevice, world, PixelsPerMeter);
 
@@ -34,50 +37,49 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         );
         trainMap.SetPosition(trainPosition);
         trainMap.PlaceObject(1, 1, new CoalResource());
-        trainMap.PlaceObject(6, 1, new CoalOven());
+        trainMap.PlaceObject(6, 1, new CoalOven(gameplayConfig));
         trainMap.PlaceObject(3, 2, new Counter());
 
-        worldScroller = new WorldScroller(GraphicsDevice, virtualScreenSize.X, virtualScreenSize.Y);
-        worldScroller.TrainSpeed = 150f;
+        worldScroller = new WorldScroller(GraphicsDevice, virtualScreenSize.X, virtualScreenSize.Y, gameplayConfig);
+        worldScroller.TrainSpeed = gameplayConfig.TrainSpeed;
 
         var spawnPositions = new Vector2[]
         {
-            new Vector2(virtualScreenSize.X / 2f - 100, virtualScreenSize.Y / 2f - 100),
-            new Vector2(virtualScreenSize.X / 2f + 100, virtualScreenSize.Y / 2f - 100),
-            new Vector2(virtualScreenSize.X / 2f - 100, virtualScreenSize.Y / 2f + 100),
-            new Vector2(virtualScreenSize.X / 2f + 100, virtualScreenSize.Y / 2f + 100),
+            new Vector2(virtualScreenSize.X / 2f - gameplayConfig.SpawnOffsetPixels, virtualScreenSize.Y / 2f - gameplayConfig.SpawnOffsetPixels),
+            new Vector2(virtualScreenSize.X / 2f + gameplayConfig.SpawnOffsetPixels, virtualScreenSize.Y / 2f - gameplayConfig.SpawnOffsetPixels),
+            new Vector2(virtualScreenSize.X / 2f - gameplayConfig.SpawnOffsetPixels, virtualScreenSize.Y / 2f + gameplayConfig.SpawnOffsetPixels),
+            new Vector2(virtualScreenSize.X / 2f + gameplayConfig.SpawnOffsetPixels, virtualScreenSize.Y / 2f + gameplayConfig.SpawnOffsetPixels),
         };
 
         players = [];
         foreach (var config in Game.playerManager.Configs)
         {
             Vector2 pixelPos = spawnPositions[config.PlayerIndex % spawnPositions.Length];
-            Body playerBody = world.CreateCircle(24f / PixelsPerMeter, 3f, pixelPos / PixelsPerMeter, BodyType.Dynamic);
-            playerBody.LinearDamping = 20f;
+            Body playerBody = world.CreateCircle(gameplayConfig.PlayerRadiusPixels / PixelsPerMeter, gameplayConfig.PlayerDensity, pixelPos / PixelsPerMeter, BodyType.Dynamic);
+            playerBody.LinearDamping = gameplayConfig.PlayerLinearDamping;
             playerBody.FixedRotation = true;
 
-            players.Add(new Player(config.PlayerIndex, playerBody, config.Input, trainMap));
+            players.Add(new Player(config.PlayerIndex, playerBody, config.Input, trainMap, gameplayConfig));
         }
     }
 
     private float accumulator = 0f;
-    private const float FixedTimeStep = 1f / 60f;
 
     protected override void Update(GameTime gameTime, KeyboardState keyboard, Dictionary<int, GamePadState> gamePads)
     {
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
         worldScroller.Update(dt);
         trainMap.Update(dt);
-        accumulator += Math.Min(dt, 0.25f);
-        while (accumulator >= FixedTimeStep)
+        accumulator += Math.Min(dt, gameplayConfig.MaxAccumulatedDeltaSeconds);
+        while (accumulator >= gameplayConfig.FixedTimeStep)
         {
             foreach (Player player in players)
             {
                 player.Update();
             }
 
-            world.Step(FixedTimeStep);
-            accumulator -= FixedTimeStep;
+            world.Step(gameplayConfig.FixedTimeStep);
+            accumulator -= gameplayConfig.FixedTimeStep;
         }
     }
 

@@ -1,5 +1,6 @@
 using System;
 using Gamelab.Assets;
+using Gamelab.Config;
 using Gamelab.Input;
 using Gamelab.Items;
 using Gamelab.Map;
@@ -10,20 +11,25 @@ using nkast.Aether.Physics2D.Dynamics;
 
 namespace Gamelab.Players;
 
-public class Player(int playerIndex, Body body, IInputProvider input, TrainMap map)
+public class Player(int playerIndex, Body body, IInputProvider input, TrainMap map, GameplayConfig gameplayConfig)
 {
     public int PlayerIndex { get; set; } = playerIndex;
     public IInputProvider Input { get; private set; } = input;
     public Body Body { get; private set; } = body;
-    public const float PixelsPerMeter = 100f;
-    private const float MaxVelocity = 5f;
-    public float Radius { get; private set; } = 24f;
-    public Vector2 Position => Body.Position * PixelsPerMeter;
+    private readonly float pixelsPerMeter = gameplayConfig.PixelsPerMeter;
+    private readonly float maxVelocity = gameplayConfig.PlayerMaxVelocity;
+    private readonly float interactDistancePixels = gameplayConfig.PlayerInteractDistancePixels;
+    private readonly float heldItemOffsetRadiusMultiplier = gameplayConfig.PlayerHeldItemOffsetRadiusMultiplier;
+    private readonly float heldItemSizeRadiusMultiplier = gameplayConfig.PlayerHeldItemSizeRadiusMultiplier;
+    private readonly float visionConeLengthRadiusMultiplier = gameplayConfig.PlayerVisionConeLengthRadiusMultiplier;
+    private readonly float visionConeAngleRadians = MathHelper.ToRadians(gameplayConfig.PlayerVisionConeAngleDegrees);
+    public float Radius { get; private set; } = gameplayConfig.PlayerRadiusPixels;
+    public Vector2 Position => Body.Position * pixelsPerMeter;
     public Item HeldItem { get; set; }
     private TrainMap trainMap = map;
     public Vector2 LookDirection => new Vector2((float)Math.Cos(Body.Rotation), (float)Math.Sin(Body.Rotation));
 
-    private const float LerpFactor = 0.8f;
+    private readonly float lerpFactor = gameplayConfig.PlayerVelocityLerpFactor;
 
     public void Update()
     {
@@ -34,8 +40,8 @@ public class Player(int playerIndex, Body body, IInputProvider input, TrainMap m
             Body.Rotation = (float)Math.Atan2(movement.Y, movement.X);
         }
 
-        Vector2 targetVelocity = movement * MaxVelocity;
-        Body.LinearVelocity = Vector2.Lerp(Body.LinearVelocity, targetVelocity, LerpFactor);
+        Vector2 targetVelocity = movement * maxVelocity;
+        Body.LinearVelocity = Vector2.Lerp(Body.LinearVelocity, targetVelocity, lerpFactor);
 
         if (Input.IsActionJustPressed())
         {
@@ -45,8 +51,8 @@ public class Player(int playerIndex, Body body, IInputProvider input, TrainMap m
 
     private void TryInteract()
     {
-        Vector2 pixelPosition = Body.Position * PixelsPerMeter;
-        Vector2 targetPoint = pixelPosition + (LookDirection * 40f);
+        Vector2 pixelPosition = Body.Position * pixelsPerMeter;
+        Vector2 targetPoint = pixelPosition + (LookDirection * interactDistancePixels);
         Rectangle trainBounds = trainMap.GetBounds();
         if (trainBounds.Contains(targetPoint))
         {
@@ -71,9 +77,9 @@ public class Player(int playerIndex, Body body, IInputProvider input, TrainMap m
     {
         if (HeldItem != null)
         {
-            Vector2 itemOffset = LookDirection * (Radius * 1.5f);
+            Vector2 itemOffset = LookDirection * (Radius * heldItemOffsetRadiusMultiplier);
             Vector2 itemPosition = Position + itemOffset;
-            int itemSize = (int)(Radius * 0.8f);
+            int itemSize = (int)(Radius * heldItemSizeRadiusMultiplier);
 
             HeldItem.Draw(spriteBatch, itemPosition - new Vector2(itemSize / 2f), itemSize);
         }
@@ -81,11 +87,10 @@ public class Player(int playerIndex, Body body, IInputProvider input, TrainMap m
 
     private void DrawVisionCone(SpriteBatch spriteBatch)
     {
-        float coneLength = Radius * 2.5f;
-        float coneAngle = MathHelper.ToRadians(30);
+        float coneLength = Radius * visionConeLengthRadiusMultiplier;
 
-        Vector2 leftSide = Vector2.Transform(LookDirection, Matrix.CreateRotationZ(-coneAngle)) * coneLength;
-        Vector2 rightSide = Vector2.Transform(LookDirection, Matrix.CreateRotationZ(coneAngle)) * coneLength;
+        Vector2 leftSide = Vector2.Transform(LookDirection, Matrix.CreateRotationZ(-visionConeAngleRadians)) * coneLength;
+        Vector2 rightSide = Vector2.Transform(LookDirection, Matrix.CreateRotationZ(visionConeAngleRadians)) * coneLength;
 
         spriteBatch.DrawLine(Position, Position + leftSide, Color.Red, 2f);
         spriteBatch.DrawLine(Position, Position + rightSide, Color.Red, 2f);

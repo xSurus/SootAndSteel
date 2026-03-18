@@ -30,3 +30,6 @@
 /processor:SongProcessor
 /build:placeholder_main_menu_theme.mp3
 
+#begin Data/gameplay.json
+/copy:Data/gameplay.json
+

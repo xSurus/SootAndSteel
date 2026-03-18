@@ -1,5 +1,6 @@
 using System;
 using Gamelab.Assets;
+using Gamelab.Config;
 using Gamelab.Map;
 using Gamelab.Players;
 using Microsoft.Xna.Framework;
@@ -9,12 +10,18 @@ namespace Gamelab.Stations;
 
 public class CoalOven : AbstractStation
 {
-    public float MaxFuel { get; } = 30;
+    public float MaxFuel { get; }
     public float CurrentFuel { get; private set; }
-    private float burnRate = 1f;
+    private readonly float burnRate;
+    private readonly float refuelAmount;
+    private readonly float lowFuelThreshold;
 
-    public CoalOven() : base("CoalOven", Color.DarkRed)
+    public CoalOven(GameplayConfig gameplayConfig) : base("CoalOven", Color.DarkRed)
     {
+        MaxFuel = gameplayConfig.CoalOvenMaxFuel;
+        burnRate = gameplayConfig.CoalOvenBurnRate;
+        refuelAmount = gameplayConfig.CoalOvenRefuelAmount;
+        lowFuelThreshold = gameplayConfig.CoalOvenLowFuelThreshold;
         CurrentFuel = MaxFuel;
     }
 
@@ -31,7 +38,7 @@ public class CoalOven : AbstractStation
     {
         if (interactingPlayer.HeldItem != null && interactingPlayer.HeldItem.Id == "Coal")
         {
-            CurrentFuel += 10f;
+            CurrentFuel += refuelAmount;
             CurrentFuel = Math.Min(CurrentFuel, MaxFuel);
             interactingPlayer.HeldItem = null;
         }
@@ -51,7 +58,7 @@ public class CoalOven : AbstractStation
         float fuelPercentage = CurrentFuel / MaxFuel;
         float currentBarWidthFloat = barWidth * fuelPercentage;
 
-        Color barColor = fuelPercentage < 0.25f ? Color.Red : Color.Orange;
+        Color barColor = fuelPercentage < lowFuelThreshold ? Color.Red : Color.Orange;
         spriteBatch.Draw(AssetManager.BlankTexture, barPos, null, barColor, 0f, Vector2.Zero,
             new Vector2(currentBarWidthFloat, barHeight), SpriteEffects.None, 0f);
     }

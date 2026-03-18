@@ -1,3 +1,4 @@
+using Gamelab.Config;
 using Microsoft.Xna.Framework;
 
 namespace Gamelab.Input;
@@ -6,11 +7,15 @@ public abstract class AbstractInputProvider : IInputProvider
 {
     protected Vector2 currentMovement;
     protected Vector2 previousMovement;
+    protected readonly GameplayConfig gameplayConfig;
 
     private float holdTimer = 0f;
     private float repeatTimer = 0f;
-    private const float InitialDelay = 0.3f;
-    private const float RepeatRate = 0.1f;
+
+    protected AbstractInputProvider(GameplayConfig gameplayConfig)
+    {
+        this.gameplayConfig = gameplayConfig;
+    }
 
     public Vector2 GetMovement() => currentMovement;
     
@@ -19,29 +24,34 @@ public abstract class AbstractInputProvider : IInputProvider
     public abstract bool IsStartJustPressed();
 
     public virtual bool IsDownJustPressed() {
-        bool justPressed = currentMovement.Y > 0.5f && previousMovement.Y <= 0.5f;
-        return justPressed || CheckDirectionalRepeat(currentMovement.Y > 0.5f);
+        bool justPressed = currentMovement.Y > gameplayConfig.InputDirectionPressThreshold &&
+                           previousMovement.Y <= gameplayConfig.InputDirectionPressThreshold;
+        return justPressed || CheckDirectionalRepeat(currentMovement.Y > gameplayConfig.InputDirectionPressThreshold);
     }
 
     public virtual bool IsUpJustPressed() {
-        bool justPressed = currentMovement.Y < -0.5f && previousMovement.Y >= -0.5f;
-        return justPressed || CheckDirectionalRepeat(currentMovement.Y < -0.5f);
+        bool justPressed = currentMovement.Y < -gameplayConfig.InputDirectionPressThreshold &&
+                           previousMovement.Y >= -gameplayConfig.InputDirectionPressThreshold;
+        return justPressed || CheckDirectionalRepeat(currentMovement.Y < -gameplayConfig.InputDirectionPressThreshold);
     }
 
     public virtual bool IsRightJustPressed() {
-        bool justPressed = currentMovement.X > 0.5f && previousMovement.X <= 0.5f;
-        return justPressed || CheckDirectionalRepeat(currentMovement.X > 0.5f);
+        bool justPressed = currentMovement.X > gameplayConfig.InputDirectionPressThreshold &&
+                           previousMovement.X <= gameplayConfig.InputDirectionPressThreshold;
+        return justPressed || CheckDirectionalRepeat(currentMovement.X > gameplayConfig.InputDirectionPressThreshold);
     }
 
     public virtual bool IsLeftJustPressed() {
-        bool justPressed = currentMovement.X < -0.5f && previousMovement.X >= -0.5f;
-        return justPressed || CheckDirectionalRepeat(currentMovement.X < -0.5f);
+        bool justPressed = currentMovement.X < -gameplayConfig.InputDirectionPressThreshold &&
+                           previousMovement.X >= -gameplayConfig.InputDirectionPressThreshold;
+        return justPressed || CheckDirectionalRepeat(currentMovement.X < -gameplayConfig.InputDirectionPressThreshold);
     }
 
     private bool CheckDirectionalRepeat(bool isDirectionHeld)
     {
         if (!isDirectionHeld) return false;
-        if (holdTimer >= InitialDelay && repeatTimer >= RepeatRate)
+        if (holdTimer >= gameplayConfig.InputInitialRepeatDelaySeconds &&
+            repeatTimer >= gameplayConfig.InputRepeatRateSeconds)
         {
             repeatTimer = 0f;
             return true;
@@ -52,7 +62,7 @@ public abstract class AbstractInputProvider : IInputProvider
     public virtual void Update(GameTime gameTime)
     {
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-        if (currentMovement.LengthSquared() > 0.25f) {
+        if (currentMovement.LengthSquared() > gameplayConfig.InputMovementDeadzoneSquared) {
             holdTimer += dt;
             repeatTimer += dt;
         }

@@ -66,6 +66,10 @@ public abstract class AbstractGameScreen(GamelabGame game) : GameScreen(game)
 
     protected virtual void Update(GameTime gameTime, KeyboardState keyboard, Dictionary<int, GamePadState> gamePads)
     {
+        if (Game.IsDebug && keyboard.IsKeyDown(Keys.F5))
+        {
+            Game.LoadGameplayConfig();
+        }
     }
 
     public override void Draw(GameTime gameTime)
