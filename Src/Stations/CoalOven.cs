@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Gamelab.Stations;
 
-public class CoalOven : TileObject
+public class CoalOven : AbstractStation
 {
     public float MaxFuel { get; } = 30;
     public float CurrentFuel { get; private set; }

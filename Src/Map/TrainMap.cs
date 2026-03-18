@@ -102,10 +102,10 @@ public class TrainMap
         return grid[x, y];
     }
 
-    public void PlaceObject(int x, int y, TileObject tileObject)
+    public void PlaceObject(int x, int y, AbstractStation abstractStation)
     {
         var tile = GetTile(x, y);
-        tile?.SetObject(tileObject);
+        tile?.SetObject(abstractStation);
     }
 
     public Rectangle GetBounds()
@@ -135,7 +135,7 @@ public class TrainMap
         {
             for (int y = 0; y < Height; y++)
             {
-                grid[x, y].TileObject?.Update(deltaTime);
+                grid[x, y].AbstractStation?.Update(deltaTime);
             }
         }
     }

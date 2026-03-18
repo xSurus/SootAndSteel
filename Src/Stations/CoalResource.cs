@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 
 namespace Gamelab.Stations;
 
-public class CoalResource() : TileObject("CoalResource", Color.DarkGray)
+public class CoalResource() : AbstractStation("CoalResource", Color.DarkGray)
 {
     public override void Interact(Player interactingPlayer)
     {

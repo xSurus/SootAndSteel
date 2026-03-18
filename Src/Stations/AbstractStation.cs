@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Gamelab.Map;
 
-public abstract class TileObject(string type, Color displayColor)
+public abstract class AbstractStation(string type, Color displayColor)
 {
     public string Type { get; protected set; } = type;
 

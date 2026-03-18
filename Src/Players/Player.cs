@@ -53,7 +53,7 @@ public class Player(int playerIndex, Body body, IInputProvider input, TrainMap m
             int gridX = (int)((targetPoint.X - trainBounds.X) / trainMap.TileSize);
             int gridY = (int)((targetPoint.Y - trainBounds.Y) / trainMap.TileSize);
             TileCell targetCell = trainMap.GetTile(gridX, gridY);
-            targetCell?.TileObject?.Interact(this);
+            targetCell?.AbstractStation?.Interact(this);
         }
     }
 

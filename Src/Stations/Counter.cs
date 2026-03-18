@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 
 namespace Gamelab.Stations;
 
-public class Counter() : TileObject("Counter", Color.SaddleBrown)
+public class Counter() : AbstractStation("Counter", Color.SaddleBrown)
 {
     public override void Interact(Player interactingPlayer)
     {

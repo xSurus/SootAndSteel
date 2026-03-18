@@ -10,20 +10,20 @@ public class TileCell(int x, int y, Vector2 worldPosition, World world, float pi
     public int Y { get; } = y;
     public Vector2 WorldPosition { get; private set; } = worldPosition;
     public bool IsWalkable { get; private set; } = true;
-    public TileObject TileObject { get; private set; } = null;
+    public AbstractStation AbstractStation { get; private set; } = null;
 
     private Body collisionBody;
 
-    public void SetObject(TileObject obj)
+    public void SetObject(AbstractStation obj)
     {
-        TileObject = obj;
+        AbstractStation = obj;
         IsWalkable = obj == null || !obj.IsSolid;
         UpdatePhysicsBody();
     }
 
     public void ClearObject()
     {
-        TileObject = null;
+        AbstractStation = null;
         IsWalkable = true;
         UpdatePhysicsBody();
     }
@@ -59,6 +59,6 @@ public class TileCell(int x, int y, Vector2 worldPosition, World world, float pi
         // Background
         spriteBatch.Draw(tileTexture, WorldPosition, null, Color.Gray, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
         // Tile
-        TileObject?.Draw(spriteBatch, WorldPosition, tileSize);
+        AbstractStation?.Draw(spriteBatch, WorldPosition, tileSize);
     }
 }
