@@ -3,6 +3,7 @@ using System.IO;
 using FontStashSharp;
 using Gamelab.Assets;
 using Gamelab.Config;
+using Gamelab.Map.Train.State;
 using Gamelab.Players;
 using Gamelab.Screens;
 using Gamelab.Services;
@@ -202,6 +203,7 @@ public class GamelabGame : Game
         try
         {
             GameplayConfig = jsonLoader.LoadJson<GameplayConfig>("gameplay.json") ?? new GameplayConfig();
+            TrainSpeedSetting.Initialize(GameplayConfig);
             logger.Info("Loaded gameplay config from Data/gameplay.json");
         }
         catch (Exception ex)

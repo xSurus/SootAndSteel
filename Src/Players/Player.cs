@@ -3,7 +3,8 @@ using Gamelab.Assets;
 using Gamelab.Config;
 using Gamelab.Input;
 using Gamelab.Items;
-using Gamelab.Map;
+using Gamelab.Map.Train;
+using Gamelab.Map.Train.State;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
@@ -11,9 +12,13 @@ using nkast.Aether.Physics2D.Dynamics;
 
 namespace Gamelab.Players;
 
-public class Player(int playerIndex, Body body, IInputProvider input, TrainMap map, GameplayConfig gameplayConfig)
+public class Player(
+    int playerIndex,
+    Body body,
+    IInputProvider input,
+    TrainContext context,
+    GameplayConfig gameplayConfig)
 {
-    public int PlayerIndex { get; set; } = playerIndex;
     public IInputProvider Input { get; private set; } = input;
     public Body Body { get; private set; } = body;
     private readonly float pixelsPerMeter = gameplayConfig.PixelsPerMeter;
@@ -26,7 +31,8 @@ public class Player(int playerIndex, Body body, IInputProvider input, TrainMap m
     public float Radius { get; private set; } = gameplayConfig.PlayerRadiusPixels;
     public Vector2 Position => Body.Position * pixelsPerMeter;
     public Item HeldItem { get; set; }
-    private TrainMap trainMap = map;
+
+    private TrainContext trainContext = context;
     public Vector2 LookDirection => new Vector2((float)Math.Cos(Body.Rotation), (float)Math.Sin(Body.Rotation));
 
     private readonly float lerpFactor = gameplayConfig.PlayerVelocityLerpFactor;
@@ -53,13 +59,13 @@ public class Player(int playerIndex, Body body, IInputProvider input, TrainMap m
     {
         Vector2 pixelPosition = Body.Position * pixelsPerMeter;
         Vector2 targetPoint = pixelPosition + (LookDirection * interactDistancePixels);
-        Rectangle trainBounds = trainMap.GetBounds();
+        Rectangle trainBounds = trainContext.Map.GetBounds();
         if (trainBounds.Contains(targetPoint))
         {
-            int gridX = (int)((targetPoint.X - trainBounds.X) / trainMap.TileSize);
-            int gridY = (int)((targetPoint.Y - trainBounds.Y) / trainMap.TileSize);
-            TileCell targetCell = trainMap.GetTile(gridX, gridY);
-            targetCell?.AbstractStation?.Interact(this);
+            int gridX = (int)((targetPoint.X - trainBounds.X) / trainContext.Map.TileSize);
+            int gridY = (int)((targetPoint.Y - trainBounds.Y) / trainContext.Map.TileSize);
+            TileCell targetCell = trainContext.Map.GetTile(gridX, gridY);
+            targetCell?.AbstractStation?.Interact(this, trainContext);
         }
     }
 
@@ -89,8 +95,10 @@ public class Player(int playerIndex, Body body, IInputProvider input, TrainMap m
     {
         float coneLength = Radius * visionConeLengthRadiusMultiplier;
 
-        Vector2 leftSide = Vector2.Transform(LookDirection, Matrix.CreateRotationZ(-visionConeAngleRadians)) * coneLength;
-        Vector2 rightSide = Vector2.Transform(LookDirection, Matrix.CreateRotationZ(visionConeAngleRadians)) * coneLength;
+        Vector2 leftSide = Vector2.Transform(LookDirection, Matrix.CreateRotationZ(-visionConeAngleRadians)) *
+                           coneLength;
+        Vector2 rightSide = Vector2.Transform(LookDirection, Matrix.CreateRotationZ(visionConeAngleRadians)) *
+                            coneLength;
 
         spriteBatch.DrawLine(Position, Position + leftSide, Color.Red, 2f);
         spriteBatch.DrawLine(Position, Position + rightSide, Color.Red, 2f);
