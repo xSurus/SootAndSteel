@@ -4,7 +4,7 @@ using Gamelab.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Gamelab.Map;
+namespace Gamelab.Stations;
 
 public abstract class AbstractStation(string type, Color displayColor)
 {

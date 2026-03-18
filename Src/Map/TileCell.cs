@@ -1,3 +1,4 @@
+using Gamelab.Stations;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using nkast.Aether.Physics2D.Dynamics;
@@ -10,7 +11,7 @@ public class TileCell(int x, int y, Vector2 worldPosition, World world, float pi
     public int Y { get; } = y;
     public Vector2 WorldPosition { get; private set; } = worldPosition;
     public bool IsWalkable { get; private set; } = true;
-    public AbstractStation AbstractStation { get; private set; } = null;
+    public AbstractStation AbstractStation { get; private set; }
 
     private Body collisionBody;
 
@@ -45,7 +46,7 @@ public class TileCell(int x, int y, Vector2 worldPosition, World world, float pi
             Vector2 simPos = (WorldPosition + new Vector2(tileSize / 2f)) / pixelsPerMeter;
             float simSize = tileSize / pixelsPerMeter;
 
-            collisionBody = world.CreateRectangle(simSize, simSize, 1f, simPos, 0f, BodyType.Static);
+            collisionBody = world.CreateRectangle(simSize, simSize, 1f, simPos);
         }
         else if (IsWalkable && collisionBody != null)
         {
