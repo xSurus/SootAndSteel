@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Gamelab.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -24,7 +25,8 @@ public abstract class AbstractGameScreen(GamelabGame game) : GameScreen(game)
         base.Initialize();
 
         // Simplify rendering on different screen sizes by using a virtual resolution, scaling it to fit the actual window size, and applying letterboxing if needed to maintain the aspect ratio
-        viewportAdapter = new BoxingViewportAdapter(Game.Window, GraphicsDevice, virtualScreenSize.X, virtualScreenSize.Y);
+        viewportAdapter =
+            new BoxingViewportAdapter(Game.Window, GraphicsDevice, virtualScreenSize.X, virtualScreenSize.Y);
         viewportAdapter.Reset();
 
         spriteBatch = new SpriteBatch(GraphicsDevice);
@@ -32,6 +34,11 @@ public abstract class AbstractGameScreen(GamelabGame game) : GameScreen(game)
 
     public override void Update(GameTime gameTime)
     {
+        foreach (PlayerConfiguration config in Game.playerManager.Configs)
+        {
+            config.Input.Update(gameTime);
+        }
+
         var keyboard = Keyboard.GetState();
         bool toggleDebugOverlayRequested = keyboard.IsKeyDown(Keys.F3) && previousKeyboardState.IsKeyUp(Keys.F3);
         if (toggleDebugOverlayRequested)
@@ -65,6 +72,7 @@ public abstract class AbstractGameScreen(GamelabGame game) : GameScreen(game)
     {
         NumFramesDrawn++;
     }
+
     public class Factory
     {
         public string name;
@@ -94,8 +102,7 @@ public abstract class AbstractGameScreen(GamelabGame game) : GameScreen(game)
             .Where(t => t.IsSubclassOf(typeof(AbstractGameScreen)) && !t.IsAbstract)
             .ToList();
 
-        return screenTypes.Select(t => new Factory(t.Name, game => {
-            return (AbstractGameScreen)Activator.CreateInstance(t, game);
-        }));
+        return screenTypes.Select(t =>
+            new Factory(t.Name, game => { return (AbstractGameScreen)Activator.CreateInstance(t, game); }));
     }
 }

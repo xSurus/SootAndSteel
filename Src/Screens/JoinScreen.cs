@@ -2,13 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FontStashSharp;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Myra.Graphics2D.UI;
-using Myra.Graphics2D.Brushes;
 using Gamelab.Input;
-using Gamelab.Players;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
+using Myra.Graphics2D;
+using Myra.Graphics2D.Brushes;
+using Myra.Graphics2D.UI;
 
 namespace Gamelab.Screens;
 
@@ -20,73 +19,85 @@ public class JoinScreen(GamelabGame game) : AbstractGameScreen(game)
     private readonly List<Label> playerStatusLabels = [];
 
     private readonly Dictionary<int, GamePadState> previousGamePadStates = new();
-    private KeyboardState previousKeyboardState;
 
-        public override void Initialize() {
-            base.Initialize();
-            Game.playerManager.Reset();
-        }
+    public override void Initialize()
+    {
+        base.Initialize();
+        Game.playerManager.Reset();
+    }
 
-        public override void LoadContent() {
-            base.LoadContent();
+    public override void LoadContent()
+    {
+        base.LoadContent();
 
-            desktop = new Desktop();
+        desktop = new Desktop();
 
-            int screenWidth = virtualScreenSize.X;
-            int screenHeight = virtualScreenSize.Y;
-            
-            float scaleX = screenWidth / 1920f;
-            float scaleY = screenHeight / 1080f;
-            float minScale = Math.Min(scaleX, scaleY);
-            
-            VerticalStackPanel mainStack = new VerticalStackPanel {
-                Spacing = (int)(50 * scaleY),
-                Padding = new Myra.Graphics2D.Thickness(0, (int)(100 * scaleY), 0, 0),
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                VerticalAlignment = VerticalAlignment.Stretch
-            };
-            
-            Label titleLabel = new Label {
-                Text = "Join Game",
-                HorizontalAlignment = HorizontalAlignment.Center,
-                Font = Game.fontSystem.GetFont((int)(96 * minScale))
-            };
-            mainStack.Widgets.Add(titleLabel);
-            
-            instructionLabel = new Label {
-                Text = "Press (A) to join.",
-                HorizontalAlignment = HorizontalAlignment.Center,
-                Font = Game.fontSystem.GetFont((int)(48 * minScale))
-            };
-            mainStack.Widgets.Add(instructionLabel);
-            
-            Grid panelsContainer = new Grid {
-                ColumnSpacing = (int)(20 * scaleX),
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                VerticalAlignment = VerticalAlignment.Center,
-                Padding = new Myra.Graphics2D.Thickness((int)(50 * scaleX), 0, (int)(50 * scaleX), 0)
-            };
+        int screenWidth = virtualScreenSize.X;
+        int screenHeight = virtualScreenSize.Y;
 
-            DynamicSpriteFont playerLabelFont = Game.fontSystem.GetFont((int)(36 * minScale));
-            DynamicSpriteFont statusLabelFont = Game.fontSystem.GetFont((int)(28 * minScale));
+        float scaleX = screenWidth / 1920f;
+        float scaleY = screenHeight / 1080f;
+        float minScale = Math.Min(scaleX, scaleY);
+
+        VerticalStackPanel mainStack = new VerticalStackPanel
+        {
+            Spacing = (int)(50 * scaleY),
+            Padding = new Thickness(0, (int)(100 * scaleY), 0, 0),
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            VerticalAlignment = VerticalAlignment.Stretch
+        };
+
+        Label titleLabel = new Label
+        {
+            Text = "Join Game",
+            HorizontalAlignment = HorizontalAlignment.Center,
+            Font = Game.fontSystem.GetFont((int)(96 * minScale))
+        };
+        mainStack.Widgets.Add(titleLabel);
+
+        instructionLabel = new Label
+        {
+            Text = "Press (A) to join.",
+            HorizontalAlignment = HorizontalAlignment.Center,
+            Font = Game.fontSystem.GetFont((int)(48 * minScale))
+        };
+        mainStack.Widgets.Add(instructionLabel);
+
+        Grid panelsContainer = new Grid
+        {
+            ColumnSpacing = (int)(20 * scaleX),
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            VerticalAlignment = VerticalAlignment.Center,
+            Padding = new Thickness((int)(50 * scaleX), 0, (int)(50 * scaleX), 0)
+        };
+
+        DynamicSpriteFont playerLabelFont = Game.fontSystem.GetFont((int)(36 * minScale));
+        DynamicSpriteFont statusLabelFont = Game.fontSystem.GetFont((int)(28 * minScale));
 
         for (int i = 0; i < 4; i++)
         {
             panelsContainer.ColumnsProportions.Add(new Proportion(ProportionType.Part, 1.0f));
-            var panel = new Panel { Height = (int)(400 * scaleY), Background = new SolidBrush(new Color(Color.White, 0.5f)) };
+            var panel = new Panel
+                { Height = (int)(400 * scaleY), Background = new SolidBrush(new Color(Color.White, 0.5f)) };
             Grid.SetColumn(panel, i);
-            var content = new VerticalStackPanel { Spacing = (int)(100 * scaleY), Padding = new Myra.Graphics2D.Thickness(0, (int)(20 * scaleY), 0, 0), HorizontalAlignment = HorizontalAlignment.Stretch };
-            content.Widgets.Add(new Label {
-                Text = $"Player {i + 1}", 
-                HorizontalAlignment = HorizontalAlignment.Center, 
-                TextColor = Color.Black, 
+            var content = new VerticalStackPanel
+            {
+                Spacing = (int)(100 * scaleY), Padding = new Thickness(0, (int)(20 * scaleY), 0, 0),
+                HorizontalAlignment = HorizontalAlignment.Stretch
+            };
+            content.Widgets.Add(new Label
+            {
+                Text = $"Player {i + 1}",
+                HorizontalAlignment = HorizontalAlignment.Center,
+                TextColor = Color.Black,
                 Font = playerLabelFont
             });
-            var statusLabel = new Label {
-                Text = "Press (A) to Join", 
-                HorizontalAlignment = HorizontalAlignment.Center, 
-                TextColor = Color.Black, 
-                VerticalAlignment = VerticalAlignment.Center, 
+            var statusLabel = new Label
+            {
+                Text = "Press (A) to Join",
+                HorizontalAlignment = HorizontalAlignment.Center,
+                TextColor = Color.Black,
+                VerticalAlignment = VerticalAlignment.Center,
                 Font = statusLabelFont
             };
             content.Widgets.Add(statusLabel);
@@ -95,23 +106,20 @@ public class JoinScreen(GamelabGame game) : AbstractGameScreen(game)
             playerPanels.Add(panel);
             playerStatusLabels.Add(statusLabel);
         }
+
         mainStack.Widgets.Add(panelsContainer);
         desktop.Root = mainStack;
     }
 
     protected override void Update(GameTime gameTime, KeyboardState keyboard, Dictionary<int, GamePadState> gamePads)
     {
-        foreach (PlayerConfiguration config in Game.playerManager.Configs)
-        {
-            config.Input.Update(gameTime);
-        }
-        
         for (int i = 0; i < GamePad.MaximumGamePadCount; i++)
         {
             if (!gamePads.TryGetValue(i, out GamePadState currentGamePadState)) continue;
             previousGamePadStates.TryGetValue(i, out GamePadState previousGamePadState);
 
-            if (currentGamePadState.Buttons.A == ButtonState.Pressed && previousGamePadState.Buttons.A == ButtonState.Released)
+            if (currentGamePadState.Buttons.A == ButtonState.Pressed &&
+                previousGamePadState.Buttons.A == ButtonState.Released)
             {
                 if (!Game.playerManager.IsControllerJoined(i))
                 {
@@ -119,7 +127,7 @@ public class JoinScreen(GamelabGame game) : AbstractGameScreen(game)
                 }
             }
         }
-        
+
         if (keyboard.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space))
         {
             bool keyboardExists = Game.playerManager.Configs.Any(c => c.Input is KeyboardInputProvider);
@@ -128,9 +136,11 @@ public class JoinScreen(GamelabGame game) : AbstractGameScreen(game)
                 Game.playerManager.JoinPlayer(new KeyboardInputProvider(Keys.W, Keys.S, Keys.A, Keys.D, Keys.Space));
             }
         }
-        
+
         bool anyJoined = Game.playerManager.Configs.Any();
-        instructionLabel.Text = anyJoined ? "Press (A)/[Space] to join. Press (Start)/[Enter] to begin." : "Press (A) or [Space] to join.";
+        instructionLabel.Text = anyJoined
+            ? "Press (A)/[Space] to join. Press (Start)/[Enter] to begin."
+            : "Press (A) or [Space] to join.";
 
         for (int i = 0; i < 4; i++)
         {
@@ -138,7 +148,7 @@ public class JoinScreen(GamelabGame game) : AbstractGameScreen(game)
             playerPanels[i].Background = new SolidBrush(isJoined ? Color.LightGreen : new Color(Color.White, 0.5f));
             playerStatusLabels[i].Text = isJoined ? "Joined!" : "Ready...";
         }
-        
+
         if (anyJoined)
         {
             bool startPressed = Game.playerManager.Configs.Any(c => c.Input.IsStartJustPressed());
@@ -148,7 +158,7 @@ public class JoinScreen(GamelabGame game) : AbstractGameScreen(game)
                 return;
             }
         }
-        
+
         previousKeyboardState = keyboard;
         previousGamePadStates.Clear();
         foreach ((int i, GamePadState state) in gamePads) previousGamePadStates[i] = state;

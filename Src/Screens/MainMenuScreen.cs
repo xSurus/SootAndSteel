@@ -1,11 +1,10 @@
 using System.Collections.Generic;
+using FontStashSharp;
 using Gamelab.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
-using FontStashSharp;
-
 
 namespace Gamelab.Screens;
 
@@ -24,6 +23,7 @@ public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
     }
 
     private ExampleData exampleData;
+
     public override void LoadContent()
     {
         base.LoadContent();
@@ -77,7 +77,8 @@ public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
 
     protected void SaveExampleData()
     {
-        var newExampleData = new ExampleData {
+        var newExampleData = new ExampleData
+        {
             size = 42,
             position = new Vector2(100, 100),
         };
@@ -88,7 +89,7 @@ public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
     private void StartGame()
     {
         MediaPlayer.Stop();
-        Game.SwitchToScreen(new GameplayScene(Game));
+        Game.SwitchToScreen(new GameplayScreen(Game));
     }
 
     private void TryStartMainMenuMusic()
