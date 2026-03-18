@@ -16,15 +16,12 @@ public class TrainSpeedSetting
         BurnMultiplier = burnMultiplier;
     }
 
-    public static TrainSpeedSetting Stopped { get; private set; } = new("Stopped", 0f, 1f);
-    public static TrainSpeedSetting Default { get; private set; } = new("Default", 150f, 1f);
-    public static TrainSpeedSetting Double { get; private set; } = new("Double", 300f, 1f);
-    public static TrainSpeedSetting Quadruple { get; private set; } = new("Quadruple", 600f, 4f);
+    public static TrainSpeedSetting Stopped { get; private set; }
+    public static TrainSpeedSetting Default { get; private set; }
+    public static TrainSpeedSetting Double { get; private set; }
+    public static TrainSpeedSetting Quadruple { get; private set; }
 
-    public static List<TrainSpeedSetting> All { get; private set; } =
-    [
-        Stopped, Default, Double, Quadruple
-    ];
+    public static List<TrainSpeedSetting> All { get; private set; }
 
     public static void Initialize(GameplayConfig config)
     {

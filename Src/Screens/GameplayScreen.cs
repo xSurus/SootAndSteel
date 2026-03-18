@@ -23,9 +23,9 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     private TrainMap trainMap;
     private WorldScroller worldScroller;
     private TrainContext trainContext;
-    private Desktop _desktop;
-    private Label _coalLabel;
-    private Label _speedLabel;
+    private Desktop desktop;
+    private Label coalLabel;
+    private Label speedLabel;
 
     public override void LoadContent()
     {
@@ -52,7 +52,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
 
         worldScroller = new WorldScroller(GraphicsDevice, virtualScreenSize.X, virtualScreenSize.Y, gameplayConfig);
 
-        var spawnPositions = new Vector2[]
+        var spawnPositions = new[]
         {
             new Vector2(virtualScreenSize.X / 2f - gameplayConfig.SpawnOffsetPixels,
                 virtualScreenSize.Y / 2f - gameplayConfig.SpawnOffsetPixels),
@@ -73,18 +73,18 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
             playerBody.LinearDamping = gameplayConfig.PlayerLinearDamping;
             playerBody.FixedRotation = true;
 
-            players.Add(new Player(config.PlayerIndex, playerBody, config.Input, trainContext, gameplayConfig));
+            players.Add(new Player(playerBody, config.Input, trainContext, gameplayConfig));
         }
 
         // Initialize Myra UI
-        _desktop = new Desktop();
+        desktop = new Desktop();
         var mainPanel = new Panel
         {
             HorizontalAlignment = HorizontalAlignment.Stretch,
             VerticalAlignment = VerticalAlignment.Stretch
         };
 
-        _coalLabel = new Label
+        coalLabel = new Label
         {
             Text = "Coal: 0",
             Font = Game.fontSystem.GetFont(48),
@@ -94,7 +94,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
             Margin = new Thickness(20)
         };
 
-        _speedLabel = new Label
+        speedLabel = new Label
         {
             Text = "Speed: 0",
             Font = Game.fontSystem.GetFont(48),
@@ -104,12 +104,12 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
             Margin = new Thickness(20, 80, 20, 20)
         };
 
-        mainPanel.Widgets.Add(_coalLabel);
-        mainPanel.Widgets.Add(_speedLabel);
-        _desktop.Root = mainPanel;
+        mainPanel.Widgets.Add(coalLabel);
+        mainPanel.Widgets.Add(speedLabel);
+        desktop.Root = mainPanel;
     }
 
-    private float accumulator = 0f;
+    private float accumulator;
 
     protected override void Update(GameTime gameTime, KeyboardState keyboard, Dictionary<int, GamePadState> gamePads)
     {
@@ -131,8 +131,8 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         }
 
         // Update coal label
-        _coalLabel.Text = $"Coal: {trainContext.State.CoalAmount}";
-        _speedLabel.Text = $"Speed: {trainContext.State.ActualSpeed:F0}";
+        coalLabel.Text = $"Coal: {trainContext.State.CoalAmount}";
+        speedLabel.Text = $"Speed: {trainContext.State.ActualSpeed:F0}";
     }
 
     public override void Draw(GameTime gameTime)
@@ -149,7 +149,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         spriteBatch.End();
 
         spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
-        _desktop.Render();
+        desktop.Render();
         spriteBatch.End();
 
         base.Draw(gameTime);

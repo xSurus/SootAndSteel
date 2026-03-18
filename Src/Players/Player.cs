@@ -13,7 +13,6 @@ using nkast.Aether.Physics2D.Dynamics;
 namespace Gamelab.Players;
 
 public class Player(
-    int playerIndex,
     Body body,
     IInputProvider input,
     TrainContext context,

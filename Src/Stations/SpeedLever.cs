@@ -1,7 +1,6 @@
 using Gamelab.Map.Train.State;
 using Gamelab.Players;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace Gamelab.Stations;
 
@@ -24,13 +23,5 @@ public class SpeedLever : AbstractStation
         int nextIndex = (currentIndex + 1) % allSpeeds.Count;
 
         trainContext.State.CurrentSpeed = allSpeeds[nextIndex];
-    }
-
-    public override void Draw(SpriteBatch spriteBatch, Vector2 position, int tileSize)
-    {
-        base.Draw(spriteBatch, position, tileSize);
-
-        string speedText = "??";
-        Color textColor = Color.White;
     }
 }
