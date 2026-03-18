@@ -1,9 +1,10 @@
+using Gamelab.Config;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace Gamelab.Input;
 
-public class KeyboardInputProvider(Keys up, Keys down, Keys left, Keys right, Keys action) : AbstractInputProvider
+public class KeyboardInputProvider(Keys up, Keys down, Keys left, Keys right, Keys action, GameplayConfig gameplayConfig) : AbstractInputProvider(gameplayConfig)
 {
     private KeyboardState currentKeyboardState;
     private KeyboardState previousKeyboardState;

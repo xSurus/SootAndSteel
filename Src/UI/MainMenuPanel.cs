@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using FontStashSharp;
+using Gamelab.Config;
 using Gamelab.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -10,14 +11,16 @@ namespace Gamelab.UI;
 public class MainMenuPanel
 {
     private const int VolumeMenuIndex = 1;
-    private const float VolumeStep = 0.05f;
 
     private readonly GamelabGame game;
+    private readonly GameplayConfig gameplayConfig;
     private readonly MenuList menuList;
 
-    public MainMenuPanel(GamelabGame game, GraphicsDevice graphicsDevice, Action onStartSelected, Action onQuitSelected)
+    public MainMenuPanel(GamelabGame game, GraphicsDevice graphicsDevice, Action onStartSelected, Action onQuitSelected,
+        GameplayConfig gameplayConfig)
     {
         this.game = game;
+        this.gameplayConfig = gameplayConfig;
         menuList = new MenuList([
             new MenuList.MenuEntry("Start Game", onStartSelected),
             new MenuList.MenuEntry("Music Volume", () => { }),
@@ -37,12 +40,12 @@ public class MainMenuPanel
         // Keep menu controls lower so they don't cover key parts of the background image.
         var panelRect = new Rectangle(
             0,
-            virtualScreenSize.Y - 330,
+            virtualScreenSize.Y - gameplayConfig.MenuPanelBottomOffsetPixels,
             virtualScreenSize.X,
-            250);
+            gameplayConfig.MenuPanelHeightPixels);
 
-        int firstItemY = panelRect.Y + 20;
-        int itemSpacing = 85;
+        int firstItemY = panelRect.Y + gameplayConfig.MenuPanelFirstItemOffsetYPixels;
+        int itemSpacing = gameplayConfig.MenuPanelItemSpacingPixels;
 
         DrawMenuItem(
             spriteBatch,
@@ -86,11 +89,11 @@ public class MainMenuPanel
             {
                 if (player.Input.IsLeftJustPressed())
                 {
-                    game.SetMusicVolume(game.MusicVolume - VolumeStep);
+                    game.SetMusicVolume(game.MusicVolume - gameplayConfig.MenuVolumeStep);
                 }
                 else if (player.Input.IsRightJustPressed())
                 {
-                    game.SetMusicVolume(game.MusicVolume + VolumeStep);
+                    game.SetMusicVolume(game.MusicVolume + gameplayConfig.MenuVolumeStep);
                 }
             }
         }
@@ -120,13 +123,13 @@ public class MainMenuPanel
 
                 // P1 and P2 on the left, P3 and P4 on the right
                 if (playerIndex == 0)
-                    playerPos = new Vector2(labelPosition.X - 60 - pSize.X, yPosition);
+                    playerPos = new Vector2(labelPosition.X - gameplayConfig.MenuPlayerMarkerNearOffsetPixels - pSize.X, yPosition);
                 else if (playerIndex == 1)
-                    playerPos = new Vector2(labelPosition.X - 140 - pSize.X, yPosition);
+                    playerPos = new Vector2(labelPosition.X - gameplayConfig.MenuPlayerMarkerFarOffsetPixels - pSize.X, yPosition);
                 else if (playerIndex == 2)
-                    playerPos = new Vector2(labelPosition.X + labelSize.X + 60, yPosition);
+                    playerPos = new Vector2(labelPosition.X + labelSize.X + gameplayConfig.MenuPlayerMarkerNearOffsetPixels, yPosition);
                 else if (playerIndex == 3)
-                    playerPos = new Vector2(labelPosition.X + labelSize.X + 140, yPosition);
+                    playerPos = new Vector2(labelPosition.X + labelSize.X + gameplayConfig.MenuPlayerMarkerFarOffsetPixels, yPosition);
 
                 spriteBatch.DrawString(buttonFont, pText, playerPos, Color.White);
             }
