@@ -12,9 +12,9 @@ namespace Gamelab.Interactable.Structures;
 public class ShootHoleWall : IInteractable, IDamageable
 {
     public Body PhysicsBody { get; private set; }
-    public float MaxHealth { get; private set; } = 100f;
+    public float MaxHealth => GamelabGame.Instance.GameplayConfig.WallMaxHealth;
+    private float HealthRestoredPerSecond => GamelabGame.Instance.GameplayConfig.WallHealthRestoredPerSecond;
     public float CurrentHealth { get; private set; }
-    private readonly float healthRestoredPerSecond = 40f;
     public bool IsBroken => CurrentHealth <= 0f;
 
     private readonly Vector2 dimensionsPixels;
@@ -49,7 +49,7 @@ public class ShootHoleWall : IInteractable, IDamageable
 
         bool wasBroken = IsBroken;
 
-        CurrentHealth += healthRestoredPerSecond * dt;
+        CurrentHealth += HealthRestoredPerSecond * dt;
 
         if (CurrentHealth >= MaxHealth)
         {

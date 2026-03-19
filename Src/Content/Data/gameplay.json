@@ -41,5 +41,7 @@
     "coalOvenMaxFuel": 30.0,
     "coalOvenBurnRate": 1.0,
     "coalOvenRefuelAmount": 10.0,
-    "coalOvenLowFuelThreshold": 0.25
+  "coalOvenLowFuelThreshold": 0.25,
+  "wallMaxHealth": 100.0,
+  "wallHealthRestoredPerSecond": 40.0
 }

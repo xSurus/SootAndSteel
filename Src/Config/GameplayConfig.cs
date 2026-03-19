@@ -45,4 +45,6 @@ public class GameplayConfig
     public float CoalOvenBurnRate { get; set; } = 1f;
     public float CoalOvenRefuelAmount { get; set; } = 10f;
     public float CoalOvenLowFuelThreshold { get; set; } = 0.25f;
+    public float WallMaxHealth { get; set; } = 100f;
+    public float WallHealthRestoredPerSecond { get; set; } = 40f;
 }
