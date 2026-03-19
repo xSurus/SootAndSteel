@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using nkast.Aether.Physics2D.Dynamics;
 
-namespace Gamelab.Map;
+namespace Gamelab.Map.Train;
 
 public class TileCell(int x, int y, Vector2 worldPosition, World world, float pixelsPerMeter, int tileSize)
 {

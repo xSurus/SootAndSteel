@@ -1,4 +1,4 @@
-using Gamelab.Map;
+using Gamelab.Map.Train.State;
 using Gamelab.Players;
 using Microsoft.Xna.Framework;
 
@@ -6,7 +6,7 @@ namespace Gamelab.Stations;
 
 public class Counter() : AbstractStation("Counter", Color.SaddleBrown)
 {
-    public override void Interact(Player interactingPlayer)
+    public override void Interact(Player interactingPlayer, TrainContext trainContext)
     {
         if (interactingPlayer.HeldItem == null || HeldItem == null)
         {

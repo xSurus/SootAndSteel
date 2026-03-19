@@ -1,5 +1,6 @@
 using Gamelab.Assets;
 using Gamelab.Items;
+using Gamelab.Map.Train.State;
 using Gamelab.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -15,12 +16,12 @@ public abstract class AbstractStation(string type, Color displayColor)
     public bool IsSolid { get; protected set; } = true;
     public Item HeldItem { get; set; }
 
-    public virtual void Update(float deltaTime)
+    public virtual void Update(float deltaTime, TrainContext trainContext)
     {
         // by default, does nothing. Stations like coal oven need to continously update
     }
 
-    public abstract void Interact(Player interactingPlayer);
+    public abstract void Interact(Player interactingPlayer, TrainContext trainContext);
 
     public virtual void Draw(SpriteBatch spriteBatch, Vector2 position, int tileSize)
     {

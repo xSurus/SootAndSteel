@@ -8,7 +8,16 @@ public class GameplayConfig
     public int TrainTileSize { get; set; } = 80;
     public int TrainWidth { get; set; } = 8;
     public int TrainHeight { get; set; } = 6;
-    public float TrainSpeed { get; set; } = 150f;
+    public float TrainSpeedStopped { get; set; } = 0f;
+    public float TrainSpeedDefault { get; set; } = 150f;
+    public float TrainSpeedDouble { get; set; } = 300f;
+    public float TrainSpeedQuadruple { get; set; } = 600f;
+    public float TrainBurnMultiplierStopped { get; set; } = 1f;
+    public float TrainBurnMultiplierDefault { get; set; } = 1f;
+    public float TrainBurnMultiplierDouble { get; set; } = 1f;
+    public float TrainBurnMultiplierQuadruple { get; set; } = 4f;
+    public float TrainAccelerationRate { get; set; } = 50f;
+    public int TrainInitialCoalAmount { get; set; } = 50;
     public float SpawnOffsetPixels { get; set; } = 100f;
     public float PlayerRadiusPixels { get; set; } = 24f;
     public float PlayerDensity { get; set; } = 3f;

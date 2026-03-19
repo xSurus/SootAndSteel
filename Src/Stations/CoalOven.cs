@@ -1,7 +1,7 @@
 using System;
 using Gamelab.Assets;
 using Gamelab.Config;
-using Gamelab.Map;
+using Gamelab.Map.Train.State;
 using Gamelab.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -25,16 +25,22 @@ public class CoalOven : AbstractStation
         CurrentFuel = MaxFuel;
     }
 
-    public override void Update(float deltaTime)
+    public override void Update(float deltaTime, TrainContext trainContext)
     {
         if (CurrentFuel > 0)
         {
-            CurrentFuel -= burnRate * deltaTime;
-            CurrentFuel = Math.Max(0, CurrentFuel);
+            trainContext.State.IsCoalOvenBurning = true;
+            float speedMultiplier = trainContext.State.CurrentSpeed.BurnMultiplier;
+            CurrentFuel -= burnRate * speedMultiplier * deltaTime;
+        }
+        else
+        {
+            trainContext.State.IsCoalOvenBurning = false;
+            trainContext.State.CurrentSpeed = TrainSpeedSetting.Stopped;
         }
     }
 
-    public override void Interact(Player interactingPlayer)
+    public override void Interact(Player interactingPlayer, TrainContext trainContext)
     {
         if (interactingPlayer.HeldItem != null && interactingPlayer.HeldItem.Id == "Coal")
         {

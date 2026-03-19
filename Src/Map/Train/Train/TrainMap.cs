@@ -1,22 +1,20 @@
 using System.Collections.Generic;
+using Gamelab.Map.Train.State;
 using Gamelab.Stations;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using nkast.Aether.Physics2D.Dynamics;
 
-namespace Gamelab.Map;
+namespace Gamelab.Map.Train;
 
 public class TrainMap
 {
     private int Width { get; }
     private int Height { get; }
     public int TileSize { get; }
-
     private TileCell[,] grid;
     private Vector2 trainPosition;
     private Texture2D tileTexture;
-
-    // Physics dependencies
     private readonly World physicsWorld;
     private float pixelsPerMeter;
     private List<Body> boundaryWalls = [];
@@ -30,7 +28,6 @@ public class TrainMap
         physicsWorld = world;
         this.pixelsPerMeter = pixelsPerMeter;
 
-        // Create a simple tile texture with a border effect
         tileTexture = new Texture2D(graphicsDevice, tileSize, tileSize);
         Color[] data = new Color[tileSize * tileSize];
         for (int i = 0; i < data.Length; i++)
@@ -130,13 +127,13 @@ public class TrainMap
         }
     }
 
-    public void Update(float deltaTime)
+    public void Update(float deltaTime, TrainContext context)
     {
         for (int x = 0; x < Width; x++)
         {
             for (int y = 0; y < Height; y++)
             {
-                grid[x, y].AbstractStation?.Update(deltaTime);
+                grid[x, y].AbstractStation?.Update(deltaTime, context);
             }
         }
     }

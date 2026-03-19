@@ -2,10 +2,14 @@ using System;
 using System.Collections.Generic;
 using Gamelab.Config;
 using Gamelab.Map;
+using Gamelab.Map.Train;
+using Gamelab.Map.Train.State;
 using Gamelab.Players;
 using Gamelab.Stations;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Myra.Graphics2D;
+using Myra.Graphics2D.UI;
 using nkast.Aether.Physics2D.Dynamics;
 
 namespace Gamelab.Screens;
@@ -18,6 +22,10 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     private float PixelsPerMeter => gameplayConfig.PixelsPerMeter;
     private TrainMap trainMap;
     private WorldScroller worldScroller;
+    private TrainContext trainContext;
+    private Desktop desktop;
+    private Label coalLabel;
+    private Label speedLabel;
 
     public override void LoadContent()
     {
@@ -30,6 +38,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         int trainHeight = gameplayConfig.TrainHeight;
 
         trainMap = new TrainMap(trainWidth, trainHeight, tileSize, GraphicsDevice, world, PixelsPerMeter);
+        trainContext = new TrainContext(trainMap, new TrainState(gameplayConfig));
 
         Vector2 trainPosition = new Vector2(
             (virtualScreenSize.X - trainWidth * tileSize) / 2f,
@@ -39,37 +48,76 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         trainMap.PlaceObject(1, 1, new CoalResource());
         trainMap.PlaceObject(6, 1, new CoalOven(gameplayConfig));
         trainMap.PlaceObject(3, 2, new Counter());
+        trainMap.PlaceObject(4, 2, new SpeedLever());
 
         worldScroller = new WorldScroller(GraphicsDevice, virtualScreenSize.X, virtualScreenSize.Y, gameplayConfig);
-        worldScroller.TrainSpeed = gameplayConfig.TrainSpeed;
 
-        var spawnPositions = new Vector2[]
+        var spawnPositions = new[]
         {
-            new Vector2(virtualScreenSize.X / 2f - gameplayConfig.SpawnOffsetPixels, virtualScreenSize.Y / 2f - gameplayConfig.SpawnOffsetPixels),
-            new Vector2(virtualScreenSize.X / 2f + gameplayConfig.SpawnOffsetPixels, virtualScreenSize.Y / 2f - gameplayConfig.SpawnOffsetPixels),
-            new Vector2(virtualScreenSize.X / 2f - gameplayConfig.SpawnOffsetPixels, virtualScreenSize.Y / 2f + gameplayConfig.SpawnOffsetPixels),
-            new Vector2(virtualScreenSize.X / 2f + gameplayConfig.SpawnOffsetPixels, virtualScreenSize.Y / 2f + gameplayConfig.SpawnOffsetPixels),
+            new Vector2(virtualScreenSize.X / 2f - gameplayConfig.SpawnOffsetPixels,
+                virtualScreenSize.Y / 2f - gameplayConfig.SpawnOffsetPixels),
+            new Vector2(virtualScreenSize.X / 2f + gameplayConfig.SpawnOffsetPixels,
+                virtualScreenSize.Y / 2f - gameplayConfig.SpawnOffsetPixels),
+            new Vector2(virtualScreenSize.X / 2f - gameplayConfig.SpawnOffsetPixels,
+                virtualScreenSize.Y / 2f + gameplayConfig.SpawnOffsetPixels),
+            new Vector2(virtualScreenSize.X / 2f + gameplayConfig.SpawnOffsetPixels,
+                virtualScreenSize.Y / 2f + gameplayConfig.SpawnOffsetPixels),
         };
 
         players = [];
         foreach (var config in Game.playerManager.Configs)
         {
             Vector2 pixelPos = spawnPositions[config.PlayerIndex % spawnPositions.Length];
-            Body playerBody = world.CreateCircle(gameplayConfig.PlayerRadiusPixels / PixelsPerMeter, gameplayConfig.PlayerDensity, pixelPos / PixelsPerMeter, BodyType.Dynamic);
+            Body playerBody = world.CreateCircle(gameplayConfig.PlayerRadiusPixels / PixelsPerMeter,
+                gameplayConfig.PlayerDensity, pixelPos / PixelsPerMeter, BodyType.Dynamic);
             playerBody.LinearDamping = gameplayConfig.PlayerLinearDamping;
             playerBody.FixedRotation = true;
 
-            players.Add(new Player(config.PlayerIndex, playerBody, config.Input, trainMap, gameplayConfig));
+            players.Add(new Player(playerBody, config.Input, trainContext, gameplayConfig));
         }
+
+        // Initialize Myra UI
+        desktop = new Desktop();
+        var mainPanel = new Panel
+        {
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            VerticalAlignment = VerticalAlignment.Stretch
+        };
+
+        coalLabel = new Label
+        {
+            Text = "Coal: 0",
+            Font = Game.fontSystem.GetFont(48),
+            TextColor = Color.White,
+            HorizontalAlignment = HorizontalAlignment.Left,
+            VerticalAlignment = VerticalAlignment.Top,
+            Margin = new Thickness(20)
+        };
+
+        speedLabel = new Label
+        {
+            Text = "Speed: 0",
+            Font = Game.fontSystem.GetFont(48),
+            TextColor = Color.White,
+            HorizontalAlignment = HorizontalAlignment.Left,
+            VerticalAlignment = VerticalAlignment.Top,
+            Margin = new Thickness(20, 80, 20, 20)
+        };
+
+        mainPanel.Widgets.Add(coalLabel);
+        mainPanel.Widgets.Add(speedLabel);
+        desktop.Root = mainPanel;
     }
 
-    private float accumulator = 0f;
+    private float accumulator;
 
     protected override void Update(GameTime gameTime, KeyboardState keyboard, Dictionary<int, GamePadState> gamePads)
     {
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        trainContext.State.Update(dt);
+        worldScroller.TrainSpeed = trainContext.State.ActualSpeed;
         worldScroller.Update(dt);
-        trainMap.Update(dt);
+        trainMap.Update(dt, trainContext);
         accumulator += Math.Min(dt, gameplayConfig.MaxAccumulatedDeltaSeconds);
         while (accumulator >= gameplayConfig.FixedTimeStep)
         {
@@ -81,6 +129,10 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
             world.Step(gameplayConfig.FixedTimeStep);
             accumulator -= gameplayConfig.FixedTimeStep;
         }
+
+        // Update coal label
+        coalLabel.Text = $"Coal: {trainContext.State.CoalAmount}";
+        speedLabel.Text = $"Speed: {trainContext.State.ActualSpeed:F0}";
     }
 
     public override void Draw(GameTime gameTime)
@@ -95,6 +147,11 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         }
 
         spriteBatch.End();
+
+        spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
+        desktop.Render();
+        spriteBatch.End();
+
         base.Draw(gameTime);
     }
 
