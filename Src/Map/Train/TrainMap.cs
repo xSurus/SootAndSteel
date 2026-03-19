@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using Gamelab.Interactable.Stations;
 using Gamelab.Map.Train.State;
-using Gamelab.Stations;
+using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using nkast.Aether.Physics2D.Dynamics;
@@ -16,7 +17,6 @@ public class TrainMap
     private Vector2 trainPosition;
     private Texture2D tileTexture;
     private World physicsWorld;
-    private float PixelsPerMeter => GamelabGame.Instance.GameplayConfig.PixelsPerMeter;
     private List<Body> boundaryWalls = [];
 
     public TrainMap(GraphicsDevice graphicsDevice, World world)
@@ -46,7 +46,7 @@ public class TrainMap
             for (int y = 0; y < Height; y++)
             {
                 Vector2 worldPos = new Vector2(x * TileSize, y * TileSize);
-                grid[x, y] = new TileCell(x, y, worldPos, physicsWorld, PixelsPerMeter, TileSize);
+                grid[x, y] = new TileCell(x, y, worldPos, physicsWorld, TileSize);
             }
         }
     }
@@ -76,10 +76,10 @@ public class TrainMap
 
         boundaryWalls.Clear();
 
-        float simLeft = trainPosition.X / PixelsPerMeter;
-        float simTop = trainPosition.Y / PixelsPerMeter;
-        float simRight = (trainPosition.X + (Width * TileSize)) / PixelsPerMeter;
-        float simBottom = (trainPosition.Y + (Height * TileSize)) / PixelsPerMeter;
+        float simLeft = trainPosition.X.ToMeters();
+        float simTop = trainPosition.Y.ToMeters();
+        float simRight = (trainPosition.X + (Width * TileSize)).ToMeters();
+        float simBottom = (trainPosition.Y + (Height * TileSize)).ToMeters();
 
         var topWall = physicsWorld.CreateEdge(new Vector2(simLeft, simTop), new Vector2(simRight, simTop));
         var bottomWall = physicsWorld.CreateEdge(new Vector2(simLeft, simBottom), new Vector2(simRight, simBottom));

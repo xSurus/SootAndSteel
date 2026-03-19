@@ -1,28 +1,31 @@
 using System;
+using System.Collections.Generic;
 using Gamelab.Assets;
-using Gamelab.Input;
+using Gamelab.Interactable;
 using Gamelab.Items;
-using Gamelab.Map.Train;
 using Gamelab.Map.Train.State;
+using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using nkast.Aether.Physics2D.Dynamics;
+using nkast.Aether.Physics2D.Dynamics.Contacts;
 
 namespace Gamelab.Players;
 
 public class Player
 {
-    public IInputProvider Input { get; private set; }
-    public Body Body { get; private set; }
-    public Vector2 Position => Body.Position * PixelsPerMeter;
+    public PlayerConfiguration PlayerConfiguration { get; private set; }
+    public Body PhysicsBody { get; private set; }
+    public Vector2 Position => PhysicsBody.Position.ToPixels();
     public Item HeldItem { get; set; }
 
+    private HashSet<IInteractable> nearbyInteractables = [];
+
     private readonly TrainContext trainContext;
-    public Vector2 LookDirection => new((float)Math.Cos(Body.Rotation), (float)Math.Sin(Body.Rotation));
+    public Vector2 LookDirection => new((float)Math.Cos(PhysicsBody.Rotation), (float)Math.Sin(PhysicsBody.Rotation));
 
     private float LerpFactor => GamelabGame.Instance.GameplayConfig.PlayerVelocityLerpFactor;
-    private float PixelsPerMeter => GamelabGame.Instance.GameplayConfig.PixelsPerMeter;
     private float MaxVelocity => GamelabGame.Instance.GameplayConfig.PlayerMaxVelocity;
     private float InteractDistancePixels => GamelabGame.Instance.GameplayConfig.PlayerInteractDistancePixels;
 
@@ -32,52 +35,81 @@ public class Player
     private float HeldItemSizeRadiusMultiplier =>
         GamelabGame.Instance.GameplayConfig.PlayerHeldItemSizeRadiusMultiplier;
 
-    private float VisionConeLengthRadiusMultiplier =>
-        GamelabGame.Instance.GameplayConfig.PlayerVisionConeLengthRadiusMultiplier;
-
-    private float VisionConeAngleRadians =>
-        MathHelper.ToRadians(GamelabGame.Instance.GameplayConfig.PlayerVisionConeAngleDegrees);
-
     private float Radius => GamelabGame.Instance.GameplayConfig.PlayerRadiusPixels;
+    private float Density => GamelabGame.Instance.GameplayConfig.PlayerDensity;
+    private float LinearDampening => GamelabGame.Instance.GameplayConfig.PlayerLinearDamping;
 
 
-    public Player(Body body, IInputProvider input, TrainContext context)
+    public Player(World world, Vector2 startPosition, PlayerConfiguration playerConfig, TrainContext context)
     {
+        PlayerConfiguration = playerConfig;
         trainContext = context;
-        Body = body;
-        Input = input;
+        PhysicsBody = world.CreateCircle(Radius.ToMeters(), Density, startPosition.ToMeters(), BodyType.Dynamic);
+        PhysicsBody.LinearDamping = LinearDampening;
+        PhysicsBody.FixedRotation = true;
+        PhysicsBody.Tag = this;
+        Fixture sensorFixture = PhysicsBody.CreateCircle(InteractDistancePixels, 0f);
+        sensorFixture.IsSensor = true;
+        sensorFixture.OnCollision += HandleSensorCollision;
+        sensorFixture.OnSeparation += HandleSensorSeparation;
     }
 
+    private bool HandleSensorCollision(Fixture sender, Fixture other, Contact contact)
+    {
+        if (other.Body.Tag is IInteractable interactable)
+        {
+            nearbyInteractables.Add(interactable);
+        }
+
+        return true;
+    }
+
+    private void HandleSensorSeparation(Fixture sender, Fixture other, Contact contact)
+    {
+        if (other.Body.Tag is IInteractable interactable)
+        {
+            nearbyInteractables.Remove(interactable);
+        }
+    }
 
     public void Update()
     {
-        Vector2 movement = Input.GetMovement();
+        Vector2 movement = PlayerConfiguration.Input.GetMovement();
 
         if (movement != Vector2.Zero)
         {
-            Body.Rotation = (float)Math.Atan2(movement.Y, movement.X);
+            PhysicsBody.Rotation = (float)Math.Atan2(movement.Y, movement.X);
         }
 
         Vector2 targetVelocity = movement * MaxVelocity;
-        Body.LinearVelocity = Vector2.Lerp(Body.LinearVelocity, targetVelocity, LerpFactor);
+        PhysicsBody.LinearVelocity = Vector2.Lerp(PhysicsBody.LinearVelocity, targetVelocity, LerpFactor);
 
-        if (Input.IsActionJustPressed())
+        if (PlayerConfiguration.Input.IsActionJustPressed())
         {
             TryInteract();
         }
     }
 
-    private void TryInteract()
+    public void TryInteract()
     {
-        Vector2 pixelPosition = Body.Position * PixelsPerMeter;
-        Vector2 targetPoint = pixelPosition + (LookDirection * InteractDistancePixels);
-        Rectangle trainBounds = trainContext.Map.GetBounds();
-        if (trainBounds.Contains(targetPoint))
+        nearbyInteractables.RemoveWhere(i => i.PhysicsBody?.World == null || !i.PhysicsBody.Enabled);
+
+        if (nearbyInteractables.Count == 0) return;
+        Vector2 targetPointPixels = Position + (LookDirection * InteractDistancePixels);
+        Vector2 targetPointSimulation = targetPointPixels.ToMeters();
+
+        foreach (var interactable in nearbyInteractables)
         {
-            int gridX = (int)((targetPoint.X - trainBounds.X) / trainContext.Map.TileSize);
-            int gridY = (int)((targetPoint.Y - trainBounds.Y) / trainContext.Map.TileSize);
-            TileCell targetCell = trainContext.Map.GetTile(gridX, gridY);
-            targetCell?.AbstractStation?.Interact(this, trainContext);
+            if (interactable.PhysicsBody == null) continue;
+
+            foreach (var fixture in interactable.PhysicsBody.FixtureList)
+            {
+                if (fixture.TestPoint(ref targetPointSimulation))
+                {
+                    interactable?.Interact(this, trainContext);
+                    return;
+                }
+            }
         }
     }
 
@@ -86,8 +118,9 @@ public class Player
         Texture2D texture = AssetManager.PlayerTexture;
         float scale = (Radius * 2) / texture.Width;
         Vector2 origin = new Vector2(texture.Width / 2f, texture.Height / 2f);
-        spriteBatch.Draw(texture, Position, null, Color.White, Body.Rotation, origin, scale, SpriteEffects.None, 0f);
-        DrawVisionCone(spriteBatch);
+        spriteBatch.Draw(texture, Position, null, Color.White, PhysicsBody.Rotation, origin, scale, SpriteEffects.None,
+            0f);
+        DrawInteractionTarget(spriteBatch);
         DrawHeldItem(spriteBatch);
     }
 
@@ -103,17 +136,9 @@ public class Player
         }
     }
 
-    private void DrawVisionCone(SpriteBatch spriteBatch)
+    private void DrawInteractionTarget(SpriteBatch spriteBatch)
     {
-        float coneLength = Radius * VisionConeLengthRadiusMultiplier;
-
-        Vector2 leftSide = Vector2.Transform(LookDirection, Matrix.CreateRotationZ(-VisionConeAngleRadians)) *
-                           coneLength;
-        Vector2 rightSide = Vector2.Transform(LookDirection, Matrix.CreateRotationZ(VisionConeAngleRadians)) *
-                            coneLength;
-
-        spriteBatch.DrawLine(Position, Position + leftSide, Color.Red, 2f);
-        spriteBatch.DrawLine(Position, Position + rightSide, Color.Red, 2f);
-        spriteBatch.DrawLine(Position + leftSide, Position + rightSide, Color.Red, 2f);
+        Vector2 targetPointPixels = Position + (LookDirection * InteractDistancePixels);
+        spriteBatch.DrawCircle(targetPointPixels, 5f, 12, Color.Red, 2f);
     }
 }

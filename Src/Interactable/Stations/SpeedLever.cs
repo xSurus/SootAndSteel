@@ -2,7 +2,7 @@ using Gamelab.Map.Train.State;
 using Gamelab.Players;
 using Microsoft.Xna.Framework;
 
-namespace Gamelab.Stations;
+namespace Gamelab.Interactable.Stations;
 
 public class SpeedLever : AbstractStation
 {

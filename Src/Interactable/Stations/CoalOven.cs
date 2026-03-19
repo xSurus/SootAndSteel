@@ -5,7 +5,7 @@ using Gamelab.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Gamelab.Stations;
+namespace Gamelab.Interactable.Stations;
 
 public class CoalOven : AbstractStation
 {

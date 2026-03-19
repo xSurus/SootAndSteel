@@ -113,6 +113,7 @@ public class GamelabGame : Game
         var fontBytes = File.ReadAllBytes(fontPath);
         fontSystem.AddFont(fontBytes);
         LoadGameplayConfig();
+        PhysicsUtility.Initialize(GameplayConfig.PixelsPerMeter);
         serviceManager.InitializeAll(this);
 
         AssetManager.LoadContent(graphics.GraphicsDevice);

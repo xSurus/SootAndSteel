@@ -24,8 +24,6 @@
     "playerInteractDistancePixels": 40.0,
     "playerHeldItemOffsetRadiusMultiplier": 1.5,
     "playerHeldItemSizeRadiusMultiplier": 0.8,
-    "playerVisionConeLengthRadiusMultiplier": 2.5,
-    "playerVisionConeAngleDegrees": 30.0,
     "inputInitialRepeatDelaySeconds": 0.3,
     "inputRepeatRateSeconds": 0.1,
     "inputDirectionPressThreshold": 0.5,

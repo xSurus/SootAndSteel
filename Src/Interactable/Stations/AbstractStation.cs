@@ -4,10 +4,11 @@ using Gamelab.Map.Train.State;
 using Gamelab.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using nkast.Aether.Physics2D.Dynamics;
 
-namespace Gamelab.Stations;
+namespace Gamelab.Interactable.Stations;
 
-public abstract class AbstractStation(string type, Color displayColor)
+public abstract class AbstractStation(string type, Color displayColor) : IInteractable
 {
     public string Type { get; protected set; } = type;
 
@@ -15,6 +16,27 @@ public abstract class AbstractStation(string type, Color displayColor)
     public Color DisplayColor { get; protected set; } = displayColor;
     public bool IsSolid { get; protected set; } = true;
     public Item HeldItem { get; set; }
+
+    public Body PhysicsBody { get; protected set; }
+
+    public void AttachPhysics(Body body)
+    {
+        PhysicsBody = body;
+        PhysicsBody.Tag = this;
+
+        if (!IsSolid)
+        {
+            foreach (var fixture in PhysicsBody.FixtureList)
+            {
+                fixture.IsSensor = true;
+            }
+        }
+    }
+
+    public void DetachPhysics()
+    {
+        PhysicsBody = null;
+    }
 
     public virtual void Update(float deltaTime, TrainContext trainContext)
     {
