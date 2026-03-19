@@ -4,7 +4,7 @@
     "maxAccumulatedDeltaSeconds": 0.25,
     "trainTileSize": 80,
     "trainWidth": 8,
-    "trainHeight": 6,
+  "trainHeight": 5,
   "trainSpeedStopped": 0.0,
   "trainSpeedDefault": 150.0,
   "trainSpeedDouble": 300.0,

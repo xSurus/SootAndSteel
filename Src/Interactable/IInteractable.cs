@@ -8,5 +8,7 @@ public interface IInteractable
 {
     void Interact(Player interactingPlayer, TrainContext trainContext);
 
+    void HoldInteract(Player interactingPlayer, TrainContext trainContext, float dt);
+
     Body PhysicsBody { get; }
 }

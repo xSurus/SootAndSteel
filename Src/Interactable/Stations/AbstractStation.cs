@@ -38,12 +38,16 @@ public abstract class AbstractStation(string type, Color displayColor) : IIntera
         PhysicsBody = null;
     }
 
-    public virtual void Update(float deltaTime, TrainContext trainContext)
+    public virtual void Update(float dt, TrainContext trainContext)
     {
         // by default, does nothing. Stations like coal oven need to continously update
     }
 
     public abstract void Interact(Player interactingPlayer, TrainContext trainContext);
+
+    public virtual void HoldInteract(Player interactingPlayer, TrainContext trainContext, float dt)
+    {
+    }
 
     public virtual void Draw(SpriteBatch spriteBatch, Vector2 position, int tileSize)
     {

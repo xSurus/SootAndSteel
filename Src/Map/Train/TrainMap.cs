@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Gamelab.Interactable.Stations;
+using Gamelab.Interactable.Structures;
 using Gamelab.Map.Train.State;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
@@ -17,7 +18,7 @@ public class TrainMap
     private Vector2 trainPosition;
     private Texture2D tileTexture;
     private World physicsWorld;
-    private List<Body> boundaryWalls = [];
+    private readonly List<ShootHoleWall> boundaryWalls = new();
 
     public TrainMap(GraphicsDevice graphicsDevice, World world)
     {
@@ -64,29 +65,39 @@ public class TrainMap
             }
         }
 
-        BuildTrainBoundaries();
+        InitializeBoundaryWalls();
     }
 
-    private void BuildTrainBoundaries()
+    public void InitializeBoundaryWalls()
     {
-        foreach (Body wall in boundaryWalls)
+        float wallHeightPixels = TileSize / 2f;
+        Vector2 wallDimensions = new Vector2(TileSize, wallHeightPixels);
+
+        float simWidth = wallDimensions.X.ToMeters();
+        float simHeight = wallDimensions.Y.ToMeters();
+
+        for (int x = 0; x < Width; x++)
         {
-            physicsWorld.Remove(wall);
+            // --- TOP WALL ---
+            var topWall = new ShootHoleWall(wallDimensions);
+            Vector2 topPixelPos = trainPosition + new Vector2(x * TileSize + TileSize / 2f, -wallHeightPixels / 2f);
+
+            Body topBody =
+                physicsWorld.CreateRectangle(simWidth, simHeight, 1f, topPixelPos.ToMeters(), 0f, BodyType.Static);
+            topWall.AttachPhysics(topBody);
+            boundaryWalls.Add(topWall);
+
+            // --- BOTTOM WALL ---
+            var bottomWall = new ShootHoleWall(wallDimensions);
+            Vector2 bottomPixelPos = trainPosition +
+                                     new Vector2(x * TileSize + TileSize / 2f,
+                                         (Height * TileSize) + wallHeightPixels / 2f);
+
+            Body bottomBody = physicsWorld.CreateRectangle(simWidth, simHeight, 1f, bottomPixelPos.ToMeters(), 0f,
+                BodyType.Static);
+            bottomWall.AttachPhysics(bottomBody);
+            boundaryWalls.Add(bottomWall);
         }
-
-        boundaryWalls.Clear();
-
-        float simLeft = trainPosition.X.ToMeters();
-        float simTop = trainPosition.Y.ToMeters();
-        float simRight = (trainPosition.X + (Width * TileSize)).ToMeters();
-        float simBottom = (trainPosition.Y + (Height * TileSize)).ToMeters();
-
-        var topWall = physicsWorld.CreateEdge(new Vector2(simLeft, simTop), new Vector2(simRight, simTop));
-        var bottomWall = physicsWorld.CreateEdge(new Vector2(simLeft, simBottom), new Vector2(simRight, simBottom));
-        var leftWall = physicsWorld.CreateEdge(new Vector2(simLeft, simTop), new Vector2(simLeft, simBottom));
-        var rightWall = physicsWorld.CreateEdge(new Vector2(simRight, simTop), new Vector2(simRight, simBottom));
-
-        boundaryWalls.AddRange([topWall, bottomWall, leftWall, rightWall]);
     }
 
     public TileCell GetTile(int x, int y)
@@ -101,16 +112,6 @@ public class TrainMap
         tile?.SetObject(abstractStation);
     }
 
-    public Rectangle GetBounds()
-    {
-        return new Rectangle(
-            (int)trainPosition.X,
-            (int)trainPosition.Y,
-            Width * TileSize,
-            Height * TileSize
-        );
-    }
-
     public void Draw(SpriteBatch spriteBatch)
     {
         for (int x = 0; x < Width; x++)
@@ -120,15 +121,20 @@ public class TrainMap
                 grid[x, y].Draw(spriteBatch, tileTexture);
             }
         }
+
+        foreach (var wall in boundaryWalls)
+        {
+            wall.Draw(spriteBatch);
+        }
     }
 
-    public void Update(float deltaTime, TrainContext context)
+    public void Update(float dt, TrainContext context)
     {
         for (int x = 0; x < Width; x++)
         {
             for (int y = 0; y < Height; y++)
             {
-                grid[x, y].AbstractStation?.Update(deltaTime, context);
+                grid[x, y].AbstractStation?.Update(dt, context);
             }
         }
     }

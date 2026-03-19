@@ -72,7 +72,7 @@ public class Player
         }
     }
 
-    public void Update()
+    public void Update(float dt)
     {
         Vector2 movement = PlayerConfiguration.Input.GetMovement();
 
@@ -88,29 +88,43 @@ public class Player
         {
             TryInteract();
         }
+        else if (PlayerConfiguration.Input.IsRepairHeld())
+        {
+            TryHoldInteract(dt);
+        }
     }
 
     public void TryInteract()
     {
-        nearbyInteractables.RemoveWhere(i => i.PhysicsBody?.World == null || !i.PhysicsBody.Enabled);
+        IInteractable target = GetTargetedInteractable();
+        target?.Interact(this, trainContext);
+    }
 
-        if (nearbyInteractables.Count == 0) return;
-        Vector2 targetPointPixels = Position + (LookDirection * InteractDistancePixels);
-        Vector2 targetPointSimulation = targetPointPixels.ToMeters();
+    public void TryHoldInteract(float dt)
+    {
+        IInteractable target = GetTargetedInteractable();
+        target?.HoldInteract(this, trainContext, dt);
+    }
+
+    private IInteractable GetTargetedInteractable()
+    {
+        if (nearbyInteractables.Count == 0) return null;
+
+        float reachInMeters = InteractDistancePixels.ToMeters();
+        Vector2 targetPoint = PhysicsBody.Position + (LookDirection * reachInMeters);
 
         foreach (var interactable in nearbyInteractables)
         {
-            if (interactable.PhysicsBody == null) continue;
-
             foreach (var fixture in interactable.PhysicsBody.FixtureList)
             {
-                if (fixture.TestPoint(ref targetPointSimulation))
+                if (fixture.TestPoint(ref targetPoint))
                 {
-                    interactable?.Interact(this, trainContext);
-                    return;
+                    return interactable;
                 }
             }
         }
+
+        return null;
     }
 
     public void Draw(SpriteBatch spriteBatch)

@@ -7,6 +7,8 @@ public interface IInputProvider
     Vector2 GetMovement();
     bool IsActionJustPressed();
     bool IsActionHeld();
+    bool IsRepairJustPressed();
+    bool IsRepairHeld();
     bool IsStartJustPressed();
     bool IsUpJustPressed();
     bool IsDownJustPressed();

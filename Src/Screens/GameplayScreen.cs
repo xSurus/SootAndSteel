@@ -101,18 +101,18 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     {
         base.Update(gameTime);
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-        trainContext.State.Update(dt);
         worldScroller.TrainSpeed = trainContext.State.actualSpeed;
         worldScroller.Update(dt);
-        trainMap.Update(dt, trainContext);
         accumulator += Math.Min(dt, Game.GameplayConfig.MaxAccumulatedDeltaSeconds);
         while (accumulator >= Game.GameplayConfig.FixedTimeStep)
         {
             foreach (Player player in players)
             {
-                player.Update();
+                player.Update(Game.GameplayConfig.FixedTimeStep);
             }
 
+            trainContext.State.Update(Game.GameplayConfig.FixedTimeStep);
+            trainMap.Update(Game.GameplayConfig.FixedTimeStep, trainContext);
             world.Step(Game.GameplayConfig.FixedTimeStep);
             accumulator -= Game.GameplayConfig.FixedTimeStep;
         }

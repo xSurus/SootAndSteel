@@ -21,13 +21,13 @@ public class CoalOven : AbstractStation
         currentFuel = maxFuel;
     }
 
-    public override void Update(float deltaTime, TrainContext trainContext)
+    public override void Update(float dt, TrainContext trainContext)
     {
         if (currentFuel > 0)
         {
             trainContext.State.IsCoalOvenBurning = true;
             float speedMultiplier = trainContext.State.CurrentSpeed.BurnMultiplier;
-            currentFuel -= BurnRate * speedMultiplier * deltaTime;
+            currentFuel -= BurnRate * speedMultiplier * dt;
         }
         else
         {

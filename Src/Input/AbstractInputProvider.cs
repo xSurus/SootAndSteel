@@ -19,6 +19,8 @@ public abstract class AbstractInputProvider : IInputProvider
 
     public abstract bool IsActionJustPressed();
     public abstract bool IsActionHeld();
+    public abstract bool IsRepairJustPressed();
+    public abstract bool IsRepairHeld();
     public abstract bool IsStartJustPressed();
 
     public virtual bool IsDownJustPressed()
