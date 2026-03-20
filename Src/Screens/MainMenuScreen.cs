@@ -1,9 +1,6 @@
-using System.Collections.Generic;
-using FontStashSharp;
 using Gamelab.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 
 namespace Gamelab.Screens;
@@ -21,12 +18,13 @@ public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
         base.LoadContent();
 
         TryLoadBackgroundTexture();
-        mainMenuPanel = new MainMenuPanel(Game, GraphicsDevice, StartGame, Game.Exit, Game.GameplayConfig);
+        mainMenuPanel = new MainMenuPanel(Game, StartGame, Game.Exit);
         TryStartMainMenuMusic();
     }
 
-    protected override void Update(GameTime gameTime, KeyboardState keyboard, Dictionary<int, GamePadState> gamePads)
+    public override void Update(GameTime gameTime)
     {
+        base.Update(gameTime);
         mainMenuPanel.Update(gameTime);
     }
 

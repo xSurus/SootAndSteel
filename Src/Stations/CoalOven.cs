@@ -1,6 +1,5 @@
 using System;
 using Gamelab.Assets;
-using Gamelab.Config;
 using Gamelab.Map.Train.State;
 using Gamelab.Players;
 using Microsoft.Xna.Framework;
@@ -10,28 +9,25 @@ namespace Gamelab.Stations;
 
 public class CoalOven : AbstractStation
 {
-    public float MaxFuel { get; }
-    public float CurrentFuel { get; private set; }
-    private readonly float burnRate;
-    private readonly float refuelAmount;
-    private readonly float lowFuelThreshold;
+    private readonly float maxFuel;
+    private float currentFuel;
+    private float BurnRate => GamelabGame.Instance.GameplayConfig.CoalOvenBurnRate;
+    private float RefuelAmount => GamelabGame.Instance.GameplayConfig.CoalOvenRefuelAmount;
+    private float LowFuelThreshold => GamelabGame.Instance.GameplayConfig.CoalOvenLowFuelThreshold;
 
-    public CoalOven(GameplayConfig gameplayConfig) : base("CoalOven", Color.DarkRed)
+    public CoalOven() : base("CoalOven", Color.DarkRed)
     {
-        MaxFuel = gameplayConfig.CoalOvenMaxFuel;
-        burnRate = gameplayConfig.CoalOvenBurnRate;
-        refuelAmount = gameplayConfig.CoalOvenRefuelAmount;
-        lowFuelThreshold = gameplayConfig.CoalOvenLowFuelThreshold;
-        CurrentFuel = MaxFuel;
+        maxFuel = GamelabGame.Instance.GameplayConfig.CoalOvenMaxFuel;
+        currentFuel = maxFuel;
     }
 
     public override void Update(float deltaTime, TrainContext trainContext)
     {
-        if (CurrentFuel > 0)
+        if (currentFuel > 0)
         {
             trainContext.State.IsCoalOvenBurning = true;
             float speedMultiplier = trainContext.State.CurrentSpeed.BurnMultiplier;
-            CurrentFuel -= burnRate * speedMultiplier * deltaTime;
+            currentFuel -= BurnRate * speedMultiplier * deltaTime;
         }
         else
         {
@@ -44,8 +40,8 @@ public class CoalOven : AbstractStation
     {
         if (interactingPlayer.HeldItem != null && interactingPlayer.HeldItem.Id == "Coal")
         {
-            CurrentFuel += refuelAmount;
-            CurrentFuel = Math.Min(CurrentFuel, MaxFuel);
+            currentFuel += RefuelAmount;
+            currentFuel = Math.Min(currentFuel, maxFuel);
             interactingPlayer.HeldItem = null;
         }
     }
@@ -61,10 +57,10 @@ public class CoalOven : AbstractStation
         spriteBatch.Draw(AssetManager.BlankTexture, barPos, null, Color.Black, 0f, Vector2.Zero,
             new Vector2(barWidth, barHeight), SpriteEffects.None, 0f);
 
-        float fuelPercentage = CurrentFuel / MaxFuel;
+        float fuelPercentage = currentFuel / maxFuel;
         float currentBarWidthFloat = barWidth * fuelPercentage;
 
-        Color barColor = fuelPercentage < lowFuelThreshold ? Color.Red : Color.Orange;
+        Color barColor = fuelPercentage < LowFuelThreshold ? Color.Red : Color.Orange;
         spriteBatch.Draw(AssetManager.BlankTexture, barPos, null, barColor, 0f, Vector2.Zero,
             new Vector2(currentBarWidthFloat, barHeight), SpriteEffects.None, 0f);
     }

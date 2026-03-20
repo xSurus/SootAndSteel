@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
-using Gamelab.Config;
 using Gamelab.Map;
 using Gamelab.Map.Train;
 using Gamelab.Map.Train.State;
 using Gamelab.Players;
 using Gamelab.Stations;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 using Myra.Graphics2D;
 using Myra.Graphics2D.UI;
 using nkast.Aether.Physics2D.Dynamics;
@@ -18,8 +16,6 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
 {
     private List<Player> players;
     private World world;
-    private GameplayConfig gameplayConfig;
-    private float PixelsPerMeter => gameplayConfig.PixelsPerMeter;
     private TrainMap trainMap;
     private WorldScroller worldScroller;
     private TrainContext trainContext;
@@ -30,50 +26,46 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     public override void LoadContent()
     {
         base.LoadContent();
-        gameplayConfig = Game.GameplayConfig;
         world = new World(Vector2.Zero);
 
-        int tileSize = gameplayConfig.TrainTileSize;
-        int trainWidth = gameplayConfig.TrainWidth;
-        int trainHeight = gameplayConfig.TrainHeight;
-
-        trainMap = new TrainMap(trainWidth, trainHeight, tileSize, GraphicsDevice, world, PixelsPerMeter);
-        trainContext = new TrainContext(trainMap, new TrainState(gameplayConfig));
+        trainMap = new TrainMap(GraphicsDevice, world);
+        trainContext = new TrainContext(trainMap, new TrainState());
 
         Vector2 trainPosition = new Vector2(
-            (virtualScreenSize.X - trainWidth * tileSize) / 2f,
-            (virtualScreenSize.Y - trainHeight * tileSize) / 2f
+            (virtualScreenSize.X - trainMap.Width * trainMap.TileSize) / 2f,
+            (virtualScreenSize.Y - trainMap.Height * trainMap.TileSize) / 2f
         );
         trainMap.SetPosition(trainPosition);
         trainMap.PlaceObject(1, 1, new CoalResource());
-        trainMap.PlaceObject(6, 1, new CoalOven(gameplayConfig));
+        trainMap.PlaceObject(6, 1, new CoalOven());
         trainMap.PlaceObject(3, 2, new Counter());
         trainMap.PlaceObject(4, 2, new SpeedLever());
 
-        worldScroller = new WorldScroller(GraphicsDevice, virtualScreenSize.X, virtualScreenSize.Y, gameplayConfig);
+        worldScroller = new WorldScroller(GraphicsDevice, virtualScreenSize.X, virtualScreenSize.Y);
 
         var spawnPositions = new[]
         {
-            new Vector2(virtualScreenSize.X / 2f - gameplayConfig.SpawnOffsetPixels,
-                virtualScreenSize.Y / 2f - gameplayConfig.SpawnOffsetPixels),
-            new Vector2(virtualScreenSize.X / 2f + gameplayConfig.SpawnOffsetPixels,
-                virtualScreenSize.Y / 2f - gameplayConfig.SpawnOffsetPixels),
-            new Vector2(virtualScreenSize.X / 2f - gameplayConfig.SpawnOffsetPixels,
-                virtualScreenSize.Y / 2f + gameplayConfig.SpawnOffsetPixels),
-            new Vector2(virtualScreenSize.X / 2f + gameplayConfig.SpawnOffsetPixels,
-                virtualScreenSize.Y / 2f + gameplayConfig.SpawnOffsetPixels),
+            new Vector2(virtualScreenSize.X / 2f - Game.GameplayConfig.SpawnOffsetPixels,
+                virtualScreenSize.Y / 2f - Game.GameplayConfig.SpawnOffsetPixels),
+            new Vector2(virtualScreenSize.X / 2f + Game.GameplayConfig.SpawnOffsetPixels,
+                virtualScreenSize.Y / 2f - Game.GameplayConfig.SpawnOffsetPixels),
+            new Vector2(virtualScreenSize.X / 2f - Game.GameplayConfig.SpawnOffsetPixels,
+                virtualScreenSize.Y / 2f + Game.GameplayConfig.SpawnOffsetPixels),
+            new Vector2(virtualScreenSize.X / 2f + Game.GameplayConfig.SpawnOffsetPixels,
+                virtualScreenSize.Y / 2f + Game.GameplayConfig.SpawnOffsetPixels),
         };
 
         players = [];
-        foreach (var config in Game.playerManager.Configs)
+        foreach (var playerConfig in Game.playerManager.Configs)
         {
-            Vector2 pixelPos = spawnPositions[config.PlayerIndex % spawnPositions.Length];
-            Body playerBody = world.CreateCircle(gameplayConfig.PlayerRadiusPixels / PixelsPerMeter,
-                gameplayConfig.PlayerDensity, pixelPos / PixelsPerMeter, BodyType.Dynamic);
-            playerBody.LinearDamping = gameplayConfig.PlayerLinearDamping;
+            Vector2 pixelPos = spawnPositions[playerConfig.PlayerIndex % spawnPositions.Length];
+            Body playerBody = world.CreateCircle(
+                Game.GameplayConfig.PlayerRadiusPixels / Game.GameplayConfig.PixelsPerMeter,
+                Game.GameplayConfig.PlayerDensity, pixelPos / Game.GameplayConfig.PixelsPerMeter, BodyType.Dynamic);
+            playerBody.LinearDamping = Game.GameplayConfig.PlayerLinearDamping;
             playerBody.FixedRotation = true;
 
-            players.Add(new Player(playerBody, config.Input, trainContext, gameplayConfig));
+            players.Add(new Player(playerBody, playerConfig.Input, trainContext));
         }
 
         // Initialize Myra UI
@@ -111,28 +103,29 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
 
     private float accumulator;
 
-    protected override void Update(GameTime gameTime, KeyboardState keyboard, Dictionary<int, GamePadState> gamePads)
+    public override void Update(GameTime gameTime)
     {
+        base.Update(gameTime);
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
         trainContext.State.Update(dt);
-        worldScroller.TrainSpeed = trainContext.State.ActualSpeed;
+        worldScroller.TrainSpeed = trainContext.State.actualSpeed;
         worldScroller.Update(dt);
         trainMap.Update(dt, trainContext);
-        accumulator += Math.Min(dt, gameplayConfig.MaxAccumulatedDeltaSeconds);
-        while (accumulator >= gameplayConfig.FixedTimeStep)
+        accumulator += Math.Min(dt, Game.GameplayConfig.MaxAccumulatedDeltaSeconds);
+        while (accumulator >= Game.GameplayConfig.FixedTimeStep)
         {
             foreach (Player player in players)
             {
                 player.Update();
             }
 
-            world.Step(gameplayConfig.FixedTimeStep);
-            accumulator -= gameplayConfig.FixedTimeStep;
+            world.Step(Game.GameplayConfig.FixedTimeStep);
+            accumulator -= Game.GameplayConfig.FixedTimeStep;
         }
 
         // Update coal label
         coalLabel.Text = $"Coal: {trainContext.State.CoalAmount}";
-        speedLabel.Text = $"Speed: {trainContext.State.ActualSpeed:F0}";
+        speedLabel.Text = $"Speed: {trainContext.State.actualSpeed:F0}";
     }
 
     public override void Draw(GameTime gameTime)

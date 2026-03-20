@@ -1,6 +1,5 @@
 using System;
 using Gamelab.Assets;
-using Gamelab.Config;
 using Gamelab.Input;
 using Gamelab.Items;
 using Gamelab.Map.Train;
@@ -12,29 +11,43 @@ using nkast.Aether.Physics2D.Dynamics;
 
 namespace Gamelab.Players;
 
-public class Player(
-    Body body,
-    IInputProvider input,
-    TrainContext context,
-    GameplayConfig gameplayConfig)
+public class Player
 {
-    public IInputProvider Input { get; private set; } = input;
-    public Body Body { get; private set; } = body;
-    private readonly float pixelsPerMeter = gameplayConfig.PixelsPerMeter;
-    private readonly float maxVelocity = gameplayConfig.PlayerMaxVelocity;
-    private readonly float interactDistancePixels = gameplayConfig.PlayerInteractDistancePixels;
-    private readonly float heldItemOffsetRadiusMultiplier = gameplayConfig.PlayerHeldItemOffsetRadiusMultiplier;
-    private readonly float heldItemSizeRadiusMultiplier = gameplayConfig.PlayerHeldItemSizeRadiusMultiplier;
-    private readonly float visionConeLengthRadiusMultiplier = gameplayConfig.PlayerVisionConeLengthRadiusMultiplier;
-    private readonly float visionConeAngleRadians = MathHelper.ToRadians(gameplayConfig.PlayerVisionConeAngleDegrees);
-    public float Radius { get; private set; } = gameplayConfig.PlayerRadiusPixels;
-    public Vector2 Position => Body.Position * pixelsPerMeter;
+    public IInputProvider Input { get; private set; }
+    public Body Body { get; private set; }
+    public Vector2 Position => Body.Position * PixelsPerMeter;
     public Item HeldItem { get; set; }
 
-    private TrainContext trainContext = context;
-    public Vector2 LookDirection => new Vector2((float)Math.Cos(Body.Rotation), (float)Math.Sin(Body.Rotation));
+    private readonly TrainContext trainContext;
+    public Vector2 LookDirection => new((float)Math.Cos(Body.Rotation), (float)Math.Sin(Body.Rotation));
 
-    private readonly float lerpFactor = gameplayConfig.PlayerVelocityLerpFactor;
+    private float LerpFactor => GamelabGame.Instance.GameplayConfig.PlayerVelocityLerpFactor;
+    private float PixelsPerMeter => GamelabGame.Instance.GameplayConfig.PixelsPerMeter;
+    private float MaxVelocity => GamelabGame.Instance.GameplayConfig.PlayerMaxVelocity;
+    private float InteractDistancePixels => GamelabGame.Instance.GameplayConfig.PlayerInteractDistancePixels;
+
+    private float HeldItemOffsetRadiusMultiplier =>
+        GamelabGame.Instance.GameplayConfig.PlayerHeldItemOffsetRadiusMultiplier;
+
+    private float HeldItemSizeRadiusMultiplier =>
+        GamelabGame.Instance.GameplayConfig.PlayerHeldItemSizeRadiusMultiplier;
+
+    private float VisionConeLengthRadiusMultiplier =>
+        GamelabGame.Instance.GameplayConfig.PlayerVisionConeLengthRadiusMultiplier;
+
+    private float VisionConeAngleRadians =>
+        MathHelper.ToRadians(GamelabGame.Instance.GameplayConfig.PlayerVisionConeAngleDegrees);
+
+    private float Radius => GamelabGame.Instance.GameplayConfig.PlayerRadiusPixels;
+
+
+    public Player(Body body, IInputProvider input, TrainContext context)
+    {
+        trainContext = context;
+        Body = body;
+        Input = input;
+    }
+
 
     public void Update()
     {
@@ -45,8 +58,8 @@ public class Player(
             Body.Rotation = (float)Math.Atan2(movement.Y, movement.X);
         }
 
-        Vector2 targetVelocity = movement * maxVelocity;
-        Body.LinearVelocity = Vector2.Lerp(Body.LinearVelocity, targetVelocity, lerpFactor);
+        Vector2 targetVelocity = movement * MaxVelocity;
+        Body.LinearVelocity = Vector2.Lerp(Body.LinearVelocity, targetVelocity, LerpFactor);
 
         if (Input.IsActionJustPressed())
         {
@@ -56,8 +69,8 @@ public class Player(
 
     private void TryInteract()
     {
-        Vector2 pixelPosition = Body.Position * pixelsPerMeter;
-        Vector2 targetPoint = pixelPosition + (LookDirection * interactDistancePixels);
+        Vector2 pixelPosition = Body.Position * PixelsPerMeter;
+        Vector2 targetPoint = pixelPosition + (LookDirection * InteractDistancePixels);
         Rectangle trainBounds = trainContext.Map.GetBounds();
         if (trainBounds.Contains(targetPoint))
         {
@@ -82,9 +95,9 @@ public class Player(
     {
         if (HeldItem != null)
         {
-            Vector2 itemOffset = LookDirection * (Radius * heldItemOffsetRadiusMultiplier);
+            Vector2 itemOffset = LookDirection * (Radius * HeldItemOffsetRadiusMultiplier);
             Vector2 itemPosition = Position + itemOffset;
-            int itemSize = (int)(Radius * heldItemSizeRadiusMultiplier);
+            int itemSize = (int)(Radius * HeldItemSizeRadiusMultiplier);
 
             HeldItem.Draw(spriteBatch, itemPosition - new Vector2(itemSize / 2f), itemSize);
         }
@@ -92,11 +105,11 @@ public class Player(
 
     private void DrawVisionCone(SpriteBatch spriteBatch)
     {
-        float coneLength = Radius * visionConeLengthRadiusMultiplier;
+        float coneLength = Radius * VisionConeLengthRadiusMultiplier;
 
-        Vector2 leftSide = Vector2.Transform(LookDirection, Matrix.CreateRotationZ(-visionConeAngleRadians)) *
+        Vector2 leftSide = Vector2.Transform(LookDirection, Matrix.CreateRotationZ(-VisionConeAngleRadians)) *
                            coneLength;
-        Vector2 rightSide = Vector2.Transform(LookDirection, Matrix.CreateRotationZ(visionConeAngleRadians)) *
+        Vector2 rightSide = Vector2.Transform(LookDirection, Matrix.CreateRotationZ(VisionConeAngleRadians)) *
                             coneLength;
 
         spriteBatch.DrawLine(Position, Position + leftSide, Color.Red, 2f);

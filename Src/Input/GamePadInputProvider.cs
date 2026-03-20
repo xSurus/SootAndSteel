@@ -1,22 +1,22 @@
-using Gamelab.Config;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace Gamelab.Input;
 
-public class GamePadInputProvider(int controllerIndex, GameplayConfig gameplayConfig) : AbstractInputProvider(gameplayConfig)
+public class GamePadInputProvider(int controllerIndex) : AbstractInputProvider()
 {
     private GamePadState currentGamePadState;
     private GamePadState previousGamePadState;
     public int ControllerIndex { get; } = controllerIndex;
 
-    public override void Update(GameTime gameTime) {
+    public override void Update(GameTime gameTime)
+    {
         previousGamePadState = currentGamePadState;
         previousMovement = currentMovement;
-        
+
         currentGamePadState = GamePad.GetState(ControllerIndex);
         currentMovement = CalculateMovement();
-        
+
         base.Update(gameTime);
     }
 
@@ -37,9 +37,11 @@ public class GamePadInputProvider(int controllerIndex, GameplayConfig gameplayCo
         return move;
     }
 
-    public override bool IsActionJustPressed() => currentGamePadState.Buttons.A == ButtonState.Pressed && previousGamePadState.Buttons.A == ButtonState.Released;
-    
+    public override bool IsActionJustPressed() => currentGamePadState.Buttons.A == ButtonState.Pressed &&
+                                                  previousGamePadState.Buttons.A == ButtonState.Released;
+
     public override bool IsActionHeld() => currentGamePadState.Buttons.A == ButtonState.Pressed;
-    
-    public override bool IsStartJustPressed() => currentGamePadState.Buttons.Start == ButtonState.Pressed && previousGamePadState.Buttons.Start == ButtonState.Released;
+
+    public override bool IsStartJustPressed() => currentGamePadState.Buttons.Start == ButtonState.Pressed &&
+                                                 previousGamePadState.Buttons.Start == ButtonState.Released;
 }

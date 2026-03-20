@@ -34,13 +34,6 @@ public class GameplayConfig
     public float InputDirectionPressThreshold { get; set; } = 0.5f;
     public float InputMovementDeadzoneSquared { get; set; } = 0.25f;
     public float MenuVolumeStep { get; set; } = 0.05f;
-    public int MenuPanelBottomOffsetPixels { get; set; } = 330;
-    public int MenuPanelHeightPixels { get; set; } = 250;
-    public int MenuPanelFirstItemOffsetYPixels { get; set; } = 20;
-    public int MenuPanelItemSpacingPixels { get; set; } = 85;
-    public int MenuPlayerMarkerNearOffsetPixels { get; set; } = 60;
-    public int MenuPlayerMarkerFarOffsetPixels { get; set; } = 140;
-    public float WorldScrollerDefaultSpeed { get; set; } = 100f;
     public int WorldScrollerPatternWidthPixels { get; set; } = 480;
     public int WorldScrollerStripeSpacingPixels { get; set; } = 80;
     public int WorldScrollerStripeThicknessPixels { get; set; } = 4;
