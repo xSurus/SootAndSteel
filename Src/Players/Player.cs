@@ -93,19 +93,19 @@ public class Player
         if (target == null) return;
         if (PlayerConfiguration.Input.IsInteractJustPressed())
         {
-            target.OnInteractAction(this, trainContext);
+            target.OnInteract(this, trainContext);
         }
         else if (PlayerConfiguration.Input.IsInteractHeld())
         {
-            target.OnInteractActionHeld(this, trainContext, dt);
+            target.OnInteractHeld(this, trainContext, dt);
         }
         else if (PlayerConfiguration.Input.IsGrabJustPressed())
         {
-            target.OnGrabAction(this, trainContext);
+            target.OnGrab(this, trainContext);
         }
         else if (PlayerConfiguration.Input.IsGrabHeld())
         {
-            target.OnGrabActionHeld(this, trainContext, dt);
+            target.OnGrabHeld(this, trainContext, dt);
         }
     }
 

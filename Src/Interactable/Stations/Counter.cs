@@ -6,7 +6,7 @@ namespace Gamelab.Interactable.Stations;
 
 public class Counter() : AbstractStation("Counter", Color.SaddleBrown)
 {
-    public override void OnGrabAction(Player interactingPlayer, TrainContext trainContext)
+    public override void OnGrab(Player interactingPlayer, TrainContext trainContext)
     {
         if (interactingPlayer.HeldItem == null || HeldItem == null)
         {
