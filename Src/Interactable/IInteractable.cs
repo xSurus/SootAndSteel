@@ -6,9 +6,21 @@ namespace Gamelab.Interactable;
 
 public interface IInteractable
 {
-    void Interact(Player interactingPlayer, TrainContext trainContext);
+    void OnPrimaryAction(Player player, TrainContext context)
+    {
+    }
 
-    void HoldInteract(Player interactingPlayer, TrainContext trainContext, float dt);
+    void OnPrimaryActionHeld(Player player, TrainContext context, float dt)
+    {
+    }
+
+    void OnCarryAction(Player interactingPlayer, TrainContext trainContext)
+    {
+    }
+
+    void OnCarryActionHeld(Player interactingPlayer, TrainContext trainContext, float dt)
+    {
+    }
 
     Body PhysicsBody { get; }
 }

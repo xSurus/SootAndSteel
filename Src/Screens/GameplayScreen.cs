@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Gamelab.Interactable.Stations;
+using Gamelab.Interactable.Stations.Resources;
 using Gamelab.Map;
 using Gamelab.Map.Train;
 using Gamelab.Map.Train.State;

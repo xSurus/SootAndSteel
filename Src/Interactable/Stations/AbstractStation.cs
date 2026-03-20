@@ -40,12 +40,21 @@ public abstract class AbstractStation(string type, Color displayColor) : IIntera
 
     public virtual void Update(float dt, TrainContext trainContext)
     {
-        // by default, does nothing. Stations like coal oven need to continously update
     }
 
-    public abstract void Interact(Player interactingPlayer, TrainContext trainContext);
+    public virtual void OnPrimaryAction(Player player, TrainContext context)
+    {
+    }
 
-    public virtual void HoldInteract(Player interactingPlayer, TrainContext trainContext, float dt)
+    public virtual void OnPrimaryActionHeld(Player player, TrainContext context, float dt)
+    {
+    }
+
+    public virtual void OnCarryAction(Player interactingPlayer, TrainContext trainContext)
+    {
+    }
+
+    public virtual void OnCarryActionHeld(Player interactingPlayer, TrainContext trainContext, float dt)
     {
     }
 

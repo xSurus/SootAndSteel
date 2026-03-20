@@ -36,7 +36,7 @@ public class CoalOven : AbstractStation
         }
     }
 
-    public override void Interact(Player interactingPlayer, TrainContext trainContext)
+    public override void OnCarryAction(Player interactingPlayer, TrainContext trainContext)
     {
         if (interactingPlayer.HeldItem != null && interactingPlayer.HeldItem.Id == "Coal")
         {

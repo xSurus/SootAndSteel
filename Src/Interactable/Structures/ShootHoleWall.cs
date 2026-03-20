@@ -38,16 +38,15 @@ public class ShootHoleWall : IInteractable, IDamageable
         CurrentHealth -= damageAmount;
     }
 
-    public void Interact(Player interactingPlayer, TrainContext trainContext)
+    public void OnCarryAction(Player player, TrainContext context)
     {
+        // TODO Only for debugging until damage from enemies is implemented
         TakeDamage(10);
     }
 
-    public void HoldInteract(Player interactingPlayer, TrainContext trainContext, float dt)
+    public void OnPrimaryActionHeld(Player player, TrainContext context, float dt)
     {
         if (CurrentHealth >= MaxHealth) return;
-
-        bool wasBroken = IsBroken;
 
         CurrentHealth += HealthRestoredPerSecond * dt;
 

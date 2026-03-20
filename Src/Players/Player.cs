@@ -84,26 +84,29 @@ public class Player
         Vector2 targetVelocity = movement * MaxVelocity;
         PhysicsBody.LinearVelocity = Vector2.Lerp(PhysicsBody.LinearVelocity, targetVelocity, LerpFactor);
 
-        if (PlayerConfiguration.Input.IsActionJustPressed())
-        {
-            TryInteract();
-        }
-        else if (PlayerConfiguration.Input.IsRepairHeld())
-        {
-            TryHoldInteract(dt);
-        }
+        TryInteract(dt);
     }
 
-    public void TryInteract()
+    private void TryInteract(float dt)
     {
         IInteractable target = GetTargetedInteractable();
-        target?.Interact(this, trainContext);
-    }
-
-    public void TryHoldInteract(float dt)
-    {
-        IInteractable target = GetTargetedInteractable();
-        target?.HoldInteract(this, trainContext, dt);
+        if (target == null) return;
+        if (PlayerConfiguration.Input.IsInteractJustPressed())
+        {
+            target.OnPrimaryAction(this, trainContext);
+        }
+        else if (PlayerConfiguration.Input.IsInteractHeld())
+        {
+            target.OnPrimaryActionHeld(this, trainContext, dt);
+        }
+        else if (PlayerConfiguration.Input.IsCarryJustPressed())
+        {
+            target.OnCarryAction(this, trainContext);
+        }
+        else if (PlayerConfiguration.Input.IsCarryHeld())
+        {
+            target.OnCarryActionHeld(this, trainContext, dt);
+        }
     }
 
     private IInteractable GetTargetedInteractable()

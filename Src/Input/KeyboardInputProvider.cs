@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Gamelab.Input;
 
-public class KeyboardInputProvider(Keys up, Keys down, Keys left, Keys right, Keys action, Keys repair)
+public class KeyboardInputProvider(Keys up, Keys down, Keys left, Keys right, Keys interact, Keys carry)
     : AbstractInputProvider()
 {
     private KeyboardState currentKeyboardState;
@@ -33,15 +33,15 @@ public class KeyboardInputProvider(Keys up, Keys down, Keys left, Keys right, Ke
         return move;
     }
 
-    public override bool IsActionJustPressed() =>
-        currentKeyboardState.IsKeyDown(action) && previousKeyboardState.IsKeyUp(action);
+    public override bool IsInteractJustPressed() =>
+        currentKeyboardState.IsKeyDown(interact) && previousKeyboardState.IsKeyUp(interact);
 
-    public override bool IsActionHeld() => currentKeyboardState.IsKeyDown(action);
+    public override bool IsInteractHeld() => currentKeyboardState.IsKeyDown(interact);
 
-    public override bool IsRepairJustPressed() =>
-        currentKeyboardState.IsKeyDown(repair) && previousKeyboardState.IsKeyUp(repair);
+    public override bool IsCarryJustPressed() =>
+        currentKeyboardState.IsKeyDown(carry) && previousKeyboardState.IsKeyUp(carry);
 
-    public override bool IsRepairHeld() => currentKeyboardState.IsKeyDown(repair);
+    public override bool IsCarryHeld() => currentKeyboardState.IsKeyDown(carry);
 
     public override bool IsStartJustPressed() =>
         currentKeyboardState.IsKeyDown(Keys.Enter) && previousKeyboardState.IsKeyUp(Keys.Enter);
