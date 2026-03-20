@@ -5,8 +5,10 @@ namespace Gamelab.Input;
 public interface IInputProvider
 {
     Vector2 GetMovement();
-    bool IsActionJustPressed();
-    bool IsActionHeld();
+    bool IsInteractJustPressed();
+    bool IsInteractHeld();
+    bool IsGrabJustPressed();
+    bool IsGrabHeld();
     bool IsStartJustPressed();
     bool IsUpJustPressed();
     bool IsDownJustPressed();

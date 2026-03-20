@@ -4,7 +4,7 @@
     "maxAccumulatedDeltaSeconds": 0.25,
     "trainTileSize": 80,
     "trainWidth": 8,
-    "trainHeight": 6,
+  "trainHeight": 5,
   "trainSpeedStopped": 0.0,
   "trainSpeedDefault": 150.0,
   "trainSpeedDouble": 300.0,
@@ -24,8 +24,6 @@
     "playerInteractDistancePixels": 40.0,
     "playerHeldItemOffsetRadiusMultiplier": 1.5,
     "playerHeldItemSizeRadiusMultiplier": 0.8,
-    "playerVisionConeLengthRadiusMultiplier": 2.5,
-    "playerVisionConeAngleDegrees": 30.0,
     "inputInitialRepeatDelaySeconds": 0.3,
     "inputRepeatRateSeconds": 0.1,
     "inputDirectionPressThreshold": 0.5,
@@ -43,5 +41,7 @@
     "coalOvenMaxFuel": 30.0,
     "coalOvenBurnRate": 1.0,
     "coalOvenRefuelAmount": 10.0,
-    "coalOvenLowFuelThreshold": 0.25
+  "coalOvenLowFuelThreshold": 0.25,
+  "wallMaxHealth": 100.0,
+  "wallHealthRestoredPerSecond": 40.0
 }

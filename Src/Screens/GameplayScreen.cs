@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
+using Gamelab.Interactable.Stations;
+using Gamelab.Interactable.Stations.Resources;
 using Gamelab.Map;
 using Gamelab.Map.Train;
 using Gamelab.Map.Train.State;
 using Gamelab.Players;
-using Gamelab.Stations;
 using Microsoft.Xna.Framework;
 using Myra.Graphics2D;
 using Myra.Graphics2D.UI;
@@ -59,13 +60,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         foreach (var playerConfig in Game.playerManager.Configs)
         {
             Vector2 pixelPos = spawnPositions[playerConfig.PlayerIndex % spawnPositions.Length];
-            Body playerBody = world.CreateCircle(
-                Game.GameplayConfig.PlayerRadiusPixels / Game.GameplayConfig.PixelsPerMeter,
-                Game.GameplayConfig.PlayerDensity, pixelPos / Game.GameplayConfig.PixelsPerMeter, BodyType.Dynamic);
-            playerBody.LinearDamping = Game.GameplayConfig.PlayerLinearDamping;
-            playerBody.FixedRotation = true;
-
-            players.Add(new Player(playerBody, playerConfig.Input, trainContext));
+            players.Add(new Player(world, pixelPos, playerConfig, trainContext));
         }
 
         // Initialize Myra UI
@@ -107,18 +102,18 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     {
         base.Update(gameTime);
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-        trainContext.State.Update(dt);
         worldScroller.TrainSpeed = trainContext.State.actualSpeed;
         worldScroller.Update(dt);
-        trainMap.Update(dt, trainContext);
         accumulator += Math.Min(dt, Game.GameplayConfig.MaxAccumulatedDeltaSeconds);
         while (accumulator >= Game.GameplayConfig.FixedTimeStep)
         {
             foreach (Player player in players)
             {
-                player.Update();
+                player.Update(Game.GameplayConfig.FixedTimeStep);
             }
 
+            trainContext.State.Update(Game.GameplayConfig.FixedTimeStep);
+            trainMap.Update(Game.GameplayConfig.FixedTimeStep, trainContext);
             world.Step(Game.GameplayConfig.FixedTimeStep);
             accumulator -= Game.GameplayConfig.FixedTimeStep;
         }

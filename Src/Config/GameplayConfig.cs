@@ -27,8 +27,6 @@ public class GameplayConfig
     public float PlayerInteractDistancePixels { get; set; } = 40f;
     public float PlayerHeldItemOffsetRadiusMultiplier { get; set; } = 1.5f;
     public float PlayerHeldItemSizeRadiusMultiplier { get; set; } = 0.8f;
-    public float PlayerVisionConeLengthRadiusMultiplier { get; set; } = 2.5f;
-    public float PlayerVisionConeAngleDegrees { get; set; } = 30f;
     public float InputInitialRepeatDelaySeconds { get; set; } = 0.3f;
     public float InputRepeatRateSeconds { get; set; } = 0.1f;
     public float InputDirectionPressThreshold { get; set; } = 0.5f;
@@ -47,4 +45,6 @@ public class GameplayConfig
     public float CoalOvenBurnRate { get; set; } = 1f;
     public float CoalOvenRefuelAmount { get; set; } = 10f;
     public float CoalOvenLowFuelThreshold { get; set; } = 0.25f;
+    public float WallMaxHealth { get; set; } = 100f;
+    public float WallHealthRestoredPerSecond { get; set; } = 40f;
 }

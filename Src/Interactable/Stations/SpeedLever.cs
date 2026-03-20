@@ -2,15 +2,11 @@ using Gamelab.Map.Train.State;
 using Gamelab.Players;
 using Microsoft.Xna.Framework;
 
-namespace Gamelab.Stations;
+namespace Gamelab.Interactable.Stations;
 
-public class SpeedLever : AbstractStation
+public class SpeedLever() : AbstractStation("SpeedLever", Color.LightGreen)
 {
-    public SpeedLever() : base("SpeedLever", Color.LightGreen)
-    {
-    }
-
-    public override void Interact(Player interactingPlayer, TrainContext trainContext)
+    public override void OnInteract(Player interactingPlayer, TrainContext trainContext)
     {
         if (!trainContext.State.IsCoalOvenBurning)
         {

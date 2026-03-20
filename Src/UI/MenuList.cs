@@ -1,10 +1,6 @@
 using System;
 using System.Collections.Generic;
-using FontStashSharp;
 using Gamelab.Players;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace Gamelab.UI;
 
@@ -50,7 +46,7 @@ public class MenuList
                 PlayerSelections[pIndex] = (PlayerSelections[pIndex] + 1) % entries.Count;
             }
 
-            if (input.IsActionJustPressed())
+            if (input.IsGrabJustPressed())
             {
                 entries[PlayerSelections[pIndex]].OnSelected.Invoke();
             }

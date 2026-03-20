@@ -17,8 +17,10 @@ public abstract class AbstractInputProvider : IInputProvider
 
     public Vector2 GetMovement() => currentMovement;
 
-    public abstract bool IsActionJustPressed();
-    public abstract bool IsActionHeld();
+    public abstract bool IsInteractJustPressed();
+    public abstract bool IsInteractHeld();
+    public abstract bool IsGrabJustPressed();
+    public abstract bool IsGrabHeld();
     public abstract bool IsStartJustPressed();
 
     public virtual bool IsDownJustPressed()
