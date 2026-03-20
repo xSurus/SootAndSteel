@@ -6,7 +6,7 @@ using Gamelab.Config;
 using Gamelab.Map.Train.State;
 using Gamelab.Players;
 using Gamelab.Screens;
-using Gamelab.Services;
+using Gamelab.Systems;
 using Gamelab.Utils;
 using Gamelab.Utils.Logging;
 using Microsoft.Xna.Framework;
@@ -30,8 +30,8 @@ public class GamelabGame : Game
     private readonly Logger logger = new("Game");
     public readonly GraphicsDeviceManager graphics;
     public readonly ScreenManager screenManager;
-    public readonly ServiceManager serviceManager;
-    public readonly DebugOverlayService debugOverlayService;
+    public readonly SystemManager systemManager;
+    public readonly DebugOverlaySystem debugOverlaySystem;
     public readonly FontSystem fontSystem = new();
     public readonly PlayerManager playerManager = new();
 
@@ -74,9 +74,9 @@ public class GamelabGame : Game
             : null;
 
         jsonLoader = new(this, "Data");
-        serviceManager = new ServiceManager();
-        debugOverlayService = new DebugOverlayService();
-        serviceManager.Add(debugOverlayService);
+        systemManager = new SystemManager();
+        debugOverlaySystem = new DebugOverlaySystem();
+        systemManager.Add(debugOverlaySystem);
 
         screenManager = new ScreenManager();
         Components.Add(screenManager);
@@ -114,7 +114,7 @@ public class GamelabGame : Game
         fontSystem.AddFont(fontBytes);
         LoadGameplayConfig();
         PhysicsUtility.Initialize(GameplayConfig.PixelsPerMeter);
-        serviceManager.InitializeAll(this);
+        systemManager.InitializeAll(this);
 
         AssetManager.LoadContent(graphics.GraphicsDevice);
         screenManager.ShowScreen(new JoinScreen(this));
@@ -129,7 +129,7 @@ public class GamelabGame : Game
             nextScreen = null;
         }
 
-        serviceManager.UpdateAll(gameTime);
+        systemManager.UpdateAll(gameTime);
         base.Update(gameTime);
     }
 
@@ -138,7 +138,7 @@ public class GamelabGame : Game
         GraphicsDevice.Clear(Color.Black);
 
         base.Draw(gameTime);
-        serviceManager.DrawAll();
+        systemManager.DrawAll();
 
         if (!string.IsNullOrEmpty(screenshotPath))
         {
@@ -224,7 +224,7 @@ public class GamelabGame : Game
     {
         if (disposing)
         {
-            serviceManager.ShutdownAll();
+            systemManager.ShutdownAll();
         }
 
         AssetManager.UnloadContent();

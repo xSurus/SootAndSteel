@@ -1,8 +1,8 @@
 using Microsoft.Xna.Framework;
 
-namespace Gamelab.Services;
+namespace Gamelab.Systems;
 
-public interface IGameService
+public interface IGameSystem
 {
     void Initialize(GamelabGame game);
     void Update(GameTime gameTime);
