@@ -19,8 +19,8 @@ public abstract class AbstractInputProvider : IInputProvider
 
     public abstract bool IsInteractJustPressed();
     public abstract bool IsInteractHeld();
-    public abstract bool IsCarryJustPressed();
-    public abstract bool IsCarryHeld();
+    public abstract bool IsGrabJustPressed();
+    public abstract bool IsGrabHeld();
     public abstract bool IsStartJustPressed();
 
     public virtual bool IsDownJustPressed()

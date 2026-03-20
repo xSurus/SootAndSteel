@@ -7,8 +7,8 @@ public interface IInputProvider
     Vector2 GetMovement();
     bool IsInteractJustPressed();
     bool IsInteractHeld();
-    bool IsCarryJustPressed();
-    bool IsCarryHeld();
+    bool IsGrabJustPressed();
+    bool IsGrabHeld();
     bool IsStartJustPressed();
     bool IsUpJustPressed();
     bool IsDownJustPressed();

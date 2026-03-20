@@ -8,7 +8,7 @@ namespace Gamelab.Interactable.Stations.Resources;
 public class CoalResource() : AbstractResource("CoalResource", Color.Black, "Coal", Color.Black)
 {
     // overrides since it consumes coal from the train
-    public override void OnCarryAction(Player interactingPlayer, TrainContext trainContext)
+    public override void OnGrabAction(Player interactingPlayer, TrainContext trainContext)
     {
         if (interactingPlayer.HeldItem == null)
         {

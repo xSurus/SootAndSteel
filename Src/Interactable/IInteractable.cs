@@ -6,19 +6,19 @@ namespace Gamelab.Interactable;
 
 public interface IInteractable
 {
-    void OnPrimaryAction(Player player, TrainContext context)
+    void OnInteractAction(Player player, TrainContext context)
     {
     }
 
-    void OnPrimaryActionHeld(Player player, TrainContext context, float dt)
+    void OnInteractActionHeld(Player player, TrainContext context, float dt)
     {
     }
 
-    void OnCarryAction(Player interactingPlayer, TrainContext trainContext)
+    void OnGrabAction(Player interactingPlayer, TrainContext trainContext)
     {
     }
 
-    void OnCarryActionHeld(Player interactingPlayer, TrainContext trainContext, float dt)
+    void OnGrabActionHeld(Player interactingPlayer, TrainContext trainContext, float dt)
     {
     }
 

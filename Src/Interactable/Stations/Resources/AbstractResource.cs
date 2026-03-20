@@ -11,7 +11,7 @@ public abstract class AbstractResource(string stationType, Color stationColor, s
     protected string ResourceId { get; } = resourceId;
     protected Color ResourceColor { get; } = resourceColor;
 
-    public override void OnCarryAction(Player interactingPlayer, TrainContext trainContext)
+    public override void OnGrabAction(Player interactingPlayer, TrainContext trainContext)
     {
         if (interactingPlayer.HeldItem == null)
         {

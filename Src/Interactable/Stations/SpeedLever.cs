@@ -6,7 +6,7 @@ namespace Gamelab.Interactable.Stations;
 
 public class SpeedLever() : AbstractStation("SpeedLever", Color.LightGreen)
 {
-    public override void OnPrimaryAction(Player interactingPlayer, TrainContext trainContext)
+    public override void OnInteractAction(Player interactingPlayer, TrainContext trainContext)
     {
         if (!trainContext.State.IsCoalOvenBurning)
         {

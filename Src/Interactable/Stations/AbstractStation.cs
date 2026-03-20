@@ -42,19 +42,19 @@ public abstract class AbstractStation(string type, Color displayColor) : IIntera
     {
     }
 
-    public virtual void OnPrimaryAction(Player player, TrainContext context)
+    public virtual void OnInteractAction(Player player, TrainContext context)
     {
     }
 
-    public virtual void OnPrimaryActionHeld(Player player, TrainContext context, float dt)
+    public virtual void OnInteractActionHeld(Player player, TrainContext context, float dt)
     {
     }
 
-    public virtual void OnCarryAction(Player interactingPlayer, TrainContext trainContext)
+    public virtual void OnGrabAction(Player interactingPlayer, TrainContext trainContext)
     {
     }
 
-    public virtual void OnCarryActionHeld(Player interactingPlayer, TrainContext trainContext, float dt)
+    public virtual void OnGrabActionHeld(Player interactingPlayer, TrainContext trainContext, float dt)
     {
     }
 
