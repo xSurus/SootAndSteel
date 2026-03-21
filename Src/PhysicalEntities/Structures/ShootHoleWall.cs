@@ -9,7 +9,7 @@ using nkast.Aether.Physics2D.Dynamics;
 
 namespace Gamelab.PhysicalEntities.Structures;
 
-public class ShootHoleWall : IInteractable, IDamageable
+public class ShootHoleWall : IInteractable, IDamageable, IPickable
 {
     public Body PhysicsBody { get; set; }
     public float MaxHealth => GamelabGame.Instance.GameplayConfig.WallMaxHealth;
@@ -38,7 +38,7 @@ public class ShootHoleWall : IInteractable, IDamageable
         CurrentHealth -= damageAmount;
     }
 
-    public void OnGrab(Player interactingPlayer, TrainContext context)
+    public void OnPickup(Player interactingPlayer, TrainContext context)
     {
         // TODO Only for debugging until damage from enemies is implemented
         TakeDamage(10);
