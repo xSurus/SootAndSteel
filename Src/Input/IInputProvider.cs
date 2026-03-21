@@ -9,6 +9,8 @@ public interface IInputProvider
     bool IsInteractHeld();
     bool IsGrabJustPressed();
     bool IsGrabHeld();
+    bool IsPickupJustPressed();
+    bool IsPickupHeld();
     bool IsStartJustPressed();
     bool IsUpJustPressed();
     bool IsDownJustPressed();

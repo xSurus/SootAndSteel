@@ -3,12 +3,13 @@ using Gamelab.Map.Train.State;
 using Gamelab.Players;
 using Microsoft.Xna.Framework;
 
-namespace Gamelab.Interactable.Stations.Resources;
+namespace Gamelab.PhysicalEntities.Stations.Resources;
 
-public class CoalResource() : AbstractResource("CoalResource", Color.Black, "Coal", Color.Black)
+public class CoalResource(Vector2 position, TrainContext trainContext)
+    : AbstractResource("CoalResource", Color.Black, "Coal", Color.Black, position, trainContext)
 {
     // overrides since it consumes coal from the train
-    public override void OnGrab(Player interactingPlayer, TrainContext trainContext)
+    public override void OnPickup(Player interactingPlayer, TrainContext trainContext)
     {
         if (interactingPlayer.HeldItem == null)
         {

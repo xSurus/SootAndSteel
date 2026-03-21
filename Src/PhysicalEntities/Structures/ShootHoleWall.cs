@@ -7,11 +7,11 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using nkast.Aether.Physics2D.Dynamics;
 
-namespace Gamelab.Interactable.Structures;
+namespace Gamelab.PhysicalEntities.Structures;
 
 public class ShootHoleWall : IInteractable, IDamageable
 {
-    public Body PhysicsBody { get; private set; }
+    public Body PhysicsBody { get; set; }
     public float MaxHealth => GamelabGame.Instance.GameplayConfig.WallMaxHealth;
     private float HealthRestoredPerSecond => GamelabGame.Instance.GameplayConfig.WallHealthRestoredPerSecond;
     public float CurrentHealth { get; private set; }

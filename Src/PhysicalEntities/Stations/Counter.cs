@@ -2,11 +2,12 @@ using Gamelab.Map.Train.State;
 using Gamelab.Players;
 using Microsoft.Xna.Framework;
 
-namespace Gamelab.Interactable.Stations;
+namespace Gamelab.PhysicalEntities.Stations;
 
-public class Counter() : AbstractStation("Counter", Color.SaddleBrown)
+public class Counter(Vector2 position, TrainContext trainContext)
+    : AbstractStation("Counter", Color.SaddleBrown, position, trainContext)
 {
-    public override void OnGrab(Player interactingPlayer, TrainContext trainContext)
+    public override void OnPickup(Player interactingPlayer, TrainContext trainContext)
     {
         if (interactingPlayer.HeldItem == null || HeldItem == null)
         {

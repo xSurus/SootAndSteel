@@ -1,15 +1,13 @@
 using System;
-using System.Collections.Generic;
 using Gamelab.Assets;
-using Gamelab.Interactable;
 using Gamelab.Items;
 using Gamelab.Map.Train.State;
+using Gamelab.PhysicalEntities;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using nkast.Aether.Physics2D.Dynamics;
-using nkast.Aether.Physics2D.Dynamics.Contacts;
 
 namespace Gamelab.Players;
 
@@ -19,10 +17,10 @@ public class Player
     public Body PhysicsBody { get; private set; }
     public Vector2 Position => PhysicsBody.Position.ToPixels();
     public Item HeldItem { get; set; }
-
-    private HashSet<IInteractable> nearbyInteractables = [];
+    public IGrabbable GrabbedObject { get; private set; }
 
     private readonly TrainContext trainContext;
+
     public Vector2 LookDirection => new((float)Math.Cos(PhysicsBody.Rotation), (float)Math.Sin(PhysicsBody.Rotation));
 
     private float LerpFactor => GamelabGame.Instance.GameplayConfig.PlayerVelocityLerpFactor;
@@ -38,7 +36,7 @@ public class Player
     private float Radius => GamelabGame.Instance.GameplayConfig.PlayerRadiusPixels;
     private float Density => GamelabGame.Instance.GameplayConfig.PlayerDensity;
     private float LinearDampening => GamelabGame.Instance.GameplayConfig.PlayerLinearDamping;
-
+    private float PlayerForceMultiplier => GamelabGame.Instance.GameplayConfig.PlayerForceMultiplier;
 
     public Player(World world, Vector2 startPosition, PlayerConfiguration playerConfig, TrainContext context)
     {
@@ -48,86 +46,110 @@ public class Player
         PhysicsBody.LinearDamping = LinearDampening;
         PhysicsBody.FixedRotation = true;
         PhysicsBody.Tag = this;
-        Fixture sensorFixture = PhysicsBody.CreateCircle(InteractDistancePixels, 0f);
-        sensorFixture.IsSensor = true;
-        sensorFixture.OnCollision += HandleSensorCollision;
-        sensorFixture.OnSeparation += HandleSensorSeparation;
-    }
-
-    private bool HandleSensorCollision(Fixture sender, Fixture other, Contact contact)
-    {
-        if (other.Body.Tag is IInteractable interactable)
-        {
-            nearbyInteractables.Add(interactable);
-        }
-
-        return true;
-    }
-
-    private void HandleSensorSeparation(Fixture sender, Fixture other, Contact contact)
-    {
-        if (other.Body.Tag is IInteractable interactable)
-        {
-            nearbyInteractables.Remove(interactable);
-        }
     }
 
     public void Update(float dt)
     {
         Vector2 movement = PlayerConfiguration.Input.GetMovement();
 
-        if (movement != Vector2.Zero)
+        if (GrabbedObject == null)
         {
-            PhysicsBody.Rotation = (float)Math.Atan2(movement.Y, movement.X);
+            if (movement != Vector2.Zero) PhysicsBody.Rotation = (float)Math.Atan2(movement.Y, movement.X);
+            Vector2 targetVelocity = movement * MaxVelocity;
+            PhysicsBody.LinearVelocity = Vector2.Lerp(PhysicsBody.LinearVelocity, targetVelocity, LerpFactor);
+        }
+        else if (movement != Vector2.Zero)
+        {
+            PhysicsBody.ApplyForce(movement * 100);
         }
 
-        Vector2 targetVelocity = movement * MaxVelocity;
-        PhysicsBody.LinearVelocity = Vector2.Lerp(PhysicsBody.LinearVelocity, targetVelocity, LerpFactor);
-
-        TryInteract(dt);
+        if (TryGrab()) return;
+        if (TryInteract(dt)) return;
+        TryPickup(dt);
     }
 
-    private void TryInteract(float dt)
+    private bool TryGrab()
     {
-        IInteractable target = GetTargetedInteractable();
-        if (target == null) return;
-        if (PlayerConfiguration.Input.IsInteractJustPressed())
+        if (PlayerConfiguration.Input.IsGrabJustPressed() && GrabbedObject == null)
         {
-            target.OnInteract(this, trainContext);
-        }
-        else if (PlayerConfiguration.Input.IsInteractHeld())
-        {
-            target.OnInteractHeld(this, trainContext, dt);
-        }
-        else if (PlayerConfiguration.Input.IsGrabJustPressed())
-        {
-            target.OnGrab(this, trainContext);
-        }
-        else if (PlayerConfiguration.Input.IsGrabHeld())
-        {
-            target.OnGrabHeld(this, trainContext, dt);
-        }
-    }
-
-    private IInteractable GetTargetedInteractable()
-    {
-        if (nearbyInteractables.Count == 0) return null;
-
-        float reachInMeters = InteractDistancePixels.ToMeters();
-        Vector2 targetPoint = PhysicsBody.Position + (LookDirection * reachInMeters);
-
-        foreach (var interactable in nearbyInteractables)
-        {
-            foreach (var fixture in interactable.PhysicsBody.FixtureList)
+            IPhysicalEntity target = GetTargetedEntity();
+            if (target == null) return false;
+            float reachInMeters = InteractDistancePixels.ToMeters();
+            Vector2 grabPointWorldMeters = PhysicsBody.Position + (LookDirection * reachInMeters);
+            if (target is IGrabbable grabbable)
             {
-                if (fixture.TestPoint(ref targetPoint))
+                if (grabbable.OnGrab(this, trainContext, grabPointWorldMeters))
                 {
-                    return interactable;
+                    GrabbedObject = grabbable;
+                    return true;
                 }
             }
         }
+        else if (!PlayerConfiguration.Input.IsGrabHeld() && GrabbedObject != null)
+        {
+            GrabbedObject.OnRelease(this, trainContext);
+            GrabbedObject = null;
+            return true;
+        }
 
-        return null;
+        return false;
+    }
+
+    private bool TryInteract(float dt)
+    {
+        IPhysicalEntity target = GetTargetedEntity();
+        if (target == null || !(target is IInteractable interactable)) return false;
+        if (PlayerConfiguration.Input.IsInteractJustPressed())
+        {
+            interactable.OnInteract(this, trainContext);
+            return true;
+        }
+        else if (PlayerConfiguration.Input.IsInteractHeld())
+        {
+            interactable.OnInteractHeld(this, trainContext, dt);
+            return true;
+        }
+
+        return false;
+    }
+
+    private bool TryPickup(float dt)
+    {
+        IPhysicalEntity target = GetTargetedEntity();
+        if (target == null || !(target is IPickable pickable)) return false;
+        if (PlayerConfiguration.Input.IsPickupJustPressed())
+        {
+            pickable.OnPickup(this, trainContext);
+        }
+        else if (PlayerConfiguration.Input.IsPickupHeld())
+        {
+            pickable.OnPickupHeld(this, trainContext, dt);
+            return true;
+        }
+
+        return false;
+    }
+
+    private IPhysicalEntity GetTargetedEntity()
+    {
+        float reachInMeters = InteractDistancePixels.ToMeters();
+        Vector2 startPoint = PhysicsBody.Position;
+        Vector2 targetPoint = startPoint + (LookDirection * reachInMeters);
+
+        IPhysicalEntity closestEntity = null;
+        trainContext.Map.PhysicsWorld.RayCast((fixture, point, normal, fraction) =>
+        {
+            if (fixture.Body == PhysicsBody) return -1;
+            if (fixture.Body.Tag is IPhysicalEntity physicalEntity)
+            {
+                closestEntity = physicalEntity;
+                return fraction;
+            }
+
+            return -1;
+        }, startPoint, targetPoint);
+
+        return closestEntity;
     }
 
     public void Draw(SpriteBatch spriteBatch)
