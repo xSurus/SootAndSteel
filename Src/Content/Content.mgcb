@@ -14,22 +14,48 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin promptfont.ttf
-/copy:promptfont.ttf
-
 #begin Data/example.json
 /copy:Data/example.json
+
+#begin Data/gameplay.json
+/copy:Data/gameplay.json
 
 #begin placeholder_main_menu_background.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
 /build:placeholder_main_menu_background.png
 
 #begin placeholder_main_menu_theme.mp3
 /importer:Mp3Importer
 /processor:SongProcessor
+/processorParam:Quality=Best
 /build:placeholder_main_menu_theme.mp3
 
-#begin Data/gameplay.json
-/copy:Data/gameplay.json
+#begin promptfont.ttf
+/copy:promptfont.ttf
+
+#begin sfx/menu_stab.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sfx/menu_stab.mp3
+
+#begin sfx/train_chug.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sfx/train_chug.mp3
+
+#begin sfx/train_ga.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sfx/train_ga.mp3
 

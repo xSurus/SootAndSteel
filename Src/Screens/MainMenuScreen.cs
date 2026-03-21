@@ -1,4 +1,6 @@
+using Gamelab.Services.Sound;
 using Gamelab.UI;
+using Gamelab.Utils.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
@@ -7,16 +9,20 @@ namespace Gamelab.Screens;
 
 public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
 {
+    private Logger logger = new Logger("MainMenuScreen");
+    
     private const string MainMenuBackgroundAsset = "placeholder_main_menu_background";
     private const string MainMenuSongAsset = "placeholder_main_menu_theme";
     protected Texture2D bgTexture;
     private MainMenuPanel mainMenuPanel;
     private Song mainMenuSong;
+    private SoundHandle menuSelectSound;
 
     public override void LoadContent()
     {
         base.LoadContent();
 
+        menuSelectSound = Services.GetService<ISoundService>().RegisterSound("menu_stab", 4);
         TryLoadBackgroundTexture();
         mainMenuPanel = new MainMenuPanel(Game, StartGame, Game.Exit);
         TryStartMainMenuMusic();
@@ -26,6 +32,14 @@ public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
     {
         base.Update(gameTime);
         mainMenuPanel.Update(gameTime);
+
+        foreach (var player in game.playerManager.Configs)
+        {
+            if (player.Input.IsUpJustPressed() || player.Input.IsDownJustPressed())
+            {
+                menuSelectSound.Play();
+            }
+        }
     }
 
     public override void Draw(GameTime gameTime)
@@ -88,5 +102,11 @@ public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
             bgTexture = new Texture2D(GraphicsDevice, 1, 1);
             bgTexture.SetData([Color.White]);
         }
+    }
+
+    public override void Dispose()
+    {
+        base.Dispose();
+        menuSelectSound.Dispose();
     }
 }
