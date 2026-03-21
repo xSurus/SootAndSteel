@@ -1,16 +1,16 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
-namespace Gamelab.Services;
+namespace Gamelab.Systems;
 
-public class ServiceManager
+public class SystemManager
 {
-    private readonly List<IGameService> services = [];
+    private readonly List<IGameSystem> systems = [];
     private bool isInitialized;
 
-    public void Add(IGameService service)
+    public void Add(IGameSystem system)
     {
-        services.Add(service);
+        systems.Add(system);
     }
 
     public void InitializeAll(GamelabGame game)
@@ -20,9 +20,9 @@ public class ServiceManager
             return;
         }
 
-        foreach (var service in services)
+        foreach (var system in systems)
         {
-            service.Initialize(game);
+            system.Initialize(game);
         }
 
         isInitialized = true;
@@ -35,9 +35,9 @@ public class ServiceManager
             return;
         }
 
-        foreach (var service in services)
+        foreach (var system in systems)
         {
-            service.Update(gameTime);
+            system.Update(gameTime);
         }
     }
 
@@ -48,9 +48,9 @@ public class ServiceManager
             return;
         }
 
-        foreach (var service in services)
+        foreach (var system in systems)
         {
-            service.Draw();
+            system.Draw();
         }
     }
 
@@ -61,9 +61,9 @@ public class ServiceManager
             return;
         }
 
-        for (int i = services.Count - 1; i >= 0; i--)
+        for (int i = systems.Count - 1; i >= 0; i--)
         {
-            services[i].Shutdown();
+            systems[i].Shutdown();
         }
 
         isInitialized = false;

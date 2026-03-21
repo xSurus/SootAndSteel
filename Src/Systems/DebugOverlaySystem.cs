@@ -1,10 +1,9 @@
-using System;
 using Microsoft.Xna.Framework;
 using Myra.Graphics2D.UI;
 
-namespace Gamelab.Services;
+namespace Gamelab.Systems;
 
-public class DebugOverlayService : IGameService
+public class DebugOverlaySystem : IGameSystem
 {
     private GamelabGame game;
     private double smoothedFps;
