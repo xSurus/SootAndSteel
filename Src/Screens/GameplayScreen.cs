@@ -6,6 +6,8 @@ using Gamelab.Map;
 using Gamelab.Map.Train;
 using Gamelab.Map.Train.State;
 using Gamelab.Players;
+using Gamelab.Services.Music;
+using Gamelab.Services.Sound;
 using Microsoft.Xna.Framework;
 using Myra.Graphics2D;
 using Myra.Graphics2D.UI;
@@ -20,6 +22,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     private TrainMap trainMap;
     private WorldScroller worldScroller;
     private TrainContext trainContext;
+    private TrainSound trainSound;
     private Desktop desktop;
     private Label coalLabel;
     private Label speedLabel;
@@ -31,6 +34,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
 
         trainMap = new TrainMap(GraphicsDevice, world);
         trainContext = new TrainContext(trainMap, new TrainState());
+        trainSound = new TrainSound(Services.GetService<ISoundService>());
 
         Vector2 trainPosition = new Vector2(
             (virtualScreenSize.X - trainMap.Width * trainMap.TileSize) / 2f,
@@ -94,6 +98,8 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         mainPanel.Widgets.Add(coalLabel);
         mainPanel.Widgets.Add(speedLabel);
         desktop.Root = mainPanel;
+        
+        Services.GetService<IMusicService>().FadeOutAndPlay("tmp_ambient", 2, repeating: true, volume: Game.MusicVolume);
     }
 
     private float accumulator;
@@ -117,6 +123,8 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
             world.Step(Game.GameplayConfig.FixedTimeStep);
             accumulator -= Game.GameplayConfig.FixedTimeStep;
         }
+        
+        trainSound.Update(gameTime, worldScroller.TrainSpeed);
 
         // Update coal label
         coalLabel.Text = $"Coal: {trainContext.State.CoalAmount}";
@@ -147,6 +155,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     {
         trainMap?.Dispose();
         worldScroller?.Dispose();
+        trainSound?.Dispose();
         base.UnloadContent();
     }
 }
