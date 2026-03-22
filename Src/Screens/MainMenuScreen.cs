@@ -1,9 +1,9 @@
+using Gamelab.Services.Music;
 using Gamelab.Services.Sound;
 using Gamelab.UI;
 using Gamelab.Utils.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Media;
 
 namespace Gamelab.Screens;
 
@@ -12,10 +12,9 @@ public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
     private Logger logger = new Logger("MainMenuScreen");
     
     private const string MainMenuBackgroundAsset = "placeholder_main_menu_background";
-    private const string MainMenuSongAsset = "placeholder_main_menu_theme";
+    private const string MainMenuSongAsset = "tmp_main_menu";
     protected Texture2D bgTexture;
     private MainMenuPanel mainMenuPanel;
-    private Song mainMenuSong;
     private SoundHandle menuSelectSound;
 
     public override void LoadContent()
@@ -25,7 +24,7 @@ public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
         menuSelectSound = Services.GetService<ISoundService>().RegisterSound("menu_stab", 4);
         TryLoadBackgroundTexture();
         mainMenuPanel = new MainMenuPanel(Game, StartGame, Game.Exit);
-        TryStartMainMenuMusic();
+        Services.GetService<IMusicService>().FadeOutAndPlay(MainMenuSongAsset, 2, true, Game.MusicVolume);
     }
 
     public override void Update(GameTime gameTime)
@@ -63,31 +62,7 @@ public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
 
     private void StartGame()
     {
-        MediaPlayer.Stop();
         Game.SwitchToScreen(new GameplayScreen(Game));
-    }
-
-    private void TryStartMainMenuMusic()
-    {
-        try
-        {
-            if (MediaPlayer.State == MediaState.Playing)
-            {
-                MediaPlayer.IsRepeating = true;
-                Game.SetMusicVolume(Game.MusicVolume);
-                return;
-            }
-
-            // Requires this song to be added to Content.mgcb and built as a Song.
-            mainMenuSong = Game.Content.Load<Song>(MainMenuSongAsset);
-            MediaPlayer.IsRepeating = true;
-            Game.SetMusicVolume(Game.MusicVolume);
-            MediaPlayer.Play(mainMenuSong);
-        }
-        catch
-        {
-            // Keep the menu usable even when music asset is not added yet.
-        }
     }
 
     private void TryLoadBackgroundTexture()

@@ -6,6 +6,7 @@ using Gamelab.Map;
 using Gamelab.Map.Train;
 using Gamelab.Map.Train.State;
 using Gamelab.Players;
+using Gamelab.Services.Music;
 using Gamelab.Services.Sound;
 using Microsoft.Xna.Framework;
 using Myra.Graphics2D;
@@ -97,6 +98,8 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         mainPanel.Widgets.Add(coalLabel);
         mainPanel.Widgets.Add(speedLabel);
         desktop.Root = mainPanel;
+        
+        Services.GetService<IMusicService>().FadeOutAndPlay("tmp_ambient", 2, repeating: true, volume: Game.MusicVolume);
     }
 
     private float accumulator;
@@ -152,6 +155,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     {
         trainMap?.Dispose();
         worldScroller?.Dispose();
+        trainSound?.Dispose();
         base.UnloadContent();
     }
 }

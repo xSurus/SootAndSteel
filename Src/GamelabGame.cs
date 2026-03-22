@@ -6,6 +6,7 @@ using Gamelab.Config;
 using Gamelab.Map.Train.State;
 using Gamelab.Players;
 using Gamelab.Screens;
+using Gamelab.Services.Music;
 using Gamelab.Services.Sound;
 using Gamelab.Systems;
 using Gamelab.Utils;
@@ -81,8 +82,13 @@ public class GamelabGame : Game
 
         screenManager = new ScreenManager();
         Components.Add(screenManager);
-        
-        Services.AddService<ISoundService>(new SoundService());
+
+        IGameSystem soundService = new SoundService();
+        IGameSystem musicService = new MusicService();
+        Services.AddService((ISoundService)soundService);
+        Services.AddService((IMusicService)musicService);
+        systemManager.Add(soundService);
+        systemManager.Add(musicService);
     }
 
     protected override void Initialize()
