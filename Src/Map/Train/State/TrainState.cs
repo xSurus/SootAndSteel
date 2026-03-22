@@ -22,7 +22,7 @@ public class TrainState
         }
     }
 
-    public float CoalAmount { get; set; }
+    public int CoalAmount { get; set; }
     public float Temperature { get; set; } = 20f;
     public bool IsCoalOvenBurning { get; set; } = true;
 
