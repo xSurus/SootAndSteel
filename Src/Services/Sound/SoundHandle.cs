@@ -1,21 +1,14 @@
 ﻿using System;
 using Gamelab.Utils.Logging;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Gamelab.Services.Sound;
 
-public class SoundHandle : IDisposable
+public class SoundHandle(SoundEffectInstance[] pool) : IDisposable
 {
-    private readonly SoundEffectInstance[] pool;
     private int currentIndex;
     private bool isDisposed;
-    private readonly Action unregister;
-
-    internal SoundHandle(SoundEffectInstance[] pool, Action unregister)
-    {
-        this.pool = pool;
-        this.unregister = unregister;
-    }
 
     public SoundEffectInstance Play(float volume = 1.0f, float pitch = 0.0f, float pan = 0.0f)
     {
@@ -72,6 +65,5 @@ public class SoundHandle : IDisposable
         foreach (SoundEffectInstance sfx in pool)
             sfx.Dispose();
         isDisposed = true;
-        unregister?.Invoke();
     }
 }

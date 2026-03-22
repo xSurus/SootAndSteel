@@ -9,10 +9,9 @@ namespace Gamelab.Services.Sound;
 
 public class SoundService : ISoundService, IDisposable, IGameSystem
 {
-    private Logger logger = new Logger("SoundService");
+    private readonly Logger logger = new Logger("SoundService");
     
     private readonly Dictionary<string, SoundEffect> sfxLibrary = new Dictionary<string, SoundEffect>();
-    private readonly Dictionary<string, int> sfxReferences = new Dictionary<string, int>();
     private readonly List<SoundAnimation> sfxAnimations = new List<SoundAnimation>();
 
     public void Initialize(GamelabGame game)
@@ -28,14 +27,13 @@ public class SoundService : ISoundService, IDisposable, IGameSystem
     {
         if (!sfxLibrary.ContainsKey(soundName))
             PreloadSound(soundName);
-        sfxReferences[soundName] += 1;
         
         SoundEffectInstance[] pool = new SoundEffectInstance[maxConcurrent];
         for (int i = 0; i < maxConcurrent; i++)
         {
             pool[i] = sfxLibrary[soundName].CreateInstance();
         }
-        return new SoundHandle(pool, () => UnregisterSound(soundName));
+        return new SoundHandle(pool);
     }
 
     public void FadeIn(SoundEffectInstance sound, double duration)
@@ -61,25 +59,10 @@ public class SoundService : ISoundService, IDisposable, IGameSystem
             duration: duration
         ));
     }
-
-    private void UnregisterSound(string soundName)
-    {
-        if (!sfxLibrary.ContainsKey(soundName)) return;
-        
-        sfxReferences[soundName] -= 1;
-
-        if (sfxReferences[soundName] > 0) return;
-        
-        logger.Debug("Unloading sound: " + soundName);
-        sfxLibrary[soundName].Dispose();
-        sfxLibrary.Remove(soundName);
-        sfxReferences.Remove(soundName);
-    }
     
     private void PreloadSound(string soundName)
     {
         sfxLibrary[soundName] = GamelabGame.Instance.Content.Load<SoundEffect>("sfx/" + soundName);
-        sfxReferences[soundName] = 0;
     }
     
     public void Dispose()
@@ -89,7 +72,6 @@ public class SoundService : ISoundService, IDisposable, IGameSystem
             sfx.Dispose();
         }
         sfxLibrary.Clear();
-        sfxReferences.Clear();
     }
 
     public void Update(GameTime gameTime)
