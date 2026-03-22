@@ -9,9 +9,8 @@ using nkast.Aether.Physics2D.Dynamics;
 
 namespace Gamelab.PhysicalEntities.Structures;
 
-public class ShootHoleWall : IInteractable, IDamageable, IPickable
+public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable, IPickable
 {
-    public Body PhysicsBody { get; set; }
     public float MaxHealth => GamelabGame.Instance.GameplayConfig.WallMaxHealth;
     private float HealthRestoredPerSecond => GamelabGame.Instance.GameplayConfig.WallHealthRestoredPerSecond;
     public float CurrentHealth { get; private set; }
@@ -56,7 +55,7 @@ public class ShootHoleWall : IInteractable, IDamageable, IPickable
         }
     }
 
-    public void Draw(SpriteBatch spriteBatch)
+    public override void Draw(SpriteBatch spriteBatch)
     {
         Vector2 centerPixels = PhysicsBody.Position.ToPixels();
         Vector2 topLeft = centerPixels - (dimensionsPixels / 2f);

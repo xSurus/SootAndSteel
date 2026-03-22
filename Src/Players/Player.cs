@@ -11,10 +11,9 @@ using nkast.Aether.Physics2D.Dynamics;
 
 namespace Gamelab.Players;
 
-public class Player
+public class Player : AbstractPhysicalEntity
 {
     public PlayerConfiguration PlayerConfiguration { get; private set; }
-    public Body PhysicsBody { get; private set; }
     public Vector2 Position => PhysicsBody.Position.ToPixels();
     public Item HeldItem { get; set; }
     public IGrabbable GrabbedObject { get; private set; }
@@ -152,7 +151,7 @@ public class Player
         return closestEntity;
     }
 
-    public void Draw(SpriteBatch spriteBatch)
+    public override void Draw(SpriteBatch spriteBatch)
     {
         Texture2D texture = AssetManager.PlayerTexture;
         float scale = (Radius * 2) / texture.Width;

@@ -50,24 +50,11 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         trainMap.MapObjects.Add(new CannonStation(trainMap.GetTileCenterPixels(5, 2), trainContext));
 
         worldScroller = new WorldScroller(GraphicsDevice, virtualScreenSize.X, virtualScreenSize.Y);
-
-        var spawnPositions = new[]
-        {
-            new Vector2(virtualScreenSize.X / 2f - Game.GameplayConfig.SpawnOffsetPixels,
-                virtualScreenSize.Y / 2f - Game.GameplayConfig.SpawnOffsetPixels),
-            new Vector2(virtualScreenSize.X / 2f + Game.GameplayConfig.SpawnOffsetPixels,
-                virtualScreenSize.Y / 2f - Game.GameplayConfig.SpawnOffsetPixels),
-            new Vector2(virtualScreenSize.X / 2f - Game.GameplayConfig.SpawnOffsetPixels,
-                virtualScreenSize.Y / 2f + Game.GameplayConfig.SpawnOffsetPixels),
-            new Vector2(virtualScreenSize.X / 2f + Game.GameplayConfig.SpawnOffsetPixels,
-                virtualScreenSize.Y / 2f + Game.GameplayConfig.SpawnOffsetPixels),
-        };
-
         players = [];
         foreach (var playerConfig in Game.playerManager.Configs)
         {
-            Vector2 pixelPos = spawnPositions[playerConfig.PlayerIndex % spawnPositions.Length];
-            players.Add(new Player(world, pixelPos, playerConfig, trainContext));
+            players.Add(new Player(world, trainMap.GetTileCenterPixels(playerConfig.PlayerIndex, 1), playerConfig,
+                trainContext));
         }
 
         // Initialize Myra UI
