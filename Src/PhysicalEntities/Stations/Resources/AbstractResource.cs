@@ -3,15 +3,21 @@ using Gamelab.Map.Train.State;
 using Gamelab.Players;
 using Microsoft.Xna.Framework;
 
-namespace Gamelab.Interactable.Stations.Resources;
+namespace Gamelab.PhysicalEntities.Stations.Resources;
 
-public abstract class AbstractResource(string stationType, Color stationColor, string resourceId, Color resourceColor)
-    : AbstractStation(stationType, stationColor)
+public abstract class AbstractResource(
+    string stationType,
+    Color stationColor,
+    string resourceId,
+    Color resourceColor,
+    Vector2 position,
+    TrainContext trainContext)
+    : AbstractStation(stationType, stationColor, position, trainContext)
 {
     protected string ResourceId { get; } = resourceId;
     protected Color ResourceColor { get; } = resourceColor;
 
-    public override void OnGrab(Player interactingPlayer, TrainContext trainContext)
+    public override void OnPickup(Player interactingPlayer, TrainContext trainContext)
     {
         if (interactingPlayer.HeldItem == null)
         {

@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
-using Gamelab.Interactable.Stations;
-using Gamelab.Interactable.Stations.Resources;
 using Gamelab.Map;
 using Gamelab.Map.Train;
 using Gamelab.Map.Train.State;
+using Gamelab.PhysicalEntities.Stations;
+using Gamelab.PhysicalEntities.Stations.Cannon;
+using Gamelab.PhysicalEntities.Stations.Resources;
 using Gamelab.Players;
 using Gamelab.Services.Music;
 using Gamelab.Services.Sound;
@@ -40,31 +41,20 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
             (virtualScreenSize.X - trainMap.Width * trainMap.TileSize) / 2f,
             (virtualScreenSize.Y - trainMap.Height * trainMap.TileSize) / 2f
         );
-        trainMap.SetPosition(trainPosition);
-        trainMap.PlaceObject(1, 1, new CoalResource());
-        trainMap.PlaceObject(6, 1, new CoalOven());
-        trainMap.PlaceObject(3, 2, new Counter());
-        trainMap.PlaceObject(4, 2, new SpeedLever());
+        trainMap.Initialize(trainPosition);
+
+        trainMap.MapObjects.Add(new CoalResource(trainMap.GetTileCenterPixels(1, 1), trainContext));
+        trainMap.MapObjects.Add(new CoalOven(trainMap.GetTileCenterPixels(6, 1), trainContext));
+        trainMap.MapObjects.Add(new Counter(trainMap.GetTileCenterPixels(3, 2), trainContext));
+        trainMap.MapObjects.Add(new SpeedLever(trainMap.GetTileCenterPixels(4, 2), trainContext));
+        trainMap.MapObjects.Add(new CannonStation(trainMap.GetTileCenterPixels(5, 2), trainContext));
 
         worldScroller = new WorldScroller(GraphicsDevice, virtualScreenSize.X, virtualScreenSize.Y);
-
-        var spawnPositions = new[]
-        {
-            new Vector2(virtualScreenSize.X / 2f - Game.GameplayConfig.SpawnOffsetPixels,
-                virtualScreenSize.Y / 2f - Game.GameplayConfig.SpawnOffsetPixels),
-            new Vector2(virtualScreenSize.X / 2f + Game.GameplayConfig.SpawnOffsetPixels,
-                virtualScreenSize.Y / 2f - Game.GameplayConfig.SpawnOffsetPixels),
-            new Vector2(virtualScreenSize.X / 2f - Game.GameplayConfig.SpawnOffsetPixels,
-                virtualScreenSize.Y / 2f + Game.GameplayConfig.SpawnOffsetPixels),
-            new Vector2(virtualScreenSize.X / 2f + Game.GameplayConfig.SpawnOffsetPixels,
-                virtualScreenSize.Y / 2f + Game.GameplayConfig.SpawnOffsetPixels),
-        };
-
         players = [];
         foreach (var playerConfig in Game.playerManager.Configs)
         {
-            Vector2 pixelPos = spawnPositions[playerConfig.PlayerIndex % spawnPositions.Length];
-            players.Add(new Player(world, pixelPos, playerConfig, trainContext));
+            players.Add(new Player(world, trainMap.GetTileCenterPixels(playerConfig.PlayerIndex, 1), playerConfig,
+                trainContext));
         }
 
         // Initialize Myra UI
@@ -153,7 +143,6 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
 
     public override void UnloadContent()
     {
-        trainMap?.Dispose();
         worldScroller?.Dispose();
         trainSound?.Dispose();
         base.UnloadContent();

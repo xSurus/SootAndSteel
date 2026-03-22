@@ -7,6 +7,7 @@ public static class AssetManager
 {
     public static Texture2D BlankTexture { get; private set; }
     public static Texture2D PlayerTexture { get; private set; }
+    public static Texture2D TileTexture { get; private set; }
 
     public static void LoadContent(GraphicsDevice graphicsDevice)
     {
@@ -16,6 +17,13 @@ public static class AssetManager
         BlankTexture = new Texture2D(graphicsDevice, 1, 1);
         BlankTexture.SetData([Color.White]);
 
+        LoadPlayerTexture(graphicsDevice);
+        LoadTileTexture(graphicsDevice);
+        // TODO add texture loading from json
+    }
+
+    private static void LoadPlayerTexture(GraphicsDevice graphicsDevice)
+    {
         // player texture
         int textureSize = 128;
         PlayerTexture = new Texture2D(graphicsDevice, textureSize, textureSize);
@@ -33,8 +41,22 @@ public static class AssetManager
         }
 
         PlayerTexture.SetData(data);
+    }
 
-        // TODO add texture loading from json
+    private static void LoadTileTexture(GraphicsDevice graphicsDevice)
+    {
+        int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
+        TileTexture = new Texture2D(graphicsDevice, tileSize, tileSize);
+        Color[] data = new Color[tileSize * tileSize];
+        for (int i = 0; i < data.Length; i++)
+        {
+            int x = i % tileSize;
+            int y = i / tileSize;
+            bool isBorder = x == 0 || y == 0 || x == tileSize - 1 || y == tileSize - 1;
+            data[i] = isBorder ? Color.DarkGray : Color.Gray;
+        }
+
+        TileTexture.SetData(data);
     }
 
     public static void UnloadContent()
@@ -44,5 +66,8 @@ public static class AssetManager
 
         PlayerTexture?.Dispose();
         PlayerTexture = null;
+
+        TileTexture?.Dispose();
+        TileTexture = null;
     }
 }

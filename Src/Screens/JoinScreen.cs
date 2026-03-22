@@ -133,8 +133,8 @@ public class JoinScreen(GamelabGame game) : AbstractGameScreen(game)
             bool keyboardExists = Game.playerManager.Configs.Any(c => c.Input is KeyboardInputProvider);
             if (!keyboardExists)
             {
-                Game.playerManager.JoinPlayer(new KeyboardInputProvider(Keys.W, Keys.S, Keys.A, Keys.D, Keys.Space,
-                    Keys.E));
+                Game.playerManager.JoinPlayer(new KeyboardInputProvider(Keys.W, Keys.S, Keys.A, Keys.D, Keys.E,
+                    Keys.R, Keys.Space));
             }
         }
 

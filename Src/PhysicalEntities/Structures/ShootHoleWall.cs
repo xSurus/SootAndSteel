@@ -7,11 +7,10 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using nkast.Aether.Physics2D.Dynamics;
 
-namespace Gamelab.Interactable.Structures;
+namespace Gamelab.PhysicalEntities.Structures;
 
-public class ShootHoleWall : IInteractable, IDamageable
+public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable, IPickable
 {
-    public Body PhysicsBody { get; private set; }
     public float MaxHealth => GamelabGame.Instance.GameplayConfig.WallMaxHealth;
     private float HealthRestoredPerSecond => GamelabGame.Instance.GameplayConfig.WallHealthRestoredPerSecond;
     public float CurrentHealth { get; private set; }
@@ -38,7 +37,7 @@ public class ShootHoleWall : IInteractable, IDamageable
         CurrentHealth -= damageAmount;
     }
 
-    public void OnGrab(Player interactingPlayer, TrainContext context)
+    public void OnPickup(Player interactingPlayer, TrainContext context)
     {
         // TODO Only for debugging until damage from enemies is implemented
         TakeDamage(10);
@@ -56,7 +55,7 @@ public class ShootHoleWall : IInteractable, IDamageable
         }
     }
 
-    public void Draw(SpriteBatch spriteBatch)
+    public override void Draw(SpriteBatch spriteBatch)
     {
         Vector2 centerPixels = PhysicsBody.Position.ToPixels();
         Vector2 topLeft = centerPixels - (dimensionsPixels / 2f);

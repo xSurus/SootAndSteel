@@ -46,7 +46,7 @@ public class MenuList
                 PlayerSelections[pIndex] = (PlayerSelections[pIndex] + 1) % entries.Count;
             }
 
-            if (input.IsGrabJustPressed())
+            if (input.IsPickupJustPressed())
             {
                 entries[PlayerSelections[pIndex]].OnSelected.Invoke();
             }

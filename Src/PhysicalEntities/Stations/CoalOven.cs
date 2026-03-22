@@ -2,10 +2,11 @@ using System;
 using Gamelab.Assets;
 using Gamelab.Map.Train.State;
 using Gamelab.Players;
+using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Gamelab.Interactable.Stations;
+namespace Gamelab.PhysicalEntities.Stations;
 
 public class CoalOven : AbstractStation
 {
@@ -15,7 +16,8 @@ public class CoalOven : AbstractStation
     private float RefuelAmount => GamelabGame.Instance.GameplayConfig.CoalOvenRefuelAmount;
     private float LowFuelThreshold => GamelabGame.Instance.GameplayConfig.CoalOvenLowFuelThreshold;
 
-    public CoalOven() : base("CoalOven", Color.DarkRed)
+    public CoalOven(Vector2 position, TrainContext trainContext)
+        : base("CoalOven", Color.DarkRed, position, trainContext)
     {
         maxFuel = GamelabGame.Instance.GameplayConfig.CoalOvenMaxFuel;
         currentFuel = maxFuel;
@@ -36,7 +38,7 @@ public class CoalOven : AbstractStation
         }
     }
 
-    public override void OnGrab(Player interactingPlayer, TrainContext trainContext)
+    public override void OnPickup(Player interactingPlayer, TrainContext trainContext)
     {
         if (interactingPlayer.HeldItem != null && interactingPlayer.HeldItem.Id == "Coal")
         {
@@ -46,10 +48,11 @@ public class CoalOven : AbstractStation
         }
     }
 
-    public override void Draw(SpriteBatch spriteBatch, Vector2 position, int tileSize)
+    public override void Draw(SpriteBatch spriteBatch)
     {
-        base.Draw(spriteBatch, position, tileSize);
-
+        base.Draw(spriteBatch);
+        int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
+        var position = PhysicsBody.Position.ToPixels() - new Vector2(tileSize / 2f);
         int barWidth = tileSize - 20;
         int barHeight = 8;
         Vector2 barPos = new Vector2(position.X + 10, position.Y + tileSize - 15);

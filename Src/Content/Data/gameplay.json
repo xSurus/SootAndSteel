@@ -21,9 +21,10 @@
     "playerLinearDamping": 20.0,
     "playerMaxVelocity": 5.0,
     "playerVelocityLerpFactor": 0.8,
-    "playerInteractDistancePixels": 40.0,
+  "playerInteractDistancePixels": 60.0,
     "playerHeldItemOffsetRadiusMultiplier": 1.5,
     "playerHeldItemSizeRadiusMultiplier": 0.8,
+  "playerForceMultiplier": 50.0,
     "inputInitialRepeatDelaySeconds": 0.3,
     "inputRepeatRateSeconds": 0.1,
     "inputDirectionPressThreshold": 0.5,
@@ -43,5 +44,7 @@
     "coalOvenRefuelAmount": 10.0,
   "coalOvenLowFuelThreshold": 0.25,
   "wallMaxHealth": 100.0,
-  "wallHealthRestoredPerSecond": 40.0
+  "wallHealthRestoredPerSecond": 40.0,
+  "GrabbableLinearDamping": 100.0,
+  "GrabbableRotationalResistance": 40.0
 }
