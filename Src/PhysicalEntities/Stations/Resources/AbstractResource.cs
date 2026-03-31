@@ -9,19 +9,17 @@ public abstract class AbstractResource(
     string stationType,
     Color stationColor,
     string resourceId,
-    Color resourceColor,
     Vector2 position,
-    TrainContext trainContext)
-    : AbstractStation(stationType, stationColor, position, trainContext)
+    GameplayContext gameplayContext)
+    : AbstractStation(stationType, stationColor, position, gameplayContext)
 {
     protected string ResourceId { get; } = resourceId;
-    protected Color ResourceColor { get; } = resourceColor;
 
-    public override void OnPickup(Player interactingPlayer, TrainContext trainContext)
+    public override void OnPickup(Player interactingPlayer, GameplayContext gameplayContext)
     {
         if (interactingPlayer.HeldItem == null)
         {
-            interactingPlayer.HeldItem = new Item(ResourceId, ResourceColor);
+            interactingPlayer.HeldItem = new Item(ResourceId);
         }
         else if (interactingPlayer.HeldItem.Id == ResourceId)
         {

@@ -13,10 +13,10 @@ public class CannonAimingBar : AbstractGrabbable
 {
     protected override bool AllowPlayerRotation { get; } = true;
 
-    public CannonAimingBar(Body cannonBaseBody, Vector2 anchorMeters, TrainContext trainContext)
+    public CannonAimingBar(Body cannonBaseBody, Vector2 anchorMeters, GameplayContext gameplayContext)
     {
         // TODO only example asset
-        PhysicsBody = trainContext.Map.PhysicsWorld.CreateRectangle(1.5f, 0.3f, 1f, anchorMeters, 0f, BodyType.Dynamic);
+        PhysicsBody = gameplayContext.Map.PhysicsWorld.CreateRectangle(1.5f, 0.3f, 1f, anchorMeters, 0f, BodyType.Dynamic);
         PhysicsBody.Tag = this;
         PhysicsBody.LinearDamping = GamelabGame.Instance.GameplayConfig.GrabbableLinearDamping;
 
@@ -25,7 +25,7 @@ public class CannonAimingBar : AbstractGrabbable
             fixture.IsSensor = true;
         }
 
-        RevoluteJoint joint = JointFactory.CreateRevoluteJoint(trainContext.Map.PhysicsWorld, cannonBaseBody,
+        RevoluteJoint joint = JointFactory.CreateRevoluteJoint(gameplayContext.Map.PhysicsWorld, cannonBaseBody,
             PhysicsBody, Vector2.Zero);
         joint.MotorEnabled = true;
         joint.MotorSpeed = 0f;
@@ -37,7 +37,7 @@ public class CannonAimingBar : AbstractGrabbable
         if (PhysicsBody == null) return;
 
         int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
-        Vector2 barCenterPixels = PhysicsBody.Position.ToPixels();
+        Vector2 barCenterPixels = Position;
 
         float barPixelWidth = 1.5f * tileSize;
         float barPixelHeight = 0.3f * tileSize;
@@ -59,7 +59,7 @@ public class CannonAimingBar : AbstractGrabbable
         );
     }
 
-    protected override void OnLastRelease(Player interactingPlayer, TrainContext trainContext)
+    protected override void OnLastRelease(Player interactingPlayer, GameplayContext gameplayContext)
     {
         PhysicsBody.BodyType = BodyType.Dynamic;
     }

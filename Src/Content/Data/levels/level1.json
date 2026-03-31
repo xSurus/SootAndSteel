@@ -1,0 +1,19 @@
+{
+  "LevelDistance": 15000,
+  "SpawnEvents": [
+    { "Distance":  1000, "Type": "Shooter" },
+    { "Distance":  2000, "Type": "Thief",   "Side": "Top" },
+    { "Distance":  3000, "Type": "Shooter", "Side": "Bottom" },
+    { "Distance":  4000, "Type": "Thief",   "Side": "Right" },
+    { "Distance":  5000, "Type": "Shooter", "Side": "Top" },
+
+    { "Distance":  6000, "Type": "Shooter" },
+    { "Distance":  7500, "Type": "Shooter", "Side": "Top" },
+    { "Distance":  8000, "Type": "Thief",   "Side": "Right" },
+    { "Distance":  9500, "Type": "Shooter", "Side": "Bottom" },
+
+    { "Distance": 10500, "Type": "Thief",   "Side": "Top" },
+    { "Distance": 11000, "Type": "Shooter" },
+    { "Distance": 11500, "Type": "Thief",   "Side": "Bottom" }
+  ]
+}

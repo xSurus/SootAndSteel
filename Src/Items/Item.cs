@@ -4,17 +4,14 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Gamelab.Items;
 
-public class Item(string id, Color debugColor)
+public class Item(string id)
 {
-    public string Id { get; private set; } = id;
-    public Color DebugColor { get; private set; } = debugColor;
-
-    // TODO Alle basic Items in einem JSON definieren? Items mit speziellen Features als eigene Klasse
+    public string Id { get; } = id;
+    public ItemDefinition Definition => ItemRegistry.Get(Id);
 
     public void Draw(SpriteBatch spriteBatch, Vector2 position, int size)
     {
-        // als test sind items bisher nur eine pixelbox, später ersetzen mit texture
         Rectangle rect = new Rectangle((int)position.X, (int)position.Y, size, size);
-        spriteBatch.Draw(AssetManager.BlankTexture, rect, DebugColor);
+        spriteBatch.Draw(AssetManager.BlankTexture, rect, Definition.Color);
     }
 }

@@ -3,6 +3,7 @@ using System.IO;
 using FontStashSharp;
 using Gamelab.Assets;
 using Gamelab.Config;
+using Gamelab.Items;
 using Gamelab.Map.Train.State;
 using Gamelab.Players;
 using Gamelab.Screens;
@@ -49,6 +50,7 @@ public class GamelabGame : Game
 
     public readonly JsonLoader jsonLoader;
     public GameplayConfig GameplayConfig { get; private set; } = new();
+    public int CurrentLevel { get; set; } = 1;
 
     public RunMode runMode { get; private set; }
     public bool IsDebug => runMode == RunMode.Debug;
@@ -123,8 +125,8 @@ public class GamelabGame : Game
         fontSystem.AddFont(fontBytes);
         LoadGameplayConfig();
         PhysicsUtility.Initialize(GameplayConfig.PixelsPerMeter);
+        ItemRegistry.Initialize();
         systemManager.InitializeAll(this);
-
         AssetManager.LoadContent(graphics.GraphicsDevice);
         screenManager.ShowScreen(new JoinScreen(this));
         logger.Info("Game initialized");

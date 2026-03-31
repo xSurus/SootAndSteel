@@ -1,16 +1,24 @@
 using System;
 using System.Collections.Generic;
+using Gamelab.Enemies;
+using Gamelab.Events;
+using Gamelab.Input;
+using Gamelab.Levels;
 using Gamelab.Map;
 using Gamelab.Map.Train;
 using Gamelab.Map.Train.State;
+using Gamelab.PhysicalEntities.Projectiles;
 using Gamelab.PhysicalEntities.Stations;
 using Gamelab.PhysicalEntities.Stations.Cannon;
 using Gamelab.PhysicalEntities.Stations.Resources;
+using Gamelab.PhysicalEntities.Stations.Workbenches;
 using Gamelab.Players;
 using Gamelab.Services.Music;
 using Gamelab.Services.Sound;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using Myra.Graphics2D;
+using Myra.Graphics2D.Brushes;
 using Myra.Graphics2D.UI;
 using nkast.Aether.Physics2D.Dynamics;
 
@@ -22,39 +30,75 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     private World world;
     private TrainMap trainMap;
     private WorldScroller worldScroller;
-    private TrainContext trainContext;
+    private GameplayContext gameplayContext;
     private TrainSound trainSound;
+    private EnemyManager enemyManager;
+    private GameEvents gameEvents;
+    private LevelManager levelManager;
+    private SoundHandle menuSelectSound;
+    private LevelDefinition currentLevelDef;
     private Desktop desktop;
     private Label coalLabel;
     private Label speedLabel;
+    private Label temperatureLabel;
+    private Label cannonLabel;
+    private Label distanceLabel;
+    private CannonStation cannonStation;
+    private ProjectileManager projectileManager;
+    private Panel pauseOverlay;
+    private Label continueLabel;
+    private Label exitLabel;
+
+    private float screenShakeTimer;
+    private float screenShakeIntensity;
+    private Vector2 screenShakeOffset;
+    private readonly Random random = new Random();
+    private bool isPaused;
+    private int pauseSelectionIndex;
+    private bool wasEscapeDown;
+    private bool isFailureTriggered;
 
     public override void LoadContent()
     {
         base.LoadContent();
         world = new World(Vector2.Zero);
 
-        trainMap = new TrainMap(GraphicsDevice, world);
-        trainContext = new TrainContext(trainMap, new TrainState());
-        trainSound = new TrainSound(Services.GetService<ISoundService>());
+        currentLevelDef = LevelLoader.Load(Game.CurrentLevel);
+        menuSelectSound = Services.GetService<ISoundService>().RegisterSound("menu_stab", 4);
+        gameEvents = new GameEvents();
+        trainMap = new TrainMap(GraphicsDevice, world, gameEvents, virtualScreenSize);
+        gameplayContext = new GameplayContext(trainMap, new TrainState(), gameEvents, virtualScreenSize);
+        trainSound = new TrainSound(Services.GetService<ISoundService>(), gameplayContext);
 
-        Vector2 trainPosition = new Vector2(
-            (virtualScreenSize.X - trainMap.Width * trainMap.TileSize) / 2f,
-            (virtualScreenSize.Y - trainMap.Height * trainMap.TileSize) / 2f
-        );
-        trainMap.Initialize(trainPosition);
+        trainMap.MapObjects.Add(new CoalResource(trainMap.GetTileCenterPixels(0, 2), gameplayContext));
+        trainMap.MapObjects.Add(new CoalOven(trainMap.GetTileCenterPixels(7, 2), gameplayContext));
+        trainMap.MapObjects.Add(new SpeedLever(trainMap.GetTileCenterPixels(7, 3), gameplayContext));
+        trainMap.MapObjects.Add(new CannonStation(trainMap.GetTileCenterPixels(5, 2), gameplayContext));
 
-        trainMap.MapObjects.Add(new CoalResource(trainMap.GetTileCenterPixels(1, 1), trainContext));
-        trainMap.MapObjects.Add(new CoalOven(trainMap.GetTileCenterPixels(6, 1), trainContext));
-        trainMap.MapObjects.Add(new Counter(trainMap.GetTileCenterPixels(3, 2), trainContext));
-        trainMap.MapObjects.Add(new SpeedLever(trainMap.GetTileCenterPixels(4, 2), trainContext));
-        trainMap.MapObjects.Add(new CannonStation(trainMap.GetTileCenterPixels(5, 2), trainContext));
+        // Two left-side work zones: top-left and bottom-left, each with an anvil.
+        trainMap.MapObjects.Add(new CopperResource(trainMap.GetTileCenterPixels(2, 0), gameplayContext));
+        trainMap.MapObjects.Add(new GunpowderResource(trainMap.GetTileCenterPixels(2, 4), gameplayContext));
+        trainMap.MapObjects.Add(new Anvil(trainMap.GetTileCenterPixels(1, 0), gameplayContext)); // top-left crafting
+        trainMap.MapObjects.Add(new Anvil(trainMap.GetTileCenterPixels(1, 4), gameplayContext)); // bottom-left crafting
+        trainMap.MapObjects.Add(new Counter(trainMap.GetTileCenterPixels(0, 0), gameplayContext));
+        trainMap.MapObjects.Add(new Counter(trainMap.GetTileCenterPixels(3, 0), gameplayContext));
+        trainMap.MapObjects.Add(new Counter(trainMap.GetTileCenterPixels(0, 4), gameplayContext));
+        trainMap.MapObjects.Add(new Counter(trainMap.GetTileCenterPixels(3, 4), gameplayContext));
 
-        worldScroller = new WorldScroller(GraphicsDevice, virtualScreenSize.X, virtualScreenSize.Y);
+        worldScroller = new WorldScroller(GraphicsDevice, gameplayContext);
+        projectileManager = new ProjectileManager();
+        enemyManager = new EnemyManager(gameplayContext, random, currentLevelDef, projectileManager);
+        levelManager = new LevelManager(currentLevelDef);
+
+        gameEvents.OnWallBreached += OnWallBreached;
+        gameEvents.OnWallRepaired += OnWallRepaired;
+        gameplayContext.State.OnTrainFrozen += OnTrainFrozen;
+
         players = [];
         foreach (var playerConfig in Game.playerManager.Configs)
         {
             players.Add(new Player(world, trainMap.GetTileCenterPixels(playerConfig.PlayerIndex, 1), playerConfig,
-                trainContext));
+                gameplayContext));
         }
 
         // Initialize Myra UI
@@ -85,11 +129,129 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
             Margin = new Thickness(20, 80, 20, 20)
         };
 
+        temperatureLabel = new Label
+        {
+            Text = "Temperature: 100",
+            Font = Game.fontSystem.GetFont(48),
+            TextColor = Color.White,
+            HorizontalAlignment = HorizontalAlignment.Left,
+            VerticalAlignment = VerticalAlignment.Top,
+            Margin = new Thickness(20, 140, 20, 20)
+        };
+
+        cannonLabel = new Label
+        {
+            Text = "Cannon: Empty",
+            Font = Game.fontSystem.GetFont(48),
+            TextColor = Color.White,
+            HorizontalAlignment = HorizontalAlignment.Left,
+            VerticalAlignment = VerticalAlignment.Top,
+            Margin = new Thickness(20, 200, 20, 20)
+        };
+
+        distanceLabel = new Label
+        {
+            Text = "Distance: 0",
+            Font = Game.fontSystem.GetFont(48),
+            TextColor = Color.White,
+            HorizontalAlignment = HorizontalAlignment.Left,
+            VerticalAlignment = VerticalAlignment.Top,
+            Margin = new Thickness(20, 260, 20, 20)
+        };
+
         mainPanel.Widgets.Add(coalLabel);
         mainPanel.Widgets.Add(speedLabel);
+        mainPanel.Widgets.Add(temperatureLabel);
+        mainPanel.Widgets.Add(cannonLabel);
+        mainPanel.Widgets.Add(distanceLabel);
+        pauseOverlay = CreatePauseOverlay();
+        mainPanel.Widgets.Add(pauseOverlay);
         desktop.Root = mainPanel;
-        
-        Services.GetService<IMusicService>().FadeOutAndPlay("tmp_ambient", 2, repeating: true, volume: Game.MusicVolume);
+
+        Services.GetService<IMusicService>()
+            .FadeOutAndPlay("tmp_ambient", 2, repeating: true, volume: Game.MusicVolume);
+    }
+
+    private Panel CreatePauseOverlay()
+    {
+        var overlay = new Panel
+        {
+            Background = new SolidBrush(new Color(0, 0, 0, 180)),
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            VerticalAlignment = VerticalAlignment.Stretch,
+            Visible = false
+        };
+
+        var modal = new Panel
+        {
+            Width = 420,
+            Height = 280,
+            Background = new SolidBrush(new Color(25, 25, 30, 230)),
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center
+        };
+
+        var stack = new VerticalStackPanel
+        {
+            Spacing = 24,
+            Padding = new Thickness(40),
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center
+        };
+
+        stack.Widgets.Add(new Label
+        {
+            Text = "PAUSED",
+            Font = Game.fontSystem.GetFont(64),
+            HorizontalAlignment = HorizontalAlignment.Center,
+            TextColor = Color.White
+        });
+
+        continueLabel = new Label
+        {
+            Text = "CONTINUE",
+            Font = Game.fontSystem.GetFont(40),
+            HorizontalAlignment = HorizontalAlignment.Center
+        };
+
+        exitLabel = new Label
+        {
+            Text = "EXIT",
+            Font = Game.fontSystem.GetFont(40),
+            HorizontalAlignment = HorizontalAlignment.Center
+        };
+
+        stack.Widgets.Add(continueLabel);
+        stack.Widgets.Add(exitLabel);
+        modal.Widgets.Add(stack);
+        overlay.Widgets.Add(modal);
+
+        UpdatePauseSelectionVisuals();
+        return overlay;
+    }
+
+    private void OnWallBreached()
+    {
+        gameplayContext.State.numberBreachedWalls++;
+        screenShakeTimer = Game.GameplayConfig.ScreenShakeDuration;
+        screenShakeIntensity = Game.GameplayConfig.ScreenShakeIntensity;
+    }
+
+    private void OnWallRepaired()
+    {
+        gameplayContext.State.numberBreachedWalls--;
+    }
+
+    private void OnTrainFrozen()
+    {
+        TriggerFailure();
+    }
+
+    private void TriggerFailure()
+    {
+        if (isFailureTriggered) return;
+        isFailureTriggered = true;
+        Game.SwitchToScreen(new FailScreen(Game));
     }
 
     private float accumulator;
@@ -98,8 +260,22 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     {
         base.Update(gameTime);
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-        worldScroller.TrainSpeed = trainContext.State.actualSpeed;
+
+        if (IsPauseToggleRequested())
+        {
+            TogglePause();
+        }
+
+        if (isPaused)
+        {
+            UpdatePauseMenu();
+            return;
+        }
+
         worldScroller.Update(dt);
+        enemyManager.Update(dt);
+        projectileManager.Update(dt);
+
         accumulator += Math.Min(dt, Game.GameplayConfig.MaxAccumulatedDeltaSeconds);
         while (accumulator >= Game.GameplayConfig.FixedTimeStep)
         {
@@ -108,24 +284,147 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
                 player.Update(Game.GameplayConfig.FixedTimeStep);
             }
 
-            trainContext.State.Update(Game.GameplayConfig.FixedTimeStep);
-            trainMap.Update(Game.GameplayConfig.FixedTimeStep, trainContext);
+            gameplayContext.State.Update(Game.GameplayConfig.FixedTimeStep);
+            if (isFailureTriggered) return;
+
+            // Failure: ran out of coal while still trying to move.
+            if (gameplayContext.State.CoalAmount <= 0 && gameplayContext.State.actualSpeed > 0f)
+            {
+                TriggerFailure();
+                return;
+            }
+
+            trainMap.Update(Game.GameplayConfig.FixedTimeStep, gameplayContext);
             world.Step(Game.GameplayConfig.FixedTimeStep);
             accumulator -= Game.GameplayConfig.FixedTimeStep;
         }
-        
-        trainSound.Update(gameTime, worldScroller.TrainSpeed);
 
-        // Update coal label
-        coalLabel.Text = $"Coal: {trainContext.State.CoalAmount}";
-        speedLabel.Text = $"Speed: {trainContext.State.actualSpeed:F0}";
+        trainSound.Update(gameTime);
+
+        coalLabel.Text = $"Coal: {gameplayContext.State.CoalAmount}";
+        speedLabel.Text = $"Speed: {gameplayContext.State.actualSpeed:F0}";
+        temperatureLabel.Text = $"Temperature: {gameplayContext.State.Temperature:F0}";
+        cannonLabel.Text = cannonStation?.HeldItem == null
+            ? "Cannon: Empty"
+            : $"Cannon: {cannonStation.HeldItem.Id}";
+        distanceLabel.Text =
+            $"Distance: {gameplayContext.State.DistanceTraveled:F0} / {currentLevelDef?.LevelDistance ?? 0:F0}";
+
+        if (currentLevelDef != null &&
+            gameplayContext.State.DistanceTraveled >= currentLevelDef.LevelDistance &&
+            enemyManager.Enemies.Count == 0)
+        {
+            Game.CurrentLevel++;
+            Game.SwitchToScreen(new MainMenuScreen(Game));
+        }
+
+        UpdateScreenShake(dt);
+    }
+
+    private bool IsPauseToggleRequested()
+    {
+        bool isEscapeDown = Keyboard.GetState().IsKeyDown(Keys.Escape);
+        bool escapePressed = isEscapeDown && !wasEscapeDown;
+        wasEscapeDown = isEscapeDown;
+        bool startPressed = false;
+
+        foreach (PlayerConfiguration player in Game.playerManager.Configs)
+        {
+            if (player.Input is GamePadInputProvider && player.Input.IsStartJustPressed())
+            {
+                startPressed = true;
+                break;
+            }
+        }
+
+        return escapePressed || startPressed;
+    }
+
+    private void TogglePause()
+    {
+        isPaused = !isPaused;
+        pauseSelectionIndex = 0;
+        pauseOverlay.Visible = isPaused;
+        UpdatePauseSelectionVisuals();
+    }
+
+    private void UpdatePauseMenu()
+    {
+        bool moveUp = false;
+        bool moveDown = false;
+        bool confirm = false;
+
+        foreach (PlayerConfiguration player in Game.playerManager.Configs)
+        {
+            moveUp |= player.Input.IsUpJustPressed();
+            moveDown |= player.Input.IsDownJustPressed();
+            confirm |= player.Input.IsPickupJustPressed();
+        }
+
+        if (moveUp || moveDown)
+        {
+            pauseSelectionIndex = 1 - pauseSelectionIndex;
+            UpdatePauseSelectionVisuals();
+            menuSelectSound?.Play();
+        }
+
+        if (!confirm)
+        {
+            return;
+        }
+
+        menuSelectSound?.Play();
+
+        if (pauseSelectionIndex == 0)
+        {
+            TogglePause();
+            return;
+        }
+
+        Game.SwitchToScreen(new JoinScreen(Game));
+    }
+
+    private void UpdatePauseSelectionVisuals()
+    {
+        if (continueLabel == null || exitLabel == null)
+        {
+            return;
+        }
+
+        continueLabel.TextColor = pauseSelectionIndex == 0 ? Color.LightBlue : Color.White;
+        exitLabel.TextColor = pauseSelectionIndex == 1 ? Color.LightBlue : Color.White;
+    }
+
+    private void UpdateScreenShake(float dt)
+    {
+        if (screenShakeTimer > 0)
+        {
+            screenShakeTimer -= dt;
+
+            float shakeX = (float)(random.NextDouble() * 2 - 1) * screenShakeIntensity;
+            float shakeY = (float)(random.NextDouble() * 2 - 1) * screenShakeIntensity;
+            screenShakeOffset = new Vector2(shakeX, shakeY);
+
+            screenShakeIntensity *= 1f - Game.GameplayConfig.ScreenShakeDecay * dt;
+
+            if (screenShakeTimer <= 0)
+            {
+                screenShakeOffset = Vector2.Zero;
+                screenShakeIntensity = 0;
+            }
+        }
     }
 
     public override void Draw(GameTime gameTime)
     {
-        spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
+        Matrix shakeMatrix = Matrix.CreateTranslation(screenShakeOffset.X, screenShakeOffset.Y, 0);
+        Matrix finalTransform = shakeMatrix * viewportAdapter.GetScaleMatrix();
+
+        spriteBatch.Begin(transformMatrix: finalTransform);
         worldScroller.Draw(spriteBatch);
         trainMap.Draw(spriteBatch);
+        enemyManager.Draw(spriteBatch);
+        projectileManager.Draw(spriteBatch);
 
         foreach (Player player in players)
         {
@@ -143,8 +442,20 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
 
     public override void UnloadContent()
     {
+        if (gameEvents != null)
+        {
+            gameEvents.OnWallBreached -= OnWallBreached;
+            gameEvents.OnWallRepaired -= OnWallRepaired;
+        }
+
+        if (gameplayContext?.State != null)
+        {
+            gameplayContext.State.OnTrainFrozen -= OnTrainFrozen;
+        }
+
+        trainMap?.Dispose();
         worldScroller?.Dispose();
-        trainSound?.Dispose();
+        projectileManager?.Clear();
         base.UnloadContent();
     }
 }

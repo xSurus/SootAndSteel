@@ -5,11 +5,11 @@ namespace Gamelab.PhysicalEntities;
 
 public interface IInteractable : IPhysicalEntity
 {
-    void OnInteract(Player interactingPlayer, TrainContext context)
+    void OnInteract(Player interactingPlayer, GameplayContext context)
     {
     }
 
-    void OnInteractHeld(Player interactingPlayer, TrainContext context, float dt)
+    void OnInteractHeld(Player interactingPlayer, GameplayContext context, float dt)
     {
     }
 }

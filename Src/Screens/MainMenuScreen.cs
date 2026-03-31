@@ -82,6 +82,5 @@ public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
     public override void Dispose()
     {
         base.Dispose();
-        menuSelectSound.Dispose();
     }
 }
