@@ -14,16 +14,16 @@ public abstract class AbstractGrabbable : AbstractPhysicalEntity, IGrabbable
 
     protected abstract bool AllowPlayerRotation { get; }
 
-    public virtual bool OnGrab(Player interactingPlayer, TrainContext trainContext, Vector2 grabPointWorldMeters)
+    public virtual bool OnGrab(Player interactingPlayer, GameplayContext gameplayContext, Vector2 grabPointWorldMeters)
     {
         if (GrabJoints.ContainsKey(interactingPlayer)) return false;
-        if (GrabJoints.Count == 0) OnFirstGrab(interactingPlayer, trainContext);
+        if (GrabJoints.Count == 0) OnFirstGrab(interactingPlayer, gameplayContext);
 
         interactingPlayer.PhysicsBody.FixedRotation = false;
         Vector2 playerLocalAnchor = interactingPlayer.PhysicsBody.GetLocalPoint(grabPointWorldMeters);
         Vector2 stationLocalAnchor = PhysicsBody.GetLocalPoint(grabPointWorldMeters);
 
-        WeldJoint joint = JointFactory.CreateWeldJoint(trainContext.Map.PhysicsWorld, interactingPlayer.PhysicsBody,
+        WeldJoint joint = JointFactory.CreateWeldJoint(gameplayContext.Map.PhysicsWorld, interactingPlayer.PhysicsBody,
             PhysicsBody, playerLocalAnchor, stationLocalAnchor);
         GrabJoints.Add(interactingPlayer, joint);
 
@@ -32,7 +32,7 @@ public abstract class AbstractGrabbable : AbstractPhysicalEntity, IGrabbable
         return true;
     }
 
-    protected virtual void OnFirstGrab(Player interactingPlayer, TrainContext trainContext)
+    protected virtual void OnFirstGrab(Player interactingPlayer, GameplayContext gameplayContext)
     {
         // make object dynamic
         PhysicsBody.BodyType = BodyType.Dynamic;
@@ -40,16 +40,16 @@ public abstract class AbstractGrabbable : AbstractPhysicalEntity, IGrabbable
         PhysicsBody.FixedRotation = false;
     }
 
-    public virtual void OnRelease(Player interactingPlayer, TrainContext trainContext)
+    public virtual void OnRelease(Player interactingPlayer, GameplayContext gameplayContext)
     {
         if (!GrabJoints.TryGetValue(interactingPlayer, out WeldJoint joint)) return;
-        trainContext.Map.PhysicsWorld.Remove(joint);
+        gameplayContext.Map.PhysicsWorld.Remove(joint);
         GrabJoints.Remove(interactingPlayer);
         interactingPlayer.PhysicsBody.FixedRotation = true;
-        if (GrabJoints.Count == 0) OnLastRelease(interactingPlayer, trainContext);
+        if (GrabJoints.Count == 0) OnLastRelease(interactingPlayer, gameplayContext);
     }
 
-    protected virtual void OnLastRelease(Player interactingPlayer, TrainContext trainContext)
+    protected virtual void OnLastRelease(Player interactingPlayer, GameplayContext gameplayContext)
     {
         PhysicsBody.BodyType = BodyType.Static;
     }

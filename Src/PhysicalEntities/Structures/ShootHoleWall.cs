@@ -1,6 +1,9 @@
+using System;
 using Gamelab.Assets;
 using Gamelab.Entities;
+using Gamelab.Events;
 using Gamelab.Map.Train.State;
+using Gamelab.PhysicalEntities.Projectiles;
 using Gamelab.Players;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
@@ -17,11 +20,16 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
     public bool IsBroken => CurrentHealth <= 0f;
 
     private readonly Vector2 dimensionsPixels;
+    private readonly GameEvents gameEvents;
 
-    public ShootHoleWall(Vector2 dimensionsPixels)
+    public ShootHoleWall(World physicsWorld, GameEvents gameEvents, Vector2 dimensionsPixels, Vector2 positionPixels)
     {
         this.dimensionsPixels = dimensionsPixels;
+        this.gameEvents = gameEvents;
         CurrentHealth = MaxHealth;
+        PhysicsBody = physicsWorld.CreateRectangle(dimensionsPixels.X.ToMeters(), dimensionsPixels.Y.ToMeters(), 1f,
+            positionPixels.ToMeters(), 0f, BodyType.Static);
+        PhysicsBody.Tag = this;
     }
 
     public void AttachPhysics(Body body)
@@ -33,34 +41,59 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
     public void TakeDamage(float damageAmount)
     {
         if (IsBroken) return;
-
-        CurrentHealth -= damageAmount;
+        bool wasBroken = IsBroken;
+        CurrentHealth = Math.Max(0f, CurrentHealth - damageAmount);
+        if (!wasBroken && IsBroken) gameEvents.FireWallBreached();
     }
 
-    public void OnPickup(Player interactingPlayer, TrainContext context)
+    public void OnHit(AbstractProjectile projectile)
+    {
+        if (projectile is not EnemyProjectile || IsBroken)
+        {
+            return;
+        }
+
+        bool wasBroken = IsBroken;
+        TakeDamage(projectile.Damage);
+
+        if (!wasBroken && IsBroken && gameEvents != null)
+        {
+            gameEvents.FireWallBreached();
+        }
+
+        projectile.Deactivate();
+    }
+
+    public void OnPickup(Player interactingPlayer, GameplayContext context)
     {
         // TODO Only for debugging until damage from enemies is implemented
         TakeDamage(10);
     }
 
-    public void OnInteractHeld(Player interactingPlayer, TrainContext context, float dt)
+    public void OnInteractHeld(Player interactingPlayer, GameplayContext context, float dt)
     {
         if (CurrentHealth >= MaxHealth) return;
 
+        float previousHealth = CurrentHealth;
         CurrentHealth += HealthRestoredPerSecond * dt;
 
         if (CurrentHealth >= MaxHealth)
         {
             CurrentHealth = MaxHealth;
+            if (previousHealth < MaxHealth) gameEvents.FireWallRepaired();
         }
     }
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        Vector2 centerPixels = PhysicsBody.Position.ToPixels();
-        Vector2 topLeft = centerPixels - (dimensionsPixels / 2f);
-        Rectangle rect = new Rectangle((int)topLeft.X, (int)topLeft.Y, (int)dimensionsPixels.X,
-            (int)dimensionsPixels.Y);
+        Vector2 topLeft = Position - (dimensionsPixels / 2f);
+
+        Rectangle rect = new Rectangle(
+            (int)topLeft.X,
+            (int)topLeft.Y,
+            (int)dimensionsPixels.X,
+            (int)dimensionsPixels.Y
+        );
         Color wallColor = IsBroken ? Color.DarkRed : Color.DarkSlateGray;
         spriteBatch.Draw(AssetManager.BlankTexture, rect, wallColor);
 

@@ -5,11 +5,11 @@ namespace Gamelab.PhysicalEntities;
 
 public interface IPickable : IPhysicalEntity
 {
-    void OnPickup(Player interactingPlayer, TrainContext trainContext)
+    void OnPickup(Player interactingPlayer, GameplayContext gameplayContext)
     {
     }
 
-    void OnPickupHeld(Player interactingPlayer, TrainContext trainContext, float dt)
+    void OnPickupHeld(Player interactingPlayer, GameplayContext gameplayContext, float dt)
     {
     }
 }

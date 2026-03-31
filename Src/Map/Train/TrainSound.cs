@@ -1,4 +1,5 @@
 ﻿using System;
+using Gamelab.Map.Train.State;
 using Gamelab.Services.Sound;
 using Gamelab.Utils.Logging;
 using Microsoft.Xna.Framework;
@@ -6,7 +7,7 @@ using Microsoft.Xna.Framework;
 
 namespace Gamelab.Map.Train;
 
-public class TrainSound(ISoundService soundService) : IDisposable
+public class TrainSound(ISoundService soundService, GameplayContext gameplayContext) : IDisposable
 {
     private readonly SoundHandle chug = soundService.RegisterSound("train_chug");
     private readonly SoundHandle ga = soundService.RegisterSound("train_ga");
@@ -14,16 +15,17 @@ public class TrainSound(ISoundService soundService) : IDisposable
     private readonly double strokeInterval = 50;
     private double timer;
     private int currentStroke;
+    private readonly GameplayContext gameplayContext = gameplayContext;
 
-    public void Update(GameTime gameTime, float speed)
+    public void Update(GameTime gameTime)
     {
-        timer += gameTime.ElapsedGameTime.TotalSeconds * speed;
+        timer += gameTime.ElapsedGameTime.TotalSeconds * gameplayContext.State.actualSpeed;
 
         if (timer > strokeInterval)
         {
             timer = 0;
             
-            float pitch = Math.Clamp((speed - 150) / 1600, -0.1f, 0.2f) +
+            float pitch = Math.Clamp((gameplayContext.State.actualSpeed - 150) / 1600, -0.1f, 0.2f) +
                           ((float)random.NextDouble() * 0.05f - 0.025f);
             float volume = 1f - currentStroke / 8f;
             

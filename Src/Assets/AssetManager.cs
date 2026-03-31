@@ -8,6 +8,7 @@ public static class AssetManager
     public static Texture2D BlankTexture { get; private set; }
     public static Texture2D PlayerTexture { get; private set; }
     public static Texture2D TileTexture { get; private set; }
+    public static Texture2D EnemyTexture { get; private set; }
 
     public static void LoadContent(GraphicsDevice graphicsDevice)
     {
@@ -41,6 +42,24 @@ public static class AssetManager
         }
 
         PlayerTexture.SetData(data);
+        
+        // enemy texture (square with darker center)
+        int enemyTextureSize = 64;
+        EnemyTexture = new Texture2D(graphicsDevice, enemyTextureSize, enemyTextureSize);
+        Color[] enemyData = new Color[enemyTextureSize * enemyTextureSize];
+        
+        for (int y = 0; y < enemyTextureSize; y++)
+        {
+            for (int x = 0; x < enemyTextureSize; x++)
+            {
+                int border = 4;
+                bool isBorder = x < border || x >= enemyTextureSize - border || 
+                               y < border || y >= enemyTextureSize - border;
+                enemyData[y * enemyTextureSize + x] = isBorder ? Color.DarkRed : Color.White;
+            }
+        }
+        
+        EnemyTexture.SetData(enemyData);
     }
 
     private static void LoadTileTexture(GraphicsDevice graphicsDevice)
@@ -69,5 +88,8 @@ public static class AssetManager
 
         TileTexture?.Dispose();
         TileTexture = null;
+        
+        EnemyTexture?.Dispose();
+        EnemyTexture = null;
     }
 }

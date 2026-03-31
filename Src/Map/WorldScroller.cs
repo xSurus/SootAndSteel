@@ -1,3 +1,4 @@
+using Gamelab.Map.Train.State;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -5,16 +6,15 @@ namespace Gamelab.Map;
 
 public class WorldScroller
 {
-    public float TrainSpeed { get; set; }
+    private GameplayContext gameplayContext;
     private float scrollOffset;
     private Texture2D backgroundTexture;
-    private readonly int screenWidth;
-    private readonly int screenHeight;
+    private int ScreenWidth => gameplayContext.ScreenWidth;
+    private int ScreenHeight => gameplayContext.ScreenHeight;
 
-    public WorldScroller(GraphicsDevice graphicsDevice, int screenWidth, int screenHeight)
+    public WorldScroller(GraphicsDevice graphicsDevice, GameplayContext gameplayContext)
     {
-        this.screenWidth = screenWidth;
-        this.screenHeight = screenHeight;
+        this.gameplayContext = gameplayContext;
         CreateBackgroundTexture(graphicsDevice);
     }
 
@@ -22,7 +22,7 @@ public class WorldScroller
     {
         var config = GamelabGame.Instance.GameplayConfig;
         int textureWidth = config.WorldScrollerPatternWidthPixels;
-        int textureHeight = screenHeight;
+        int textureHeight = ScreenHeight;
         backgroundTexture = new Texture2D(graphicsDevice, textureWidth, textureHeight);
         Color[] data = new Color[textureWidth * textureHeight];
         Color baseColor = new Color(config.WorldScrollerBaseColorR, config.WorldScrollerBaseColorG,
@@ -51,7 +51,7 @@ public class WorldScroller
 
     public void Update(float deltaTime)
     {
-        scrollOffset -= TrainSpeed * deltaTime;
+        scrollOffset -= gameplayContext.State.actualSpeed * deltaTime;
         if (scrollOffset <= -backgroundTexture.Width)
         {
             scrollOffset += backgroundTexture.Width;
@@ -60,7 +60,7 @@ public class WorldScroller
 
     public void Draw(SpriteBatch spriteBatch)
     {
-        int numCopies = (screenWidth / backgroundTexture.Width) + 3;
+        int numCopies = (ScreenWidth / backgroundTexture.Width) + 3;
         for (int i = -1; i < numCopies; i++)
         {
             float xPos = scrollOffset + (i * backgroundTexture.Width);

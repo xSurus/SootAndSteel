@@ -20,6 +20,9 @@
 #begin Data/gameplay.json
 /copy:Data/gameplay.json
 
+#begin Data/levels/level1.json
+/copy:Data/levels/level1.json
+
 #begin music/tmp_ambient.mp3
 /importer:Mp3Importer
 /processor:SongProcessor

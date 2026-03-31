@@ -3,6 +3,7 @@ using Gamelab.Assets;
 using Gamelab.Items;
 using Gamelab.Map.Train.State;
 using Gamelab.PhysicalEntities;
+using Gamelab.PhysicalEntities.Stations;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -14,11 +15,10 @@ namespace Gamelab.Players;
 public class Player : AbstractPhysicalEntity
 {
     public PlayerConfiguration PlayerConfiguration { get; private set; }
-    public Vector2 Position => PhysicsBody.Position.ToPixels();
     public Item HeldItem { get; set; }
     public IGrabbable GrabbedObject { get; private set; }
 
-    private readonly TrainContext trainContext;
+    private readonly GameplayContext gameplayContext;
 
     public Vector2 LookDirection => new((float)Math.Cos(PhysicsBody.Rotation), (float)Math.Sin(PhysicsBody.Rotation));
 
@@ -37,10 +37,10 @@ public class Player : AbstractPhysicalEntity
     private float LinearDampening => GamelabGame.Instance.GameplayConfig.PlayerLinearDamping;
     private float PlayerForceMultiplier => GamelabGame.Instance.GameplayConfig.PlayerForceMultiplier;
 
-    public Player(World world, Vector2 startPosition, PlayerConfiguration playerConfig, TrainContext context)
+    public Player(World world, Vector2 startPosition, PlayerConfiguration playerConfig, GameplayContext context)
     {
         PlayerConfiguration = playerConfig;
-        trainContext = context;
+        gameplayContext = context;
         PhysicsBody = world.CreateCircle(Radius.ToMeters(), Density, startPosition.ToMeters(), BodyType.Dynamic);
         PhysicsBody.LinearDamping = LinearDampening;
         PhysicsBody.FixedRotation = true;
@@ -51,15 +51,29 @@ public class Player : AbstractPhysicalEntity
     {
         Vector2 movement = PlayerConfiguration.Input.GetMovement();
 
+        // Players get slower as the train gets colder.
+        // In Hub mode, trainContext is null -> no slowdown.
+        // TODO: fix/improve this
+        float maxTemperature = GamelabGame.Instance.GameplayConfig.TrainMaxTemperature;
+        float temperatureRatio = gameplayContext == null || maxTemperature <= 0f
+            ? 0f
+            : gameplayContext.State.Temperature / maxTemperature;
+        // Temperature starts at max (warm) and drops to 0 (cold):
+        // warm -> fast (scale ~ 1), cold -> slow (scale ~ 0)
+        float speedScale = Math.Clamp(temperatureRatio, 0f, 1f);
+
+        float effectiveMaxVelocity = MaxVelocity * speedScale;
+
         if (GrabbedObject == null)
         {
             if (movement != Vector2.Zero) PhysicsBody.Rotation = (float)Math.Atan2(movement.Y, movement.X);
-            Vector2 targetVelocity = movement * MaxVelocity;
+            Vector2 targetVelocity = movement * effectiveMaxVelocity;
             PhysicsBody.LinearVelocity = Vector2.Lerp(PhysicsBody.LinearVelocity, targetVelocity, LerpFactor);
         }
         else if (movement != Vector2.Zero)
         {
-            PhysicsBody.ApplyForce(movement * 100);
+            // When carrying something, apply a scaled force so "movement speed" still feels slower.
+            PhysicsBody.ApplyForce(movement * 100f * speedScale);
         }
 
         if (TryGrab()) return;
@@ -77,7 +91,7 @@ public class Player : AbstractPhysicalEntity
             Vector2 grabPointWorldMeters = PhysicsBody.Position + (LookDirection * reachInMeters);
             if (target is IGrabbable grabbable)
             {
-                if (grabbable.OnGrab(this, trainContext, grabPointWorldMeters))
+                if (grabbable.OnGrab(this, gameplayContext, grabPointWorldMeters))
                 {
                     GrabbedObject = grabbable;
                     return true;
@@ -86,7 +100,7 @@ public class Player : AbstractPhysicalEntity
         }
         else if (!PlayerConfiguration.Input.IsGrabHeld() && GrabbedObject != null)
         {
-            GrabbedObject.OnRelease(this, trainContext);
+            GrabbedObject.OnRelease(this, gameplayContext);
             GrabbedObject = null;
             return true;
         }
@@ -100,12 +114,12 @@ public class Player : AbstractPhysicalEntity
         if (target == null || !(target is IInteractable interactable)) return false;
         if (PlayerConfiguration.Input.IsInteractJustPressed())
         {
-            interactable.OnInteract(this, trainContext);
+            interactable.OnInteract(this, gameplayContext);
             return true;
         }
         else if (PlayerConfiguration.Input.IsInteractHeld())
         {
-            interactable.OnInteractHeld(this, trainContext, dt);
+            interactable.OnInteractHeld(this, gameplayContext, dt);
             return true;
         }
 
@@ -118,11 +132,11 @@ public class Player : AbstractPhysicalEntity
         if (target == null || !(target is IPickable pickable)) return false;
         if (PlayerConfiguration.Input.IsPickupJustPressed())
         {
-            pickable.OnPickup(this, trainContext);
+            pickable.OnPickup(this, gameplayContext);
         }
         else if (PlayerConfiguration.Input.IsPickupHeld())
         {
-            pickable.OnPickupHeld(this, trainContext, dt);
+            pickable.OnPickupHeld(this, gameplayContext, dt);
             return true;
         }
 
@@ -136,7 +150,7 @@ public class Player : AbstractPhysicalEntity
         Vector2 targetPoint = startPoint + (LookDirection * reachInMeters);
 
         IPhysicalEntity closestEntity = null;
-        trainContext.Map.PhysicsWorld.RayCast((fixture, point, normal, fraction) =>
+        PhysicsBody.World.RayCast((fixture, point, normal, fraction) =>
         {
             if (fixture.Body == PhysicsBody) return -1;
             if (fixture.Body.Tag is IPhysicalEntity physicalEntity)
