@@ -66,7 +66,6 @@ public static class ParticleFactory
         var emitter = new ParticleEmitter(100, AssetManager.SparkTexture, random)
         {
             Position = position,
-
             AutoTrigger = false,
             Profile = new CircleProfile(radius: 5f, onlyRing: false, radiateOutward: true),
             Parameters = new ParticleReleaseParameters

@@ -13,7 +13,7 @@ public class ParticleEmitter
     public Texture2D Texture { get; set; }
 
     public bool AutoTrigger { get; set; }
-    public bool AwaitsDeletion { get; set; } = false;
+    public bool ShouldRemove { get; set; } = false;
     public float AutoTriggerFrequency { get; set; }
     private float triggerTimer;
 
@@ -63,7 +63,7 @@ public class ParticleEmitter
 
     public void Update(float dt)
     {
-        if (AutoTrigger && !AwaitsDeletion)
+        if (AutoTrigger && !ShouldRemove)
         {
             triggerTimer += dt;
             while (triggerTimer >= AutoTriggerFrequency)

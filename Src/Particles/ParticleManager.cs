@@ -7,14 +7,14 @@ public class ParticleManager
 {
     private readonly List<ParticleEmitter> emitters = [];
 
-    public void AddEmitter(ParticleEmitter effect)
+    public void AddEmitter(ParticleEmitter emitter)
     {
-        emitters.Add(effect);
+        emitters.Add(emitter);
     }
 
-    public void RemoveEmitter(ParticleEmitter effect)
+    public void RemoveEmitter(ParticleEmitter emitter)
     {
-        emitters.Remove(effect);
+        emitters.Remove(emitter);
     }
 
     public void Update(float dt)
@@ -22,7 +22,7 @@ public class ParticleManager
         for (int i = emitters.Count - 1; i >= 0; i--)
         {
             emitters[i].Update(dt);
-            if (emitters[i].AwaitsDeletion && emitters[i].activeParticles == 0)
+            if (emitters[i].ShouldRemove && emitters[i].activeParticles == 0)
             {
                 emitters.RemoveAt(i);
             }

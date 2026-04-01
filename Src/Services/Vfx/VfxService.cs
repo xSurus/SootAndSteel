@@ -16,6 +16,7 @@ public class VfxService : IVfxService, IGameSystem
     public void EmitBurst(ParticleEmitter emitter)
     {
         emitter.Emit();
+        emitter.ShouldRemove = true;
         particleManager.AddEmitter(emitter);
     }
 

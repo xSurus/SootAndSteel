@@ -3,6 +3,7 @@ using Gamelab.Particles;
 using Gamelab.Services.Vfx;
 using Microsoft.Xna.Framework;
 using nkast.Aether.Physics2D.Dynamics;
+
 // <-- Add the namespace for your new service
 
 namespace Gamelab.PhysicalEntities.Projectiles;
@@ -36,6 +37,6 @@ public class CannonProjectile : AbstractProjectile
     {
         base.Deactivate();
         trailEmitter.AutoTrigger = false;
-        trailEmitter.AwaitsDeletion = true;
+        trailEmitter.ShouldRemove = true;
     }
 }
