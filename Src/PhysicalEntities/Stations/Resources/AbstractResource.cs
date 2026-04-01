@@ -1,5 +1,4 @@
 using Gamelab.Items;
-using Gamelab.Map.Train.State;
 using Gamelab.Players;
 using Microsoft.Xna.Framework;
 
@@ -9,13 +8,12 @@ public abstract class AbstractResource(
     string stationType,
     Color stationColor,
     string resourceId,
-    Vector2 position,
-    GameplayContext gameplayContext)
-    : AbstractStation(stationType, stationColor, position, gameplayContext)
+    Vector2 position)
+    : AbstractStation(stationType, stationColor, position)
 {
     protected string ResourceId { get; } = resourceId;
 
-    public override void OnPickup(Player interactingPlayer, GameplayContext gameplayContext)
+    public override void OnPickup(Player interactingPlayer)
     {
         if (interactingPlayer.HeldItem == null)
         {

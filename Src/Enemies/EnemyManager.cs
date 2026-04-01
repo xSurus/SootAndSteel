@@ -1,14 +1,10 @@
 using System;
 using System.Collections.Generic;
-using Gamelab.Config;
-using Gamelab.Events;
 using Gamelab.Levels;
-using Gamelab.Map.Train;
 using Gamelab.Map.Train.State;
 using Gamelab.PhysicalEntities.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using nkast.Aether.Physics2D.Dynamics;
 
 namespace Gamelab.Enemies;
 
@@ -18,7 +14,7 @@ public class EnemyManager
     private readonly Random random;
     private readonly EnemySlotManager slotManager;
     private readonly LevelDefinition levelDefinition;
-    private readonly GameplayContext gameplayContext;
+    private readonly GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
 
     private float timeSinceLastSpawn;
     private float currentSpawnInterval;
@@ -30,20 +26,19 @@ public class EnemyManager
     private float EnemySize => GamelabGame.Instance.GameplayConfig.EnemySize;
     private float ShooterPreferredDistance => GamelabGame.Instance.GameplayConfig.ShooterPreferredDistance;
     private readonly ProjectileManager projectileManager;
-    
+
     public IReadOnlyList<AbstractEnemy> Enemies => enemies;
-    
-    public EnemyManager(GameplayContext gameplayContext, Random random, LevelDefinition levelDef, ProjectileManager projectileManager)
+
+    public EnemyManager(Random random, LevelDefinition levelDef, ProjectileManager projectileManager)
     {
         this.currentSpawnInterval = GamelabGame.Instance.GameplayConfig.EnemySpawnIntervalBase;
         this.levelDefinition = levelDef;
-        this.gameplayContext = gameplayContext;
         this.random = random;
         this.slotManager = new EnemySlotManager(random);
         this.projectileManager = projectileManager;
         gameplayContext.Events.OnCannonProjectileFired += AddCannonProjectile;
     }
-    
+
     public void Update(float deltaTime)
     {
         if (levelDefinition != null)
@@ -70,17 +65,17 @@ public class EnemyManager
                 currentSpawnInterval = nextInterval;
             }
         }
-        
+
         UpdateEnemies(deltaTime);
     }
-    
+
     private void UpdateEnemies(float deltaTime)
     {
         for (int i = enemies.Count - 1; i >= 0; i--)
         {
             AbstractEnemy enemy = enemies[i];
             enemy.Update(deltaTime);
-            
+
             if (enemy is ShooterEnemy shooter)
             {
                 EnemyProjectile projectile = shooter.TryShoot();
@@ -89,7 +84,7 @@ public class EnemyManager
                     projectileManager.Add(projectile);
                 }
             }
-            
+
             if (!enemy.IsAlive || enemy.ShouldRemove)
             {
                 ReleaseSlot(enemy);
@@ -98,7 +93,7 @@ public class EnemyManager
             }
         }
     }
-    
+
     private void AddCannonProjectile(CannonProjectile projectile)
     {
         projectileManager.Add(projectile);
@@ -158,15 +153,15 @@ public class EnemyManager
             }
         }
     }
-    
+
     private Vector2 GetShooterSpawnPosition(EnemyTrainSlot slot)
     {
         float spawnX = gameplayContext.ScreenWidth + EnemySpawnOffsetX;
-        Vector2 anchor = slot.GetAnchor( gameplayContext, EnemySize + ShooterPreferredDistance);
+        Vector2 anchor = slot.GetAnchor(gameplayContext, EnemySize + ShooterPreferredDistance);
 
         return new Vector2(spawnX, anchor.Y);
     }
-    
+
     private Vector2 GetThiefSpawnPosition(EnemyTrainSlot slot)
     {
         return slot.Side switch
@@ -182,7 +177,7 @@ public class EnemyManager
             _ => new Vector2(gameplayContext.Map.GetBounds().Center.X, -EnemySpawnOffsetX)
         };
     }
-    
+
     public void Draw(SpriteBatch spriteBatch)
     {
         foreach (AbstractEnemy enemy in enemies)
@@ -190,7 +185,7 @@ public class EnemyManager
             enemy.Draw(spriteBatch);
         }
     }
-    
+
     public void Clear()
     {
         foreach (AbstractEnemy enemy in enemies)

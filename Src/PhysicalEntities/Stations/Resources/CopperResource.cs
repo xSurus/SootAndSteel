@@ -1,8 +1,6 @@
-using Gamelab.Map.Train.State;
-using Gamelab.PhysicalEntities.Stations.Resources;
 using Microsoft.Xna.Framework;
 
 namespace Gamelab.PhysicalEntities.Stations.Resources;
 
-public class CopperResource(Vector2 position, GameplayContext gameplayContext)
-    : AbstractResource("CopperResource", Color.Orange, "Copper", position, gameplayContext);
+public class CopperResource(Vector2 position)
+    : AbstractResource("CopperResource", Color.Orange, "Copper", position);

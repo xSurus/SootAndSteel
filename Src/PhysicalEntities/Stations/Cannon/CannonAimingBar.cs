@@ -1,7 +1,5 @@
 using Gamelab.Assets;
-using Gamelab.Map.Train.State;
 using Gamelab.Players;
-using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using nkast.Aether.Physics2D.Dynamics;
@@ -13,10 +11,10 @@ public class CannonAimingBar : AbstractGrabbable
 {
     protected override bool AllowPlayerRotation { get; } = true;
 
-    public CannonAimingBar(Body cannonBaseBody, Vector2 anchorMeters, GameplayContext gameplayContext)
+    public CannonAimingBar(Body cannonBaseBody, Vector2 anchorMeters)
     {
         // TODO only example asset
-        PhysicsBody = gameplayContext.Map.PhysicsWorld.CreateRectangle(1.5f, 0.3f, 1f, anchorMeters, 0f, BodyType.Dynamic);
+        PhysicsBody = gameplayContext.PhysicsWorld.CreateRectangle(1.5f, 0.3f, 1f, anchorMeters, 0f, BodyType.Dynamic);
         PhysicsBody.Tag = this;
         PhysicsBody.LinearDamping = GamelabGame.Instance.GameplayConfig.GrabbableLinearDamping;
 
@@ -25,7 +23,7 @@ public class CannonAimingBar : AbstractGrabbable
             fixture.IsSensor = true;
         }
 
-        RevoluteJoint joint = JointFactory.CreateRevoluteJoint(gameplayContext.Map.PhysicsWorld, cannonBaseBody,
+        RevoluteJoint joint = JointFactory.CreateRevoluteJoint(gameplayContext.PhysicsWorld, cannonBaseBody,
             PhysicsBody, Vector2.Zero);
         joint.MotorEnabled = true;
         joint.MotorSpeed = 0f;
@@ -59,7 +57,7 @@ public class CannonAimingBar : AbstractGrabbable
         );
     }
 
-    protected override void OnLastRelease(Player interactingPlayer, GameplayContext gameplayContext)
+    protected override void OnLastRelease(Player interactingPlayer)
     {
         PhysicsBody.BodyType = BodyType.Dynamic;
     }

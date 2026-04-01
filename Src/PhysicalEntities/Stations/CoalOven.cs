@@ -2,7 +2,6 @@ using System;
 using Gamelab.Assets;
 using Gamelab.Map.Train.State;
 using Gamelab.Players;
-using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -16,14 +15,14 @@ public class CoalOven : AbstractStation
     private float RefuelAmount => GamelabGame.Instance.GameplayConfig.CoalOvenRefuelAmount;
     private float LowFuelThreshold => GamelabGame.Instance.GameplayConfig.CoalOvenLowFuelThreshold;
 
-    public CoalOven(Vector2 position, GameplayContext gameplayContext)
-        : base("CoalOven", Color.DarkRed, position, gameplayContext)
+    public CoalOven(Vector2 position)
+        : base("CoalOven", Color.DarkRed, position)
     {
         maxFuel = GamelabGame.Instance.GameplayConfig.CoalOvenMaxFuel;
         currentFuel = maxFuel;
     }
 
-    public override void Update(float dt, GameplayContext gameplayContext)
+    public override void Update(float dt)
     {
         if (currentFuel > 0)
         {
@@ -38,7 +37,7 @@ public class CoalOven : AbstractStation
         }
     }
 
-    public override void OnPickup(Player interactingPlayer, GameplayContext gameplayContext)
+    public override void OnPickup(Player interactingPlayer)
     {
         if (interactingPlayer.HeldItem != null && interactingPlayer.HeldItem.Id == "Coal")
         {

@@ -13,6 +13,7 @@ public class ParticleEmitter
     public Texture2D Texture { get; set; }
 
     public bool AutoTrigger { get; set; }
+    public bool AwaitsDeletion { get; set; } = false;
     public float AutoTriggerFrequency { get; set; }
     private float triggerTimer;
 
@@ -21,7 +22,7 @@ public class ParticleEmitter
     public List<IParticleModifier> Modifiers { get; } = new();
 
     private readonly Particle[] particles;
-    private int activeParticles = 0;
+    public int activeParticles = 0;
     private readonly Random random;
     private Vector2 origin;
 
@@ -62,7 +63,7 @@ public class ParticleEmitter
 
     public void Update(float dt)
     {
-        if (AutoTrigger)
+        if (AutoTrigger && !AwaitsDeletion)
         {
             triggerTimer += dt;
             while (triggerTimer >= AutoTriggerFrequency)

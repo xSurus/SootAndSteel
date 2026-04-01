@@ -9,6 +9,7 @@ using Gamelab.Players;
 using Gamelab.Screens;
 using Gamelab.Services.Music;
 using Gamelab.Services.Sound;
+using Gamelab.Services.Vfx;
 using Gamelab.Systems;
 using Gamelab.Utils;
 using Gamelab.Utils.Logging;
@@ -87,10 +88,13 @@ public class GamelabGame : Game
 
         IGameSystem soundService = new SoundService();
         IGameSystem musicService = new MusicService();
+        VfxService vfxService = new VfxService();
         Services.AddService((ISoundService)soundService);
         Services.AddService((IMusicService)musicService);
+        Services.AddService<IVfxService>(vfxService);
         systemManager.Add(soundService);
         systemManager.Add(musicService);
+        systemManager.Add(vfxService);
     }
 
     protected override void Initialize()

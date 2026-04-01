@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Gamelab.Enemies;
-using Gamelab.Events;
 using Gamelab.Input;
 using Gamelab.Levels;
 using Gamelab.Map;
@@ -16,25 +15,23 @@ using Gamelab.PhysicalEntities.Stations.Workbenches;
 using Gamelab.Players;
 using Gamelab.Services.Music;
 using Gamelab.Services.Sound;
+using Gamelab.Services.Vfx;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Myra.Graphics2D;
 using Myra.Graphics2D.Brushes;
 using Myra.Graphics2D.UI;
-using nkast.Aether.Physics2D.Dynamics;
 
 namespace Gamelab.Screens;
 
 public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
 {
     private List<Player> players;
-    private World world;
     private TrainMap trainMap;
     private WorldScroller worldScroller;
     private GameplayContext gameplayContext;
     private TrainSound trainSound;
     private EnemyManager enemyManager;
-    private GameEvents gameEvents;
     private LevelManager levelManager;
     private SoundHandle menuSelectSound;
     private LevelDefinition currentLevelDef;
@@ -48,7 +45,6 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     private Panel pauseOverlay;
     private Label continueLabel;
     private Label exitLabel;
-    private ParticleManager particleManager;
 
     private float screenShakeTimer;
     private float screenShakeIntensity;
@@ -62,46 +58,43 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     public override void LoadContent()
     {
         base.LoadContent();
-        world = new World(Vector2.Zero);
-
+        gameplayContext = new GameplayContext(virtualScreenSize);
+        Services.AddService(gameplayContext);
         currentLevelDef = LevelLoader.Load(Game.CurrentLevel);
+        trainMap = new TrainMap(GraphicsDevice);
+        gameplayContext.Map = trainMap;
         menuSelectSound = Services.GetService<ISoundService>().RegisterSound("menu_stab", 4);
-        gameEvents = new GameEvents();
-        trainMap = new TrainMap(GraphicsDevice, world, gameEvents, virtualScreenSize);
-        gameplayContext = new GameplayContext(trainMap, new TrainState(), gameEvents, virtualScreenSize);
-        trainSound = new TrainSound(Services.GetService<ISoundService>(), gameplayContext);
-        particleManager = new ParticleManager();
-        particleManager.AddEmitter(ParticleFactory.CreateSnowstorm(gameplayContext, random));
+        trainSound = new TrainSound(Services.GetService<ISoundService>());
+        Services.GetService<IVfxService>().AddContinuous(ParticleFactory.CreateSnowstorm(random));
 
-        trainMap.MapObjects.Add(new CoalResource(trainMap.GetTileCenterPixels(0, 2), gameplayContext));
-        trainMap.MapObjects.Add(new CoalOven(trainMap.GetTileCenterPixels(7, 2), gameplayContext));
-        trainMap.MapObjects.Add(new SpeedLever(trainMap.GetTileCenterPixels(7, 3), gameplayContext));
-        trainMap.MapObjects.Add(new CannonStation(trainMap.GetTileCenterPixels(5, 2), gameplayContext));
+        trainMap.MapObjects.Add(new CoalResource(trainMap.GetTileCenterPixels(0, 2)));
+        trainMap.MapObjects.Add(new CoalOven(trainMap.GetTileCenterPixels(7, 2)));
+        trainMap.MapObjects.Add(new SpeedLever(trainMap.GetTileCenterPixels(7, 3)));
+        trainMap.MapObjects.Add(new CannonStation(trainMap.GetTileCenterPixels(5, 2)));
 
         // Two left-side work zones: top-left and bottom-left, each with an anvil.
-        trainMap.MapObjects.Add(new CopperResource(trainMap.GetTileCenterPixels(2, 0), gameplayContext));
-        trainMap.MapObjects.Add(new GunpowderResource(trainMap.GetTileCenterPixels(2, 4), gameplayContext));
-        trainMap.MapObjects.Add(new Anvil(trainMap.GetTileCenterPixels(1, 0), gameplayContext)); // top-left crafting
-        trainMap.MapObjects.Add(new Anvil(trainMap.GetTileCenterPixels(1, 4), gameplayContext)); // bottom-left crafting
-        trainMap.MapObjects.Add(new Counter(trainMap.GetTileCenterPixels(0, 0), gameplayContext));
-        trainMap.MapObjects.Add(new Counter(trainMap.GetTileCenterPixels(3, 0), gameplayContext));
-        trainMap.MapObjects.Add(new Counter(trainMap.GetTileCenterPixels(0, 4), gameplayContext));
-        trainMap.MapObjects.Add(new Counter(trainMap.GetTileCenterPixels(3, 4), gameplayContext));
+        trainMap.MapObjects.Add(new CopperResource(trainMap.GetTileCenterPixels(2, 0)));
+        trainMap.MapObjects.Add(new GunpowderResource(trainMap.GetTileCenterPixels(2, 4)));
+        trainMap.MapObjects.Add(new Anvil(trainMap.GetTileCenterPixels(1, 0))); // top-left crafting
+        trainMap.MapObjects.Add(new Anvil(trainMap.GetTileCenterPixels(1, 4))); // bottom-left crafting
+        trainMap.MapObjects.Add(new Counter(trainMap.GetTileCenterPixels(0, 0)));
+        trainMap.MapObjects.Add(new Counter(trainMap.GetTileCenterPixels(3, 0)));
+        trainMap.MapObjects.Add(new Counter(trainMap.GetTileCenterPixels(0, 4)));
+        trainMap.MapObjects.Add(new Counter(trainMap.GetTileCenterPixels(3, 4)));
 
-        worldScroller = new WorldScroller(GraphicsDevice, gameplayContext);
+        worldScroller = new WorldScroller(GraphicsDevice);
         projectileManager = new ProjectileManager();
-        enemyManager = new EnemyManager(gameplayContext, random, currentLevelDef, projectileManager);
+        enemyManager = new EnemyManager(random, currentLevelDef, projectileManager);
         levelManager = new LevelManager(currentLevelDef);
 
-        gameEvents.OnWallBreached += OnWallBreached;
-        gameEvents.OnWallRepaired += OnWallRepaired;
+        gameplayContext.Events.OnWallBreached += OnWallBreached;
+        gameplayContext.Events.OnWallRepaired += OnWallRepaired;
         gameplayContext.State.OnTrainFrozen += OnTrainFrozen;
 
         players = [];
         foreach (var playerConfig in Game.playerManager.Configs)
         {
-            players.Add(new Player(world, trainMap.GetTileCenterPixels(playerConfig.PlayerIndex, 1), playerConfig,
-                gameplayContext));
+            players.Add(new Player(trainMap.GetTileCenterPixels(playerConfig.PlayerIndex, 1), playerConfig));
         }
 
         // Initialize Myra UI
@@ -278,7 +271,6 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         worldScroller.Update(dt);
         enemyManager.Update(dt);
         projectileManager.Update(dt);
-        particleManager.Update(dt);
 
         accumulator += Math.Min(dt, Game.GameplayConfig.MaxAccumulatedDeltaSeconds);
         while (accumulator >= Game.GameplayConfig.FixedTimeStep)
@@ -298,8 +290,8 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
                 return;
             }
 
-            trainMap.Update(Game.GameplayConfig.FixedTimeStep, gameplayContext);
-            world.Step(Game.GameplayConfig.FixedTimeStep);
+            trainMap.Update(Game.GameplayConfig.FixedTimeStep);
+            gameplayContext.PhysicsWorld.Step(Game.GameplayConfig.FixedTimeStep);
             accumulator -= Game.GameplayConfig.FixedTimeStep;
         }
 
@@ -432,7 +424,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
             player.Draw(spriteBatch);
         }
 
-        particleManager.Draw(spriteBatch);
+        Services.GetService<IVfxService>().Render(spriteBatch);
         spriteBatch.End();
 
         spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
@@ -444,10 +436,10 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
 
     public override void UnloadContent()
     {
-        if (gameEvents != null)
+        if (gameplayContext.Events != null)
         {
-            gameEvents.OnWallBreached -= OnWallBreached;
-            gameEvents.OnWallRepaired -= OnWallRepaired;
+            gameplayContext.Events.OnWallBreached -= OnWallBreached;
+            gameplayContext.Events.OnWallRepaired -= OnWallRepaired;
         }
 
         if (gameplayContext?.State != null)
@@ -455,6 +447,8 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
             gameplayContext.State.OnTrainFrozen -= OnTrainFrozen;
         }
 
+        Game.Services.RemoveService(typeof(GameplayContext));
+        Services.GetService<IVfxService>().ClearAll();
         trainMap?.Dispose();
         worldScroller?.Dispose();
         projectileManager?.Clear();

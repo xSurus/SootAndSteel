@@ -1,13 +1,11 @@
 using Gamelab.Items.Crafting;
-using Gamelab.Map.Train.State;
-using Gamelab.PhysicalEntities.Stations.Workbenches;
 using Microsoft.Xna.Framework;
 
 namespace Gamelab.PhysicalEntities.Stations.Workbenches;
 
 public class Anvil : AbstractWorkbench
 {
-    public Anvil(Vector2 position, GameplayContext gameplayContext) : base("Anvil", Color.DarkSlateGray,  position, gameplayContext)
+    public Anvil(Vector2 position) : base("Anvil", Color.DarkSlateGray, position)
     {
         ValidRecipes.Add(new Recipe("HammeredCopper", 2.0f, "Copper"));
         ValidRecipes.Add(new Recipe("Core", 2.0f, "HammeredCopper"));

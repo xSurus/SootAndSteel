@@ -1,6 +1,5 @@
 using Gamelab.Assets;
 using Gamelab.Entities;
-using Gamelab.PhysicalEntities;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -46,7 +45,7 @@ public abstract class AbstractProjectile : AbstractPhysicalEntity
         }
     }
 
-    public void Update(float deltaTime)
+    public virtual void Update(float deltaTime)
     {
         if (pendingDisable && PhysicsBody != null && PhysicsBody.Enabled)
         {
@@ -66,7 +65,7 @@ public abstract class AbstractProjectile : AbstractPhysicalEntity
         }
     }
 
-    public void Deactivate()
+    public virtual void Deactivate()
     {
         if (!IsActive)
         {

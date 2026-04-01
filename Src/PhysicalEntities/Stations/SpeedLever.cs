@@ -4,10 +4,10 @@ using Microsoft.Xna.Framework;
 
 namespace Gamelab.PhysicalEntities.Stations;
 
-public class SpeedLever(Vector2 position, GameplayContext gameplayContext)
-    : AbstractStation("SpeedLever", Color.LightGreen, position, gameplayContext)
+public class SpeedLever(Vector2 position)
+    : AbstractStation("SpeedLever", Color.LightGreen, position)
 {
-    public override void OnInteract(Player interactingPlayer, GameplayContext gameplayContext)
+    public override void OnInteract(Player interactingPlayer)
     {
         if (!gameplayContext.State.IsCoalOvenBurning)
         {

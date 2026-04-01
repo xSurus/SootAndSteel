@@ -19,17 +19,26 @@ public class ParticleManager
 
     public void Update(float dt)
     {
-        foreach (var effect in emitters)
+        for (int i = emitters.Count - 1; i >= 0; i--)
         {
-            effect.Update(dt);
+            emitters[i].Update(dt);
+            if (emitters[i].AwaitsDeletion && emitters[i].activeParticles == 0)
+            {
+                emitters.RemoveAt(i);
+            }
         }
     }
 
     public void Draw(SpriteBatch spriteBatch)
     {
-        foreach (var effect in emitters)
+        foreach (var emitter in emitters)
         {
-            effect.Draw(spriteBatch);
+            emitter.Draw(spriteBatch);
         }
+    }
+
+    public void Clear()
+    {
+        emitters.Clear();
     }
 }
