@@ -13,7 +13,21 @@ public class ParticleEmitter
     public Texture2D Texture { get; set; }
 
     public bool AutoTrigger { get; set; }
-    public bool ShouldRemove { get; set; } = false;
+    private bool shouldRemove;
+
+    public bool ShouldRemove
+    {
+        get => shouldRemove;
+        set
+        {
+            shouldRemove = value;
+            if (shouldRemove)
+            {
+                AutoTrigger = false;
+            }
+        }
+    }
+
     public float AutoTriggerFrequency { get; set; }
     private float triggerTimer;
 

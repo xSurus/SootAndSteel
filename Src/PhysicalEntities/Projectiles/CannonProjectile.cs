@@ -36,7 +36,6 @@ public class CannonProjectile : AbstractProjectile
     public override void Deactivate()
     {
         base.Deactivate();
-        trailEmitter.AutoTrigger = false;
         trailEmitter.ShouldRemove = true;
     }
 }
