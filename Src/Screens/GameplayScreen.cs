@@ -7,6 +7,7 @@ using Gamelab.Levels;
 using Gamelab.Map;
 using Gamelab.Map.Train;
 using Gamelab.Map.Train.State;
+using Gamelab.Particles;
 using Gamelab.PhysicalEntities.Projectiles;
 using Gamelab.PhysicalEntities.Stations;
 using Gamelab.PhysicalEntities.Stations.Cannon;
@@ -43,11 +44,11 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     private Label temperatureLabel;
     private Label cannonLabel;
     private Label distanceLabel;
-    private CannonStation cannonStation;
     private ProjectileManager projectileManager;
     private Panel pauseOverlay;
     private Label continueLabel;
     private Label exitLabel;
+    private ParticleManager particleManager;
 
     private float screenShakeTimer;
     private float screenShakeIntensity;
@@ -69,6 +70,8 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         trainMap = new TrainMap(GraphicsDevice, world, gameEvents, virtualScreenSize);
         gameplayContext = new GameplayContext(trainMap, new TrainState(), gameEvents, virtualScreenSize);
         trainSound = new TrainSound(Services.GetService<ISoundService>(), gameplayContext);
+        particleManager = new ParticleManager();
+        particleManager.AddEmitter(ParticleFactory.CreateSnowstorm(gameplayContext, random));
 
         trainMap.MapObjects.Add(new CoalResource(trainMap.GetTileCenterPixels(0, 2), gameplayContext));
         trainMap.MapObjects.Add(new CoalOven(trainMap.GetTileCenterPixels(7, 2), gameplayContext));
@@ -275,6 +278,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         worldScroller.Update(dt);
         enemyManager.Update(dt);
         projectileManager.Update(dt);
+        particleManager.Update(dt);
 
         accumulator += Math.Min(dt, Game.GameplayConfig.MaxAccumulatedDeltaSeconds);
         while (accumulator >= Game.GameplayConfig.FixedTimeStep)
@@ -304,9 +308,6 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         coalLabel.Text = $"Coal: {gameplayContext.State.CoalAmount}";
         speedLabel.Text = $"Speed: {gameplayContext.State.actualSpeed:F0}";
         temperatureLabel.Text = $"Temperature: {gameplayContext.State.Temperature:F0}";
-        cannonLabel.Text = cannonStation?.HeldItem == null
-            ? "Cannon: Empty"
-            : $"Cannon: {cannonStation.HeldItem.Id}";
         distanceLabel.Text =
             $"Distance: {gameplayContext.State.DistanceTraveled:F0} / {currentLevelDef?.LevelDistance ?? 0:F0}";
 
@@ -431,6 +432,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
             player.Draw(spriteBatch);
         }
 
+        particleManager.Draw(spriteBatch);
         spriteBatch.End();
 
         spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
