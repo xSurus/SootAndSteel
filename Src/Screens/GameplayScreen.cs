@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Gamelab.Assets;
 using Gamelab.Enemies;
 using Gamelab.Input;
 using Gamelab.Levels;
@@ -26,6 +27,12 @@ namespace Gamelab.Screens;
 
 public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
 {
+    private enum GameplayPhase
+    {
+        Running,
+        EndOfLevelOutro,
+    }
+
     private List<Player> players;
     private TrainMap trainMap;
     private WorldScroller worldScroller;
@@ -54,6 +61,9 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     private int pauseSelectionIndex;
     private bool wasEscapeDown;
     private bool isFailureTriggered;
+    private GameplayPhase phase = GameplayPhase.Running;
+    private ParticleEmitter baseSnowstormEmitter;
+    private readonly WhiteFilterTransition endLevelWhiteFilter = new WhiteFilterTransition();
 
     public override void LoadContent()
     {
@@ -65,7 +75,9 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         gameplayContext.Map = trainMap;
         menuSelectSound = Services.GetService<ISoundService>().RegisterSound("menu_stab", 4);
         trainSound = new TrainSound(Services.GetService<ISoundService>());
-        Services.GetService<IVfxService>().AddContinuous(ParticleFactory.CreateSnowstorm(random));
+        baseSnowstormEmitter = ParticleFactory.CreateSnowstorm(random);
+        phase = GameplayPhase.Running;
+        Services.GetService<IVfxService>().AddContinuous(baseSnowstormEmitter);
 
         trainMap.MapObjects.Add(new CoalResource(trainMap.GetTileCenterPixels(0, 2)));
         trainMap.MapObjects.Add(new CoalOven(trainMap.GetTileCenterPixels(7, 2)));
@@ -268,6 +280,18 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
             return;
         }
 
+        if (phase == GameplayPhase.EndOfLevelOutro)
+        {
+            endLevelWhiteFilter.Update(dt);
+            if (!endLevelWhiteFilter.IsDone)
+            {
+                return;
+            }
+
+            Game.SwitchToScreen(new PostLevelStatsScreen(Game));
+            return;
+        }
+
         worldScroller.Update(dt);
         enemyManager.Update(dt);
         projectileManager.Update(dt);
@@ -280,17 +304,21 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
                 player.Update(Game.GameplayConfig.FixedTimeStep);
             }
 
-            gameplayContext.State.Update(Game.GameplayConfig.FixedTimeStep);
-            if (isFailureTriggered) return;
-
-            // Failure: ran out of coal while still trying to move.
-            if (gameplayContext.State.CoalAmount <= 0 && gameplayContext.State.actualSpeed > 0f)
+            if (phase == GameplayPhase.Running)
             {
-                TriggerFailure();
-                return;
+                gameplayContext.State.Update(Game.GameplayConfig.FixedTimeStep);
+                if (isFailureTriggered) return;
+
+                // Failure: ran out of coal while still trying to move.
+                if (gameplayContext.State.CoalAmount <= 0 && gameplayContext.State.actualSpeed > 0f)
+                {
+                    TriggerFailure();
+                    return;
+                }
+
+                trainMap.Update(Game.GameplayConfig.FixedTimeStep);
             }
 
-            trainMap.Update(Game.GameplayConfig.FixedTimeStep);
             gameplayContext.PhysicsWorld.Step(Game.GameplayConfig.FixedTimeStep);
             accumulator -= Game.GameplayConfig.FixedTimeStep;
         }
@@ -300,15 +328,23 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         coalLabel.Text = $"Coal: {gameplayContext.State.CoalAmount}";
         speedLabel.Text = $"Speed: {gameplayContext.State.actualSpeed:F0}";
         temperatureLabel.Text = $"Temperature: {gameplayContext.State.Temperature:F0}";
-        distanceLabel.Text =
-            $"Distance: {gameplayContext.State.DistanceTraveled:F0} / {currentLevelDef?.LevelDistance ?? 0:F0}";
-
-        if (currentLevelDef != null &&
-            gameplayContext.State.DistanceTraveled >= currentLevelDef.LevelDistance &&
-            enemyManager.Enemies.Count == 0)
+        if (phase == GameplayPhase.Running)
         {
-            Game.CurrentLevel++;
-            Game.SwitchToScreen(new MainMenuScreen(Game));
+            distanceLabel.Text =
+                $"Distance: {gameplayContext.State.DistanceTraveled:F0} / {currentLevelDef?.LevelDistance ?? 0:F0}";
+        }
+
+        if (phase == GameplayPhase.Running && currentLevelDef != null &&
+            levelManager.IsLevelComplete(gameplayContext, enemyManager))
+        {
+            ScreenPayloads.LastPostLevelResults = new ScreenPayloads.PostLevelResults
+            {
+                CompletedLevelNumber = Game.CurrentLevel,
+                CoalRemaining = gameplayContext.State.CoalAmount
+            };
+            endLevelWhiteFilter.FadeIn(4f);
+            phase = GameplayPhase.EndOfLevelOutro;
+            return;
         }
 
         UpdateScreenShake(dt);
@@ -429,6 +465,15 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
 
         spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
         desktop.Render();
+        float w = endLevelWhiteFilter.Opacity;
+        if (w > 0.001f)
+        {
+            spriteBatch.Draw(
+                AssetManager.BlankTexture,
+                new Rectangle(0, 0, virtualScreenSize.X, virtualScreenSize.Y),
+                Color.White * w);
+        }
+
         spriteBatch.End();
 
         base.Draw(gameTime);

@@ -24,15 +24,20 @@ public class CoalOven : AbstractStation
 
     public override void Update(float dt)
     {
+        // During non-running phases (station/hub), GameplayScreen temporarily forces
+        // IsCoalOvenBurning=false to prevent background fuel drain.
+        if (!gameplayContext.State.IsCoalOvenBurning)
+        {
+            return;
+        }
+
         if (currentFuel > 0)
         {
-            gameplayContext.State.IsCoalOvenBurning = true;
             float speedMultiplier = gameplayContext.State.CurrentSpeed.BurnMultiplier;
             currentFuel -= BurnRate * speedMultiplier * dt;
         }
         else
         {
-            gameplayContext.State.IsCoalOvenBurning = false;
             gameplayContext.State.CurrentSpeed = TrainSpeedSetting.Stopped;
         }
     }
