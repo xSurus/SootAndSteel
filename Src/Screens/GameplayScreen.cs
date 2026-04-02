@@ -7,12 +7,12 @@ using Gamelab.Map;
 using Gamelab.Map.Train;
 using Gamelab.Map.Train.State;
 using Gamelab.Particles;
-using Gamelab.PhysicalEntities;
 using Gamelab.PhysicalEntities.Projectiles;
 using Gamelab.PhysicalEntities.Stations;
 using Gamelab.PhysicalEntities.Stations.Cannon;
 using Gamelab.PhysicalEntities.Stations.Resources;
 using Gamelab.PhysicalEntities.Stations.Workbenches;
+using Gamelab.PhysicalEntities.Structures;
 using Gamelab.Players;
 using Gamelab.Services.Music;
 using Gamelab.Services.Sound;
@@ -73,7 +73,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
             trainMap.Position.Y + (trainMap.Height * trainMap.TileSize) / 2f
         );
         trainMap.MapObjects.Add(new CoalWagon(coalWagonPos));
-        trainMap.MapObjects.Add(new CoalOven(trainMap.GetTileCenterPixels(7, 2)));
+        trainMap.MapObjects.Add(new TrainNose(trainMap.GetTileCenterPixels(8, 2)));
         trainMap.MapObjects.Add(new SpeedLever(trainMap.GetTileCenterPixels(7, 3)));
         trainMap.MapObjects.Add(new CannonStation(trainMap.GetTileCenterPixels(5, 2)));
 

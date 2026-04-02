@@ -6,7 +6,7 @@ using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Gamelab.PhysicalEntities;
+namespace Gamelab.PhysicalEntities.Structures;
 
 public class CoalWagon : AbstractPhysicalEntity, IPickable
 {

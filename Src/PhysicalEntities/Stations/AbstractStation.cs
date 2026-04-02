@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Gamelab.PhysicalEntities.Stations;
 
-public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPickable
+public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPickable, IUpdatable
 {
     public string Type { get; protected set; }
 
