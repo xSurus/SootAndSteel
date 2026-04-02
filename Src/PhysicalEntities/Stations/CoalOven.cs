@@ -27,6 +27,11 @@ public class CoalOven : AbstractStation
         GamelabGame.Instance.Services.GetService<IVfxService>()?.AddContinuous(smokeEmitter);
     }
 
+    public override bool OnGrab(Player interactingPlayer, Vector2 grabPointWorldMeters)
+    {
+        return false;
+    }
+
     public override void Update(float dt)
     {
         if (currentFuel > 0)
