@@ -6,15 +6,14 @@ namespace Gamelab.Map;
 
 public class WorldScroller
 {
-    private GameplayContext gameplayContext;
+    private readonly GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
     private float scrollOffset;
     private Texture2D backgroundTexture;
     private int ScreenWidth => gameplayContext.ScreenWidth;
     private int ScreenHeight => gameplayContext.ScreenHeight;
 
-    public WorldScroller(GraphicsDevice graphicsDevice, GameplayContext gameplayContext)
+    public WorldScroller(GraphicsDevice graphicsDevice)
     {
-        this.gameplayContext = gameplayContext;
         CreateBackgroundTexture(graphicsDevice);
     }
 

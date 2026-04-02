@@ -3,7 +3,6 @@ using System.Linq;
 using Gamelab.Assets;
 using Gamelab.Items;
 using Gamelab.Items.Crafting;
-using Gamelab.Map.Train.State;
 using Gamelab.Players;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
@@ -11,8 +10,8 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Gamelab.PhysicalEntities.Stations.Workbenches;
 
-public abstract class AbstractWorkbench(string type, Color displayColor, Vector2 position, GameplayContext gameplayContext)
-    : AbstractStation(type, displayColor, position, gameplayContext)
+public abstract class AbstractWorkbench(string type, Color displayColor, Vector2 position)
+    : AbstractStation(type, displayColor, position)
 {
     protected List<Recipe> ValidRecipes { get; } = new();
     protected List<Item> PlacedItems { get; } = new();
@@ -20,7 +19,7 @@ public abstract class AbstractWorkbench(string type, Color displayColor, Vector2
     private Recipe currentValidCompleteRecipe = null;
     private float craftProgress = 0f;
 
-    public override void OnPickup(Player interactingPlayer, GameplayContext gameplayContext)
+    public override void OnPickup(Player interactingPlayer)
     {
         // playerp picks up held item
         if (HeldItem != null && interactingPlayer.HeldItem == null)
@@ -51,7 +50,7 @@ public abstract class AbstractWorkbench(string type, Color displayColor, Vector2
         }
     }
 
-    public override void OnInteractHeld(Player interactingPlayer, GameplayContext gameplayContext, float dt)
+    public override void OnInteractHeld(Player interactingPlayer, float dt)
     {
         if (currentValidCompleteRecipe == null) return;
         craftProgress += dt;

@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Gamelab.Assets;
-using Gamelab.Events;
 using Gamelab.Map.Train.State;
 using Gamelab.PhysicalEntities;
 using Gamelab.PhysicalEntities.Stations;
@@ -19,17 +18,15 @@ public class TrainMap
     public int Height => GamelabGame.Instance.GameplayConfig.TrainHeight;
     public int TileSize => GamelabGame.Instance.GameplayConfig.TrainTileSize;
     public Vector2 Position { get; private set; }
-    public World PhysicsWorld { get; private set; }
-    public List<IPhysicalEntity> MapObjects { get; } = new();
-    private GameEvents GameEvents { get; }
+    private readonly GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
 
-    public TrainMap(GraphicsDevice graphicsDevice, World world, GameEvents gameEvents, Point virtualScreenSize)
+    public List<IPhysicalEntity> MapObjects { get; } = new();
+
+    public TrainMap(GraphicsDevice graphicsDevice)
     {
-        PhysicsWorld = world;
-        this.GameEvents = gameEvents;
         Position = new Vector2(
-            (virtualScreenSize.X - Width * TileSize) / 2f,
-            (virtualScreenSize.Y - Height * TileSize) / 2f
+            (gameplayContext.ScreenWidth - Width * TileSize) / 2f,
+            (gameplayContext.ScreenHeight - Height * TileSize) / 2f
         );
         InitializeBoundaryWalls();
     }
@@ -71,12 +68,12 @@ public class TrainMap
 
             // --- TOP WALL ---
             Vector2 topPixelPos = new Vector2(centerX, Position.Y - wallHeightPixels / 2f);
-            var topWall = new ShootHoleWall(PhysicsWorld, GameEvents, wallDimensions, topPixelPos);
+            var topWall = new ShootHoleWall(wallDimensions, topPixelPos);
             MapObjects.Add(topWall);
 
             // --- BOTTOM WALL ---
             Vector2 bottomPixelPos = new Vector2(centerX, Position.Y + (Height * TileSize) + wallHeightPixels / 2f);
-            var bottomWall = new ShootHoleWall(PhysicsWorld, GameEvents, wallDimensions, bottomPixelPos);
+            var bottomWall = new ShootHoleWall(wallDimensions, bottomPixelPos);
             MapObjects.Add(bottomWall);
         }
 
@@ -84,7 +81,7 @@ public class TrainMap
             Position.X - endWallWidthPixels / 2f,
             Position.Y + trainHeightPixels / 2f
         );
-        Body backWallBody = PhysicsWorld.CreateRectangle(
+        Body backWallBody = gameplayContext.PhysicsWorld.CreateRectangle(
             endWallSimWidth,
             endWallSimHeight,
             1f,
@@ -97,7 +94,7 @@ public class TrainMap
             Position.X + Width * TileSize + endWallWidthPixels / 2f,
             Position.Y + trainHeightPixels / 2f
         );
-        Body frontWallBody = PhysicsWorld.CreateRectangle(
+        Body frontWallBody = gameplayContext.PhysicsWorld.CreateRectangle(
             endWallSimWidth,
             endWallSimHeight,
             1f,
@@ -173,13 +170,13 @@ public class TrainMap
         }
     }
 
-    public void Update(float dt, GameplayContext context)
+    public void Update(float dt)
     {
         foreach (var mapObject in MapObjects)
         {
             if (mapObject is AbstractStation station)
             {
-                station.Update(dt, context);
+                station.Update(dt);
             }
         }
     }

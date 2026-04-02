@@ -1,8 +1,9 @@
 using System;
 using Gamelab.Assets;
 using Gamelab.Map.Train.State;
+using Gamelab.Particles;
 using Gamelab.Players;
-using Gamelab.Utils;
+using Gamelab.Services.Vfx;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -15,30 +16,35 @@ public class CoalOven : AbstractStation
     private float BurnRate => GamelabGame.Instance.GameplayConfig.CoalOvenBurnRate;
     private float RefuelAmount => GamelabGame.Instance.GameplayConfig.CoalOvenRefuelAmount;
     private float LowFuelThreshold => GamelabGame.Instance.GameplayConfig.CoalOvenLowFuelThreshold;
+    private ParticleEmitter smokeEmitter;
 
-    public CoalOven(Vector2 position, GameplayContext gameplayContext)
-        : base("CoalOven", Color.DarkRed, position, gameplayContext)
+    public CoalOven(Vector2 position)
+        : base("CoalOven", Color.DarkRed, position)
     {
         maxFuel = GamelabGame.Instance.GameplayConfig.CoalOvenMaxFuel;
         currentFuel = maxFuel;
+        smokeEmitter = ParticleFactory.CreateOvenSmoke(Position - new Vector2(0, 10f));
+        GamelabGame.Instance.Services.GetService<IVfxService>()?.AddContinuous(smokeEmitter);
     }
 
-    public override void Update(float dt, GameplayContext gameplayContext)
+    public override void Update(float dt)
     {
         if (currentFuel > 0)
         {
             gameplayContext.State.IsCoalOvenBurning = true;
             float speedMultiplier = gameplayContext.State.CurrentSpeed.BurnMultiplier;
             currentFuel -= BurnRate * speedMultiplier * dt;
+            smokeEmitter.AutoTrigger = true;
         }
         else
         {
             gameplayContext.State.IsCoalOvenBurning = false;
             gameplayContext.State.CurrentSpeed = TrainSpeedSetting.Stopped;
+            smokeEmitter.AutoTrigger = false;
         }
     }
 
-    public override void OnPickup(Player interactingPlayer, GameplayContext gameplayContext)
+    public override void OnPickup(Player interactingPlayer)
     {
         if (interactingPlayer.HeldItem != null && interactingPlayer.HeldItem.Id == "Coal")
         {

@@ -1,15 +1,14 @@
-using Gamelab.Map.Train.State;
 using Gamelab.Players;
 
 namespace Gamelab.PhysicalEntities;
 
 public interface IInteractable : IPhysicalEntity
 {
-    void OnInteract(Player interactingPlayer, GameplayContext context)
+    void OnInteract(Player interactingPlayer)
     {
     }
 
-    void OnInteractHeld(Player interactingPlayer, GameplayContext context, float dt)
+    void OnInteractHeld(Player interactingPlayer, float dt)
     {
     }
 }

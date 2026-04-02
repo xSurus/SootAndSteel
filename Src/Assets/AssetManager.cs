@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -9,6 +10,8 @@ public static class AssetManager
     public static Texture2D PlayerTexture { get; private set; }
     public static Texture2D TileTexture { get; private set; }
     public static Texture2D EnemyTexture { get; private set; }
+    public static Texture2D SmokeTexture { get; private set; }
+    public static Texture2D SparkTexture { get; private set; }
 
     public static void LoadContent(GraphicsDevice graphicsDevice)
     {
@@ -20,6 +23,7 @@ public static class AssetManager
 
         LoadPlayerTexture(graphicsDevice);
         LoadTileTexture(graphicsDevice);
+        LoadParticleTextures(graphicsDevice);
         // TODO add texture loading from json
     }
 
@@ -42,23 +46,23 @@ public static class AssetManager
         }
 
         PlayerTexture.SetData(data);
-        
+
         // enemy texture (square with darker center)
         int enemyTextureSize = 64;
         EnemyTexture = new Texture2D(graphicsDevice, enemyTextureSize, enemyTextureSize);
         Color[] enemyData = new Color[enemyTextureSize * enemyTextureSize];
-        
+
         for (int y = 0; y < enemyTextureSize; y++)
         {
             for (int x = 0; x < enemyTextureSize; x++)
             {
                 int border = 4;
-                bool isBorder = x < border || x >= enemyTextureSize - border || 
-                               y < border || y >= enemyTextureSize - border;
+                bool isBorder = x < border || x >= enemyTextureSize - border ||
+                                y < border || y >= enemyTextureSize - border;
                 enemyData[y * enemyTextureSize + x] = isBorder ? Color.DarkRed : Color.White;
             }
         }
-        
+
         EnemyTexture.SetData(enemyData);
     }
 
@@ -78,6 +82,44 @@ public static class AssetManager
         TileTexture.SetData(data);
     }
 
+    private static void LoadParticleTextures(GraphicsDevice graphicsDevice)
+    {
+        int smokeSize = 64;
+        SmokeTexture = new Texture2D(graphicsDevice, smokeSize, smokeSize);
+        Color[] smokeData = new Color[smokeSize * smokeSize];
+        Vector2 smokeCenter = new Vector2(smokeSize / 2f);
+        float smokeRadius = smokeSize / 2f;
+
+        for (int y = 0; y < smokeSize; y++)
+        {
+            for (int x = 0; x < smokeSize; x++)
+            {
+                float distance = Vector2.Distance(new Vector2(x, y), smokeCenter);
+                float alpha = Math.Clamp(1f - (distance / smokeRadius), 0f, 1f);
+                smokeData[y * smokeSize + x] = new Color(Color.White, alpha);
+            }
+        }
+
+        SmokeTexture.SetData(smokeData);
+
+        int sparkSize = 8;
+        SparkTexture = new Texture2D(graphicsDevice, sparkSize, sparkSize);
+        Color[] sparkData = new Color[sparkSize * sparkSize];
+        Vector2 sparkCenter = new Vector2(sparkSize / 2f);
+        float sparkRadius = sparkSize / 2f;
+
+        for (int y = 0; y < sparkSize; y++)
+        {
+            for (int x = 0; x < sparkSize; x++)
+            {
+                float distance = Vector2.Distance(new Vector2(x, y), sparkCenter);
+                sparkData[y * sparkSize + x] = distance <= sparkRadius ? Color.White : Color.Transparent;
+            }
+        }
+
+        SparkTexture.SetData(sparkData);
+    }
+
     public static void UnloadContent()
     {
         BlankTexture?.Dispose();
@@ -88,8 +130,14 @@ public static class AssetManager
 
         TileTexture?.Dispose();
         TileTexture = null;
-        
+
         EnemyTexture?.Dispose();
         EnemyTexture = null;
+
+        SparkTexture?.Dispose();
+        SparkTexture = null;
+
+        SmokeTexture?.Dispose();
+        SmokeTexture = null;
     }
 }

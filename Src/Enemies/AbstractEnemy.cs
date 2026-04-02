@@ -1,9 +1,10 @@
-using Gamelab.Entities;
 using Gamelab.Assets;
-using Gamelab.Config;
+using Gamelab.Entities;
 using Gamelab.Map.Train.State;
+using Gamelab.Particles;
 using Gamelab.PhysicalEntities;
 using Gamelab.PhysicalEntities.Projectiles;
+using Gamelab.Services.Vfx;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -18,17 +19,17 @@ public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable
     public bool IsAlive => Health > 0;
     public bool ShouldRemove { get; protected set; }
     public abstract Color EnemyColor { get; }
-    public float Radius => Size / 2f;
-    
+
     protected float Size => GamelabGame.Instance.GameplayConfig.EnemySize;
     protected readonly GameplayContext gameplayContext;
-    
+
     protected AbstractEnemy(GameplayContext gameplayContext, Vector2 spawnPosition, EnemyTrainSlot slot)
     {
         Health = GamelabGame.Instance.GameplayConfig.EnemyHealth;
         Slot = slot;
         this.gameplayContext = gameplayContext;
-        PhysicsBody = gameplayContext.Map.PhysicsWorld.CreateCircle((Size / 2f).ToMeters(), 1f, spawnPosition.ToMeters(), BodyType.Dynamic);
+        PhysicsBody = gameplayContext.PhysicsWorld.CreateCircle((Size / 2f).ToMeters(), 1f, spawnPosition.ToMeters(),
+            BodyType.Dynamic);
         PhysicsBody.IgnoreGravity = true;
         PhysicsBody.FixedRotation = true;
 
@@ -46,10 +47,12 @@ public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable
             ShouldRemove = true;
         }
     }
-    
+
     public void TakeDamage(float damage)
     {
         Health -= damage;
+        var vfxService = GamelabGame.Instance.Services.GetService<IVfxService>();
+        vfxService.EmitBurst(ParticleFactory.CreateBloodSplatter(this.Position));
         if (Health <= 0)
         {
             ShouldRemove = true;
@@ -77,11 +80,11 @@ public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable
         PhysicsBody.World.Remove(PhysicsBody);
         PhysicsBody = null;
     }
-    
+
     public override void Draw(SpriteBatch spriteBatch)
     {
         if (!IsAlive || ShouldRemove) return;
-        
+
         Texture2D texture = AssetManager.EnemyTexture;
         Rectangle destRect = new Rectangle(
             (int)(Position.X - Size / 2),
@@ -89,10 +92,10 @@ public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable
             (int)Size,
             (int)Size
         );
-        
+
         spriteBatch.Draw(texture, destRect, EnemyColor);
     }
-    
+
     protected bool IsOffScreenLeft()
     {
         return Position.X < -Size;
@@ -102,7 +105,7 @@ public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable
     {
         return Position.X > gameplayContext.ScreenWidth + Size;
     }
-    
+
 
     protected bool IsOffScreenTop()
     {

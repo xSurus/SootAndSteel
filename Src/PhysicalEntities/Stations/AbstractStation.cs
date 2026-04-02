@@ -1,6 +1,5 @@
 using Gamelab.Assets;
 using Gamelab.Items;
-using Gamelab.Map.Train.State;
 using Gamelab.Players;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
@@ -18,38 +17,38 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
     public Vector2 DrawPosition => Position - new Vector2(GamelabGame.Instance.GameplayConfig.TrainTileSize / 2f);
     protected override bool AllowPlayerRotation { get; } = false;
 
-    protected AbstractStation(string type, Color displayColor, Vector2 position, GameplayContext gameplayContext)
+    protected AbstractStation(string type, Color displayColor, Vector2 position)
     {
         Type = type;
         DisplayColor = displayColor;
         float collisionSizePixels = GamelabGame.Instance.GameplayConfig.TrainTileSize * 0.90f;
         float simSize = collisionSizePixels.ToMeters();
-        PhysicsBody = gameplayContext.Map.PhysicsWorld.CreateRectangle(simSize, simSize, 1f, position.ToMeters());
+        PhysicsBody = gameplayContext.PhysicsWorld.CreateRectangle(simSize, simSize, 1f, position.ToMeters());
     }
 
-    public virtual void Update(float dt, GameplayContext gameplayContext)
+    public virtual void Update(float dt)
     {
     }
 
-    public virtual void OnInteract(Player interactingPlayer, GameplayContext context)
+    public virtual void OnInteract(Player interactingPlayer)
     {
     }
 
-    public virtual void OnInteractHeld(Player interactingPlayer, GameplayContext context, float dt)
+    public virtual void OnInteractHeld(Player interactingPlayer, float dt)
     {
     }
 
-    public virtual void OnPickup(Player interactingPlayer, GameplayContext gameplayContext)
+    public virtual void OnPickup(Player interactingPlayer)
     {
     }
 
-    public virtual void OnPickupHeld(Player interactingPlayer, GameplayContext gameplayContext, float dt)
+    public virtual void OnPickupHeld(Player interactingPlayer, float dt)
     {
     }
 
-    protected override void OnLastRelease(Player interactingPlayer, GameplayContext gameplayContext)
+    protected override void OnLastRelease(Player interactingPlayer)
     {
-        base.OnLastRelease(interactingPlayer, gameplayContext);
+        base.OnLastRelease(interactingPlayer);
         gameplayContext.Map.SnapToNearestValidCell(this);
     }
 
@@ -57,7 +56,7 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
     {
         int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
         Vector2 position = DrawPosition;
-        
+
         Rectangle rect = new Rectangle((int)position.X + 5, (int)position.Y + 5, tileSize - 10, tileSize - 10);
         spriteBatch.Draw(AssetManager.BlankTexture, rect, DisplayColor);
         HeldItem?.Draw(spriteBatch, position + new Vector2(tileSize / 4f), tileSize / 2);

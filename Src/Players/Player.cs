@@ -3,7 +3,6 @@ using Gamelab.Assets;
 using Gamelab.Items;
 using Gamelab.Map.Train.State;
 using Gamelab.PhysicalEntities;
-using Gamelab.PhysicalEntities.Stations;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -17,8 +16,6 @@ public class Player : AbstractPhysicalEntity
     public PlayerConfiguration PlayerConfiguration { get; private set; }
     public Item HeldItem { get; set; }
     public IGrabbable GrabbedObject { get; private set; }
-
-    private readonly GameplayContext gameplayContext;
 
     public Vector2 LookDirection => new((float)Math.Cos(PhysicsBody.Rotation), (float)Math.Sin(PhysicsBody.Rotation));
 
@@ -35,13 +32,14 @@ public class Player : AbstractPhysicalEntity
     private float Radius => GamelabGame.Instance.GameplayConfig.PlayerRadiusPixels;
     private float Density => GamelabGame.Instance.GameplayConfig.PlayerDensity;
     private float LinearDampening => GamelabGame.Instance.GameplayConfig.PlayerLinearDamping;
-    private float PlayerForceMultiplier => GamelabGame.Instance.GameplayConfig.PlayerForceMultiplier;
+    private readonly GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
 
-    public Player(World world, Vector2 startPosition, PlayerConfiguration playerConfig, GameplayContext context)
+
+    public Player(Vector2 startPosition, PlayerConfiguration playerConfig)
     {
         PlayerConfiguration = playerConfig;
-        gameplayContext = context;
-        PhysicsBody = world.CreateCircle(Radius.ToMeters(), Density, startPosition.ToMeters(), BodyType.Dynamic);
+        PhysicsBody = gameplayContext.PhysicsWorld.CreateCircle(Radius.ToMeters(), Density, startPosition.ToMeters(),
+            BodyType.Dynamic);
         PhysicsBody.LinearDamping = LinearDampening;
         PhysicsBody.FixedRotation = true;
         PhysicsBody.Tag = this;
@@ -51,15 +49,11 @@ public class Player : AbstractPhysicalEntity
     {
         Vector2 movement = PlayerConfiguration.Input.GetMovement();
 
-        // Players get slower as the train gets colder.
-        // In Hub mode, trainContext is null -> no slowdown.
-        // TODO: fix/improve this
         float maxTemperature = GamelabGame.Instance.GameplayConfig.TrainMaxTemperature;
         float temperatureRatio = gameplayContext == null || maxTemperature <= 0f
             ? 0f
             : gameplayContext.State.Temperature / maxTemperature;
-        // Temperature starts at max (warm) and drops to 0 (cold):
-        // warm -> fast (scale ~ 1), cold -> slow (scale ~ 0)
+
         float speedScale = Math.Clamp(temperatureRatio, 0f, 1f);
 
         float effectiveMaxVelocity = MaxVelocity * speedScale;
@@ -91,7 +85,7 @@ public class Player : AbstractPhysicalEntity
             Vector2 grabPointWorldMeters = PhysicsBody.Position + (LookDirection * reachInMeters);
             if (target is IGrabbable grabbable)
             {
-                if (grabbable.OnGrab(this, gameplayContext, grabPointWorldMeters))
+                if (grabbable.OnGrab(this, grabPointWorldMeters))
                 {
                     GrabbedObject = grabbable;
                     return true;
@@ -100,7 +94,7 @@ public class Player : AbstractPhysicalEntity
         }
         else if (!PlayerConfiguration.Input.IsGrabHeld() && GrabbedObject != null)
         {
-            GrabbedObject.OnRelease(this, gameplayContext);
+            GrabbedObject.OnRelease(this);
             GrabbedObject = null;
             return true;
         }
@@ -114,12 +108,12 @@ public class Player : AbstractPhysicalEntity
         if (target == null || !(target is IInteractable interactable)) return false;
         if (PlayerConfiguration.Input.IsInteractJustPressed())
         {
-            interactable.OnInteract(this, gameplayContext);
+            interactable.OnInteract(this);
             return true;
         }
         else if (PlayerConfiguration.Input.IsInteractHeld())
         {
-            interactable.OnInteractHeld(this, gameplayContext, dt);
+            interactable.OnInteractHeld(this, dt);
             return true;
         }
 
@@ -132,11 +126,11 @@ public class Player : AbstractPhysicalEntity
         if (target == null || !(target is IPickable pickable)) return false;
         if (PlayerConfiguration.Input.IsPickupJustPressed())
         {
-            pickable.OnPickup(this, gameplayContext);
+            pickable.OnPickup(this);
         }
         else if (PlayerConfiguration.Input.IsPickupHeld())
         {
-            pickable.OnPickupHeld(this, gameplayContext, dt);
+            pickable.OnPickupHeld(this, dt);
             return true;
         }
 

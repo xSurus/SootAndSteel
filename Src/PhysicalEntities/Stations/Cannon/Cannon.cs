@@ -2,9 +2,10 @@ using System;
 using Gamelab.Assets;
 using Gamelab.Config;
 using Gamelab.Items;
-using Gamelab.Map.Train.State;
+using Gamelab.Particles;
 using Gamelab.PhysicalEntities.Projectiles;
 using Gamelab.Players;
+using Gamelab.Services.Vfx;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -18,15 +19,15 @@ public class CannonStation : AbstractStation
 
     public CannonAimingBar AimingBar { get; private set; }
 
-    public CannonStation(Vector2 position, GameplayContext gameplayContext)
-        : base("Cannon", Color.DarkRed, position, gameplayContext)
+    public CannonStation(Vector2 position)
+        : base("Cannon", Color.DarkRed, position)
     {
         config = GamelabGame.Instance.GameplayConfig;
         cooldownTimer = 0f;
-        AimingBar = new CannonAimingBar(PhysicsBody, position.ToMeters(), gameplayContext);
+        AimingBar = new CannonAimingBar(PhysicsBody, position.ToMeters());
     }
 
-    public override void Update(float dt, GameplayContext gameplayContext)
+    public override void Update(float dt)
     {
         if (cooldownTimer > 0)
         {
@@ -34,7 +35,7 @@ public class CannonStation : AbstractStation
         }
     }
 
-    public override void OnInteract(Player interactingPlayer, GameplayContext context)
+    public override void OnInteract(Player interactingPlayer)
     {
         if (cooldownTimer > 0f || HeldItem == null)
         {
@@ -46,11 +47,11 @@ public class CannonStation : AbstractStation
             (float)Math.Sin(AimingBar.PhysicsBody.Rotation)
         );
 
-        FireCannon(context, direction, HeldItem);
+        FireCannon(direction, HeldItem);
         HeldItem = null;
     }
 
-    public override void OnPickup(Player interactingPlayer, GameplayContext gameplayContext)
+    public override void OnPickup(Player interactingPlayer)
     {
         if (HeldItem != null || interactingPlayer.HeldItem == null)
         {
@@ -66,7 +67,7 @@ public class CannonStation : AbstractStation
         interactingPlayer.HeldItem = null;
     }
 
-    private void FireCannon(GameplayContext gameplayContext, Vector2 direction, Item ammo)
+    private void FireCannon(Vector2 direction, Item ammo)
     {
         Vector2 cannonPosition = DrawPosition + new Vector2(config.TrainTileSize / 2f);
         float barrelLength = config.TrainTileSize * 0.5f;
@@ -74,7 +75,7 @@ public class CannonStation : AbstractStation
         float damage = GetBulletDamage(ammo);
 
         CannonProjectile projectile = new CannonProjectile(
-            gameplayContext.Map.PhysicsWorld,
+            gameplayContext.PhysicsWorld,
             projectileSpawn,
             direction * config.CannonProjectileSpeed,
             damage,
@@ -83,6 +84,8 @@ public class CannonStation : AbstractStation
         );
 
         gameplayContext.Events.FireCannonProjectile(projectile);
+        GamelabGame.Instance.Services.GetService<IVfxService>()
+            .EmitBurst(ParticleFactory.CreateCannonMuzzleFlash(projectileSpawn, direction));
         cooldownTimer = config.CannonCooldown;
     }
 
