@@ -56,9 +56,7 @@ public class NextLevelIntroScreen(GamelabGame game) : AbstractGameScreen(game)
         desktop = new Desktop { Root = overlay };
 
         var vfx = Services.GetService<IVfxService>();
-        var emitter = ParticleFactory.CreateSnowstorm(new Random());
-        ParticleFactory.ApplySnowstormSteadyIntensity(emitter, 1f);
-        vfx.AddContinuous(emitter);
+        vfx.AddContinuous(ParticleFactory.CreateSnowstorm(new Random()));
         phase = Phase.Hold;
         holdTimer = 0f;
     }
