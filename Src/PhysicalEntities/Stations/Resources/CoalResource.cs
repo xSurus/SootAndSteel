@@ -10,7 +10,8 @@ public class CoalResource(Vector2 position)
     // overrides since it consumes coal from the train
     public override void OnPickup(Player interactingPlayer)
     {
-        if (interactingPlayer.HeldItem == null && gameplayContext.State.CoalAmount > 0)
+        if (interactingPlayer.HeldItem == null && gameplayContext.State.CoalAmount > 0 &&
+            !gameplayContext.State.VictoryLapActive)
         {
             interactingPlayer.HeldItem = new Item("Coal");
             gameplayContext.State.ConsumeCoal(1);

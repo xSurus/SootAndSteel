@@ -252,6 +252,11 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
 
     private void OnTrainFrozen()
     {
+        if (gameplayContext.State.VictoryLapActive)
+        {
+            return;
+        }
+
         TriggerFailure();
     }
 
@@ -280,21 +285,18 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
             return;
         }
 
-        if (phase == GameplayPhase.EndOfLevelOutro)
+        bool isEndOfLevelOutro = phase == GameplayPhase.EndOfLevelOutro;
+        if (isEndOfLevelOutro)
         {
             endLevelWhiteFilter.Update(dt);
-            if (!endLevelWhiteFilter.IsDone)
-            {
-                return;
-            }
-
-            Game.SwitchToScreen(new PostLevelStatsScreen(Game));
-            return;
         }
 
         worldScroller.Update(dt);
-        enemyManager.Update(dt);
-        projectileManager.Update(dt);
+        if (!isEndOfLevelOutro)
+        {
+            enemyManager.Update(dt);
+            projectileManager.Update(dt);
+        }
 
         accumulator += Math.Min(dt, Game.GameplayConfig.MaxAccumulatedDeltaSeconds);
         while (accumulator >= Game.GameplayConfig.FixedTimeStep)
@@ -318,6 +320,11 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
 
                 trainMap.Update(Game.GameplayConfig.FixedTimeStep);
             }
+            else if (isEndOfLevelOutro)
+            {
+                gameplayContext.State.Update(Game.GameplayConfig.FixedTimeStep);
+                trainMap.Update(Game.GameplayConfig.FixedTimeStep);
+            }
 
             gameplayContext.PhysicsWorld.Step(Game.GameplayConfig.FixedTimeStep);
             accumulator -= Game.GameplayConfig.FixedTimeStep;
@@ -337,6 +344,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         if (phase == GameplayPhase.Running && currentLevelDef != null &&
             levelManager.IsLevelComplete(gameplayContext, enemyManager))
         {
+            gameplayContext.State.VictoryLapActive = true;
             ScreenPayloads.LastPostLevelResults = new ScreenPayloads.PostLevelResults
             {
                 CompletedLevelNumber = Game.CurrentLevel,
@@ -348,6 +356,11 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         }
 
         UpdateScreenShake(dt);
+
+        if (isEndOfLevelOutro && endLevelWhiteFilter.IsDone)
+        {
+            Game.SwitchToScreen(new PostLevelStatsScreen(Game));
+        }
     }
 
     private bool IsPauseToggleRequested()

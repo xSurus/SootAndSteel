@@ -9,6 +9,11 @@ public class SpeedLever(Vector2 position)
 {
     public override void OnInteract(Player interactingPlayer)
     {
+        if (gameplayContext.State.VictoryLapActive)
+        {
+            return;
+        }
+
         if (!gameplayContext.State.IsCoalOvenBurning)
         {
             gameplayContext.State.CurrentSpeed = TrainSpeedSetting.Stopped;

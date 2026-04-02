@@ -24,6 +24,11 @@ public class CoalOven : AbstractStation
 
     public override void Update(float dt)
     {
+        if (gameplayContext.State.VictoryLapActive)
+        {
+            return;
+        }
+
         // During non-running phases (station/hub), GameplayScreen temporarily forces
         // IsCoalOvenBurning=false to prevent background fuel drain.
         if (!gameplayContext.State.IsCoalOvenBurning)
