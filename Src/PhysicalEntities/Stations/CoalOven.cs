@@ -32,7 +32,7 @@ public class CoalOven : AbstractStation
         if (currentFuel > 0)
         {
             gameplayContext.State.IsCoalOvenBurning = true;
-            float speedMultiplier = gameplayContext.State.CurrentSpeed.BurnMultiplier;
+            float speedMultiplier = GetInterpolatedBurnMultiplier(gameplayContext.State.actualSpeed);
             currentFuel -= BurnRate * speedMultiplier * dt;
             smokeEmitter.AutoTrigger = true;
         }
@@ -42,6 +42,32 @@ public class CoalOven : AbstractStation
             gameplayContext.State.CurrentSpeed = TrainSpeedSetting.Stopped;
             smokeEmitter.AutoTrigger = false;
         }
+    }
+
+    private float GetInterpolatedBurnMultiplier(float actualSpeed)
+    {
+        var allSpeeds = TrainSpeedSetting.All;
+        if (allSpeeds == null || allSpeeds.Count == 0) return 1f;
+
+        // check for lowest and highest speeds
+        if (actualSpeed <= allSpeeds[0].TargetSpeed) return allSpeeds[0].BurnMultiplier;
+        if (actualSpeed >= allSpeeds[^1].TargetSpeed) return allSpeeds[^1].BurnMultiplier;
+
+        for (int i = 0; i < allSpeeds.Count - 1; i++)
+        {
+            var lowerBound = allSpeeds[i];
+            var upperBound = allSpeeds[i + 1];
+
+            if (actualSpeed >= lowerBound.TargetSpeed && actualSpeed <= upperBound.TargetSpeed)
+            {
+                if (Math.Abs(upperBound.TargetSpeed - lowerBound.TargetSpeed) < 0.001) return lowerBound.BurnMultiplier;
+                float t = (actualSpeed - lowerBound.TargetSpeed) / (upperBound.TargetSpeed - lowerBound.TargetSpeed);
+                t = MathHelper.Clamp(t, 0f, 1f);
+                return MathHelper.Lerp(lowerBound.BurnMultiplier, upperBound.BurnMultiplier, t);
+            }
+        }
+
+        return 0f;
     }
 
     public override void OnPickup(Player interactingPlayer)
