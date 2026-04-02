@@ -19,6 +19,8 @@ public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
     private float RefuelAmount => GamelabGame.Instance.GameplayConfig.CoalOvenRefuelAmount;
     private float LowFuelThreshold => GamelabGame.Instance.GameplayConfig.CoalOvenLowFuelThreshold;
     private ParticleEmitter smokeEmitter;
+    private float heightPixels;
+    private float widthPixels;
 
     public TrainNose(Vector2 position)
     {
@@ -28,8 +30,8 @@ public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
         int trainHeightTiles = GamelabGame.Instance.GameplayConfig.TrainHeight;
         int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
 
-        float widthPixels = tileSize;
-        float heightPixels = trainHeightTiles * tileSize;
+        widthPixels = tileSize;
+        heightPixels = (trainHeightTiles + 1) * tileSize;
 
         PhysicsBody = gameplayContext.PhysicsWorld.CreateRectangle(widthPixels.ToMeters(), heightPixels.ToMeters(), 1f,
             position.ToMeters());
@@ -66,13 +68,7 @@ public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        int trainHeightTiles = GamelabGame.Instance.GameplayConfig.TrainHeight;
-        int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
-
-        float widthPixels = tileSize;
-        float heightPixels = trainHeightTiles * tileSize;
-
-        Vector2 centerPixels = PhysicsBody.Position.ToPixels();
+        Vector2 centerPixels = Position;
 
         Rectangle boxRect = new Rectangle(
             (int)(centerPixels.X - widthPixels / 2f),
@@ -80,12 +76,12 @@ public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
             (int)widthPixels,
             (int)heightPixels
         );
-        spriteBatch.Draw(AssetManager.BlankTexture, boxRect, Color.DarkSlateGray);
+        spriteBatch.Draw(AssetManager.BlankTexture, boxRect, Color.DarkGray);
 
         int barMaxWidth = (int)(widthPixels * 0.8f);
         int barHeight = 12;
         int barX = (int)(centerPixels.X - barMaxWidth / 2f);
-        int barY = (int)(centerPixels.Y - barHeight / 2f);
+        int barY = (int)(centerPixels.Y + (heightPixels / 2));
 
         float fuelRatio = Math.Max(0f, currentFuel / maxFuel);
         int currentBarWidth = (int)(barMaxWidth * fuelRatio);
