@@ -9,7 +9,7 @@ public class TrainSound(ISoundService soundService) : IDisposable
 {
     private readonly SoundHandle chug = soundService.RegisterSound("train_chug");
     private readonly SoundHandle ga = soundService.RegisterSound("train_ga");
-    private readonly Random random = new Random();
+    private readonly Random random = Random.Shared;
     private readonly double strokeInterval = 50;
     private double timer;
     private int currentStroke;

@@ -2,8 +2,10 @@ using System;
 using Gamelab.Assets;
 using Gamelab.Config;
 using Gamelab.Items;
+using Gamelab.Particles;
 using Gamelab.PhysicalEntities.Projectiles;
 using Gamelab.Players;
+using Gamelab.Services.Vfx;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -82,6 +84,8 @@ public class CannonStation : AbstractStation
         );
 
         gameplayContext.Events.FireCannonProjectile(projectile);
+        GamelabGame.Instance.Services.GetService<IVfxService>()
+            .EmitBurst(ParticleFactory.CreateCannonMuzzleFlash(projectileSpawn, direction));
         cooldownTimer = config.CannonCooldown;
     }
 

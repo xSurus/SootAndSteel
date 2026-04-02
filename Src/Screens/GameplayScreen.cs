@@ -49,7 +49,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     private float screenShakeTimer;
     private float screenShakeIntensity;
     private Vector2 screenShakeOffset;
-    private readonly Random random = new Random();
+    private readonly Random random = Random.Shared;
     private bool isPaused;
     private int pauseSelectionIndex;
     private bool wasEscapeDown;
@@ -65,7 +65,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         gameplayContext.Map = trainMap;
         menuSelectSound = Services.GetService<ISoundService>().RegisterSound("menu_stab", 4);
         trainSound = new TrainSound(Services.GetService<ISoundService>());
-        Services.GetService<IVfxService>().AddContinuous(ParticleFactory.CreateSnowstorm(random));
+        Services.GetService<IVfxService>().AddContinuous(ParticleFactory.CreateSnowstorm());
 
         trainMap.MapObjects.Add(new CoalResource(trainMap.GetTileCenterPixels(0, 2)));
         trainMap.MapObjects.Add(new CoalOven(trainMap.GetTileCenterPixels(7, 2)));
@@ -84,7 +84,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
 
         worldScroller = new WorldScroller(GraphicsDevice);
         projectileManager = new ProjectileManager();
-        enemyManager = new EnemyManager(random, currentLevelDef, projectileManager);
+        enemyManager = new EnemyManager(currentLevelDef, projectileManager);
         levelManager = new LevelManager(currentLevelDef);
 
         gameplayContext.Events.OnWallBreached += OnWallBreached;
@@ -269,30 +269,24 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         }
 
         worldScroller.Update(dt);
-        enemyManager.Update(dt);
-        projectileManager.Update(dt);
 
         accumulator += Math.Min(dt, Game.GameplayConfig.MaxAccumulatedDeltaSeconds);
+        float fixedDt = Game.GameplayConfig.FixedTimeStep;
         while (accumulator >= Game.GameplayConfig.FixedTimeStep)
         {
+            enemyManager.Update(fixedDt);
+            projectileManager.Update(fixedDt);
             foreach (Player player in players)
             {
-                player.Update(Game.GameplayConfig.FixedTimeStep);
+                player.Update(fixedDt);
             }
 
-            gameplayContext.State.Update(Game.GameplayConfig.FixedTimeStep);
+            gameplayContext.State.Update(fixedDt);
             if (isFailureTriggered) return;
 
-            // Failure: ran out of coal while still trying to move.
-            if (gameplayContext.State.CoalAmount <= 0 && gameplayContext.State.actualSpeed > 0f)
-            {
-                TriggerFailure();
-                return;
-            }
-
-            trainMap.Update(Game.GameplayConfig.FixedTimeStep);
-            gameplayContext.PhysicsWorld.Step(Game.GameplayConfig.FixedTimeStep);
-            accumulator -= Game.GameplayConfig.FixedTimeStep;
+            trainMap.Update(fixedDt);
+            gameplayContext.PhysicsWorld.Step(fixedDt);
+            accumulator -= fixedDt;
         }
 
         trainSound.Update(gameTime);

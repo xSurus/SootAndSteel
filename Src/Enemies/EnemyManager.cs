@@ -11,7 +11,7 @@ namespace Gamelab.Enemies;
 public class EnemyManager
 {
     private readonly List<AbstractEnemy> enemies = [];
-    private readonly Random random;
+    private readonly Random random = Random.Shared;
     private readonly EnemySlotManager slotManager;
     private readonly LevelDefinition levelDefinition;
     private readonly GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
@@ -29,12 +29,11 @@ public class EnemyManager
 
     public IReadOnlyList<AbstractEnemy> Enemies => enemies;
 
-    public EnemyManager(Random random, LevelDefinition levelDef, ProjectileManager projectileManager)
+    public EnemyManager(LevelDefinition levelDef, ProjectileManager projectileManager)
     {
         this.currentSpawnInterval = GamelabGame.Instance.GameplayConfig.EnemySpawnIntervalBase;
         this.levelDefinition = levelDef;
-        this.random = random;
-        this.slotManager = new EnemySlotManager(random);
+        this.slotManager = new EnemySlotManager();
         this.projectileManager = projectileManager;
         gameplayContext.Events.OnCannonProjectileFired += AddCannonProjectile;
     }

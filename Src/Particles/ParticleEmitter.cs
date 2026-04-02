@@ -37,12 +37,11 @@ public class ParticleEmitter
 
     private readonly Particle[] particles;
     public int activeParticles = 0;
-    private readonly Random random;
+    private readonly Random random = Random.Shared;
     private Vector2 origin;
 
-    public ParticleEmitter(int capacity, Texture2D texture, Random random)
+    public ParticleEmitter(int capacity, Texture2D texture)
     {
-        this.random = random;
         particles = new Particle[capacity];
         Texture = texture;
         origin = new Vector2(Texture.Width / 2f, Texture.Height / 2f);

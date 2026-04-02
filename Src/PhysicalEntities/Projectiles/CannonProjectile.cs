@@ -1,4 +1,3 @@
-using System;
 using Gamelab.Particles;
 using Gamelab.Services.Vfx;
 using Microsoft.Xna.Framework;
@@ -23,7 +22,7 @@ public class CannonProjectile : AbstractProjectile
         float size)
         : base(world, position, velocity, damage, maxLifetime, size)
     {
-        trailEmitter = ParticleFactory.CreateCannonballTrail(new Random());
+        trailEmitter = ParticleFactory.CreateCannonballTrail();
         vfxService?.AddContinuous(trailEmitter);
     }
 
