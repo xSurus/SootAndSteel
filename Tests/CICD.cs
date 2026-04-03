@@ -10,8 +10,10 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using FmodForFoxes;
 using Gamelab;
 using Gamelab.Screens;
+using Gamelab.Services.Sound;
 using Microsoft.Xna.Framework.Graphics;
 using NUnit.Framework.Constraints;
 using NUnit.Framework.Internal;
@@ -34,7 +36,7 @@ public class CICD
         metrics.Clear();
         isFirstTest = true;
 
-        game = new GamelabGame(RunMode.Release);
+        game = new GamelabGame(RunMode.Release, new DesktopAndMacNativeFmodLibrary());
 
         gameThread = new Thread(() =>
         {
