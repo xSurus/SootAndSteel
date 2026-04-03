@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using FmodForFoxes.Studio;
 using Gamelab.Enemies;
 using Gamelab.Input;
 using Gamelab.Levels;
@@ -13,7 +14,6 @@ using Gamelab.PhysicalEntities.Stations.Cannon;
 using Gamelab.PhysicalEntities.Stations.Resources;
 using Gamelab.PhysicalEntities.Stations.Workbenches;
 using Gamelab.Players;
-using Gamelab.Services.Music;
 using Gamelab.Services.Sound;
 using Gamelab.Services.Vfx;
 using Microsoft.Xna.Framework;
@@ -30,10 +30,8 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     private TrainMap trainMap;
     private WorldScroller worldScroller;
     private GameplayContext gameplayContext;
-    private TrainSound trainSound;
     private EnemyManager enemyManager;
     private LevelManager levelManager;
-    private SoundHandle menuSelectSound;
     private LevelDefinition currentLevelDef;
     private Desktop desktop;
     private Label coalLabel;
@@ -45,6 +43,10 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     private Panel pauseOverlay;
     private Label continueLabel;
     private Label exitLabel;
+
+    private ISoundService soundService;
+    private EventInstance trainSound;
+    private EventInstance ambientMusic;
 
     private float screenShakeTimer;
     private float screenShakeIntensity;
@@ -63,9 +65,16 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         currentLevelDef = LevelLoader.Load(Game.CurrentLevel);
         trainMap = new TrainMap(GraphicsDevice);
         gameplayContext.Map = trainMap;
-        menuSelectSound = Services.GetService<ISoundService>().RegisterSound("menu_stab", 4);
-        trainSound = new TrainSound(Services.GetService<ISoundService>());
         Services.GetService<IVfxService>().AddContinuous(ParticleFactory.CreateSnowstorm());
+        
+        // Sounds
+        soundService = Services.GetService<ISoundService>();
+        soundService.LoadSound(Sounds.MenuSelect);
+        trainSound = soundService.GetSoundInstance(Sounds.Train);
+        ambientMusic = soundService.GetSoundInstance(Sounds.AmbientSong);
+        soundService.RegisterParameter(trainSound, "Train Velocity", () => gameplayContext.State.actualSpeed);
+        ambientMusic?.Start();
+        trainSound?.Start();
 
         trainMap.MapObjects.Add(new CoalResource(trainMap.GetTileCenterPixels(0, 2)));
         trainMap.MapObjects.Add(new CoalOven(trainMap.GetTileCenterPixels(7, 2)));
@@ -163,9 +172,6 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         pauseOverlay = CreatePauseOverlay();
         mainPanel.Widgets.Add(pauseOverlay);
         desktop.Root = mainPanel;
-
-        Services.GetService<IMusicService>()
-            .FadeOutAndPlay("tmp_ambient", 2, repeating: true, volume: Game.MusicVolume);
     }
 
     private Panel CreatePauseOverlay()
@@ -289,8 +295,6 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
             accumulator -= fixedDt;
         }
 
-        trainSound.Update(gameTime);
-
         coalLabel.Text = $"Coal: {gameplayContext.State.CoalAmount}";
         speedLabel.Text = $"Speed: {gameplayContext.State.actualSpeed:F0}";
         temperatureLabel.Text = $"Temperature: {gameplayContext.State.Temperature:F0}";
@@ -352,7 +356,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         {
             pauseSelectionIndex = 1 - pauseSelectionIndex;
             UpdatePauseSelectionVisuals();
-            menuSelectSound?.Play();
+            soundService.PlayOnce(Sounds.MenuSelect);
         }
 
         if (!confirm)
@@ -360,7 +364,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
             return;
         }
 
-        menuSelectSound?.Play();
+        soundService.PlayOnce(Sounds.MenuSelect);
 
         if (pauseSelectionIndex == 0)
         {
@@ -446,6 +450,12 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         trainMap?.Dispose();
         worldScroller?.Dispose();
         projectileManager?.Clear();
+
+        trainSound?.Stop();
+        ambientMusic?.Stop();
+        trainSound?.Dispose();
+        ambientMusic?.Dispose();
+        
         base.UnloadContent();
     }
 }

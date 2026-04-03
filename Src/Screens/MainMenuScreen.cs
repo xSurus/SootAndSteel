@@ -1,4 +1,3 @@
-using Gamelab.Services.Music;
 using Gamelab.Services.Sound;
 using Gamelab.UI;
 using Gamelab.Utils.Logging;
@@ -12,22 +11,22 @@ public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
     private Logger logger = new Logger("MainMenuScreen");
     
     private const string MainMenuBackgroundAsset = "placeholder_main_menu_background";
-    private const string MainMenuSongAsset = "tmp_main_menu";
+    
     protected Texture2D bgTexture;
     private MainMenuPanel mainMenuPanel;
-    private SoundHandle menuSelectSound;
+    private ISoundService soundService;
 
     public override void LoadContent()
     {
         base.LoadContent();
-
-        menuSelectSound = Services.GetService<ISoundService>().RegisterSound("menu_stab", 4);
+        
         TryLoadBackgroundTexture();
         mainMenuPanel = new MainMenuPanel(Game, StartGame, Game.Exit);
-        Services.GetService<IMusicService>().FadeOutAndPlay(MainMenuSongAsset, 2, true, Game.MusicVolume);
+        soundService = Services.GetService<ISoundService>();
+        soundService.LoadSound(Sounds.MenuSelect);
     }
 
-    public override void Update(GameTime gameTime)
+    public override void Update(GameTime gameTime) 
     {
         base.Update(gameTime);
         mainMenuPanel.Update(gameTime);
@@ -36,7 +35,7 @@ public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
         {
             if (player.Input.IsUpJustPressed() || player.Input.IsDownJustPressed())
             {
-                menuSelectSound.Play();
+                soundService.PlayOnce(Sounds.MenuSelect);
             }
         }
     }
@@ -81,6 +80,7 @@ public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
 
     public override void Dispose()
     {
+        soundService.UnloadSound(Sounds.MenuSelect);
         base.Dispose();
     }
 }

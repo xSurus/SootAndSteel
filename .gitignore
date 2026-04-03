@@ -68,3 +68,5 @@ artifacts/
 Tests/Output/
 
 !Src/PipelineReferences/*
+
+/.idea
