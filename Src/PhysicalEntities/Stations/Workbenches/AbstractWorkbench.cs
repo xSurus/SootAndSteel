@@ -103,26 +103,20 @@ public abstract class AbstractWorkbench(string type, Color displayColor, Vector2
     {
         base.Draw(spriteBatch);
         int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
-
         float itemSizeFloat = tileSize * 0.4f;
         int drawItemSize = (int)itemSizeFloat;
-
-        Vector2 dynamicPos = DrawPosition;
-
-        float cellSize = tileSize * 0.5f;
-
-        float centerOffset = (cellSize - itemSizeFloat) * 0.5f;
+        float quadOffset = tileSize * 0.25f;
+        Vector2[] gridOffsets =
+        {
+            new Vector2(-quadOffset, -quadOffset),
+            new Vector2(quadOffset, -quadOffset),
+            new Vector2(-quadOffset, quadOffset),
+            new Vector2(quadOffset, quadOffset)
+        };
 
         for (int i = 0; i < PlacedItems.Count; i++)
         {
-            int row = i / 2;
-            int col = i % 2;
-
-            Vector2 itemPos = new Vector2(
-                dynamicPos.X + (col * cellSize) + centerOffset,
-                dynamicPos.Y + (row * cellSize) + centerOffset
-            );
-
+            Vector2 itemPos = Position + gridOffsets[i];
             PlacedItems[i].Draw(spriteBatch, itemPos, drawItemSize);
         }
 
@@ -130,12 +124,11 @@ public abstract class AbstractWorkbench(string type, Color displayColor, Vector2
         {
             int barWidth = tileSize - 4;
             int barHeight = 6;
-
             float progressPercentage = craftProgress / currentValidCompleteRecipe.CraftingTime;
 
             Rectangle bgBar = new Rectangle(
-                (int)dynamicPos.X + 2,
-                (int)dynamicPos.Y + tileSize - barHeight - 2,
+                (int)(Position.X - barWidth / 2f),
+                (int)(Position.Y + (tileSize / 2f) - barHeight - 2),
                 barWidth,
                 barHeight
             );
