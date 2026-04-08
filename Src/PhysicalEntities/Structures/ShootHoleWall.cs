@@ -46,19 +46,8 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
 
     public void OnHit(AbstractProjectile projectile)
     {
-        if (projectile is not EnemyProjectile || IsBroken)
-        {
-            return;
-        }
-
-        bool wasBroken = IsBroken;
+        if (projectile is not EnemyProjectile || IsBroken) return;
         TakeDamage(projectile.Damage);
-
-        if (!wasBroken && IsBroken && gameplayContext.Events != null)
-        {
-            gameplayContext.Events.FireWallBreached();
-        }
-
         projectile.Deactivate();
     }
 
