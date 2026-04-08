@@ -178,7 +178,7 @@ public class Player : AbstractPhysicalEntity
             Vector2 itemPosition = Position + itemOffset;
             int itemSize = (int)(Radius * HeldItemSizeRadiusMultiplier);
 
-            HeldItem.Draw(spriteBatch, itemPosition - new Vector2(itemSize / 2f), itemSize);
+            HeldItem.Draw(spriteBatch, itemPosition, itemSize);
         }
     }
 

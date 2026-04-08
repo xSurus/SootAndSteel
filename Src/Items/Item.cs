@@ -11,7 +11,19 @@ public class Item(string id)
 
     public void Draw(SpriteBatch spriteBatch, Vector2 position, int size)
     {
-        Rectangle rect = new Rectangle((int)position.X, (int)position.Y, size, size);
-        spriteBatch.Draw(AssetManager.BlankTexture, rect, Definition.Color);
+        Vector2 origin = new Vector2(size / 2f, size / 2f);
+        Rectangle sourceRect = new Rectangle(0, 0, size, size);
+
+        spriteBatch.Draw(
+            texture: AssetManager.BlankTexture,
+            position: position,
+            sourceRectangle: sourceRect,
+            color: Definition.Color,
+            rotation: 0f,
+            origin: origin,
+            scale: 1f,
+            effects: SpriteEffects.None,
+            layerDepth: 0f
+        );
     }
 }

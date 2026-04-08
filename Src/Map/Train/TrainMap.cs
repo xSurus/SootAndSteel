@@ -8,7 +8,6 @@ using Gamelab.PhysicalEntities.Structures;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using nkast.Aether.Physics2D.Dynamics;
 
 namespace Gamelab.Map.Train;
 
@@ -52,56 +51,31 @@ public class TrainMap
         return new Point((int)(localPos.X / TileSize), (int)(localPos.Y / TileSize));
     }
 
-    public void InitializeBoundaryWalls()
+    private void InitializeBoundaryWalls()
     {
-        float wallHeightPixels = TileSize / 2f;
-        Vector2 wallDimensions = new Vector2(TileSize, wallHeightPixels);
-
-        float trainHeightPixels = Height * TileSize;
-        float endWallWidthPixels = wallHeightPixels;
-        float endWallSimWidth = endWallWidthPixels.ToMeters();
-        float endWallSimHeight = trainHeightPixels.ToMeters();
+        float halfTile = TileSize / 2f;
+        Vector2 horizontalWallSize = new Vector2(TileSize, halfTile);
 
         for (int x = 0; x < Width; x++)
         {
-            float centerX = GetTileCenterPixels(x, 0).X;
+            // top walls
+            Vector2 topPos = GetTileCenterPixels(x, 0) - new Vector2(0, halfTile + halfTile / 2f);
+            MapObjects.Add(new ShootHoleWall(horizontalWallSize, topPos));
 
-            // --- TOP WALL ---
-            Vector2 topPixelPos = new Vector2(centerX, Position.Y - wallHeightPixels / 2f);
-            var topWall = new ShootHoleWall(wallDimensions, topPixelPos);
-            MapObjects.Add(topWall);
-
-            // --- BOTTOM WALL ---
-            Vector2 bottomPixelPos = new Vector2(centerX, Position.Y + (Height * TileSize) + wallHeightPixels / 2f);
-            var bottomWall = new ShootHoleWall(wallDimensions, bottomPixelPos);
-            MapObjects.Add(bottomWall);
+            // bottom walls
+            Vector2 bottomPos = GetTileCenterPixels(x, Height - 1) + new Vector2(0, halfTile + halfTile / 2f);
+            MapObjects.Add(new ShootHoleWall(horizontalWallSize, bottomPos));
         }
 
-        Vector2 backWallPosition = new Vector2(
-            Position.X - endWallWidthPixels / 2f,
-            Position.Y + trainHeightPixels / 2f
-        );
-        Body backWallBody = gameplayContext.PhysicsWorld.CreateRectangle(
-            endWallSimWidth,
-            endWallSimHeight,
-            1f,
-            backWallPosition.ToMeters(),
-            0f,
-            BodyType.Static
-        );
+        // blockers above and below the bridge
+        Point[] bridgeBlocker = [new Point(-1, 0), new Point(-1, 1), new Point(-1, 3), new Point(-1, 4)];
+        float tileSimSize = TileSize.ToMeters();
 
-        Vector2 frontWallPosition = new Vector2(
-            Position.X + Width * TileSize + endWallWidthPixels / 2f,
-            Position.Y + trainHeightPixels / 2f
-        );
-        Body frontWallBody = gameplayContext.PhysicsWorld.CreateRectangle(
-            endWallSimWidth,
-            endWallSimHeight,
-            1f,
-            frontWallPosition.ToMeters(),
-            0f,
-            BodyType.Static
-        );
+        foreach (var tile in bridgeBlocker)
+        {
+            Vector2 wallCenterMeters = GetTileCenterMeters(tile.X, tile.Y);
+            gameplayContext.PhysicsWorld.CreateRectangle(tileSimSize, tileSimSize, 1f, wallCenterMeters);
+        }
     }
 
     public void SnapToNearestValidCell(AbstractStation station)
@@ -122,39 +96,10 @@ public class TrainMap
 
     public void Draw(SpriteBatch spriteBatch)
     {
-        DrawTrainNose(spriteBatch);
         DrawTrainTiles(spriteBatch);
         foreach (var mapObject in MapObjects)
         {
             mapObject.Draw(spriteBatch);
-        }
-    }
-
-    private void DrawTrainNose(SpriteBatch spriteBatch)
-    {
-        int trainHeightPixels = Height * TileSize;
-        float noseLength = TileSize * 1.5f;
-        int sliceHeight = 2;
-        int numSlices = trainHeightPixels / sliceHeight;
-        float trainRightEdge = Position.X + Width * TileSize;
-
-        for (int i = 0; i < numSlices; i++)
-        {
-            float t = MathHelper.Distance(i, numSlices / 2f) / (numSlices / 2f);
-            float sliceWidth = noseLength * (1f - t);
-
-            if (sliceWidth < 1f)
-            {
-                continue;
-            }
-
-            Rectangle slice = new Rectangle(
-                (int)trainRightEdge,
-                (int)(Position.Y + i * sliceHeight),
-                (int)sliceWidth,
-                sliceHeight
-            );
-            spriteBatch.Draw(AssetManager.BlankTexture, slice, Color.Gray);
         }
     }
 
@@ -168,13 +113,16 @@ public class TrainMap
                 spriteBatch.Draw(AssetManager.TileTexture, drawPos, Color.White);
             }
         }
+
+        Vector2 bridgePos = GetTileTopLeftPixels(-1, 2);
+        spriteBatch.Draw(AssetManager.TileTexture, bridgePos, Color.White);
     }
 
     public void Update(float dt)
     {
         foreach (var mapObject in MapObjects)
         {
-            if (mapObject is AbstractStation station)
+            if (mapObject is IUpdatable station)
             {
                 station.Update(dt);
             }
@@ -183,12 +131,7 @@ public class TrainMap
 
     public Rectangle GetBounds()
     {
-        return new Rectangle(
-            (int)Position.X,
-            (int)Position.Y,
-            Width * TileSize,
-            Height * TileSize
-        );
+        return new Rectangle((int)Position.X, (int)Position.Y, Width * TileSize, Height * TileSize);
     }
 
     public void Dispose()
