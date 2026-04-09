@@ -5,14 +5,11 @@ using Gamelab.Enemies;
 using Gamelab.Input;
 using Gamelab.Levels;
 using Gamelab.Map;
+using Gamelab.Map.Hub;
 using Gamelab.Map.Train;
 using Gamelab.Map.Train.State;
 using Gamelab.Particles;
 using Gamelab.PhysicalEntities.Projectiles;
-using Gamelab.PhysicalEntities.Stations;
-using Gamelab.PhysicalEntities.Stations.Cannon;
-using Gamelab.PhysicalEntities.Stations.Resources;
-using Gamelab.PhysicalEntities.Stations.Workbenches;
 using Gamelab.Players;
 using Gamelab.Services.Music;
 using Gamelab.Services.Sound;
@@ -71,28 +68,14 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         gameplayContext = new GameplayContext(virtualScreenSize);
         Services.AddService(gameplayContext);
         currentLevelDef = LevelLoader.Load(Game.CurrentLevel);
-        trainMap = new TrainMap(GraphicsDevice);
+        trainMap = new TrainMap();
         gameplayContext.Map = trainMap;
         menuSelectSound = Services.GetService<ISoundService>().RegisterSound("menu_stab", 4);
         trainSound = new TrainSound(Services.GetService<ISoundService>());
         baseSnowstormEmitter = ParticleFactory.CreateSnowstorm(random);
         phase = GameplayPhase.Running;
         Services.GetService<IVfxService>().AddContinuous(baseSnowstormEmitter);
-
-        trainMap.MapObjects.Add(new CoalResource(trainMap.GetTileCenterPixels(0, 2)));
-        trainMap.MapObjects.Add(new CoalOven(trainMap.GetTileCenterPixels(7, 2)));
-        trainMap.MapObjects.Add(new SpeedLever(trainMap.GetTileCenterPixels(7, 3)));
-        trainMap.MapObjects.Add(new CannonStation(trainMap.GetTileCenterPixels(5, 2)));
-
-        // Two left-side work zones: top-left and bottom-left, each with an anvil.
-        trainMap.MapObjects.Add(new CopperResource(trainMap.GetTileCenterPixels(2, 0)));
-        trainMap.MapObjects.Add(new GunpowderResource(trainMap.GetTileCenterPixels(2, 4)));
-        trainMap.MapObjects.Add(new Anvil(trainMap.GetTileCenterPixels(1, 0))); // top-left crafting
-        trainMap.MapObjects.Add(new Anvil(trainMap.GetTileCenterPixels(1, 4))); // bottom-left crafting
-        trainMap.MapObjects.Add(new Counter(trainMap.GetTileCenterPixels(0, 0)));
-        trainMap.MapObjects.Add(new Counter(trainMap.GetTileCenterPixels(3, 0)));
-        trainMap.MapObjects.Add(new Counter(trainMap.GetTileCenterPixels(0, 4)));
-        trainMap.MapObjects.Add(new Counter(trainMap.GetTileCenterPixels(3, 4)));
+        PrepTrainLayout.ApplyFromPendingOrDefault(Game, trainMap);
 
         worldScroller = new WorldScroller(GraphicsDevice);
         projectileManager = new ProjectileManager();
@@ -359,6 +342,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
 
         if (isEndOfLevelOutro && endLevelWhiteFilter.IsDone)
         {
+            Game.TrainLayoutSeedForHub = PrepTrainLayout.Capture(trainMap);
             Game.SwitchToScreen(new PostLevelStatsScreen(Game));
         }
     }

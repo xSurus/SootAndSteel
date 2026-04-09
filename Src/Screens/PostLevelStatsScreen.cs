@@ -99,6 +99,9 @@ public class PostLevelStatsScreen(GamelabGame game) : AbstractGameScreen(game)
 
             if (pressedByInput || pressedByKeyboard)
             {
+                // TODO: Calculate reward based on level difficulty and coal remaining.
+                int reward = 25 + ScreenPayloads.LastPostLevelResults.CoalRemaining * 3;
+                Game.AddCredits(reward);
                 whiteToHub.FadeIn(0.8f);
                 phase = Phase.FadeOutToHub;
             }

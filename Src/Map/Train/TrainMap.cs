@@ -1,9 +1,13 @@
+using System;
 using System.Collections.Generic;
 using Gamelab.Assets;
+using Gamelab.Config;
 using Gamelab.Map.Train.State;
 using Gamelab.PhysicalEntities;
 using Gamelab.PhysicalEntities.Stations;
 using Gamelab.PhysicalEntities.Stations.Cannon;
+using Gamelab.PhysicalEntities.Stations.Resources;
+using Gamelab.PhysicalEntities.Stations.Workbenches;
 using Gamelab.PhysicalEntities.Structures;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
@@ -22,13 +26,32 @@ public class TrainMap
 
     public List<IPhysicalEntity> MapObjects { get; } = new();
 
-    public TrainMap(GraphicsDevice graphicsDevice)
+    public TrainMap() : this(ComputeDefaultTopLeftPixels(), spawnBreakableBottomEdge: true, -1, -1)
     {
-        Position = new Vector2(
-            (gameplayContext.ScreenWidth - Width * TileSize) / 2f,
-            (gameplayContext.ScreenHeight - Height * TileSize) / 2f
-        );
-        InitializeBoundaryWalls();
+    }
+
+    /// <param name="spawnBreakableBottomEdge">When false, skips all per-tile bottom <see cref="ShootHoleWall"/>s.</param>
+    /// <param name="bottomWallOmitStartTileX">If &gt;= 0 and &lt; <paramref name="bottomWallOmitEndTileXExclusive"/>, those tile columns have no bottom wall (hub hatch gap).</param>
+    public TrainMap(
+        Vector2 topLeftPixels,
+        bool spawnBreakableBottomEdge = true,
+        int bottomWallOmitStartTileX = -1,
+        int bottomWallOmitEndTileXExclusive = -1)
+    {
+        Position = topLeftPixels;
+        InitializeBoundaryWalls(spawnBreakableBottomEdge, bottomWallOmitStartTileX, bottomWallOmitEndTileXExclusive);
+    }
+
+    private static Vector2 ComputeDefaultTopLeftPixels()
+    {
+        GameplayContext ctx = GamelabGame.Instance.Services.GetService<GameplayContext>()
+            ?? throw new InvalidOperationException("GameplayContext must exist before TrainMap is created.");
+        GameplayConfig cfg = GamelabGame.Instance.GameplayConfig;
+        int w = ctx.ScreenWidth;
+        int h = ctx.ScreenHeight;
+        return new Vector2(
+            (w - cfg.TrainWidth * cfg.TrainTileSize) / 2f,
+            (h - cfg.TrainHeight * cfg.TrainTileSize) / 2f);
     }
 
     public Vector2 GetTileTopLeftPixels(int x, int y)
@@ -51,8 +74,11 @@ public class TrainMap
         Vector2 localPos = pixelPosition - Position;
         return new Point((int)(localPos.X / TileSize), (int)(localPos.Y / TileSize));
     }
-
-    public void InitializeBoundaryWalls()
+    // TODO temporary change to enable gap in wall for players to enter/exit
+    public void InitializeBoundaryWalls(
+        bool spawnBreakableBottomEdge = true,
+        int bottomWallOmitStartTileX = -1,
+        int bottomWallOmitEndTileXExclusive = -1)
     {
         float wallHeightPixels = TileSize / 2f;
         Vector2 wallDimensions = new Vector2(TileSize, wallHeightPixels);
@@ -61,6 +87,9 @@ public class TrainMap
         float endWallWidthPixels = wallHeightPixels;
         float endWallSimWidth = endWallWidthPixels.ToMeters();
         float endWallSimHeight = trainHeightPixels.ToMeters();
+
+        bool omitBottomBand = bottomWallOmitStartTileX >= 0
+                              && bottomWallOmitEndTileXExclusive > bottomWallOmitStartTileX;
 
         for (int x = 0; x < Width; x++)
         {
@@ -71,10 +100,21 @@ public class TrainMap
             var topWall = new ShootHoleWall(wallDimensions, topPixelPos);
             MapObjects.Add(topWall);
 
-            // --- BOTTOM WALL ---
-            Vector2 bottomPixelPos = new Vector2(centerX, Position.Y + (Height * TileSize) + wallHeightPixels / 2f);
-            var bottomWall = new ShootHoleWall(wallDimensions, bottomPixelPos);
-            MapObjects.Add(bottomWall);
+            // --- BOTTOM WALL --- 
+            // TODO Temporary fix for bottom wall not spawning in some cases e.g. to get into train
+            if (spawnBreakableBottomEdge)
+            {
+                bool skipThisBottom = omitBottomBand
+                                      && x >= bottomWallOmitStartTileX
+                                      && x < bottomWallOmitEndTileXExclusive;
+                if (!skipThisBottom)
+                {
+                    Vector2 bottomPixelPos =
+                        new Vector2(centerX, Position.Y + (Height * TileSize) + wallHeightPixels / 2f);
+                    var bottomWall = new ShootHoleWall(wallDimensions, bottomPixelPos);
+                    MapObjects.Add(bottomWall);
+                }
+            }
         }
 
         Vector2 backWallPosition = new Vector2(
@@ -102,6 +142,22 @@ public class TrainMap
             0f,
             BodyType.Static
         );
+    }
+
+    public void AddDefaultStationLoadout()
+    {
+        MapObjects.Add(new CoalResource(GetTileCenterPixels(0, 2)));
+        MapObjects.Add(new CoalOven(GetTileCenterPixels(7, 2)));
+        MapObjects.Add(new SpeedLever(GetTileCenterPixels(7, 3)));
+        MapObjects.Add(new CannonStation(GetTileCenterPixels(5, 2)));
+        MapObjects.Add(new CopperResource(GetTileCenterPixels(2, 0)));
+        MapObjects.Add(new GunpowderResource(GetTileCenterPixels(2, 4)));
+        MapObjects.Add(new Anvil(GetTileCenterPixels(1, 0)));
+        MapObjects.Add(new Anvil(GetTileCenterPixels(1, 4)));
+        MapObjects.Add(new Counter(GetTileCenterPixels(0, 0)));
+        MapObjects.Add(new Counter(GetTileCenterPixels(3, 0)));
+        MapObjects.Add(new Counter(GetTileCenterPixels(0, 4)));
+        MapObjects.Add(new Counter(GetTileCenterPixels(3, 4)));
     }
 
     public void SnapToNearestValidCell(AbstractStation station)

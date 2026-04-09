@@ -19,20 +19,13 @@ public class HubMap : IDisposable
     private Body topWall;
     private Body bottomWall;
 
-    public HubMap()
+    public HubMap(Rectangle boundsPixels, bool openBottom = false)
     {
-        int padding = 120;
-        BoundsPixels = new Rectangle(
-            padding,
-            padding,
-            gameplayContext.ScreenWidth - padding * 2,
-            gameplayContext.ScreenHeight - padding * 2
-        );
-
-        CreateBoundaryWalls();
+        BoundsPixels = boundsPixels;
+        CreateBoundaryWalls(openBottom);
     }
 
-    private void CreateBoundaryWalls()
+    private void CreateBoundaryWalls(bool openBottom)
     {
         float thicknessPixels = 40f;
         float thicknessMeters = thicknessPixels.ToMeters();
@@ -70,14 +63,17 @@ public class HubMap : IDisposable
             BodyType.Static
         );
 
-        bottomWall = gameplayContext.PhysicsWorld.CreateRectangle(
-            widthMeters,
-            thicknessMeters,
-            1f,
-            (centerMeters + new Vector2(0f, heightMeters / 2f + thicknessMeters / 2f)),
-            0f,
-            BodyType.Static
-        );
+        if (!openBottom)
+        {
+            bottomWall = gameplayContext.PhysicsWorld.CreateRectangle(
+                widthMeters,
+                thicknessMeters,
+                1f,
+                (centerMeters + new Vector2(0f, heightMeters / 2f + thicknessMeters / 2f)),
+                0f,
+                BodyType.Static
+            );
+        }
     }
 
     public void Draw(SpriteBatch spriteBatch)

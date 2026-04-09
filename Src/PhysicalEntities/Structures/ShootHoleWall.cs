@@ -14,6 +14,7 @@ namespace Gamelab.PhysicalEntities.Structures;
 public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable, IPickable
 {
     public float MaxHealth => GamelabGame.Instance.GameplayConfig.WallMaxHealth;
+
     private float HealthRestoredPerSecond => GamelabGame.Instance.GameplayConfig.WallHealthRestoredPerSecond;
     public float CurrentHealth { get; private set; }
     public bool IsBroken => CurrentHealth <= 0f;
@@ -39,9 +40,16 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
     public void TakeDamage(float damageAmount)
     {
         if (IsBroken) return;
-        bool wasBroken = IsBroken;
+        float before = CurrentHealth;
         CurrentHealth = Math.Max(0f, CurrentHealth - damageAmount);
-        if (!wasBroken && IsBroken) gameplayContext.Events.FireWallBreached();
+        if (before > 0f && CurrentHealth <= 0f)
+        {
+            if (PhysicsBody?.World != null)
+            {
+                PhysicsBody.Enabled = false;
+            }
+            gameplayContext.Events.FireWallBreached();
+        }
     }
 
     public void OnHit(AbstractProjectile projectile)
@@ -51,14 +59,7 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
             return;
         }
 
-        bool wasBroken = IsBroken;
         TakeDamage(projectile.Damage);
-
-        if (!wasBroken && IsBroken && gameplayContext.Events != null)
-        {
-            gameplayContext.Events.FireWallBreached();
-        }
-
         projectile.Deactivate();
     }
 
