@@ -72,7 +72,7 @@ public class NextLevelIntroScreen(GamelabGame game) : AbstractGameScreen(game)
         {
             case Phase.Hold:
                 holdTimer += dt;
-                if (holdTimer >= 1.1f)
+                if (holdTimer >= 5.0f)
                 {
                     whiteToGameplay.FadeIn(0.8f);
                     phase = Phase.FadeOutToGameplay;
