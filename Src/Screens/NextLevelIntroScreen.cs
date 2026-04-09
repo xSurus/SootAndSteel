@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Gamelab.Assets;
-using Gamelab.Map.Train.State;
 using Gamelab.Particles;
 using Gamelab.Services.Vfx;
 using Microsoft.Xna.Framework;
@@ -21,7 +20,6 @@ public class NextLevelIntroScreen(GamelabGame game) : AbstractGameScreen(game)
         FadeOutToGameplay,
     }
 
-    private GameplayContext gameplayContext;
     private Desktop desktop;
     private readonly WhiteFilterTransition whiteToGameplay = new WhiteFilterTransition();
     private Phase phase;
@@ -30,9 +28,6 @@ public class NextLevelIntroScreen(GamelabGame game) : AbstractGameScreen(game)
     public override void LoadContent()
     {
         base.LoadContent();
-
-        gameplayContext = new GameplayContext(virtualScreenSize);
-        Services.AddService(gameplayContext);
 
         int nextLevelNumber = Game.CurrentLevel + 1;
 
@@ -114,7 +109,6 @@ public class NextLevelIntroScreen(GamelabGame game) : AbstractGameScreen(game)
 
     public override void UnloadContent()
     {
-        Game.Services.RemoveService(typeof(GameplayContext));
         Services.GetService<IVfxService>().ClearAll();
         base.UnloadContent();
     }

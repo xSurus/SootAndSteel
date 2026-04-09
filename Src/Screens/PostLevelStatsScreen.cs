@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Gamelab.Assets;
-using Gamelab.Map.Train.State;
 using Gamelab.Particles;
 using Gamelab.Services.Vfx;
 using Microsoft.Xna.Framework;
@@ -22,7 +21,6 @@ public class PostLevelStatsScreen(GamelabGame game) : AbstractGameScreen(game)
         FadeOutToHub,
     }
 
-    private GameplayContext gameplayContext;
     private Desktop desktop;
     private readonly WhiteFilterTransition whiteToHub = new WhiteFilterTransition();
     private Phase phase;
@@ -30,9 +28,6 @@ public class PostLevelStatsScreen(GamelabGame game) : AbstractGameScreen(game)
     public override void LoadContent()
     {
         base.LoadContent();
-
-        gameplayContext = new GameplayContext(virtualScreenSize);
-        Services.AddService(gameplayContext);
 
         var overlay = new Panel
         {
@@ -139,7 +134,6 @@ public class PostLevelStatsScreen(GamelabGame game) : AbstractGameScreen(game)
 
     public override void UnloadContent()
     {
-        Game.Services.RemoveService(typeof(GameplayContext));
         Services.GetService<IVfxService>().ClearAll();
         base.UnloadContent();
     }
