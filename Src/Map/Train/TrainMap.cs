@@ -15,6 +15,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Gamelab.Map.Train;
 
+/// <summary>Specifies where a <see cref="DoorWall"/> replaces a boundary wall in <see cref="TrainMap"/>.</summary>
+public readonly record struct DoorSpec(bool OnBottom, int Column);
+
 public class TrainMap
 {
     public int Width => GamelabGame.Instance.GameplayConfig.TrainWidth;
@@ -25,20 +28,15 @@ public class TrainMap
 
     public List<IPhysicalEntity> MapObjects { get; } = new();
 
-    public TrainMap() : this(ComputeDefaultTopLeftPixels(), spawnBreakableBottomEdge: true, -1, -1)
+    public TrainMap() : this(ComputeDefaultTopLeftPixels())
     {
     }
 
-    /// <param name="spawnBreakableBottomEdge">When false, skips all per-tile bottom <see cref="ShootHoleWall"/>s.</param>
-    /// <param name="bottomWallOmitStartTileX">If &gt;= 0 and &lt; <paramref name="bottomWallOmitEndTileXExclusive"/>, those tile columns have no bottom wall (hub hatch gap).</param>
-    public TrainMap(
-        Vector2 topLeftPixels,
-        bool spawnBreakableBottomEdge = true,
-        int bottomWallOmitStartTileX = -1,
-        int bottomWallOmitEndTileXExclusive = -1)
+    /// <param name="doors">Each entry replaces the boundary wall at the specified column/side with a <see cref="DoorWall"/>.</param>
+    public TrainMap(Vector2 topLeftPixels, params DoorSpec[] doors)
     {
         Position = topLeftPixels;
-        InitializeBoundaryWalls(spawnBreakableBottomEdge, bottomWallOmitStartTileX, bottomWallOmitEndTileXExclusive);
+        InitializeBoundaryWalls(doors);
     }
 
     private static Vector2 ComputeDefaultTopLeftPixels()
@@ -73,27 +71,26 @@ public class TrainMap
         Vector2 localPos = pixelPosition - Position;
         return new Point((int)(localPos.X / TileSize), (int)(localPos.Y / TileSize));
     }
-    // TODO temporary change to enable gap in wall for players to enter/exit
-    public void InitializeBoundaryWalls(
-        bool spawnBreakableBottomEdge = true,
-        int bottomWallOmitStartTileX = -1,
-        int bottomWallOmitEndTileXExclusive = -1)
+    private void InitializeBoundaryWalls(DoorSpec[] doors)
     {
         float halfTile = TileSize / 2f;
-        Vector2 horizontalWallSize = new Vector2(TileSize, halfTile);
-
-        bool omitBottomBand = bottomWallOmitStartTileX >= 0
-                              && bottomWallOmitEndTileXExclusive > bottomWallOmitStartTileX;
+        Vector2 wallSize = new Vector2(TileSize, halfTile);
 
         for (int x = 0; x < Width; x++)
         {
             // top walls
             Vector2 topPos = GetTileCenterPixels(x, 0) - new Vector2(0, halfTile + halfTile / 2f);
-            MapObjects.Add(new ShootHoleWall(horizontalWallSize, topPos));
+            if (Array.Exists(doors, d => !d.OnBottom && d.Column == x))
+                MapObjects.Add(new DoorWall(wallSize, topPos));
+            else
+                MapObjects.Add(new ShootHoleWall(wallSize, topPos));
 
             // bottom walls
             Vector2 bottomPos = GetTileCenterPixels(x, Height - 1) + new Vector2(0, halfTile + halfTile / 2f);
-            MapObjects.Add(new ShootHoleWall(horizontalWallSize, bottomPos));
+            if (Array.Exists(doors, d => d.OnBottom && d.Column == x))
+                MapObjects.Add(new DoorWall(wallSize, bottomPos));
+            else
+                MapObjects.Add(new ShootHoleWall(wallSize, bottomPos));
         }
 
         // blockers above and below the bridge
@@ -105,6 +102,19 @@ public class TrainMap
             Vector2 wallCenterMeters = GetTileCenterMeters(tile.X, tile.Y);
             gameplayContext.PhysicsWorld.CreateRectangle(tileSimSize, tileSimSize, 1f, wallCenterMeters);
         }
+    }
+
+    /// <summary>
+    /// Adds the fixed structural elements (coal wagon, train nose) that are always present
+    /// regardless of player-configured station layout. Call this in both GameplayScreen and HubScreen prep.
+    /// </summary>
+    public void AddDefaultStructures()
+    {
+        Vector2 coalWagonPos = new Vector2(
+            Position.X - 4 * TileSize,
+            Position.Y + (Height * TileSize) / 2f);
+        MapObjects.Add(new CoalWagon(coalWagonPos));
+        MapObjects.Add(new TrainNose(GetTileCenterPixels(8, 2)));
     }
 
     public void AddDefaultStationLoadout()

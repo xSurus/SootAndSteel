@@ -88,12 +88,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         ambientMusic?.Start();
         trainSound?.Start();
 
-        Vector2 coalWagonPos = new Vector2(
-            trainMap.Position.X - 4 * trainMap.TileSize,
-            trainMap.Position.Y + (trainMap.Height * trainMap.TileSize) / 2f
-        );
-        trainMap.MapObjects.Add(new CoalWagon(coalWagonPos));
-        trainMap.MapObjects.Add(new TrainNose(trainMap.GetTileCenterPixels(8, 2)));
+        trainMap.AddDefaultStructures();
         PrepTrainLayout.ApplyFromPendingOrDefault(Game, trainMap);
 
         worldScroller = new WorldScroller(GraphicsDevice);
@@ -308,6 +303,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
 
             trainMap.Update(fixedDt);
             gameplayContext.PhysicsWorld.Step(fixedDt);
+            gameplayContext.FlushDeferredPhysicsActions();
             accumulator -= fixedDt;
         }
 

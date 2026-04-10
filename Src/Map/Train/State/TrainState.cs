@@ -27,6 +27,7 @@ public class TrainState
     public int CoalAmount { get; set; }
     public float Temperature { get; set; } = GamelabGame.Instance.GameplayConfig.TrainMaxTemperature;
     public bool IsCoalOvenBurning { get; set; } = true;
+    public bool FuelBurningEnabled { get; set; } = true;
 
     /// <summary>
     /// When true (level complete outro), the train keeps moving but stations must not consume coal/fuel.

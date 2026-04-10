@@ -38,10 +38,11 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
         CurrentHealth = Math.Max(0f, CurrentHealth - damageAmount);
         if (before > 0f && CurrentHealth <= 0f)
         {
-            if (PhysicsBody?.World != null)
+            gameplayContext.DeferPhysicsAction(() =>
             {
-                PhysicsBody.Enabled = false;
-            }
+                if (PhysicsBody?.World != null)
+                    PhysicsBody.Enabled = false;
+            });
             gameplayContext.Events.FireWallBreached();
         }
     }

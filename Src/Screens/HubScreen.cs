@@ -84,6 +84,7 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
         Services.AddService(gameplayContext);
         gameplayContext.Map = null;
         gameplayContext.State.IsCoalOvenBurning = false;
+        gameplayContext.State.FuelBurningEnabled = false;
 
         worldWidth = virtualScreenSize.X;
         worldHeight = virtualScreenSize.Y * 2;
@@ -101,13 +102,13 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
         hubMap = new HubMap(hubPlazaBounds, openBottom: true);
 
         int trainW = Game.GameplayConfig.TrainWidth * Game.GameplayConfig.TrainTileSize;
-        int tw = Game.GameplayConfig.TrainWidth;
-        int gapMid = tw / 2;
+        int gapMid = Game.GameplayConfig.TrainWidth / 2;
         prepTrainMap = new TrainMap(
             new Vector2((worldWidth - trainW) / 2f, prepViewCameraY + 360f),
-            spawnBreakableBottomEdge: true,
-            bottomWallOmitStartTileX: Math.Max(0, gapMid - 1),
-            bottomWallOmitEndTileXExclusive: Math.Min(tw, gapMid + 2));
+            new DoorSpec(OnBottom: false, Column: gapMid),
+            new DoorSpec(OnBottom: true, Column: gapMid));
+
+        prepTrainMap.AddDefaultStructures();
 
         List<PrepStationEntry> hubSeed = Game.TrainLayoutSeedForHub;
         Game.TrainLayoutSeedForHub = null;
@@ -232,7 +233,7 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
         float dragRowY = hubPlazaBounds.Bottom - 195;
         HubShopOfferTemplate[] offers =
         [
-            new(YardStationKindIds.Gunpowder, "Gunpowder",    18, new Color(45, 45, 50),   0f, pickupY),
+            new(YardStationKindIds.Gunpowder, "Gunpowder",    18, new Color(45, 45, 50),    0f, pickupY),
             new(YardStationKindIds.Cannon,    "Extra cannon", 45, Color.DarkRed,          -170f, dragRowY),
             new(YardStationKindIds.Anvil,     "Extra anvil",  38, Color.DarkSlateGray,     170f, dragRowY),
         ];

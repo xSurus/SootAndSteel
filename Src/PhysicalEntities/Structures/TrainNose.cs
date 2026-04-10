@@ -41,6 +41,13 @@ public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
 
     public void Update(float dt)
     {
+        if (!gameplayContext.State.FuelBurningEnabled)
+        {
+            gameplayContext.State.IsCoalOvenBurning = currentFuel > 0f;
+            smokeEmitter.AutoTrigger = false;
+            return;
+        }
+
         if (currentFuel > 0)
         {
             gameplayContext.State.IsCoalOvenBurning = true;
