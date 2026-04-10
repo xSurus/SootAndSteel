@@ -38,23 +38,6 @@
 #begin promptfont.ttf
 /copy:promptfont.ttf
 
-#begin sfx/menu_stab.mp3
-/importer:Mp3Importer
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:sfx/menu_stab.mp3
-
-#begin sfx/train_chug.mp3
-/importer:Mp3Importer
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:sfx/train_chug.mp3
-
-#begin sfx/train_ga.mp3
-/importer:Mp3Importer
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:sfx/train_ga.mp3
 
 #begin Data/levels/basic_easy_level.json
 /copy:Data/levels/basic_easy_level.json
