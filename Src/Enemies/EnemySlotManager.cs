@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Gamelab.Enemies;
 
-public class EnemySlotManager(Random random)
+public class EnemySlotManager()
 {
     private static readonly EnemyTrainSlot[] ShooterSlots =
     [
@@ -23,7 +23,7 @@ public class EnemySlotManager(Random random)
         new(EnemySlotSide.Bottom, 0.75f)
     ];
 
-    private readonly Random random = random;
+    private readonly Random random = Random.Shared;
     private readonly HashSet<EnemyTrainSlot> occupiedSlots = [];
 
     public bool TryReserveShooterSlot(out EnemyTrainSlot slot)
@@ -79,7 +79,8 @@ public class EnemySlotManager(Random random)
         return true;
     }
 
-    private bool TryReserveSlotOnSide(IReadOnlyList<EnemyTrainSlot> candidateSlots, EnemySlotSide side, out EnemyTrainSlot slot)
+    private bool TryReserveSlotOnSide(IReadOnlyList<EnemyTrainSlot> candidateSlots, EnemySlotSide side,
+        out EnemyTrainSlot slot)
     {
         List<EnemyTrainSlot> availableSlots = [];
 

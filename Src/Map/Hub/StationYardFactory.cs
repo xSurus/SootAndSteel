@@ -16,9 +16,7 @@ public static class StationYardFactory
             YardStationKindIds.Cannon => new CannonStation(centerPixels),
             YardStationKindIds.Anvil => new Anvil(centerPixels),
             YardStationKindIds.Counter => new Counter(centerPixels),
-            YardStationKindIds.Coal => new CoalResource(centerPixels),
             YardStationKindIds.Gunpowder => new GunpowderResource(centerPixels),
-            YardStationKindIds.CoalOven => new CoalOven(centerPixels),
             YardStationKindIds.SpeedLever => new SpeedLever(centerPixels),
             YardStationKindIds.Copper => new CopperResource(centerPixels),
             _ => throw new ArgumentOutOfRangeException(nameof(kindId), kindId, "Unknown yard station kind id.")

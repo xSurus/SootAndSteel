@@ -1,4 +1,3 @@
-using System;
 using Gamelab.Assets;
 using Gamelab.Particles.Modifiers;
 using Gamelab.Particles.Profiles;
@@ -8,12 +7,12 @@ namespace Gamelab.Particles;
 
 public static class ParticleFactory
 {
-    public static ParticleEmitter CreateSnowstorm(Random random, Point screenSize = default)
+    public static ParticleEmitter CreateSnowstorm(Point screenSize = default)
     {
         if (screenSize == default)
             screenSize = new Point(1920, 1080);
 
-        var emitter = new ParticleEmitter(1000, AssetManager.SparkTexture, random)
+        var emitter = new ParticleEmitter(1000, AssetManager.SparkTexture)
         {
             Position = new Vector2(screenSize.X / 2f, screenSize.Y / 2f),
             AutoTrigger = true,
@@ -38,9 +37,9 @@ public static class ParticleFactory
         return emitter;
     }
 
-    public static ParticleEmitter CreateCannonballTrail(Random random)
+    public static ParticleEmitter CreateCannonballTrail()
     {
-        var emitter = new ParticleEmitter(2000, AssetManager.SparkTexture, random)
+        var emitter = new ParticleEmitter(2000, AssetManager.SparkTexture)
         {
             Position = Vector2.Zero,
             AutoTrigger = true,
@@ -62,9 +61,9 @@ public static class ParticleFactory
         return emitter;
     }
 
-    public static ParticleEmitter CreateBloodSplatter(Vector2 position, Random random)
+    public static ParticleEmitter CreateBloodSplatter(Vector2 position)
     {
-        var emitter = new ParticleEmitter(100, AssetManager.SparkTexture, random)
+        var emitter = new ParticleEmitter(100, AssetManager.SparkTexture)
         {
             Position = position,
             AutoTrigger = false,
@@ -81,6 +80,55 @@ public static class ParticleFactory
 
         emitter.Modifiers.Add(new FadeOutModifier(0.3f));
         emitter.Modifiers.Add(new DirectionalForceModifier(Vector2.UnitY, 400f));
+
+        return emitter;
+    }
+
+    public static ParticleEmitter CreateOvenSmoke(Vector2 position)
+    {
+        var emitter = new ParticleEmitter(200, AssetManager.SparkTexture)
+        {
+            Position = position,
+            AutoTrigger = false,
+            AutoTriggerFrequency = 0.08f,
+            Profile = new CircleProfile(radius: 6f, onlyRing: false, radiateOutward: true),
+
+            Parameters = new ParticleReleaseParameters
+            {
+                MinQuantity = 1, MaxQuantity = 2,
+                MinSpeed = 5f, MaxSpeed = 15f,
+                MinAge = 1.0f, MaxAge = 2.0f,
+                MinSize = 0.8f, MaxSize = 2.0f,
+                Color = new Color(50, 50, 50, 200)
+            }
+        };
+
+        emitter.Modifiers.Add(new FadeInModifier(0.2f));
+        emitter.Modifiers.Add(new FadeOutModifier(0.8f));
+        emitter.Modifiers.Add(new DirectionalForceModifier(new Vector2(0, -1), 30f));
+
+        return emitter;
+    }
+
+    public static ParticleEmitter CreateCannonMuzzleFlash(Vector2 position, Vector2 direction)
+    {
+        var emitter = new ParticleEmitter(200, AssetManager.SparkTexture)
+        {
+            Position = position,
+            AutoTrigger = false,
+            Profile = new ConeProfile(direction, MathHelper.PiOver4 * 0.5f),
+
+            Parameters = new ParticleReleaseParameters
+            {
+                MinQuantity = 40, MaxQuantity = 60,
+                MinSpeed = 100f, MaxSpeed = 300f,
+                MinAge = 0.3f, MaxAge = 0.5f,
+                MinSize = 0.5f, MaxSize = 2f,
+                Color = Color.Orange
+            }
+        };
+
+        emitter.Modifiers.Add(new FadeOutModifier(0.2f));
 
         return emitter;
     }

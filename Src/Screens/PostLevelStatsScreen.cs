@@ -75,7 +75,7 @@ public class PostLevelStatsScreen(GamelabGame game) : AbstractGameScreen(game)
         desktop = new Desktop { Root = overlay };
 
         var vfx = Services.GetService<IVfxService>();
-        var emitter = ParticleFactory.CreateSnowstorm(new Random());
+        var emitter = ParticleFactory.CreateSnowstorm();
         vfx.AddContinuous(emitter);
         phase = Phase.WaitInput;
     }

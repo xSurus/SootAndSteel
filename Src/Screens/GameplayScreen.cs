@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using FmodForFoxes.Studio;
 using Gamelab.Assets;
 using Gamelab.Enemies;
 using Gamelab.Input;
@@ -10,8 +11,12 @@ using Gamelab.Map.Train;
 using Gamelab.Map.Train.State;
 using Gamelab.Particles;
 using Gamelab.PhysicalEntities.Projectiles;
+using Gamelab.PhysicalEntities.Stations;
+using Gamelab.PhysicalEntities.Stations.Cannon;
+using Gamelab.PhysicalEntities.Stations.Resources;
+using Gamelab.PhysicalEntities.Stations.Workbenches;
+using Gamelab.PhysicalEntities.Structures;
 using Gamelab.Players;
-using Gamelab.Services.Music;
 using Gamelab.Services.Sound;
 using Gamelab.Services.Vfx;
 using Microsoft.Xna.Framework;
@@ -34,10 +39,8 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     private TrainMap trainMap;
     private WorldScroller worldScroller;
     private GameplayContext gameplayContext;
-    private TrainSound trainSound;
     private EnemyManager enemyManager;
     private LevelManager levelManager;
-    private SoundHandle menuSelectSound;
     private LevelDefinition currentLevelDef;
     private Desktop desktop;
     private Label coalLabel;
@@ -50,10 +53,14 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     private Label continueLabel;
     private Label exitLabel;
 
+    private ISoundService soundService;
+    private EventInstance trainSound;
+    private EventInstance ambientMusic;
+
     private float screenShakeTimer;
     private float screenShakeIntensity;
     private Vector2 screenShakeOffset;
-    private readonly Random random = new Random();
+    private readonly Random random = Random.Shared;
     private bool isPaused;
     private int pauseSelectionIndex;
     private bool wasEscapeDown;
@@ -70,16 +77,28 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         currentLevelDef = LevelLoader.Load(Game.CurrentLevel);
         trainMap = new TrainMap();
         gameplayContext.Map = trainMap;
-        menuSelectSound = Services.GetService<ISoundService>().RegisterSound("menu_stab", 4);
-        trainSound = new TrainSound(Services.GetService<ISoundService>());
-        baseSnowstormEmitter = ParticleFactory.CreateSnowstorm(random);
-        phase = GameplayPhase.Running;
-        Services.GetService<IVfxService>().AddContinuous(baseSnowstormEmitter);
+        Services.GetService<IVfxService>().AddContinuous(ParticleFactory.CreateSnowstorm());
+
+        // Sounds
+        soundService = Services.GetService<ISoundService>();
+        soundService.LoadSound(Sounds.MenuSelect);
+        trainSound = soundService.GetSoundInstance(Sounds.Train);
+        ambientMusic = soundService.GetSoundInstance(Sounds.AmbientSong);
+        soundService.RegisterParameter(trainSound, "Train Velocity", () => gameplayContext.State.actualSpeed);
+        ambientMusic?.Start();
+        trainSound?.Start();
+
+        Vector2 coalWagonPos = new Vector2(
+            trainMap.Position.X - 4 * trainMap.TileSize,
+            trainMap.Position.Y + (trainMap.Height * trainMap.TileSize) / 2f
+        );
+        trainMap.MapObjects.Add(new CoalWagon(coalWagonPos));
+        trainMap.MapObjects.Add(new TrainNose(trainMap.GetTileCenterPixels(8, 2)));
         PrepTrainLayout.ApplyFromPendingOrDefault(Game, trainMap);
 
         worldScroller = new WorldScroller(GraphicsDevice);
         projectileManager = new ProjectileManager();
-        enemyManager = new EnemyManager(random, currentLevelDef, projectileManager);
+        enemyManager = new EnemyManager(currentLevelDef, projectileManager);
         levelManager = new LevelManager(currentLevelDef);
 
         gameplayContext.Events.OnWallBreached += OnWallBreached;
@@ -158,9 +177,6 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         pauseOverlay = CreatePauseOverlay();
         mainPanel.Widgets.Add(pauseOverlay);
         desktop.Root = mainPanel;
-
-        Services.GetService<IMusicService>()
-            .FadeOutAndPlay("tmp_ambient", 2, repeating: true, volume: Game.MusicVolume);
     }
 
     private Panel CreatePauseOverlay()
@@ -275,45 +291,25 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         }
 
         worldScroller.Update(dt);
-        if (!isEndOfLevelOutro)
-        {
-            enemyManager.Update(dt);
-            projectileManager.Update(dt);
-        }
 
         accumulator += Math.Min(dt, Game.GameplayConfig.MaxAccumulatedDeltaSeconds);
+        float fixedDt = Game.GameplayConfig.FixedTimeStep;
         while (accumulator >= Game.GameplayConfig.FixedTimeStep)
         {
+            enemyManager.Update(fixedDt);
+            projectileManager.Update(fixedDt);
             foreach (Player player in players)
             {
-                player.Update(Game.GameplayConfig.FixedTimeStep);
+                player.Update(fixedDt);
             }
 
-            if (phase == GameplayPhase.Running)
-            {
-                gameplayContext.State.Update(Game.GameplayConfig.FixedTimeStep);
-                if (isFailureTriggered) return;
+            gameplayContext.State.Update(fixedDt);
+            if (isFailureTriggered) return;
 
-                // Failure: ran out of coal while still trying to move.
-                if (gameplayContext.State.CoalAmount <= 0 && gameplayContext.State.actualSpeed > 0f)
-                {
-                    TriggerFailure();
-                    return;
-                }
-
-                trainMap.Update(Game.GameplayConfig.FixedTimeStep);
-            }
-            else if (isEndOfLevelOutro)
-            {
-                gameplayContext.State.Update(Game.GameplayConfig.FixedTimeStep);
-                trainMap.Update(Game.GameplayConfig.FixedTimeStep);
-            }
-
-            gameplayContext.PhysicsWorld.Step(Game.GameplayConfig.FixedTimeStep);
-            accumulator -= Game.GameplayConfig.FixedTimeStep;
+            trainMap.Update(fixedDt);
+            gameplayContext.PhysicsWorld.Step(fixedDt);
+            accumulator -= fixedDt;
         }
-
-        trainSound.Update(gameTime);
 
         coalLabel.Text = $"Coal: {gameplayContext.State.CoalAmount}";
         speedLabel.Text = $"Speed: {gameplayContext.State.actualSpeed:F0}";
@@ -391,7 +387,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         {
             pauseSelectionIndex = 1 - pauseSelectionIndex;
             UpdatePauseSelectionVisuals();
-            menuSelectSound?.Play();
+            soundService.PlayOnce(Sounds.MenuSelect);
         }
 
         if (!confirm)
@@ -399,7 +395,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
             return;
         }
 
-        menuSelectSound?.Play();
+        soundService.PlayOnce(Sounds.MenuSelect);
 
         if (pauseSelectionIndex == 0)
         {
@@ -494,6 +490,12 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         trainMap?.Dispose();
         worldScroller?.Dispose();
         projectileManager?.Clear();
+
+        trainSound?.Stop();
+        ambientMusic?.Stop();
+        trainSound?.Dispose();
+        ambientMusic?.Dispose();
+        
         base.UnloadContent();
     }
 }

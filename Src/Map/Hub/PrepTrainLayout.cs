@@ -38,7 +38,6 @@ public static class PrepTrainLayout
     public static string ToKindId(AbstractStation station) =>
         station switch
         {
-            CoalResource => YardStationKindIds.Coal,
             GunpowderResource => YardStationKindIds.Gunpowder,
             CopperResource => YardStationKindIds.Copper,
             _ => station.Type

@@ -1,4 +1,3 @@
-using System;
 using Gamelab.Assets;
 using Gamelab.Entities;
 using Gamelab.Map.Train.State;
@@ -53,7 +52,7 @@ public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable
     {
         Health -= damage;
         var vfxService = GamelabGame.Instance.Services.GetService<IVfxService>();
-        vfxService.EmitBurst(ParticleFactory.CreateBloodSplatter(this.Position, new Random()));
+        vfxService.EmitBurst(ParticleFactory.CreateBloodSplatter(this.Position));
         if (Health <= 0)
         {
             ShouldRemove = true;

@@ -10,7 +10,7 @@ using Gamelab.Players;
 using Gamelab.PhysicalEntities.Stations;
 using Gamelab.PhysicalEntities.Structures;
 using Gamelab.PhysicalEntities.Triggers;
-using Gamelab.Services.Music;
+using Gamelab.Services.Sound;
 using Gamelab.Services.Vfx;
 using Gamelab.UI;
 using Gamelab.Utils;
@@ -142,7 +142,7 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
         prepEntryAllInsidePrev = players.Count > 0 && AllPlayersInRectangle(prepEntryMarker);
         hubPlazaAllInsidePrev = players.Count > 0 && AllPlayersInRectangle(hubPlazaBounds);
 
-        hubSnowEmitter = ParticleFactory.CreateSnowstorm(new Random());
+        hubSnowEmitter = ParticleFactory.CreateSnowstorm();
         Services.GetService<IVfxService>().AddContinuous(hubSnowEmitter);
 
         creditsLabel = new Label
@@ -178,8 +178,9 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
 
         desktop = new Desktop { Root = rootPanel };
 
-        Services.GetService<IMusicService>()
-            .FadeOutAndPlay("tmp_ambient", 2, repeating: true, volume: Game.MusicVolume);
+        var soundService = Services.GetService<ISoundService>();
+        soundService.LoadSound(Sounds.AmbientSong);
+        soundService.GetSoundInstance(Sounds.AmbientSong)?.Start();
     }
 
     private void CreateWorldBoundaryWalls()
@@ -231,8 +232,7 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
         float dragRowY = hubPlazaBounds.Bottom - 195;
         HubShopOfferTemplate[] offers =
         [
-            new(YardStationKindIds.Coal,      "Coal stock",   12, new Color(72, 48, 36),  -150f, pickupY),
-            new(YardStationKindIds.Gunpowder, "Gunpowder",    18, new Color(45, 45, 50),   150f, pickupY),
+            new(YardStationKindIds.Gunpowder, "Gunpowder",    18, new Color(45, 45, 50),   0f, pickupY),
             new(YardStationKindIds.Cannon,    "Extra cannon", 45, Color.DarkRed,          -170f, dragRowY),
             new(YardStationKindIds.Anvil,     "Extra anvil",  38, Color.DarkSlateGray,     170f, dragRowY),
         ];

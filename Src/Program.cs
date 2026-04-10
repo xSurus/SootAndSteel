@@ -1,7 +1,9 @@
 ﻿using System;
 using System.CommandLine;
 using System.Threading;
+using FmodForFoxes;
 using Gamelab.Screens;
+using Gamelab.Services.Sound;
 using Gamelab.Utils.Logging;
 using static Gamelab.GamelabGame;
 
@@ -31,7 +33,7 @@ public static class Program
 
         var runCICDTest = options.GetValue(runCICDTestOption);
 
-        game = new GamelabGame(runMode);
+        game = new GamelabGame(runMode, new DesktopAndMacNativeFmodLibrary());
 
         if (runCICDTest)
         {
