@@ -33,7 +33,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     private GameplayContext gameplayContext;
     private TrainSound trainSound;
     private EnemyManager enemyManager;
-    private LevelManager levelManager;
+    private RunManager runManager;
     private SoundHandle menuSelectSound;
     private LevelDefinition currentLevelDef;
     private Desktop desktop;
@@ -44,6 +44,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     private Label distanceLabel;
     private ProjectileManager projectileManager;
     private Panel pauseOverlay;
+    private Panel intermissionOverlay;
     private Label continueLabel;
     private Label exitLabel;
 
@@ -55,13 +56,17 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     private int pauseSelectionIndex;
     private bool wasEscapeDown;
     private bool isFailureTriggered;
+    private bool wasEnterDown;
 
     public override void LoadContent()
     {
         base.LoadContent();
         gameplayContext = new GameplayContext(virtualScreenSize);
         Services.AddService(gameplayContext);
-        currentLevelDef = LevelLoader.Load(Game.CurrentLevel);
+        runManager = new RunManager(Game.CurrentLevel, new ProgressiveRunLevelProvider());
+        runManager.OnLevelStarted += OnLevelStarted;
+        runManager.OnIntermissionStarted += OnIntermissionStarted;
+        currentLevelDef = runManager.CurrentLevelDefinition;
         trainMap = new TrainMap(GraphicsDevice);
         gameplayContext.Map = trainMap;
         menuSelectSound = Services.GetService<ISoundService>().RegisterSound("menu_stab", 4);
@@ -90,7 +95,6 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         worldScroller = new WorldScroller(GraphicsDevice);
         projectileManager = new ProjectileManager();
         enemyManager = new EnemyManager(currentLevelDef, projectileManager);
-        levelManager = new LevelManager(currentLevelDef);
 
         gameplayContext.Events.OnWallBreached += OnWallBreached;
         gameplayContext.Events.OnWallRepaired += OnWallRepaired;
@@ -165,6 +169,8 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         mainPanel.Widgets.Add(temperatureLabel);
         mainPanel.Widgets.Add(cannonLabel);
         mainPanel.Widgets.Add(distanceLabel);
+        intermissionOverlay = CreateIntermissionOverlay();
+        mainPanel.Widgets.Add(intermissionOverlay);
         pauseOverlay = CreatePauseOverlay();
         mainPanel.Widgets.Add(pauseOverlay);
         desktop.Root = mainPanel;
@@ -231,6 +237,54 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         return overlay;
     }
 
+    private Panel CreateIntermissionOverlay()
+    {
+        var overlay = new Panel
+        {
+            Background = new SolidBrush(new Color(0, 0, 0, 180)),
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            VerticalAlignment = VerticalAlignment.Stretch,
+            Visible = false
+        };
+
+        var modal = new Panel
+        {
+            Width = 760,
+            Height = 320,
+            Background = new SolidBrush(new Color(25, 25, 30, 230)),
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center
+        };
+
+        var stack = new VerticalStackPanel
+        {
+            Spacing = 20,
+            Padding = new Thickness(40),
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center
+        };
+
+        stack.Widgets.Add(new Label
+        {
+            Text = "LEVEL COMPLETE",
+            Font = Game.fontSystem.GetFont(56),
+            HorizontalAlignment = HorizontalAlignment.Center,
+            TextColor = Color.White
+        });
+
+        stack.Widgets.Add(new Label
+        {
+            Text = "Press Start or Enter for next level",
+            Font = Game.fontSystem.GetFont(36),
+            HorizontalAlignment = HorizontalAlignment.Center,
+            TextColor = Color.LightBlue
+        });
+
+        modal.Widgets.Add(stack);
+        overlay.Widgets.Add(modal);
+        return overlay;
+    }
+
     private void OnWallBreached()
     {
         gameplayContext.State.numberBreachedWalls++;
@@ -273,21 +327,33 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
             return;
         }
 
-        worldScroller.Update(dt);
+        bool isIntermission = runManager.CurrentPhase == RunPhase.Intermission;
+        if (isIntermission)
+        {
+            UpdateIntermission();
+        }
+
+        if (!isIntermission)
+        {
+            worldScroller.Update(dt);
+        }
 
         accumulator += Math.Min(dt, Game.GameplayConfig.MaxAccumulatedDeltaSeconds);
         float fixedDt = Game.GameplayConfig.FixedTimeStep;
         while (accumulator >= Game.GameplayConfig.FixedTimeStep)
         {
-            enemyManager.Update(fixedDt);
-            projectileManager.Update(fixedDt);
             foreach (Player player in players)
             {
                 player.Update(fixedDt);
             }
 
-            gameplayContext.State.Update(fixedDt);
-            if (isFailureTriggered) return;
+            if (!isIntermission)
+            {
+                enemyManager.Update(fixedDt);
+                projectileManager.Update(fixedDt);
+                gameplayContext.State.Update(fixedDt);
+                if (isFailureTriggered) return;
+            }
 
             trainMap.Update(fixedDt);
             gameplayContext.PhysicsWorld.Step(fixedDt);
@@ -301,13 +367,9 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         temperatureLabel.Text = $"Temperature: {gameplayContext.State.Temperature:F0}";
         distanceLabel.Text =
             $"Distance: {gameplayContext.State.DistanceTraveled:F0} / {currentLevelDef?.LevelDistance ?? 0:F0}";
-
-        if (currentLevelDef != null &&
-            gameplayContext.State.DistanceTraveled >= currentLevelDef.LevelDistance &&
-            enemyManager.Enemies.Count == 0)
+        if (!isIntermission)
         {
-            Game.CurrentLevel++;
-            Game.SwitchToScreen(new MainMenuScreen(Game));
+            runManager.Update(gameplayContext, enemyManager);
         }
 
         UpdateScreenShake(dt);
@@ -407,6 +469,52 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         }
     }
 
+    private void UpdateIntermission()
+    {
+        if (!IsIntermissionAdvanceRequested())
+        {
+            return;
+        }
+
+        if (runManager.TryAdvanceToNextLevel())
+        {
+            menuSelectSound?.Play();
+        }
+    }
+
+    private bool IsIntermissionAdvanceRequested()
+    {
+        bool isEnterDown = Keyboard.GetState().IsKeyDown(Keys.Enter);
+        bool enterPressed = isEnterDown && !wasEnterDown;
+        wasEnterDown = isEnterDown;
+
+        bool startPressed = false;
+        foreach (PlayerConfiguration player in Game.playerManager.Configs)
+        {
+            if (player.Input.IsStartJustPressed())
+            {
+                startPressed = true;
+                break;
+            }
+        }
+
+        return enterPressed || startPressed;
+    }
+
+    private void OnLevelStarted(int levelNumber, LevelDefinition levelDefinition)
+    {
+        currentLevelDef = levelDefinition;
+        Game.CurrentLevel = levelNumber;
+        enemyManager?.SetLevel(levelDefinition);
+        intermissionOverlay.Visible = false;
+    }
+
+    private void OnIntermissionStarted(int _)
+    {
+        gameplayContext.State.CurrentSpeed = TrainSpeedSetting.Stopped;
+        intermissionOverlay.Visible = true;
+    }
+
     public override void Draw(GameTime gameTime)
     {
         Matrix shakeMatrix = Matrix.CreateTranslation(screenShakeOffset.X, screenShakeOffset.Y, 0);
@@ -439,6 +547,12 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         {
             gameplayContext.Events.OnWallBreached -= OnWallBreached;
             gameplayContext.Events.OnWallRepaired -= OnWallRepaired;
+        }
+
+        if (runManager != null)
+        {
+            runManager.OnLevelStarted -= OnLevelStarted;
+            runManager.OnIntermissionStarted -= OnIntermissionStarted;
         }
 
         if (gameplayContext?.State != null)

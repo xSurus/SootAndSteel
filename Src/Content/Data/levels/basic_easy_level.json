@@ -1,0 +1,4 @@
+{
+  "LevelDistance": 1000,
+  "SpawnEvents": [{ "Distance": 2000, "Type": "Thief", "Side": "Top" }]
+}

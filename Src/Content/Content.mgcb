@@ -68,3 +68,6 @@
 /processorParam:Quality=Best
 /build:sfx/train_ga.mp3
 
+#begin Data/levels/basic_easy_level.json
+/copy:Data/levels/basic_easy_level.json
+

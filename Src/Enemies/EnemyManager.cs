@@ -13,7 +13,7 @@ public class EnemyManager
     private readonly List<AbstractEnemy> enemies = [];
     private readonly Random random = Random.Shared;
     private readonly EnemySlotManager slotManager;
-    private readonly LevelDefinition levelDefinition;
+    private LevelDefinition levelDefinition;
     private readonly GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
 
     private float timeSinceLastSpawn;
@@ -36,6 +36,14 @@ public class EnemyManager
         this.slotManager = new EnemySlotManager();
         this.projectileManager = projectileManager;
         gameplayContext.Events.OnCannonProjectileFired += AddCannonProjectile;
+    }
+
+    public void SetLevel(LevelDefinition levelDef)
+    {
+        levelDefinition = levelDef;
+        nextSpawnIndex = 0;
+        timeSinceLastSpawn = 0f;
+        currentSpawnInterval = EnemySpawnIntervalBase;
     }
 
     public void Update(float deltaTime)

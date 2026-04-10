@@ -6,20 +6,37 @@ public static class LevelLoader
 {
     private static readonly Logger logger = new("LevelLoader");
 
-    public static LevelDefinition Load(int levelNumber)
+    public static bool TryLoad(int levelNumber, out LevelDefinition definition)
     {
         string path = $"levels/level{levelNumber}.json";
         try
         {
-            var def = GamelabGame.Instance.jsonLoader.LoadJson<LevelDefinition>(path);
+            definition = GamelabGame.Instance.jsonLoader.LoadJson<LevelDefinition>(path);
             logger.Info($"Loaded level definition: {path}");
-            return def;
+            return true;
         }
         catch
         {
-            logger.Warning($"Could not load {path}, falling back to level 1 definition.");
-            // load level 1 definition
-            return Load(1);
+            definition = null;
+            logger.Warning($"Could not load level definition: {path}");
+            return false;
         }
+    }
+
+    public static LevelDefinition Load(int levelNumber)
+    {
+        if (TryLoad(levelNumber, out LevelDefinition definition))
+        {
+            return definition;
+        }
+
+        if (levelNumber != 1 && TryLoad(1, out definition))
+        {
+            logger.Warning($"Falling back to level 1 definition.");
+            return definition;
+        }
+
+        logger.Warning("No level file could be loaded. Returning empty fallback level definition.");
+        return new LevelDefinition();
     }
 }
