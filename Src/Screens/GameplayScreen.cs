@@ -22,18 +22,21 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Myra.Graphics2D;
 using Myra.Graphics2D.Brushes;
+using Gamelab.Utils.Logging;
 using Myra.Graphics2D.UI;
 
 namespace Gamelab.Screens;
 
 public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
 {
+    private readonly Logger logger = new("GameplayScreen");
     private List<Player> players;
     private TrainMap trainMap;
     private WorldScroller worldScroller;
     private GameplayContext gameplayContext;
     private EnemyManager enemyManager;
     private RunManager runManager;
+    private IntermissionController intermissionController;
     private LevelDefinition currentLevelDef;
     private Desktop desktop;
     private Label coalLabel;
@@ -43,7 +46,6 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     private Label distanceLabel;
     private ProjectileManager projectileManager;
     private Panel pauseOverlay;
-    private Panel intermissionOverlay;
     private Label continueLabel;
     private Label exitLabel;
 
@@ -59,7 +61,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     private int pauseSelectionIndex;
     private bool wasEscapeDown;
     private bool isFailureTriggered;
-    private bool wasEnterDown;
+    private float levelStartDistance;
 
     public override void LoadContent()
     {
@@ -81,7 +83,9 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         ambientMusic = soundService.GetSoundInstance(Sounds.AmbientSong);
         soundService.RegisterParameter(trainSound, "Train Velocity", () => gameplayContext.State.actualSpeed);
         ambientMusic?.Start();
-        trainSound?.Start();
+
+        intermissionController = new IntermissionController(runManager);
+        intermissionController.OnIntermissionComplete += OnIntermissionComplete;
 
         Vector2 coalWagonPos = new Vector2(
             trainMap.Position.X - 4 * trainMap.TileSize,
@@ -179,10 +183,9 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         mainPanel.Widgets.Add(temperatureLabel);
         mainPanel.Widgets.Add(cannonLabel);
         mainPanel.Widgets.Add(distanceLabel);
-        intermissionOverlay = CreateIntermissionOverlay();
-        mainPanel.Widgets.Add(intermissionOverlay);
         pauseOverlay = CreatePauseOverlay();
         mainPanel.Widgets.Add(pauseOverlay);
+        mainPanel.Widgets.Add(intermissionController.Overlay);
         desktop.Root = mainPanel;
     }
 
@@ -244,54 +247,6 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         return overlay;
     }
 
-    private Panel CreateIntermissionOverlay()
-    {
-        var overlay = new Panel
-        {
-            Background = new SolidBrush(new Color(0, 0, 0, 180)),
-            HorizontalAlignment = HorizontalAlignment.Stretch,
-            VerticalAlignment = VerticalAlignment.Stretch,
-            Visible = false
-        };
-
-        var modal = new Panel
-        {
-            Width = 760,
-            Height = 320,
-            Background = new SolidBrush(new Color(25, 25, 30, 230)),
-            HorizontalAlignment = HorizontalAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Center
-        };
-
-        var stack = new VerticalStackPanel
-        {
-            Spacing = 20,
-            Padding = new Thickness(40),
-            HorizontalAlignment = HorizontalAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Center
-        };
-
-        stack.Widgets.Add(new Label
-        {
-            Text = "LEVEL COMPLETE",
-            Font = Game.fontSystem.GetFont(56),
-            HorizontalAlignment = HorizontalAlignment.Center,
-            TextColor = Color.White
-        });
-
-        stack.Widgets.Add(new Label
-        {
-            Text = "Press Start or Enter for next level",
-            Font = Game.fontSystem.GetFont(36),
-            HorizontalAlignment = HorizontalAlignment.Center,
-            TextColor = Color.LightBlue
-        });
-
-        modal.Widgets.Add(stack);
-        overlay.Widgets.Add(modal);
-        return overlay;
-    }
-
     private void OnWallBreached()
     {
         gameplayContext.State.numberBreachedWalls++;
@@ -337,7 +292,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         bool isIntermission = runManager.CurrentPhase == RunPhase.Intermission;
         if (isIntermission)
         {
-            UpdateIntermission();
+            intermissionController.Update(Game.playerManager.Configs);
         }
 
         if (!isIntermission)
@@ -370,8 +325,9 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         coalLabel.Text = $"Coal: {gameplayContext.State.CoalAmount}";
         speedLabel.Text = $"Speed: {gameplayContext.State.actualSpeed:F0}";
         temperatureLabel.Text = $"Temperature: {gameplayContext.State.Temperature:F0}";
+        float distanceInCurrentLevel = Math.Max(0f, gameplayContext.State.DistanceTraveled - levelStartDistance);
         distanceLabel.Text =
-            $"Distance: {gameplayContext.State.DistanceTraveled:F0} / {currentLevelDef?.LevelDistance ?? 0:F0}";
+            $"Distance: {distanceInCurrentLevel:F0} / {currentLevelDef?.LevelDistance ?? 0:F0}";
         if (!isIntermission)
         {
             runManager.Update(gameplayContext, enemyManager);
@@ -474,50 +430,23 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         }
     }
 
-    private void UpdateIntermission()
-    {
-        if (!IsIntermissionAdvanceRequested())
-        {
-            return;
-        }
-
-        if (runManager.TryAdvanceToNextLevel())
-        {
-            soundService.PlayOnce(Sounds.MenuSelect);
-        }
-    }
-
-    private bool IsIntermissionAdvanceRequested()
-    {
-        bool isEnterDown = Keyboard.GetState().IsKeyDown(Keys.Enter);
-        bool enterPressed = isEnterDown && !wasEnterDown;
-        wasEnterDown = isEnterDown;
-
-        bool startPressed = false;
-        foreach (PlayerConfiguration player in Game.playerManager.Configs)
-        {
-            if (player.Input.IsStartJustPressed())
-            {
-                startPressed = true;
-                break;
-            }
-        }
-
-        return enterPressed || startPressed;
-    }
-
     private void OnLevelStarted(int levelNumber, LevelDefinition levelDefinition)
     {
+        trainSound?.Start();
         currentLevelDef = levelDefinition;
         Game.CurrentLevel = levelNumber;
+        levelStartDistance = gameplayContext?.State.DistanceTraveled ?? 0f;
         enemyManager?.SetLevel(levelDefinition);
-        intermissionOverlay.Visible = false;
     }
 
     private void OnIntermissionStarted(int _)
     {
-        gameplayContext.State.CurrentSpeed = TrainSpeedSetting.Stopped;
-        intermissionOverlay.Visible = true;
+        trainSound?.Stop();
+    }
+
+    private void OnIntermissionComplete()
+    {
+        trainSound?.Start();
     }
 
     public override void Draw(GameTime gameTime)
@@ -558,6 +487,12 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         {
             runManager.OnLevelStarted -= OnLevelStarted;
             runManager.OnIntermissionStarted -= OnIntermissionStarted;
+        }
+
+        if (intermissionController != null)
+        {
+            intermissionController.OnIntermissionComplete -= OnIntermissionComplete;
+            intermissionController.Unsubscribe();
         }
 
         if (gameplayContext?.State != null)

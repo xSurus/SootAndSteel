@@ -6,6 +6,10 @@ public class ProceduralLevelGenerator(RunDifficultyConfig config)
 {
     private readonly RunDifficultyConfig config = config ?? new RunDifficultyConfig();
 
+    /// <summary>
+    /// Builds a level definition from the configured scaling model for a given level number.
+    /// The result contains a distance target and spawn events distributed across that distance.
+    /// </summary>
     public LevelDefinition Generate(int levelNumber)
     {
         int safeLevel = Math.Max(1, levelNumber);
@@ -55,7 +59,6 @@ public class ProceduralLevelGenerator(RunDifficultyConfig config)
         chance = Math.Clamp(chance, 0f, config.MaxShooterChance);
         return random.NextSingle() < chance;
     }
-
     private static float Lerp(float a, float b, float t)
     {
         return a + (b - a) * t;

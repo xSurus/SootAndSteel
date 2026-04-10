@@ -22,21 +22,4 @@ public static class LevelLoader
             return false;
         }
     }
-
-    public static LevelDefinition Load(int levelNumber)
-    {
-        if (TryLoad(levelNumber, out LevelDefinition definition))
-        {
-            return definition;
-        }
-
-        if (levelNumber != 1 && TryLoad(1, out definition))
-        {
-            logger.Warning($"Falling back to level 1 definition.");
-            return definition;
-        }
-
-        logger.Warning("No level file could be loaded. Returning empty fallback level definition.");
-        return new LevelDefinition();
-    }
 }

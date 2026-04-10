@@ -19,6 +19,7 @@ public class EnemyManager
     private float timeSinceLastSpawn;
     private float currentSpawnInterval;
     private int nextSpawnIndex;
+    private float levelStartDistance;
     private float ShooterSpawnChance => GamelabGame.Instance.GameplayConfig.ShooterSpawnChance;
     private float EnemySpawnIntervalBase => GamelabGame.Instance.GameplayConfig.EnemySpawnIntervalBase;
     private float EnemySpawnIntervalVariance => GamelabGame.Instance.GameplayConfig.EnemySpawnIntervalVariance;
@@ -35,6 +36,7 @@ public class EnemyManager
         this.levelDefinition = levelDef;
         this.slotManager = new EnemySlotManager();
         this.projectileManager = projectileManager;
+        levelStartDistance = gameplayContext.State.DistanceTraveled;
         gameplayContext.Events.OnCannonProjectileFired += AddCannonProjectile;
     }
 
@@ -44,14 +46,17 @@ public class EnemyManager
         nextSpawnIndex = 0;
         timeSinceLastSpawn = 0f;
         currentSpawnInterval = EnemySpawnIntervalBase;
+        levelStartDistance = gameplayContext.State.DistanceTraveled;
     }
 
     public void Update(float deltaTime)
     {
+        float distanceInCurrentLevel = gameplayContext.State.DistanceTraveled - levelStartDistance;
+
         if (levelDefinition != null)
         {
             while (nextSpawnIndex < levelDefinition.SpawnEvents.Count &&
-                   gameplayContext.State.DistanceTraveled >= levelDefinition.SpawnEvents[nextSpawnIndex].Distance)
+                   distanceInCurrentLevel >= levelDefinition.SpawnEvents[nextSpawnIndex].Distance)
             {
                 // Spawn *all* events in order. Filtering by index can accidentally remove specific enemy types
                 // depending on how levels are authored.
