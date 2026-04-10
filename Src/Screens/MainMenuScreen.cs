@@ -61,7 +61,10 @@ public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
 
     private void StartGame()
     {
-        Game.SwitchToScreen(new GameplayScreen(Game));
+        Game.ResetCredits();
+        Game.TrainLayoutSeedForHub = null;
+        Game.PendingPrepTrainLayout = null;
+        Game.SwitchToScreen(new HubScreen(Game));
     }
 
     private void TryLoadBackgroundTexture()

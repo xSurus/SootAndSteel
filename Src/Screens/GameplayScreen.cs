@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using FmodForFoxes;
 using FmodForFoxes.Studio;
+using Gamelab.Assets;
 using Gamelab.Enemies;
 using Gamelab.Input;
 using Gamelab.Levels;
 using Gamelab.Map;
+using Gamelab.Map.Hub;
 using Gamelab.Map.Train;
 using Gamelab.Map.Train.State;
 using Gamelab.Particles;
@@ -30,13 +32,19 @@ namespace Gamelab.Screens;
 public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
 {
     private readonly Logger logger = new("GameplayScreen");
+
+    private enum GameplayPhase
+    {
+        Running,
+        EndOfLevelOutro,
+    }
+
     private List<Player> players;
     private TrainMap trainMap;
     private WorldScroller worldScroller;
     private GameplayContext gameplayContext;
     private EnemyManager enemyManager;
     private RunManager runManager;
-    private IntermissionController intermissionController;
     private LevelDefinition currentLevelDef;
     private Desktop desktop;
     private Label coalLabel;
@@ -62,6 +70,8 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     private bool wasEscapeDown;
     private bool isFailureTriggered;
     private float levelStartDistance;
+    private GameplayPhase phase = GameplayPhase.Running;
+    private readonly WhiteFilterTransition endLevelWhiteFilter = new WhiteFilterTransition();
 
     public override void LoadContent()
     {
@@ -72,10 +82,10 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         runManager.OnLevelStarted += OnLevelStarted;
         runManager.OnIntermissionStarted += OnIntermissionStarted;
         currentLevelDef = runManager.CurrentLevelDefinition;
-        trainMap = new TrainMap(GraphicsDevice);
+        trainMap = new TrainMap();
         gameplayContext.Map = trainMap;
         Services.GetService<IVfxService>().AddContinuous(ParticleFactory.CreateSnowstorm());
-        
+
         // Sounds
         soundService = Services.GetService<ISoundService>();
         soundService.LoadSound(Sounds.MenuSelect);
@@ -84,27 +94,8 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         soundService.RegisterParameter(trainSound, "Train Velocity", () => gameplayContext.State.actualSpeed);
         ambientMusic?.Start();
 
-        intermissionController = new IntermissionController(runManager);
-        intermissionController.OnIntermissionComplete += OnIntermissionComplete;
-
-        Vector2 coalWagonPos = new Vector2(
-            trainMap.Position.X - 4 * trainMap.TileSize,
-            trainMap.Position.Y + (trainMap.Height * trainMap.TileSize) / 2f
-        );
-        trainMap.MapObjects.Add(new CoalWagon(coalWagonPos));
-        trainMap.MapObjects.Add(new TrainNose(trainMap.GetTileCenterPixels(8, 2)));
-        trainMap.MapObjects.Add(new SpeedLever(trainMap.GetTileCenterPixels(7, 3)));
-        trainMap.MapObjects.Add(new CannonStation(trainMap.GetTileCenterPixels(5, 2)));
-
-        // Two left-side work zones: top-left and bottom-left, each with an anvil.
-        trainMap.MapObjects.Add(new CopperResource(trainMap.GetTileCenterPixels(2, 0)));
-        trainMap.MapObjects.Add(new GunpowderResource(trainMap.GetTileCenterPixels(2, 4)));
-        trainMap.MapObjects.Add(new Anvil(trainMap.GetTileCenterPixels(1, 0))); // top-left crafting
-        trainMap.MapObjects.Add(new Anvil(trainMap.GetTileCenterPixels(1, 4))); // bottom-left crafting
-        trainMap.MapObjects.Add(new Counter(trainMap.GetTileCenterPixels(0, 0)));
-        trainMap.MapObjects.Add(new Counter(trainMap.GetTileCenterPixels(3, 0)));
-        trainMap.MapObjects.Add(new Counter(trainMap.GetTileCenterPixels(0, 4)));
-        trainMap.MapObjects.Add(new Counter(trainMap.GetTileCenterPixels(3, 4)));
+        trainMap.AddDefaultStructures();
+        PrepTrainLayout.ApplyFromPendingOrDefault(Game, trainMap);
 
         worldScroller = new WorldScroller(GraphicsDevice);
         projectileManager = new ProjectileManager();
@@ -185,7 +176,6 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         mainPanel.Widgets.Add(distanceLabel);
         pauseOverlay = CreatePauseOverlay();
         mainPanel.Widgets.Add(pauseOverlay);
-        mainPanel.Widgets.Add(intermissionController.Overlay);
         desktop.Root = mainPanel;
     }
 
@@ -261,6 +251,11 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
 
     private void OnTrainFrozen()
     {
+        if (gameplayContext.State.VictoryLapActive)
+        {
+            return;
+        }
+
         TriggerFailure();
     }
 
@@ -289,16 +284,13 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
             return;
         }
 
-        bool isIntermission = runManager.CurrentPhase == RunPhase.Intermission;
-        if (isIntermission)
+        bool isEndOfLevelOutro = phase == GameplayPhase.EndOfLevelOutro;
+        if (isEndOfLevelOutro)
         {
-            intermissionController.Update(Game.playerManager.Configs);
+            endLevelWhiteFilter.Update(dt);
         }
 
-        if (!isIntermission)
-        {
-            worldScroller.Update(dt);
-        }
+        worldScroller.Update(dt);
 
         accumulator += Math.Min(dt, Game.GameplayConfig.MaxAccumulatedDeltaSeconds);
         float fixedDt = Game.GameplayConfig.FixedTimeStep;
@@ -309,7 +301,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
                 player.Update(fixedDt);
             }
 
-            if (!isIntermission)
+            if (!isEndOfLevelOutro)
             {
                 enemyManager.Update(fixedDt);
                 projectileManager.Update(fixedDt);
@@ -319,6 +311,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
 
             trainMap.Update(fixedDt);
             gameplayContext.PhysicsWorld.Step(fixedDt);
+            gameplayContext.FlushDeferredPhysicsActions();
             accumulator -= fixedDt;
         }
 
@@ -328,12 +321,19 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         float distanceInCurrentLevel = Math.Max(0f, gameplayContext.State.DistanceTraveled - levelStartDistance);
         distanceLabel.Text =
             $"Distance: {distanceInCurrentLevel:F0} / {currentLevelDef?.LevelDistance ?? 0:F0}";
-        if (!isIntermission)
+
+        if (!isEndOfLevelOutro)
         {
             runManager.Update(gameplayContext, enemyManager);
         }
 
         UpdateScreenShake(dt);
+
+        if (isEndOfLevelOutro && endLevelWhiteFilter.IsDone)
+        {
+            Game.TrainLayoutSeedForHub = PrepTrainLayout.Capture(trainMap);
+            Game.SwitchToScreen(new PostLevelStatsScreen(Game));
+        }
     }
 
     private bool IsPauseToggleRequested()
@@ -442,11 +442,14 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     private void OnIntermissionStarted(int _)
     {
         trainSound?.Stop();
-    }
-
-    private void OnIntermissionComplete()
-    {
-        trainSound?.Start();
+        gameplayContext.State.VictoryLapActive = true;
+        ScreenPayloads.LastPostLevelResults = new ScreenPayloads.PostLevelResults
+        {
+            CompletedLevelNumber = Game.CurrentLevel,
+            CoalRemaining = gameplayContext.State.CoalAmount
+        };
+        endLevelWhiteFilter.FadeIn(4f);
+        phase = GameplayPhase.EndOfLevelOutro;
     }
 
     public override void Draw(GameTime gameTime)
@@ -470,6 +473,15 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
 
         spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
         desktop.Render();
+        float w = endLevelWhiteFilter.Opacity;
+        if (w > 0.001f)
+        {
+            spriteBatch.Draw(
+                AssetManager.BlankTexture,
+                new Rectangle(0, 0, virtualScreenSize.X, virtualScreenSize.Y),
+                Color.White * w);
+        }
+
         spriteBatch.End();
 
         base.Draw(gameTime);
@@ -487,12 +499,6 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         {
             runManager.OnLevelStarted -= OnLevelStarted;
             runManager.OnIntermissionStarted -= OnIntermissionStarted;
-        }
-
-        if (intermissionController != null)
-        {
-            intermissionController.OnIntermissionComplete -= OnIntermissionComplete;
-            intermissionController.Unsubscribe();
         }
 
         if (gameplayContext?.State != null)

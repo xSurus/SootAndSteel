@@ -56,7 +56,6 @@ public class WorldScroller
             scrollOffset += backgroundTexture.Width;
         }
     }
-
     public void Draw(SpriteBatch spriteBatch)
     {
         int numCopies = (ScreenWidth / backgroundTexture.Width) + 3;

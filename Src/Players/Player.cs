@@ -71,8 +71,8 @@ public class Player : AbstractPhysicalEntity
         }
 
         if (TryGrab()) return;
+        if (TryPickup(dt)) return;
         if (TryInteract(dt)) return;
-        TryPickup(dt);
     }
 
     private bool TryGrab()
@@ -105,13 +105,18 @@ public class Player : AbstractPhysicalEntity
     private bool TryInteract(float dt)
     {
         IPhysicalEntity target = GetTargetedEntity();
-        if (target == null || !(target is IInteractable interactable)) return false;
-        if (PlayerConfiguration.Input.IsInteractJustPressed())
+        if (target == null || target is not IInteractable interactable) return false;
+
+        bool interactJust = PlayerConfiguration.Input.IsInteractJustPressed();
+        bool interactHeld = PlayerConfiguration.Input.IsInteractHeld();
+
+        if (interactJust)
         {
             interactable.OnInteract(this);
             return true;
         }
-        else if (PlayerConfiguration.Input.IsInteractHeld())
+
+        if (interactHeld)
         {
             interactable.OnInteractHeld(this, dt);
             return true;

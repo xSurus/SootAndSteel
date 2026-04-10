@@ -1,5 +1,4 @@
 using Gamelab.Assets;
-using Gamelab.Map.Train.State;
 using Gamelab.Particles.Modifiers;
 using Gamelab.Particles.Profiles;
 using Microsoft.Xna.Framework;
@@ -8,15 +7,17 @@ namespace Gamelab.Particles;
 
 public static class ParticleFactory
 {
-    public static ParticleEmitter CreateSnowstorm()
+    public static ParticleEmitter CreateSnowstorm(Point screenSize = default)
     {
-        GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
+        if (screenSize == default)
+            screenSize = new Point(1920, 1080);
+
         var emitter = new ParticleEmitter(1000, AssetManager.SparkTexture)
         {
-            Position = new Vector2(gameplayContext.ScreenWidth / 2f, gameplayContext.ScreenHeight / 2f),
+            Position = new Vector2(screenSize.X / 2f, screenSize.Y / 2f),
             AutoTrigger = true,
             AutoTriggerFrequency = 0.05f,
-            Profile = new BoxProfile(gameplayContext.ScreenWidth * 1.5f, gameplayContext.ScreenHeight, Vector2.UnitY),
+            Profile = new BoxProfile(screenSize.X * 1.5f, screenSize.Y, Vector2.UnitY),
 
             Parameters = new ParticleReleaseParameters
             {

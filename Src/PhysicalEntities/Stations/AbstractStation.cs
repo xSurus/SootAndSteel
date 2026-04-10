@@ -49,7 +49,7 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
     protected override void OnLastRelease(Player interactingPlayer)
     {
         base.OnLastRelease(interactingPlayer);
-        gameplayContext.Map.SnapToNearestValidCell(this);
+        gameplayContext.Map?.SnapToNearestValidCell(this);
     }
 
     public override void Draw(SpriteBatch spriteBatch)
