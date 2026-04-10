@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using FmodForFoxes;
 using FmodForFoxes.Studio;
 using Gamelab.Assets;
 using Gamelab.Enemies;
-using Gamelab.Input;
 using Gamelab.Levels;
 using Gamelab.Map;
 using Gamelab.Map.Hub;
@@ -12,27 +10,17 @@ using Gamelab.Map.Train;
 using Gamelab.Map.Train.State;
 using Gamelab.Particles;
 using Gamelab.PhysicalEntities.Projectiles;
-using Gamelab.PhysicalEntities.Stations;
-using Gamelab.PhysicalEntities.Stations.Cannon;
-using Gamelab.PhysicalEntities.Stations.Resources;
-using Gamelab.PhysicalEntities.Stations.Workbenches;
-using Gamelab.PhysicalEntities.Structures;
 using Gamelab.Players;
 using Gamelab.Services.Sound;
 using Gamelab.Services.Vfx;
+using Gamelab.UI;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using Myra.Graphics2D;
-using Myra.Graphics2D.Brushes;
-using Gamelab.Utils.Logging;
 using Myra.Graphics2D.UI;
 
 namespace Gamelab.Screens;
 
 public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
 {
-    private readonly Logger logger = new("GameplayScreen");
-
     private enum GameplayPhase
     {
         Running,
@@ -47,15 +35,9 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     private RunManager runManager;
     private LevelDefinition currentLevelDef;
     private Desktop desktop;
-    private Label coalLabel;
-    private Label speedLabel;
-    private Label temperatureLabel;
-    private Label cannonLabel;
-    private Label distanceLabel;
     private ProjectileManager projectileManager;
-    private Panel pauseOverlay;
-    private Label continueLabel;
-    private Label exitLabel;
+    private GameplayHud hud;
+    private PauseMenuController pauseMenu;
 
     private ISoundService soundService;
     private EventInstance trainSound;
@@ -65,9 +47,6 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     private float screenShakeIntensity;
     private Vector2 screenShakeOffset;
     private readonly Random random = Random.Shared;
-    private bool isPaused;
-    private int pauseSelectionIndex;
-    private bool wasEscapeDown;
     private bool isFailureTriggered;
     private float levelStartDistance;
     private GameplayPhase phase = GameplayPhase.Running;
@@ -79,7 +58,6 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         gameplayContext = new GameplayContext(virtualScreenSize);
         Services.AddService(gameplayContext);
         runManager = new RunManager(Game.CurrentLevel, new ProgressiveRunLevelProvider());
-        runManager.OnLevelStarted += OnLevelStarted;
         runManager.OnIntermissionStarted += OnIntermissionStarted;
         currentLevelDef = runManager.CurrentLevelDefinition;
         trainMap = new TrainMap();
@@ -92,6 +70,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         trainSound = soundService.GetSoundInstance(Sounds.Train);
         ambientMusic = soundService.GetSoundInstance(Sounds.AmbientSong);
         soundService.RegisterParameter(trainSound, "Train Velocity", () => gameplayContext.State.actualSpeed);
+        trainSound?.Start();
         ambientMusic?.Start();
 
         trainMap.AddDefaultStructures();
@@ -111,130 +90,19 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
             players.Add(new Player(trainMap.GetTileCenterPixels(playerConfig.PlayerIndex, 1), playerConfig));
         }
 
-        // Initialize Myra UI
+        hud = new GameplayHud();
+        pauseMenu = new PauseMenuController();
+        pauseMenu.OnExitRequested += () => Game.SwitchToScreen(new JoinScreen(Game));
+
         desktop = new Desktop();
         var mainPanel = new Panel
         {
             HorizontalAlignment = HorizontalAlignment.Stretch,
             VerticalAlignment = VerticalAlignment.Stretch
         };
-
-        coalLabel = new Label
-        {
-            Text = "Coal: 0",
-            Font = Game.fontSystem.GetFont(48),
-            TextColor = Color.White,
-            HorizontalAlignment = HorizontalAlignment.Left,
-            VerticalAlignment = VerticalAlignment.Top,
-            Margin = new Thickness(20)
-        };
-
-        speedLabel = new Label
-        {
-            Text = "Speed: 0",
-            Font = Game.fontSystem.GetFont(48),
-            TextColor = Color.White,
-            HorizontalAlignment = HorizontalAlignment.Left,
-            VerticalAlignment = VerticalAlignment.Top,
-            Margin = new Thickness(20, 80, 20, 20)
-        };
-
-        temperatureLabel = new Label
-        {
-            Text = "Temperature: 100",
-            Font = Game.fontSystem.GetFont(48),
-            TextColor = Color.White,
-            HorizontalAlignment = HorizontalAlignment.Left,
-            VerticalAlignment = VerticalAlignment.Top,
-            Margin = new Thickness(20, 140, 20, 20)
-        };
-
-        cannonLabel = new Label
-        {
-            Text = "Cannon: Empty",
-            Font = Game.fontSystem.GetFont(48),
-            TextColor = Color.White,
-            HorizontalAlignment = HorizontalAlignment.Left,
-            VerticalAlignment = VerticalAlignment.Top,
-            Margin = new Thickness(20, 200, 20, 20)
-        };
-
-        distanceLabel = new Label
-        {
-            Text = "Distance: 0",
-            Font = Game.fontSystem.GetFont(48),
-            TextColor = Color.White,
-            HorizontalAlignment = HorizontalAlignment.Left,
-            VerticalAlignment = VerticalAlignment.Top,
-            Margin = new Thickness(20, 260, 20, 20)
-        };
-
-        mainPanel.Widgets.Add(coalLabel);
-        mainPanel.Widgets.Add(speedLabel);
-        mainPanel.Widgets.Add(temperatureLabel);
-        mainPanel.Widgets.Add(cannonLabel);
-        mainPanel.Widgets.Add(distanceLabel);
-        pauseOverlay = CreatePauseOverlay();
-        mainPanel.Widgets.Add(pauseOverlay);
+        mainPanel.Widgets.Add(hud.Root);
+        mainPanel.Widgets.Add(pauseMenu.Overlay);
         desktop.Root = mainPanel;
-    }
-
-    private Panel CreatePauseOverlay()
-    {
-        var overlay = new Panel
-        {
-            Background = new SolidBrush(new Color(0, 0, 0, 180)),
-            HorizontalAlignment = HorizontalAlignment.Stretch,
-            VerticalAlignment = VerticalAlignment.Stretch,
-            Visible = false
-        };
-
-        var modal = new Panel
-        {
-            Width = 420,
-            Height = 280,
-            Background = new SolidBrush(new Color(25, 25, 30, 230)),
-            HorizontalAlignment = HorizontalAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Center
-        };
-
-        var stack = new VerticalStackPanel
-        {
-            Spacing = 24,
-            Padding = new Thickness(40),
-            HorizontalAlignment = HorizontalAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Center
-        };
-
-        stack.Widgets.Add(new Label
-        {
-            Text = "PAUSED",
-            Font = Game.fontSystem.GetFont(64),
-            HorizontalAlignment = HorizontalAlignment.Center,
-            TextColor = Color.White
-        });
-
-        continueLabel = new Label
-        {
-            Text = "CONTINUE",
-            Font = Game.fontSystem.GetFont(40),
-            HorizontalAlignment = HorizontalAlignment.Center
-        };
-
-        exitLabel = new Label
-        {
-            Text = "EXIT",
-            Font = Game.fontSystem.GetFont(40),
-            HorizontalAlignment = HorizontalAlignment.Center
-        };
-
-        stack.Widgets.Add(continueLabel);
-        stack.Widgets.Add(exitLabel);
-        modal.Widgets.Add(stack);
-        overlay.Widgets.Add(modal);
-
-        UpdatePauseSelectionVisuals();
-        return overlay;
     }
 
     private void OnWallBreached()
@@ -273,14 +141,14 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         base.Update(gameTime);
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-        if (IsPauseToggleRequested())
+        if (pauseMenu.IsToggleRequested(Game.playerManager.Configs))
         {
-            TogglePause();
+            pauseMenu.Toggle();
         }
 
-        if (isPaused)
+        if (pauseMenu.IsPaused)
         {
-            UpdatePauseMenu();
+            pauseMenu.Update(Game.playerManager.Configs);
             return;
         }
 
@@ -315,12 +183,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
             accumulator -= fixedDt;
         }
 
-        coalLabel.Text = $"Coal: {gameplayContext.State.CoalAmount}";
-        speedLabel.Text = $"Speed: {gameplayContext.State.actualSpeed:F0}";
-        temperatureLabel.Text = $"Temperature: {gameplayContext.State.Temperature:F0}";
-        float distanceInCurrentLevel = Math.Max(0f, gameplayContext.State.DistanceTraveled - levelStartDistance);
-        distanceLabel.Text =
-            $"Distance: {distanceInCurrentLevel:F0} / {currentLevelDef?.LevelDistance ?? 0:F0}";
+        hud.Update(currentLevelDef, levelStartDistance);
 
         if (!isEndOfLevelOutro)
         {
@@ -334,80 +197,6 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
             Game.TrainLayoutSeedForHub = PrepTrainLayout.Capture(trainMap);
             Game.SwitchToScreen(new PostLevelStatsScreen(Game));
         }
-    }
-
-    private bool IsPauseToggleRequested()
-    {
-        bool isEscapeDown = Keyboard.GetState().IsKeyDown(Keys.Escape);
-        bool escapePressed = isEscapeDown && !wasEscapeDown;
-        wasEscapeDown = isEscapeDown;
-        bool startPressed = false;
-
-        foreach (PlayerConfiguration player in Game.playerManager.Configs)
-        {
-            if (player.Input is GamePadInputProvider && player.Input.IsStartJustPressed())
-            {
-                startPressed = true;
-                break;
-            }
-        }
-
-        return escapePressed || startPressed;
-    }
-
-    private void TogglePause()
-    {
-        isPaused = !isPaused;
-        pauseSelectionIndex = 0;
-        pauseOverlay.Visible = isPaused;
-        UpdatePauseSelectionVisuals();
-    }
-
-    private void UpdatePauseMenu()
-    {
-        bool moveUp = false;
-        bool moveDown = false;
-        bool confirm = false;
-
-        foreach (PlayerConfiguration player in Game.playerManager.Configs)
-        {
-            moveUp |= player.Input.IsUpJustPressed();
-            moveDown |= player.Input.IsDownJustPressed();
-            confirm |= player.Input.IsPickupJustPressed();
-        }
-
-        if (moveUp || moveDown)
-        {
-            pauseSelectionIndex = 1 - pauseSelectionIndex;
-            UpdatePauseSelectionVisuals();
-            soundService.PlayOnce(Sounds.MenuSelect);
-        }
-
-        if (!confirm)
-        {
-            return;
-        }
-
-        soundService.PlayOnce(Sounds.MenuSelect);
-
-        if (pauseSelectionIndex == 0)
-        {
-            TogglePause();
-            return;
-        }
-
-        Game.SwitchToScreen(new JoinScreen(Game));
-    }
-
-    private void UpdatePauseSelectionVisuals()
-    {
-        if (continueLabel == null || exitLabel == null)
-        {
-            return;
-        }
-
-        continueLabel.TextColor = pauseSelectionIndex == 0 ? Color.LightBlue : Color.White;
-        exitLabel.TextColor = pauseSelectionIndex == 1 ? Color.LightBlue : Color.White;
     }
 
     private void UpdateScreenShake(float dt)
@@ -428,15 +217,6 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
                 screenShakeIntensity = 0;
             }
         }
-    }
-
-    private void OnLevelStarted(int levelNumber, LevelDefinition levelDefinition)
-    {
-        trainSound?.Start();
-        currentLevelDef = levelDefinition;
-        Game.CurrentLevel = levelNumber;
-        levelStartDistance = gameplayContext?.State.DistanceTraveled ?? 0f;
-        enemyManager?.SetLevel(levelDefinition);
     }
 
     private void OnIntermissionStarted(int _)
@@ -497,7 +277,6 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
 
         if (runManager != null)
         {
-            runManager.OnLevelStarted -= OnLevelStarted;
             runManager.OnIntermissionStarted -= OnIntermissionStarted;
         }
 

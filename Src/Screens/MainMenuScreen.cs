@@ -61,6 +61,7 @@ public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
 
     private void StartGame()
     {
+        Game.CurrentLevel = 0;
         Game.ResetCredits();
         Game.TrainLayoutSeedForHub = null;
         Game.PendingPrepTrainLayout = null;

@@ -20,16 +20,5 @@ public class LevelManager
         return distanceInCurrentLevel >= levelDefinition.LevelDistance &&
                enemyManager.Enemies.Count == 0;
     }
-
-    /// <summary>
-    /// True once the train has covered the level's target distance.
-    /// This fires before <see cref="IsLevelComplete"/> (which also requires all enemies dead)
-    /// and is used to trigger the train departure animation.
-    /// </summary>
-    public bool HasReachedLevelDestination(GameplayContext gameplayContext)
-    {
-        float distanceInCurrentLevel = gameplayContext.State.DistanceTraveled - levelStartDistance;
-        return distanceInCurrentLevel >= levelDefinition.LevelDistance;
-    }
 }
 

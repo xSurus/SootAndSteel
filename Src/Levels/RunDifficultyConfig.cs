@@ -4,7 +4,7 @@ namespace Gamelab.Levels;
 /// Tuning knobs for procedural level generation.
 /// Level distance scales linearly: <c>BaseDistance + DistanceGrowthPerLevel * (level - 1)</c>.
 /// Enemy budget scales exponentially with a linear component:
-/// <c>(BaseEnemyBudget + BudgetGrowthPerLevel * (level - 1)) * BudgetMultiplierPerLevel ^ (level - 1)</c>.
+/// <c>BaseEnemyBudget * BudgetMultiplierPerLevel ^ (level - 1) + BudgetGrowthPerLevel * (level - 1)</c>.
 /// Spawn composition shifts toward shooters as levels increase, capped by <see cref="MaxShooterChance"/>.
 /// </summary>
 public class RunDifficultyConfig
