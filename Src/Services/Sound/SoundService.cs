@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using FmodForFoxes;
@@ -53,43 +53,14 @@ public class SoundService : ISoundService,
         sound.Dispose();
     }
 
-    public object GetSoundInstance(string id)
+    public EventInstance GetSoundInstance(string id)
     {
         LoadSound(id);
         return eventDescriptions[id].CreateInstance();
     }
 
-    public void StartSound(object soundInstance)
+    public void RegisterParameter(EventInstance eventInstance, string parameterName, Func<float> valueGetter)
     {
-        if (soundInstance is EventInstance eventInstance)
-        {
-            eventInstance.Start();
-        }
-    }
-
-    public void StopSound(object soundInstance)
-    {
-        if (soundInstance is EventInstance eventInstance)
-        {
-            eventInstance.Stop();
-        }
-    }
-
-    public void DisposeSound(object soundInstance)
-    {
-        if (soundInstance is EventInstance eventInstance)
-        {
-            eventInstance.Dispose();
-        }
-    }
-
-    public void RegisterParameter(object soundInstance, string parameterName, Func<float> valueGetter)
-    {
-        if (soundInstance is not EventInstance eventInstance)
-        {
-            return;
-        }
-
         parameterUpdates.Add(new ParameterBinding(eventInstance, parameterName, valueGetter));
     }
 
