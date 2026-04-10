@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using FmodForFoxes;
 using FmodForFoxes.Studio;
 using Gamelab.Enemies;
 using Gamelab.Input;
@@ -33,8 +34,6 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     private GameplayContext gameplayContext;
     private EnemyManager enemyManager;
     private RunManager runManager;
-    private SoundHandle menuSelectSound;
-    private LevelManager levelManager;
     private LevelDefinition currentLevelDef;
     private Desktop desktop;
     private Label coalLabel;
@@ -484,7 +483,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
 
         if (runManager.TryAdvanceToNextLevel())
         {
-            menuSelectSound?.Play();
+            soundService.PlayOnce(Sounds.MenuSelect);
         }
     }
 
