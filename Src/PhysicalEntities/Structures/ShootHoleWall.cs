@@ -30,12 +30,6 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
         PhysicsBody.Tag = this;
     }
 
-    public void AttachPhysics(Body body)
-    {
-        PhysicsBody = body;
-        PhysicsBody.Tag = this;
-    }
-
     public void TakeDamage(float damageAmount)
     {
         if (IsBroken) return;
@@ -46,19 +40,8 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
 
     public void OnHit(AbstractProjectile projectile)
     {
-        if (projectile is not EnemyProjectile || IsBroken)
-        {
-            return;
-        }
-
-        bool wasBroken = IsBroken;
+        if (projectile is not EnemyProjectile || IsBroken) return;
         TakeDamage(projectile.Damage);
-
-        if (!wasBroken && IsBroken && gameplayContext.Events != null)
-        {
-            gameplayContext.Events.FireWallBreached();
-        }
-
         projectile.Deactivate();
     }
 
@@ -84,34 +67,48 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        Vector2 topLeft = Position - (dimensionsPixels / 2f);
+        Vector2 origin = new Vector2(dimensionsPixels.X / 2f, dimensionsPixels.Y / 2f);
+        Rectangle sourceRect = new Rectangle(0, 0, (int)dimensionsPixels.X, (int)dimensionsPixels.Y);
 
-        Rectangle rect = new Rectangle(
-            (int)topLeft.X,
-            (int)topLeft.Y,
-            (int)dimensionsPixels.X,
-            (int)dimensionsPixels.Y
-        );
         Color wallColor = IsBroken ? Color.DarkRed : Color.DarkSlateGray;
-        spriteBatch.Draw(AssetManager.BlankTexture, rect, wallColor);
+        Vector2 snappedPosition = new Vector2(MathF.Round(Position.X), MathF.Round(Position.Y));
+
+        spriteBatch.Draw(
+            texture: AssetManager.BlankTexture,
+            position: snappedPosition,
+            sourceRectangle: sourceRect,
+            color: wallColor,
+            rotation: PhysicsBody.Rotation,
+            origin: origin,
+            scale: 1f,
+            effects: SpriteEffects.None,
+            layerDepth: 0f
+        );
 
         if (CurrentHealth < MaxHealth)
         {
             int barWidth = (int)dimensionsPixels.X - 10;
+            int barHeight = 6;
             float healthPercentage = CurrentHealth / MaxHealth;
 
-            // Background of the bar (black)
-            Rectangle bgBar = new Rectangle(rect.X + 5, rect.Y + rect.Height / 2 - 3, barWidth, 6);
+            Rectangle bgBar = new Rectangle(
+                (int)(snappedPosition.X - barWidth / 2f),
+                (int)(snappedPosition.Y - barHeight / 2f),
+                barWidth,
+                barHeight
+            );
 
-            // The filled portion of the bar
-            Rectangle fillBar = new Rectangle(rect.X + 5, rect.Y + rect.Height / 2 - 3,
-                (int)(barWidth * healthPercentage), 6);
+            Rectangle fillBar = new Rectangle(
+                bgBar.X,
+                bgBar.Y,
+                (int)MathF.Round(barWidth * healthPercentage),
+                barHeight
+            );
 
-            // Change color based on status (Red if completely broken, LimeGreen if just damaged)
-            Color barColor = IsBroken ? Color.Red : Color.LimeGreen;
+            Color healthBarColor = IsBroken ? Color.Red : Color.LimeGreen;
 
             spriteBatch.Draw(AssetManager.BlankTexture, bgBar, Color.Black);
-            spriteBatch.Draw(AssetManager.BlankTexture, fillBar, barColor);
+            spriteBatch.Draw(AssetManager.BlankTexture, fillBar, healthBarColor);
         }
     }
 }

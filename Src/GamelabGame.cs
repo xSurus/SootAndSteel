@@ -7,7 +7,6 @@ using Gamelab.Items;
 using Gamelab.Map.Train.State;
 using Gamelab.Players;
 using Gamelab.Screens;
-using Gamelab.Services.Music;
 using Gamelab.Services.Sound;
 using Gamelab.Services.Vfx;
 using Gamelab.Systems;
@@ -18,6 +17,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
 using MonoGame.Extended.Screens;
 using Myra;
+using FmodForFoxes;
+using FmodForFoxes.Studio;
 
 namespace Gamelab;
 
@@ -63,12 +64,16 @@ public class GamelabGame : Game
     private string screenshotPath;
 
     public bool IsRunning => screenManager.ActiveScreen != null;
+    
+    public readonly INativeFmodLibrary nativeFmodLibrary;
+    public EventInstance menuStabInstance;
 
-    public GamelabGame(RunMode runMode)
+    public GamelabGame(RunMode runMode, INativeFmodLibrary nativeFmodLibrary)
     {
         Instance = this;
 
         this.runMode = runMode;
+        this.nativeFmodLibrary = nativeFmodLibrary;
 
         graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
@@ -87,13 +92,10 @@ public class GamelabGame : Game
         Components.Add(screenManager);
 
         IGameSystem soundService = new SoundService();
-        IGameSystem musicService = new MusicService();
         VfxService vfxService = new VfxService();
         Services.AddService((ISoundService)soundService);
-        Services.AddService((IMusicService)musicService);
         Services.AddService<IVfxService>(vfxService);
         systemManager.Add(soundService);
-        systemManager.Add(musicService);
         systemManager.Add(vfxService);
     }
 

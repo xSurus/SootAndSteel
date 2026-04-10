@@ -55,10 +55,23 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
     public override void Draw(SpriteBatch spriteBatch)
     {
         int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
-        Vector2 position = DrawPosition;
+        int drawSize = tileSize - 10;
 
-        Rectangle rect = new Rectangle((int)position.X + 5, (int)position.Y + 5, tileSize - 10, tileSize - 10);
-        spriteBatch.Draw(AssetManager.BlankTexture, rect, DisplayColor);
-        HeldItem?.Draw(spriteBatch, position + new Vector2(tileSize / 4f), tileSize / 2);
+        Vector2 origin = new Vector2(drawSize / 2f, drawSize / 2f);
+        Rectangle sourceRect = new Rectangle(0, 0, drawSize, drawSize);
+
+        spriteBatch.Draw(
+            texture: AssetManager.BlankTexture,
+            position: Position,
+            sourceRectangle: sourceRect,
+            color: DisplayColor,
+            rotation: PhysicsBody.Rotation,
+            origin: origin,
+            scale: 1f,
+            effects: SpriteEffects.None,
+            layerDepth: 0f
+        );
+
+        HeldItem?.Draw(spriteBatch, Position, tileSize / 2);
     }
 }
