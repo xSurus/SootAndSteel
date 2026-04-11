@@ -105,6 +105,16 @@ public class GameplayConfig
     public float FireZoneRadius { get; set; } = 90f;
     public float FireZoneDurationSeconds { get; set; } = 5f;
 
+    // Tar thrower configuration
+    public float TarThrowerMaxSpeed { get; set; } = 210f;
+    public float TarThrowerPreferredDistance { get; set; } = 160f;
+    public float TarThrowerAimDurationSeconds { get; set; } = 0.9f;
+    public float TarThrowerRecoverDurationSeconds { get; set; } = 1f;
+    public float TarProjectileSpeed { get; set; } = 240f;
+    public float TarProjectileLifetime { get; set; } = 0.85f;
+    public float TarProjectileSize { get; set; } = 14f;
+    public float TarCleanDurationSeconds { get; set; } = 1.75f;
+
     // Mounter enemy configuration
     public float MounterApproachSpeed { get; set; } = 200f;
     public float MounterFleeSpeed { get; set; } = 350f;

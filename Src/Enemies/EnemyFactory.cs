@@ -16,7 +16,7 @@ public static class EnemyFactory
             EnemyType.Shield => new ShieldEnemy(gameplayContext, spawnPosition, random, slot),
             EnemyType.Anchor => new AnchorEnemy(gameplayContext, spawnPosition, slot),
             EnemyType.Molotov => new MolotovEnemy(gameplayContext, spawnPosition, slot),
-            EnemyType.TarThrower => throw new NotSupportedException("Tar thrower enemy is not implemented yet."),
+            EnemyType.TarThrower => new TarThrowerEnemy(gameplayContext, spawnPosition, slot),
             _ => throw new ArgumentOutOfRangeException(nameof(definition), definition, "Unknown enemy definition.")
         };
     }

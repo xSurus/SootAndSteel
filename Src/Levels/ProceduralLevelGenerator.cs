@@ -63,10 +63,16 @@ public class ProceduralLevelGenerator(RunDifficultyConfig config)
         bool canSpawnRifle = budget >= EnemyCatalog.GetCost(config, EnemyType.Rifle) && HasType(candidateTypes, EnemyType.Rifle);
         bool canSpawnMounter = budget >= EnemyCatalog.GetCost(config, EnemyType.Mounter) && HasType(candidateTypes, EnemyType.Mounter);
         bool canSpawnMolotov = budget >= EnemyCatalog.GetCost(config, EnemyType.Molotov) && HasType(candidateTypes, EnemyType.Molotov);
+        bool canSpawnTarThrower = budget >= EnemyCatalog.GetCost(config, EnemyType.TarThrower) && HasType(candidateTypes, EnemyType.TarThrower);
 
-        if (!canSpawnRifle && !canSpawnMounter && !canSpawnMolotov)
+        if (!canSpawnRifle && !canSpawnMounter && !canSpawnMolotov && !canSpawnTarThrower)
         {
             return null;
+        }
+
+        if (canSpawnTarThrower && levelNumber >= 2 && random.NextSingle() < 0.15f)
+        {
+            return EnemyType.TarThrower;
         }
 
         if (canSpawnMolotov && levelNumber >= 2 && random.NextSingle() < 0.2f)
@@ -84,7 +90,12 @@ public class ProceduralLevelGenerator(RunDifficultyConfig config)
             return EnemyType.Mounter;
         }
 
-        return EnemyType.Molotov;
+        if (canSpawnMolotov)
+        {
+            return EnemyType.Molotov;
+        }
+
+        return EnemyType.TarThrower;
     }
 
     private int GetMinProceduralCost(int levelNumber)

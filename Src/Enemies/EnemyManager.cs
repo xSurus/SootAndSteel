@@ -116,7 +116,13 @@ public class EnemyManager
 
     private void SpawnFallbackEnemy()
     {
-        EnemyType enemyType = random.NextSingle() < RifleSpawnChance ? EnemyType.Rifle : EnemyType.Mounter;
+        float roll = random.NextSingle();
+        EnemyType enemyType = roll switch
+        {
+            < 0.1f => EnemyType.TarThrower,
+            < 0.25f => EnemyType.Molotov,
+            _ => random.NextSingle() < RifleSpawnChance ? EnemyType.Rifle : EnemyType.Mounter
+        };
         EnemyDefinition definition = new EnemyDefinition(enemyType);
         EnemySlotSide side = random.NextSingle() < 0.5f ? EnemySlotSide.Top : EnemySlotSide.Bottom;
         SpawnEnemy(definition, side);

@@ -10,7 +10,8 @@ public static class EnemyCatalog
     [
         EnemyType.Mounter,
         EnemyType.Rifle,
-        EnemyType.Molotov
+        EnemyType.Molotov,
+        EnemyType.TarThrower
     ];
 
     public static IReadOnlyList<EnemyType> GetProceduralTypesForLevel(int levelNumber)
