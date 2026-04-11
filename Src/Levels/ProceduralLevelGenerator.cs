@@ -60,42 +60,43 @@ public class ProceduralLevelGenerator(RunDifficultyConfig config)
     private EnemyType? SelectEnemyType(Random random, int levelNumber, int budget)
     {
         IReadOnlyList<EnemyType> candidateTypes = EnemyCatalog.GetProceduralTypesForLevel(levelNumber);
-        bool canSpawnRifle = budget >= EnemyCatalog.GetCost(config, EnemyType.Rifle) && HasType(candidateTypes, EnemyType.Rifle);
-        bool canSpawnMounter = budget >= EnemyCatalog.GetCost(config, EnemyType.Mounter) && HasType(candidateTypes, EnemyType.Mounter);
-        bool canSpawnMolotov = budget >= EnemyCatalog.GetCost(config, EnemyType.Molotov) && HasType(candidateTypes, EnemyType.Molotov);
-        bool canSpawnTarThrower = budget >= EnemyCatalog.GetCost(config, EnemyType.TarThrower) && HasType(candidateTypes, EnemyType.TarThrower);
+        List<EnemyType> affordableTypes = [];
+        float totalWeight = 0f;
 
-        if (!canSpawnRifle && !canSpawnMounter && !canSpawnMolotov && !canSpawnTarThrower)
+        foreach (EnemyType type in candidateTypes)
+        {
+            int cost = EnemyCatalog.GetCost(config, type);
+            if (budget < cost)
+            {
+                continue;
+            }
+
+            float weight = EnemyCatalog.GetProceduralWeight(type, levelNumber);
+            if (weight <= 0f)
+            {
+                continue;
+            }
+
+            affordableTypes.Add(type);
+            totalWeight += weight;
+        }
+
+        if (affordableTypes.Count == 0 || totalWeight <= 0f)
         {
             return null;
         }
 
-        if (canSpawnTarThrower && levelNumber >= 2 && random.NextSingle() < 0.15f)
+        float roll = random.NextSingle() * totalWeight;
+        foreach (EnemyType type in affordableTypes)
         {
-            return EnemyType.TarThrower;
+            roll -= EnemyCatalog.GetProceduralWeight(type, levelNumber);
+            if (roll <= 0f)
+            {
+                return type;
+            }
         }
 
-        if (canSpawnMolotov && levelNumber >= 2 && random.NextSingle() < 0.2f)
-        {
-            return EnemyType.Molotov;
-        }
-
-        if (canSpawnRifle && (!canSpawnMounter || IsRifleRoll(random, levelNumber)))
-        {
-            return EnemyType.Rifle;
-        }
-
-        if (canSpawnMounter)
-        {
-            return EnemyType.Mounter;
-        }
-
-        if (canSpawnMolotov)
-        {
-            return EnemyType.Molotov;
-        }
-
-        return EnemyType.TarThrower;
+        return affordableTypes[^1];
     }
 
     private int GetMinProceduralCost(int levelNumber)
@@ -107,26 +108,6 @@ public class ProceduralLevelGenerator(RunDifficultyConfig config)
         }
 
         return minCost == int.MaxValue ? 0 : minCost;
-    }
-
-    private bool IsRifleRoll(Random random, int levelNumber)
-    {
-        float chance = config.BaseRifleChance + (levelNumber - 1) * config.RifleChanceIncreasePerLevel;
-        chance = Math.Clamp(chance, 0f, config.MaxRifleChance);
-        return random.NextSingle() < chance;
-    }
-
-    private static bool HasType(IReadOnlyList<EnemyType> types, EnemyType type)
-    {
-        foreach (EnemyType candidate in types)
-        {
-            if (candidate == type)
-            {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private static float Lerp(float a, float b, float t)

@@ -1,0 +1,18 @@
+{
+  "LevelDistance": 16000,
+  "SpawnEvents": [
+    { "Distance": 1200, "Type": "Mounter", "Side": "Top" },
+    { "Distance": 2200, "Type": "Rifle", "Side": "Bottom" },
+    { "Distance": 3400, "Type": "Shield", "Side": "Top" },
+    { "Distance": 4700, "Type": "Molotov", "Side": "Bottom" },
+    { "Distance": 6100, "Type": "TarThrower", "Side": "Top" },
+    { "Distance": 7600, "Type": "Anchor", "Side": "Bottom" },
+
+    { "Distance": 9100, "Type": "Rifle", "Side": "Top" },
+    { "Distance": 10100, "Type": "Mounter", "Side": "Bottom" },
+    { "Distance": 11200, "Type": "Shield", "Side": "Bottom" },
+    { "Distance": 12400, "Type": "Molotov", "Side": "Top" },
+    { "Distance": 13600, "Type": "TarThrower", "Side": "Bottom" },
+    { "Distance": 14800, "Type": "Anchor", "Side": "Top" }
+  ]
+}
