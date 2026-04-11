@@ -49,6 +49,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     private readonly Random random = Random.Shared;
     private bool isFailureTriggered;
     private float levelStartDistance;
+    private float allPlayersStunnedTimer;
     private GameplayPhase phase = GameplayPhase.Running;
     private readonly WhiteFilterTransition endLevelWhiteFilter = new WhiteFilterTransition();
 
@@ -60,6 +61,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         runManager = new RunManager(Game.CurrentLevel, new ProgressiveRunLevelProvider());
         runManager.OnIntermissionStarted += OnIntermissionStarted;
         currentLevelDef = runManager.CurrentLevelDefinition;
+        levelStartDistance = 0f;
         trainMap = new TrainMap();
         gameplayContext.Map = trainMap;
         Services.GetService<IVfxService>().AddContinuous(ParticleFactory.CreateSnowstorm());
@@ -180,6 +182,8 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
             trainMap.Update(fixedDt);
             gameplayContext.PhysicsWorld.Step(fixedDt);
             gameplayContext.FlushDeferredPhysicsActions();
+            UpdateAllPlayersStunnedFailure(fixedDt);
+            if (isFailureTriggered) return;
             accumulator -= fixedDt;
         }
 
@@ -196,6 +200,31 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         {
             Game.TrainLayoutSeedForHub = PrepTrainLayout.Capture(trainMap);
             Game.SwitchToScreen(new PostLevelStatsScreen(Game));
+        }
+    }
+
+    private void UpdateAllPlayersStunnedFailure(float dt)
+    {
+        bool allPlayersStunned = players.Count > 0;
+        foreach (Player player in players)
+        {
+            if (!player.IsStunned)
+            {
+                allPlayersStunned = false;
+                break;
+            }
+        }
+
+        if (!allPlayersStunned)
+        {
+            allPlayersStunnedTimer = 0f;
+            return;
+        }
+
+        allPlayersStunnedTimer += dt;
+        if (allPlayersStunnedTimer >= Game.GameplayConfig.AllPlayersStunnedFailDelaySeconds)
+        {
+            TriggerFailure();
         }
     }
 

@@ -28,6 +28,10 @@ public class GameplayConfig
     public float PlayerHeldItemOffsetRadiusMultiplier { get; set; } = 1.5f;
     public float PlayerHeldItemSizeRadiusMultiplier { get; set; } = 0.8f;
     public float PlayerForceMultiplier { get; set; } = 50f;
+    public float PlayerStunDurationSeconds { get; set; } = 4f;
+    public float PlayerReviveDurationSeconds { get; set; } = 1.5f;
+    public float AllPlayersStunnedFailDelaySeconds { get; set; } = 1.5f;
+    public float FireStunDurationSeconds { get; set; } = 2f;
     public float InputInitialRepeatDelaySeconds { get; set; } = 0.3f;
     public float InputRepeatRateSeconds { get; set; } = 0.1f;
     public float InputDirectionPressThreshold { get; set; } = 0.5f;
@@ -50,6 +54,12 @@ public class GameplayConfig
     public float WallHealthRestoredPerSecond { get; set; } = 40f;
     public float GrabbableLinearDamping { get; set; } = 100f;
     public float GrabbableRotationalResistance { get; set; } = 40f;
+    public float RepairableCannonMaxHealth { get; set; } = 100f;
+    public float RepairableCannonRepairPerSecond { get; set; } = 30f;
+    public float RepairableSpeedLeverMaxHealth { get; set; } = 75f;
+    public float RepairableSpeedLeverRepairPerSecond { get; set; } = 45f;
+    public float RepairableAnvilMaxHealth { get; set; } = 90f;
+    public float RepairableAnvilRepairPerSecond { get; set; } = 35f;
 
     // Enemy configuration (general)
     public float EnemyHealth { get; set; } = 100f;
