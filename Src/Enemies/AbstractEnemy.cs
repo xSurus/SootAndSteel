@@ -80,6 +80,11 @@ public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable
         projectile.Deactivate();
     }
 
+    public virtual EnemyProjectile TryShoot()
+    {
+        return null;
+    }
+
     public void RemovePhysicsBody()
     {
         if (PhysicsBody == null)

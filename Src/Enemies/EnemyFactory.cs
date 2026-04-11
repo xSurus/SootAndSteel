@@ -13,7 +13,7 @@ public static class EnemyFactory
         {
             EnemyType.Mounter => new MounterEnemy(gameplayContext, spawnPosition, slot),
             EnemyType.Rifle => new RifleEnemy(gameplayContext, spawnPosition, random, slot),
-            EnemyType.Shield => throw new NotSupportedException("Shield enemy is not implemented yet."),
+            EnemyType.Shield => new ShieldEnemy(gameplayContext, spawnPosition, random, slot),
             EnemyType.Anchor => throw new NotSupportedException("Anchor enemy is not implemented yet."),
             EnemyType.Molotov => throw new NotSupportedException("Molotov enemy is not implemented yet."),
             EnemyType.TarThrower => throw new NotSupportedException("Tar thrower enemy is not implemented yet."),

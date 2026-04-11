@@ -65,7 +65,7 @@ public class RifleEnemy : AbstractEnemy
         timeSinceLastShot += deltaTime;
     }
 
-    public EnemyProjectile TryShoot()
+    public override EnemyProjectile TryShoot()
     {
         if (currentState == RifleState.ApproachingSideAttackSlot || timeSinceLastShot < ShootCooldown || !IsAlive || ShouldRemove)
         {

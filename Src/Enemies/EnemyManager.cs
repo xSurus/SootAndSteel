@@ -86,13 +86,10 @@ public class EnemyManager
             AbstractEnemy enemy = enemies[i];
             enemy.Update(deltaTime);
 
-            if (enemy is RifleEnemy rifle)
+            EnemyProjectile projectile = enemy.TryShoot();
+            if (projectile != null)
             {
-                EnemyProjectile projectile = rifle.TryShoot();
-                if (projectile != null)
-                {
-                    projectileManager.Add(projectile);
-                }
+                projectileManager.Add(projectile);
             }
 
             if (!enemy.IsAlive || enemy.ShouldRemove)

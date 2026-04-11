@@ -77,6 +77,14 @@ public class GameplayConfig
     public float EnemyShootCooldown { get; set; } = 2f;
     public float EnemyShootSpread { get; set; } = 0.2f;
 
+    // Shield enemy configuration
+    public float ShieldMaxSpeed { get; set; } = 220f;
+    public float ShieldPreferredDistance { get; set; } = 150f;
+    public float ShieldDurationSeconds { get; set; } = 1.2f;
+    public float ShieldAimDurationSeconds { get; set; } = 0.8f;
+    public float ShieldRecoverDurationSeconds { get; set; } = 0.8f;
+    public float ShieldBlockArcDegrees { get; set; } = 120f;
+
     // Mounter enemy configuration
     public float MounterApproachSpeed { get; set; } = 200f;
     public float MounterFleeSpeed { get; set; } = 350f;
