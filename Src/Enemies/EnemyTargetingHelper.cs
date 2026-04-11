@@ -13,10 +13,12 @@ public static class EnemyTargetingHelper
 {
     public static Vector2 GetTargetPoint(GameplayContext gameplayContext, EnemySlotSide side, Vector2 enemyPosition)
     {
-        ShootHoleWall wallTarget = GetNearestIntactWallOnSide(gameplayContext, side, enemyPosition);
-        if (!HasBrokenWallOnSide(gameplayContext, side))
+        ShootHoleWall localWall = GetNearestWallOnSide(gameplayContext, side, enemyPosition);
+        bool localInteriorShotOpen = localWall != null && localWall.IsBroken;
+
+        if (!localInteriorShotOpen)
         {
-            return wallTarget?.Position ?? gameplayContext.Map.GetBounds().Center.ToVector2();
+            return localWall?.Position ?? gameplayContext.Map.GetBounds().Center.ToVector2();
         }
 
         IPhysicalEntity interiorTarget = GetHighestPriorityInteriorTarget(gameplayContext, enemyPosition);
@@ -25,30 +27,17 @@ public static class EnemyTargetingHelper
             return interiorTarget.Position;
         }
 
-        return wallTarget?.Position ?? gameplayContext.Map.GetBounds().Center.ToVector2();
+        return localWall?.Position ?? gameplayContext.Map.GetBounds().Center.ToVector2();
     }
 
-    private static bool HasBrokenWallOnSide(GameplayContext gameplayContext, EnemySlotSide side)
-    {
-        foreach (IPhysicalEntity entity in gameplayContext.Map.MapObjects)
-        {
-            if (entity is ShootHoleWall wall && wall.IsBroken && IsOnSide(gameplayContext, wall.Position, side))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private static ShootHoleWall GetNearestIntactWallOnSide(GameplayContext gameplayContext, EnemySlotSide side, Vector2 enemyPosition)
+    private static ShootHoleWall GetNearestWallOnSide(GameplayContext gameplayContext, EnemySlotSide side, Vector2 enemyPosition)
     {
         ShootHoleWall bestWall = null;
         float bestDistanceSquared = float.MaxValue;
 
         foreach (IPhysicalEntity entity in gameplayContext.Map.MapObjects)
         {
-            if (entity is not ShootHoleWall wall || wall.IsBroken || !IsOnSide(gameplayContext, wall.Position, side))
+            if (entity is not ShootHoleWall wall || !IsOnSide(gameplayContext, wall.Position, side))
             {
                 continue;
             }
@@ -68,27 +57,28 @@ public static class EnemyTargetingHelper
 
     private static IPhysicalEntity GetHighestPriorityInteriorTarget(GameplayContext gameplayContext, Vector2 enemyPosition)
     {
-        IPhysicalEntity target = GetNearestOfType<CannonStation>(gameplayContext, enemyPosition);
+        IPhysicalEntity target = GetNearestUsableRepairable<CannonStation>(gameplayContext, enemyPosition);
         if (target != null) return target;
 
-        target = GetNearestOfType<SpeedLever>(gameplayContext, enemyPosition);
+        target = GetNearestUsableRepairable<SpeedLever>(gameplayContext, enemyPosition);
         if (target != null) return target;
 
-        target = GetNearestOfType<Anvil>(gameplayContext, enemyPosition);
+        target = GetNearestUsableRepairable<Anvil>(gameplayContext, enemyPosition);
         if (target != null) return target;
 
-        target = GetNearestPlayer(gameplayContext, enemyPosition);
+        target = GetNearestUsablePlayer(gameplayContext, enemyPosition);
         return target;
     }
 
-    private static T GetNearestOfType<T>(GameplayContext gameplayContext, Vector2 enemyPosition) where T : class, IPhysicalEntity
+    private static T GetNearestUsableRepairable<T>(GameplayContext gameplayContext, Vector2 enemyPosition)
+        where T : class, IPhysicalEntity, IRepairable
     {
         T best = null;
         float bestDistanceSquared = float.MaxValue;
 
         foreach (IPhysicalEntity entity in gameplayContext.Map.MapObjects)
         {
-            if (entity is not T candidate)
+            if (entity is not T candidate || candidate.IsBroken)
             {
                 continue;
             }
@@ -106,7 +96,7 @@ public static class EnemyTargetingHelper
         return best;
     }
 
-    private static Player GetNearestPlayer(GameplayContext gameplayContext, Vector2 enemyPosition)
+    private static Player GetNearestUsablePlayer(GameplayContext gameplayContext, Vector2 enemyPosition)
     {
         Player best = null;
         float bestDistanceSquared = float.MaxValue;
