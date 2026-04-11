@@ -63,6 +63,11 @@ public class AnchorCable : AbstractPhysicalEntity, IEnemyHazard, IInteractable
         }
     }
 
+    public IEnemyHazard TryCreateHazard()
+    {
+        return null;
+    }
+
     public void RemovePhysicsBody()
     {
         RemoveAnchorEffect();

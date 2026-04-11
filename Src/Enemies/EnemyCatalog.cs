@@ -9,7 +9,8 @@ public static class EnemyCatalog
     private static readonly EnemyType[] EarlyProceduralTypes =
     [
         EnemyType.Mounter,
-        EnemyType.Rifle
+        EnemyType.Rifle,
+        EnemyType.Molotov
     ];
 
     public static IReadOnlyList<EnemyType> GetProceduralTypesForLevel(int levelNumber)

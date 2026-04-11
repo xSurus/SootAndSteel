@@ -94,6 +94,17 @@ public class GameplayConfig
     public float AnchorSpeedMultiplierPerActiveAnchor { get; set; } = 0.5f;
     public float AnchorMinimumSpeedMultiplier { get; set; } = 0.1f;
 
+    // Molotov enemy configuration
+    public float MolotovMaxSpeed { get; set; } = 210f;
+    public float MolotovPreferredDistance { get; set; } = 160f;
+    public float MolotovAimDurationSeconds { get; set; } = 0.8f;
+    public float MolotovRecoverDurationSeconds { get; set; } = 1f;
+    public float MolotovProjectileSpeed { get; set; } = 260f;
+    public float MolotovProjectileLifetime { get; set; } = 0.8f;
+    public float MolotovProjectileSize { get; set; } = 14f;
+    public float FireZoneRadius { get; set; } = 90f;
+    public float FireZoneDurationSeconds { get; set; } = 5f;
+
     // Mounter enemy configuration
     public float MounterApproachSpeed { get; set; } = 200f;
     public float MounterFleeSpeed { get; set; } = 350f;

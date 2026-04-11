@@ -39,6 +39,13 @@ public class EnemyHazardManager
         {
             IEnemyHazard hazard = hazards[i];
             hazard.Update(deltaTime);
+
+            IEnemyHazard spawnedHazard = hazard.TryCreateHazard();
+            if (spawnedHazard != null)
+            {
+                hazards.Add(spawnedHazard);
+            }
+
             if (!hazard.ShouldRemove)
             {
                 continue;
