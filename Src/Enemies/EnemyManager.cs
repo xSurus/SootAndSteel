@@ -20,21 +20,22 @@ public class EnemyManager
     private float currentSpawnInterval;
     private int nextSpawnIndex;
     private float levelStartDistance;
-    private float ShooterSpawnChance => GamelabGame.Instance.GameplayConfig.ShooterSpawnChance;
+    private float RifleSpawnChance => GamelabGame.Instance.GameplayConfig.RifleSpawnChance;
     private float EnemySpawnIntervalBase => GamelabGame.Instance.GameplayConfig.EnemySpawnIntervalBase;
     private float EnemySpawnIntervalVariance => GamelabGame.Instance.GameplayConfig.EnemySpawnIntervalVariance;
     private float EnemySpawnOffsetX => GamelabGame.Instance.GameplayConfig.EnemySpawnOffsetX;
     private float EnemySize => GamelabGame.Instance.GameplayConfig.EnemySize;
-    private float ShooterPreferredDistance => GamelabGame.Instance.GameplayConfig.ShooterPreferredDistance;
+    private float RiflePreferredDistance => GamelabGame.Instance.GameplayConfig.RiflePreferredDistance;
     private readonly ProjectileManager projectileManager;
 
     public IReadOnlyList<AbstractEnemy> Enemies => enemies;
+    public bool HasActiveThreats => enemies.Count > 0;
 
     public EnemyManager(LevelDefinition levelDef, ProjectileManager projectileManager)
     {
-        this.currentSpawnInterval = GamelabGame.Instance.GameplayConfig.EnemySpawnIntervalBase;
-        this.levelDefinition = levelDef;
-        this.slotManager = new EnemySlotManager();
+        currentSpawnInterval = GamelabGame.Instance.GameplayConfig.EnemySpawnIntervalBase;
+        levelDefinition = levelDef;
+        slotManager = new EnemySlotManager();
         this.projectileManager = projectileManager;
         levelStartDistance = gameplayContext.State.DistanceTraveled;
         gameplayContext.Events.OnCannonProjectileFired += AddCannonProjectile;
@@ -58,10 +59,7 @@ public class EnemyManager
             while (nextSpawnIndex < levelDefinition.SpawnEvents.Count &&
                    distanceInCurrentLevel >= levelDefinition.SpawnEvents[nextSpawnIndex].Distance)
             {
-                // Spawn *all* events in order. Filtering by index can accidentally remove specific enemy types
-                // depending on how levels are authored.
                 SpawnFromEvent(levelDefinition.SpawnEvents[nextSpawnIndex]);
-
                 nextSpawnIndex++;
             }
         }
@@ -70,7 +68,7 @@ public class EnemyManager
             timeSinceLastSpawn += deltaTime;
             if (timeSinceLastSpawn >= currentSpawnInterval)
             {
-                SpawnEnemy();
+                SpawnFallbackEnemy();
                 timeSinceLastSpawn = 0f;
                 float nextInterval = EnemySpawnIntervalBase +
                                      (random.NextSingle() - 0.5f) * EnemySpawnIntervalVariance;
@@ -88,9 +86,9 @@ public class EnemyManager
             AbstractEnemy enemy = enemies[i];
             enemy.Update(deltaTime);
 
-            if (enemy is ShooterEnemy shooter)
+            if (enemy is RifleEnemy rifle)
             {
-                EnemyProjectile projectile = shooter.TryShoot();
+                EnemyProjectile projectile = rifle.TryShoot();
                 if (projectile != null)
                 {
                     projectileManager.Add(projectile);
@@ -111,70 +109,77 @@ public class EnemyManager
         projectileManager.Add(projectile);
     }
 
-    private void SpawnEnemy()
+    private void SpawnFallbackEnemy()
     {
-        bool shouldSpawnShooter = random.NextSingle() < ShooterSpawnChance;
-
-        if (shouldSpawnShooter)
-        {
-            if (slotManager.TryReserveShooterSlot(out EnemyTrainSlot shooterSlot))
-            {
-                Vector2 spawnPosition = GetShooterSpawnPosition(shooterSlot);
-                enemies.Add(new ShooterEnemy(gameplayContext, spawnPosition, random, shooterSlot));
-                return;
-            }
-        }
-
-        if (slotManager.TryReserveThiefSlot(out EnemyTrainSlot thiefSlot))
-        {
-            Vector2 spawnPosition = GetThiefSpawnPosition(thiefSlot);
-            enemies.Add(new ThiefEnemy(gameplayContext, spawnPosition, thiefSlot));
-        }
+        EnemyType enemyType = random.NextSingle() < RifleSpawnChance ? EnemyType.Rifle : EnemyType.Mounter;
+        EnemyDefinition definition = new EnemyDefinition(enemyType);
+        EnemySlotSide side = random.NextSingle() < 0.5f ? EnemySlotSide.Top : EnemySlotSide.Bottom;
+        SpawnEnemy(definition, side);
     }
 
     private void SpawnFromEvent(SpawnEvent spawnEvent)
     {
-        if (spawnEvent.Type == "Shooter")
+        EnemyDefinition definition = EnemyDefinition.Parse(spawnEvent.Type);
+        EnemySlotSide side = spawnEvent.Side?.ToLowerInvariant() switch
         {
-            EnemySlotSide preferredSide = spawnEvent.Side?.ToLowerInvariant() switch
-            {
-                "top" => EnemySlotSide.Top,
-                "bottom" => EnemySlotSide.Bottom,
-                _ => random.NextSingle() < 0.5f ? EnemySlotSide.Top : EnemySlotSide.Bottom
-            };
+            "top" => EnemySlotSide.Top,
+            "bottom" => EnemySlotSide.Bottom,
+            _ => random.NextSingle() < 0.5f ? EnemySlotSide.Top : EnemySlotSide.Bottom
+        };
 
-            if (slotManager.TryReserveShooterSlotOnSide(preferredSide, out EnemyTrainSlot shooterSlot))
-            {
-                Vector2 spawnPosition = GetShooterSpawnPosition(shooterSlot);
-                enemies.Add(new ShooterEnemy(gameplayContext, spawnPosition, random, shooterSlot));
-            }
+        SpawnEnemy(definition, side);
+    }
+
+    private void SpawnEnemy(EnemyDefinition definition, EnemySlotSide preferredSide)
+    {
+        if (!TryReserveSlot(definition.Type, preferredSide, out EnemyTrainSlot slot))
+        {
+            return;
         }
-        else
-        {
-            EnemySlotSide side = spawnEvent.Side?.ToLowerInvariant() switch
-            {
-                "top" => EnemySlotSide.Top,
-                "bottom" => EnemySlotSide.Bottom,
-                _ => EnemySlotSide.Top
-            };
 
-            if (slotManager.TryReserveThiefSlotOnSide(side, out EnemyTrainSlot thiefSlot))
-            {
-                Vector2 spawnPosition = GetThiefSpawnPosition(thiefSlot);
-                enemies.Add(new ThiefEnemy(gameplayContext, spawnPosition, thiefSlot));
-            }
+        Vector2 spawnPosition = GetSpawnPosition(definition.Type, slot);
+        try
+        {
+            AbstractEnemy enemy = EnemyFactory.Create(gameplayContext, definition, spawnPosition, random, slot);
+            enemies.Add(enemy);
+        }
+        catch (NotSupportedException)
+        {
+            slotManager.ReleaseSlot(slot);
         }
     }
 
-    private Vector2 GetShooterSpawnPosition(EnemyTrainSlot slot)
+    private bool TryReserveSlot(EnemyType type, EnemySlotSide preferredSide, out EnemyTrainSlot slot)
+    {
+        return type switch
+        {
+            EnemyType.Mounter => slotManager.TryReserveMountSlotOnSide(preferredSide, out slot),
+            EnemyType.Rifle or EnemyType.Shield or EnemyType.Molotov or EnemyType.TarThrower =>
+                slotManager.TryReserveSideAttackSlotOnSide(preferredSide, out slot),
+            EnemyType.Anchor => slotManager.TryReserveAnchorDeploySlotOnSide(preferredSide, out slot),
+            _ => throw new ArgumentOutOfRangeException(nameof(type), type, "Unknown enemy type.")
+        };
+    }
+
+    private Vector2 GetSpawnPosition(EnemyType type, EnemyTrainSlot slot)
+    {
+        return type switch
+        {
+            EnemyType.Mounter => GetMountSpawnPosition(slot),
+            EnemyType.Rifle or EnemyType.Shield or EnemyType.Molotov or EnemyType.TarThrower or EnemyType.Anchor =>
+                GetSideAttackSpawnPosition(slot),
+            _ => throw new ArgumentOutOfRangeException(nameof(type), type, "Unknown enemy type.")
+        };
+    }
+
+    private Vector2 GetSideAttackSpawnPosition(EnemyTrainSlot slot)
     {
         float spawnX = gameplayContext.ScreenWidth + EnemySpawnOffsetX;
-        Vector2 anchor = slot.GetAnchor(gameplayContext, EnemySize + ShooterPreferredDistance);
-
+        Vector2 anchor = slot.GetAnchor(gameplayContext, EnemySize + RiflePreferredDistance);
         return new Vector2(spawnX, anchor.Y);
     }
 
-    private Vector2 GetThiefSpawnPosition(EnemyTrainSlot slot)
+    private Vector2 GetMountSpawnPosition(EnemyTrainSlot slot)
     {
         return slot.Side switch
         {

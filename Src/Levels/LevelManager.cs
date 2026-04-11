@@ -18,7 +18,6 @@ public class LevelManager
     {
         float distanceInCurrentLevel = gameplayContext.State.DistanceTraveled - levelStartDistance;
         return distanceInCurrentLevel >= levelDefinition.LevelDistance &&
-               enemyManager.Enemies.Count == 0;
+               !enemyManager.HasActiveThreats;
     }
 }
-

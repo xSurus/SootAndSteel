@@ -1,101 +1,89 @@
 using System;
-using Gamelab.Config;
 using Gamelab.Map.Train.State;
 using Gamelab.PhysicalEntities.Projectiles;
-using Gamelab.Utils;
 using Microsoft.Xna.Framework;
-using nkast.Aether.Physics2D.Dynamics;
 
 namespace Gamelab.Enemies;
 
-public enum ShooterState
+public enum RifleState
 {
-    ApproachingSlot,
-    HoldingSlot,
-    FallingBehind
+    ApproachingSideAttackSlot,
+    HoldingSideAttackSlot
 }
 
-public class ShooterEnemy : AbstractEnemy
+public class RifleEnemy : AbstractEnemy
 {
     public override Color EnemyColor => Color.Red;
 
     private float ShootCooldown => GamelabGame.Instance.GameplayConfig.EnemyShootCooldown;
-    private float HorseSpeed => GamelabGame.Instance.GameplayConfig.ShooterMaxSpeed;
-    private float PreferredDistance => GamelabGame.Instance.GameplayConfig.ShooterPreferredDistance;
+    private float MaxSpeed => GamelabGame.Instance.GameplayConfig.RifleMaxSpeed;
+    private float PreferredDistance => GamelabGame.Instance.GameplayConfig.RiflePreferredDistance;
     private float EnemyShootSpread => GamelabGame.Instance.GameplayConfig.EnemyShootSpread;
     private float ProjectileSpeed => GamelabGame.Instance.GameplayConfig.ProjectileSpeed;
     private float ProjectileDamage => GamelabGame.Instance.GameplayConfig.ProjectileDamage;
     private float ProjectileLifetime => GamelabGame.Instance.GameplayConfig.ProjectileLifetime;
     private float ProjectileSize => GamelabGame.Instance.GameplayConfig.ProjectileSize;
-    private float timeSinceLastShot;
+
     private readonly Random random;
-    private ShooterState currentState = ShooterState.ApproachingSlot;
-    
-    public ShooterEnemy(GameplayContext gameplayContext, Vector2 spawnPosition, Random random, EnemyTrainSlot slot) 
-        : base(gameplayContext, spawnPosition, slot)
+    private float timeSinceLastShot;
+    private RifleState currentState = RifleState.ApproachingSideAttackSlot;
+
+    public RifleEnemy(GameplayContext gameplayContext, Vector2 spawnPosition, Random random, EnemyTrainSlot slot)
+        : base(
+            gameplayContext,
+            new EnemyDefinition(EnemyType.Rifle),
+            spawnPosition,
+            slot,
+            EnemyMovementProfile.CreateDefault(GamelabGame.Instance.GameplayConfig.RifleMaxSpeed))
     {
         this.random = random;
-        // TODO create min and max duration so that the enemy doesnt shoot immediately shoot
         timeSinceLastShot = random.NextSingle() * ShootCooldown;
     }
-    
+
     public override void Update(float deltaTime)
     {
         base.Update(deltaTime);
+
         Vector2 slotAnchor = Slot.GetAnchor(gameplayContext, Size + PreferredDistance);
+        Vector2 approachAnchor = GetApproachAnchor(slotAnchor);
+
         switch (currentState)
         {
-            case ShooterState.ApproachingSlot:
-                Vector2 approachAnchor = GetApproachAnchor(slotAnchor);
-                MoveTowards(approachAnchor, HorseSpeed * deltaTime);
-
-                float approachSnapDistance = Size * 0.4f;
-                if (Vector2.DistanceSquared(Position, approachAnchor) <= approachSnapDistance * approachSnapDistance)
+            case RifleState.ApproachingSideAttackSlot:
+                EnemyMovement.UpdateTowardPoint(approachAnchor, deltaTime);
+                if (HasReached(approachAnchor, EnemyMovement.Profile.ArrivalRadius + 8f))
                 {
-                    currentState = ShooterState.HoldingSlot;
+                    currentState = RifleState.HoldingSideAttackSlot;
                 }
                 break;
 
-            case ShooterState.HoldingSlot:
-                MoveTowards(slotAnchor, HorseSpeed * deltaTime);
-                if (gameplayContext.State.actualSpeed > HorseSpeed)
-                {
-                    currentState = ShooterState.FallingBehind;
-                }
-                break;
-
-            case ShooterState.FallingBehind:
-                UpdateFallingBehind(deltaTime, gameplayContext.State.actualSpeed, slotAnchor);
-                if (gameplayContext.State.actualSpeed <= HorseSpeed)
-                {
-                    currentState = ShooterState.HoldingSlot;
-                }
+            case RifleState.HoldingSideAttackSlot:
+                EnemyMovement.UpdateHoldPosition(slotAnchor, deltaTime);
                 break;
         }
-
 
         timeSinceLastShot += deltaTime;
     }
-    
+
     public EnemyProjectile TryShoot()
     {
-        if (currentState == ShooterState.ApproachingSlot || timeSinceLastShot < ShootCooldown || !IsAlive || ShouldRemove)
+        if (currentState == RifleState.ApproachingSideAttackSlot || timeSinceLastShot < ShootCooldown || !IsAlive || ShouldRemove)
         {
             return null;
         }
-        
+
         timeSinceLastShot = 0f;
-        
+
         Vector2 direction = gameplayContext.Map.GetBounds().Center.ToVector2() - Position;
         if (direction != Vector2.Zero)
         {
             direction.Normalize();
         }
-        
+
         float spread = (random.NextSingle() - 0.5f) * EnemyShootSpread;
         float angle = (float)Math.Atan2(direction.Y, direction.X) + spread;
         direction = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
-        
+
         return new EnemyProjectile(
             PhysicsBody.World,
             Position,
@@ -117,18 +105,5 @@ public class ShooterEnemy : AbstractEnemy
             EnemySlotSide.Bottom => new Vector2(slotAnchor.X + horizontalOffset, slotAnchor.Y + verticalOffset),
             _ => slotAnchor
         };
-    }
-
-    private void UpdateFallingBehind(float deltaTime, float trainSpeed, Vector2 slotAnchor)
-    {
-        float fallBehindSpeed = trainSpeed - HorseSpeed;
-        float yDifference = slotAnchor.Y - Position.Y;
-        float maxVerticalMovement = HorseSpeed * 0.5f * deltaTime;
-        float verticalMovement = Math.Clamp(yDifference, -maxVerticalMovement, maxVerticalMovement);
-
-        Position = new Vector2(
-            Position.X - fallBehindSpeed * deltaTime,
-            Position.Y + verticalMovement
-        );
     }
 }

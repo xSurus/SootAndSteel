@@ -50,7 +50,7 @@ public class GameplayConfig
     public float WallHealthRestoredPerSecond { get; set; } = 40f;
     public float GrabbableLinearDamping { get; set; } = 100f;
     public float GrabbableRotationalResistance { get; set; } = 40f;
-    
+
     // Enemy configuration (general)
     public float EnemyHealth { get; set; } = 100f;
     public float EnemySpeed { get; set; } = 0f;
@@ -59,43 +59,44 @@ public class GameplayConfig
     public float EnemySpawnIntervalVariance { get; set; } = 5f;
     public float EnemySpawnOffsetX { get; set; } = 100f;
     public float EnemySpawnMarginY { get; set; } = 100f;
-    public float ShooterSpawnChance { get; set; } = 0.9f;
-    
-    // Shooter enemy configuration
-    public float ShooterMaxSpeed { get; set; } = 250f;
-    public float ShooterPreferredDistance { get; set; } = 150f;
+    public float RifleSpawnChance { get; set; } = 0.9f;
+
+    // Rifle enemy configuration
+    public float RifleMaxSpeed { get; set; } = 250f;
+    public float RiflePreferredDistance { get; set; } = 150f;
     public float EnemyShootCooldown { get; set; } = 2f;
     public float EnemyShootSpread { get; set; } = 0.2f;
-    
-    // Thief enemy configuration
-    public float ThiefApproachSpeed { get; set; } = 200f;
-    public float ThiefFleeSpeed { get; set; } = 350f;
-    public float ThiefStealDuration { get; set; } = 1.5f;
-    public int ThiefCoalAmount { get; set; } = 5;
-    
+
+    // Mounter enemy configuration
+    public float MounterApproachSpeed { get; set; } = 200f;
+    public float MounterFleeSpeed { get; set; } = 350f;
+    public float MounterMountDuration { get; set; } = 0.3f;
+    public float MounterStealDuration { get; set; } = 1.5f;
+    public int MounterCoalAmount { get; set; } = 5;
+
     // Projectile configuration
     public float ProjectileSpeed { get; set; } = 300f;
     public float ProjectileDamage { get; set; } = 10f;
     public float ProjectileLifetime { get; set; } = 5f;
     public float ProjectileSize { get; set; } = 8f;
-    
+
     // Train temperature configuration
     public float TrainMaxTemperature { get; set; } = 100f;
     public float TrainTemperatureDecreasePerSecondPerBreachedWall { get; set; } = 3f;
     public float TrainTemperatureIncreasePerSecond { get; set; } = 3f;
-    
+
     // Screen shake configuration
     public float ScreenShakeIntensity { get; set; } = 8f;
     public float ScreenShakeDuration { get; set; } = 0.15f;
     public float ScreenShakeDecay { get; set; } = 5f;
-    
+
     // Cannon configuration
     public float CannonProjectileSpeed { get; set; } = 500f;
     public float CannonProjectileDamage { get; set; } = 50f;
     public float CannonProjectileLifetime { get; set; } = 3f;
     public float CannonProjectileSize { get; set; } = 12f;
     public float CannonCooldown { get; set; } = 0.5f;
-    
+
     // Enemy movement behavior configuration
     public float WobbleAmplitude { get; set; } = 8f;
     public float WobbleFrequency { get; set; } = 3f;

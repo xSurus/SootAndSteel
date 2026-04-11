@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using Gamelab.Enemies;
 
 namespace Gamelab.Levels;
 
@@ -16,7 +18,8 @@ public class ProceduralLevelGenerator(RunDifficultyConfig config)
         float levelDistance = config.BaseDistance + (safeLevel - 1) * config.DistanceGrowthPerLevel;
         float floatBudget = config.BaseEnemyBudget * MathF.Pow(config.BudgetMultiplierPerLevel, safeLevel - 1) +
                             (safeLevel - 1) * config.BudgetGrowthPerLevel;
-        int budget = Math.Max(config.ThiefCost, (int)MathF.Round(floatBudget));
+        int minCost = GetMinProceduralCost(safeLevel);
+        int budget = Math.Max(minCost, (int)MathF.Round(floatBudget));
 
         var definition = new LevelDefinition
         {
@@ -27,21 +30,22 @@ public class ProceduralLevelGenerator(RunDifficultyConfig config)
         float cursorDistance = config.MinSpawnSpacing;
         float levelEndBuffer = MathF.Max(config.MinSpawnSpacing, 200f);
         float maxSpawnDistance = MathF.Max(config.MinSpawnSpacing, levelDistance - levelEndBuffer);
-        int minCost = Math.Min(config.ShooterCost, config.ThiefCost);
 
         while (budget >= minCost && cursorDistance <= maxSpawnDistance)
         {
-            bool canSpawnShooter = budget >= config.ShooterCost;
-            bool canSpawnThief = budget >= config.ThiefCost;
-            bool spawnShooter = canSpawnShooter && (!canSpawnThief || IsShooterRoll(random, safeLevel));
+            EnemyType? selectedType = SelectEnemyType(random, safeLevel, budget);
+            if (selectedType == null)
+            {
+                break;
+            }
 
-            int cost = spawnShooter ? config.ShooterCost : config.ThiefCost;
-            budget -= cost;
+            EnemyType enemyType = selectedType.Value;
+            budget -= EnemyCatalog.GetCost(config, enemyType);
 
             definition.SpawnEvents.Add(new SpawnEvent
             {
                 Distance = cursorDistance,
-                Type = spawnShooter ? "Shooter" : "Thief",
+                Type = new EnemyDefinition(enemyType).Id,
                 Side = random.NextSingle() < 0.5f ? "Top" : "Bottom"
             });
 
@@ -53,12 +57,56 @@ public class ProceduralLevelGenerator(RunDifficultyConfig config)
         return definition;
     }
 
-    private bool IsShooterRoll(Random random, int levelNumber)
+    private EnemyType? SelectEnemyType(Random random, int levelNumber, int budget)
     {
-        float chance = config.BaseShooterChance + (levelNumber - 1) * config.ShooterChanceIncreasePerLevel;
-        chance = Math.Clamp(chance, 0f, config.MaxShooterChance);
+        IReadOnlyList<EnemyType> candidateTypes = EnemyCatalog.GetProceduralTypesForLevel(levelNumber);
+        bool canSpawnRifle = budget >= EnemyCatalog.GetCost(config, EnemyType.Rifle) && HasType(candidateTypes, EnemyType.Rifle);
+        bool canSpawnMounter = budget >= EnemyCatalog.GetCost(config, EnemyType.Mounter) && HasType(candidateTypes, EnemyType.Mounter);
+
+        if (!canSpawnRifle && !canSpawnMounter)
+        {
+            return null;
+        }
+
+        if (canSpawnRifle && (!canSpawnMounter || IsRifleRoll(random, levelNumber)))
+        {
+            return EnemyType.Rifle;
+        }
+
+        return EnemyType.Mounter;
+    }
+
+    private int GetMinProceduralCost(int levelNumber)
+    {
+        int minCost = int.MaxValue;
+        foreach (EnemyType type in EnemyCatalog.GetProceduralTypesForLevel(levelNumber))
+        {
+            minCost = Math.Min(minCost, EnemyCatalog.GetCost(config, type));
+        }
+
+        return minCost == int.MaxValue ? 0 : minCost;
+    }
+
+    private bool IsRifleRoll(Random random, int levelNumber)
+    {
+        float chance = config.BaseRifleChance + (levelNumber - 1) * config.RifleChanceIncreasePerLevel;
+        chance = Math.Clamp(chance, 0f, config.MaxRifleChance);
         return random.NextSingle() < chance;
     }
+
+    private static bool HasType(IReadOnlyList<EnemyType> types, EnemyType type)
+    {
+        foreach (EnemyType candidate in types)
+        {
+            if (candidate == type)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private static float Lerp(float a, float b, float t)
     {
         return a + (b - a) * t;
