@@ -13,6 +13,7 @@ public class EnemyManager
     private readonly List<AbstractEnemy> enemies = [];
     private readonly Random random = Random.Shared;
     private readonly EnemySlotManager slotManager;
+    private readonly EnemyHazardManager hazardManager = new();
     private LevelDefinition levelDefinition;
     private readonly GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
 
@@ -29,7 +30,7 @@ public class EnemyManager
     private readonly ProjectileManager projectileManager;
 
     public IReadOnlyList<AbstractEnemy> Enemies => enemies;
-    public bool HasActiveThreats => enemies.Count > 0;
+    public bool HasActiveThreats => enemies.Count > 0 || hazardManager.HasActiveThreats;
 
     public EnemyManager(LevelDefinition levelDef, ProjectileManager projectileManager)
     {
@@ -77,6 +78,7 @@ public class EnemyManager
         }
 
         UpdateEnemies(deltaTime);
+        hazardManager.Update(deltaTime);
     }
 
     private void UpdateEnemies(float deltaTime)
@@ -90,6 +92,12 @@ public class EnemyManager
             if (projectile != null)
             {
                 projectileManager.Add(projectile);
+            }
+
+            IEnemyHazard hazard = enemy.TryCreateHazard();
+            if (hazard != null)
+            {
+                hazardManager.Add(hazard);
             }
 
             if (!enemy.IsAlive || enemy.ShouldRemove)
@@ -198,6 +206,8 @@ public class EnemyManager
         {
             enemy.Draw(spriteBatch);
         }
+
+        hazardManager.Draw(spriteBatch);
     }
 
     public void Clear()
@@ -210,6 +220,7 @@ public class EnemyManager
 
         enemies.Clear();
         slotManager.Clear();
+        hazardManager.Clear();
     }
 
     private void ReleaseSlot(AbstractEnemy enemy)

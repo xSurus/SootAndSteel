@@ -85,6 +85,11 @@ public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable
         return null;
     }
 
+    public virtual IEnemyHazard TryCreateHazard()
+    {
+        return null;
+    }
+
     public void RemovePhysicsBody()
     {
         if (PhysicsBody == null)

@@ -85,6 +85,15 @@ public class GameplayConfig
     public float ShieldRecoverDurationSeconds { get; set; } = 0.8f;
     public float ShieldBlockArcDegrees { get; set; } = 120f;
 
+    // Anchor enemy configuration
+    public float AnchorMaxSpeed { get; set; } = 220f;
+    public float AnchorPreferredDistance { get; set; } = 120f;
+    public float AnchorDeployDurationSeconds { get; set; } = 1f;
+    public float AnchorRetreatSpeed { get; set; } = 320f;
+    public float AnchorCutDurationSeconds { get; set; } = 1.75f;
+    public float AnchorSpeedMultiplierPerActiveAnchor { get; set; } = 0.5f;
+    public float AnchorMinimumSpeedMultiplier { get; set; } = 0.1f;
+
     // Mounter enemy configuration
     public float MounterApproachSpeed { get; set; } = 200f;
     public float MounterFleeSpeed { get; set; } = 350f;
