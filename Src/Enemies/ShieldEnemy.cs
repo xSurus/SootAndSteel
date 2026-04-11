@@ -111,7 +111,8 @@ public class ShieldEnemy : AbstractEnemy
 
         pendingShot = false;
 
-        Vector2 direction = gameplayContext.Map.GetBounds().Center.ToVector2() - Position;
+        Vector2 targetPoint = EnemyTargetingHelper.GetTargetPoint(gameplayContext, Slot.Side, Position);
+        Vector2 direction = targetPoint - Position;
         if (direction != Vector2.Zero)
         {
             direction.Normalize();
