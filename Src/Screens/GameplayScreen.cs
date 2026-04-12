@@ -102,7 +102,6 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
             HorizontalAlignment = HorizontalAlignment.Stretch,
             VerticalAlignment = VerticalAlignment.Stretch
         };
-        mainPanel.Widgets.Add(hud.Root);
         mainPanel.Widgets.Add(pauseMenu.Overlay);
         desktop.Root = mainPanel;
     }
@@ -281,6 +280,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         spriteBatch.End();
 
         spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
+        hud.Draw(spriteBatch, virtualScreenSize);
         desktop.Render();
         float w = endLevelWhiteFilter.Opacity;
         if (w > 0.001f)
