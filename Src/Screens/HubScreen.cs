@@ -60,7 +60,6 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
     private HubWorldPhase phase = HubWorldPhase.Hub;
 
     private readonly List<HubShopOffer> hubDragOffers = [];
-    private readonly List<(AbstractStation station, int price)> unpaidShopPlacements = [];
 
     /// <summary>
     /// After arriving on the hub view, block prep-entry for a moment so overlap with the hub plaza does not
@@ -249,30 +248,6 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
         worldBoundaryBodies.Add(b);
     }
 
-    private bool IsTrainTileOccupied(Point tile)
-    {
-        foreach (IPhysicalEntity entity in prepTrainMap.MapObjects)
-        {
-            if (entity is not AbstractStation station) continue;
-            if (prepTrainMap.GetTileIndexFromPixels(station.Position) == tile) return true;
-        }
-
-        return false;
-    }
-
-    private void OnShopProxyPlacedOnTrain(HubShopOffer proxy, Vector2 tileCenterPixels)
-    {
-        hubDragOffers.Remove(proxy);
-        string kindId = proxy.StationKindId;
-        int price = proxy.Cost;
-        proxy.Dispose();
-
-        AbstractStation station = StationYardFactory.CreateYardStation(kindId, tileCenterPixels);
-        prepTrainMap.MapObjects.Add(station);
-        prepTrainMap.SnapToNearestValidCell(station);
-        unpaidShopPlacements.Add((station, price));
-    }
-
     private void RestockHubDragOffers()
     {
         float cx = hubPlazaBounds.Center.X;
@@ -287,31 +262,14 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
 
         foreach (HubShopOfferTemplate offer in offers)
         {
-            if (hubDragOffers.Exists(o => o.StationKindId == offer.KindId)) continue;
+            if (hubDragOffers.Exists(o => o.Type == offer.KindId)) continue;
+            if (prepTrainMap.MapObjects.Exists(e => e is HubShopOffer o && o.Type == offer.KindId)) continue;
             hubDragOffers.Add(new HubShopOffer(
                 new Vector2(cx + offer.RelX, offer.SpawnY),
                 offer.Cost, offer.KindId, offer.DisplayName, offer.Color,
-                prepTrainMap, IsTrainTileOccupied, OnShopProxyPlacedOnTrain));
+                prepTrainMap,
+                hubDragOffers));
         }
-    }
-
-    private int ComputeUnpaidShopTotalAndPrune()
-    {
-        int total = 0;
-        Rectangle trainBounds = prepTrainMap.GetBounds();
-        for (int i = unpaidShopPlacements.Count - 1; i >= 0; i--)
-        {
-            (AbstractStation station, int price) = unpaidShopPlacements[i];
-            bool insideTrain = station.IsBeingHeld
-                || (prepTrainMap.MapObjects.Contains(station)
-                && trainBounds.Contains((int)station.Position.X, (int)station.Position.Y));
-            if (!insideTrain)
-                unpaidShopPlacements.RemoveAt(i);
-            else
-                total += price;
-        }
-
-        return total;
     }
 
     private bool AllPlayersInRectangle(Rectangle r)
@@ -322,10 +280,18 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
         return true;
     }
 
-    private void UpdateHubShopTooltip()
+    private int CountUnpurchasedShopOffers()
+    {
+        int count = 0;
+        foreach (IPhysicalEntity e in prepTrainMap.MapObjects)
+            if (e is HubShopOffer offer && !offer.IsPurchased)
+                count++;
+        return count;
+    }
+
+    private void UpdateHubShopTooltips()
     {
         hubShopTooltip.Clear();
-        if (phase != HubWorldPhase.Hub) return;
 
         float reach = Game.GameplayConfig.PlayerInteractDistancePixels * 1.4f;
         float reachSq = reach * reach;
@@ -333,19 +299,28 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
 
         foreach (Player player in players)
         {
-            foreach (HubShopOffer offer in hubDragOffers)
+            if (phase == HubWorldPhase.Hub)
             {
-                Vector2 to = offer.Position - player.Position;
-                float dsq = to.LengthSquared();
-                if (dsq > reachSq || dsq < 4f) continue;
-
-                to.Normalize();
-                if (Vector2.Dot(player.LookDirection, to) < 0.5f) continue;
-
-                Vector2 anchor = (offer.Position - cameraPosition) + new Vector2(0f, -liftPx);
-                hubShopTooltip.OfferCloser(dsq, offer.BuildTooltipText(), anchor);
+                foreach (HubShopOffer offer in hubDragOffers)
+                    TryOfferTooltip(player, offer, reachSq, liftPx);
+            }
+            else
+            {
+                foreach (IPhysicalEntity entity in prepTrainMap.MapObjects)
+                    if (entity is HubShopOffer offer && !offer.IsPurchased)
+                        TryOfferTooltip(player, offer, reachSq, liftPx);
             }
         }
+    }
+
+    private void TryOfferTooltip(Player player, HubShopOffer offer, float reachSq, float liftPx)
+    {
+        Vector2 to = offer.Position - player.Position;
+        float dsq = to.LengthSquared();
+        if (dsq > reachSq || dsq < 4f) return;
+        to.Normalize();
+        if (Vector2.Dot(player.LookDirection, to) < 0.5f) return;
+        hubShopTooltip.OfferCloser(dsq, offer.BuildTooltipText(), (offer.Position - cameraPosition) + new Vector2(0f, -liftPx));
     }
 
     public override void Update(GameTime gameTime)
@@ -365,7 +340,7 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
         hubSnowEmitter.Position = cameraPosition + new Vector2(virtualScreenSize.X / 2f, virtualScreenSize.Y / 2f);
         creditsLabel.Text = $"Credits: {Game.Credits}";
 
-        int unpaidTotal = ComputeUnpaidShopTotalAndPrune();
+        int pendingShopCount = CountUnpurchasedShopOffers();
 
         if (phase == HubWorldPhase.Hub)
             prepEntryUnlockTimer = Math.Max(0f, prepEntryUnlockTimer - dt);
@@ -440,13 +415,12 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
         if (phase == HubWorldPhase.Prep && players.Count > 0)
         {
             departBlockedLabel.Visible = true;
-            bool canAffordDepart = unpaidTotal <= Game.Credits;
-            if (allInDepart && !canAffordDepart)
+            if (allInDepart && pendingShopCount > 0)
             {
-                departBlockedLabel.Text = $"Need {unpaidTotal}c to depart (you have {Game.Credits}c).";
+                departBlockedLabel.Text = "Purchase placed shop upgrades (Interact) or drag them back to the vendor before departing.";
                 departBlockedLabel.TextColor = new Color(255, 120, 120);
             }
-            else if (allInDepart && canAffordDepart)
+            else if (allInDepart)
             {
                 float hold = Game.GameplayConfig.DepartHoldSeconds;
                 if (hold <= 0f || departHoldTimer >= hold)
@@ -455,10 +429,16 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
                     departBlockedLabel.Text = $"Stay in zone to depart ({hold - departHoldTimer:0.0}s)…";
                 departBlockedLabel.TextColor = new Color(180, 230, 200);
             }
+            else if (pendingShopCount > 0)
+            {
+                departBlockedLabel.Text =
+                    "Interact next to a colored tile on the train to buy it, or grab it and return it to the shop row to cancel.";
+                departBlockedLabel.TextColor = new Color(200, 200, 120);
+            }
             else
             {
                 departBlockedLabel.Text =
-                    "Depart: move all players into the green-tinted zone at the bottom. Shop items are paid when you depart (if you can afford them).";
+                    "Depart: move all players into the green-tinted zone at the bottom.";
                 departBlockedLabel.TextColor = new Color(160, 200, 170);
             }
         }
@@ -467,17 +447,16 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
             departBlockedLabel.Visible = false;
         }
 
-        UpdateHubShopTooltip();
+        UpdateHubShopTooltips();
 
-        bool canDepart = allInDepart && unpaidTotal <= Game.Credits;
+        bool canDepart = allInDepart && pendingShopCount == 0;
         if (canDepart)
             departHoldTimer += dt;
         else
             departHoldTimer = 0f;
 
-        if (departHoldTimer >= Game.GameplayConfig.DepartHoldSeconds && (unpaidTotal == 0 || Game.TrySpendCredits(unpaidTotal)))
+        if (departHoldTimer >= Game.GameplayConfig.DepartHoldSeconds)
         {
-            unpaidShopPlacements.Clear();
             Game.PendingPrepTrainLayout = PrepTrainLayout.Capture(prepTrainMap);
             departWhiteFilter ??= new WhiteFilterTransition();
             departWhiteFilter.FadeIn(0.8f);
@@ -534,11 +513,7 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
 
         worldBoundaryBodies.Clear();
 
-        foreach (HubShopOffer offer in hubDragOffers)
-            offer.Dispose();
-
         hubDragOffers.Clear();
-        unpaidShopPlacements.Clear();
 
         Game.Services.RemoveService(typeof(GameplayContext));
         Services.GetService<IVfxService>().ClearAll();

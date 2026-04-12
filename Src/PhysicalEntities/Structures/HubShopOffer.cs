@@ -1,28 +1,29 @@
-using System;
-using Gamelab.Assets;
+using System.Collections.Generic;
 using Gamelab.Map.Train;
 using Gamelab.Map.Train.State;
 using Gamelab.Players;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using nkast.Aether.Physics2D.Dynamics;
 
-namespace Gamelab.PhysicalEntities.Structures;
+namespace Gamelab.PhysicalEntities.Stations;
 
-public sealed class HubShopOffer : AbstractGrabbable, IInteractable, IPickable, IDisposable
+/// <summary>
+/// A shop upgrade tile that lives in the hub vendor row until dragged onto the prep train.
+/// Once on the train it stays as an <see cref="AbstractStation"/> placeholder until the player
+/// interacts and pays. On depart, <see cref="PrepTrainLayout"/> captures it by <see cref="AbstractStation.Type"/>
+/// and <see cref="Hub.StationYardFactory"/> converts it to the real station in gameplay.
+/// </summary>
+public sealed class HubShopOffer : AbstractStation
 {
     private readonly Vector2 spawnCenterPixels;
     private readonly TrainMap prepTrainMap;
-    private readonly Func<Point, bool> isTrainTileOccupied;
-    private readonly Action<HubShopOffer, Vector2> onPlacedOnTrain;
+    private readonly List<HubShopOffer> hubDragOffers;
+    private bool isOnTrain;
 
-    public string StationKindId { get; }
     public int Cost { get; }
     public string DisplayName { get; }
-    public Color DisplayColor { get; }
-
-    protected override bool AllowPlayerRotation => false;
+    public bool IsPurchased { get; private set; }
 
     public HubShopOffer(
         Vector2 centerPixels,
@@ -31,98 +32,67 @@ public sealed class HubShopOffer : AbstractGrabbable, IInteractable, IPickable, 
         string displayName,
         Color displayColor,
         TrainMap prepTrainMap,
-        Func<Point, bool> isTrainTileOccupied,
-        Action<HubShopOffer, Vector2> onPlacedOnTrain)
+        List<HubShopOffer> hubDragOffers)
+        : base(stationKindId, displayColor, centerPixels)
     {
         spawnCenterPixels = centerPixels;
         this.prepTrainMap = prepTrainMap;
-        this.isTrainTileOccupied = isTrainTileOccupied;
-        this.onPlacedOnTrain = onPlacedOnTrain;
-        StationKindId = stationKindId;
+        this.hubDragOffers = hubDragOffers;
         Cost = cost;
         DisplayName = displayName;
-        DisplayColor = displayColor;
-
-        float collisionSizePixels = GamelabGame.Instance.GameplayConfig.TrainTileSize * 0.9f;
-        float simSize = collisionSizePixels.ToMeters();
-        PhysicsBody = gameplayContext.PhysicsWorld.CreateRectangle(
-            simSize,
-            simSize,
-            1f,
-            centerPixels.ToMeters(),
-            0f,
-            BodyType.Static);
     }
 
-    public string BuildTooltipText()
-    {
-        return $"{DisplayName} — {Cost} credits\nDrag onto the train; pay when you depart.";
-    }
+    public string BuildTooltipText() => isOnTrain
+        ? $"{DisplayName} — {Cost}c\nInteract to purchase."
+        : $"{DisplayName} — {Cost} credits\nDrag onto the train, then Interact to purchase.";
 
-    public void OnInteract(Player interactingPlayer)
+    public override void OnInteract(Player interactingPlayer)
     {
-    }
-
-    public void OnInteractHeld(Player interactingPlayer, float dt)
-    {
-    }
-
-    public void OnPickup(Player interactingPlayer)
-    {
-    }
-
-    public void OnPickupHeld(Player interactingPlayer, float dt)
-    {
-    }
-
-    private void SnapBackToVendor()
-    {
-        PhysicsBody.BodyType = BodyType.Static;
-        PhysicsBody.Position = spawnCenterPixels.ToMeters();
-        PhysicsBody.Rotation = 0f;
+        if (IsPurchased || !isOnTrain) return;
+        if (!GamelabGame.Instance.TrySpendCredits(Cost)) return;
+        IsPurchased = true;
     }
 
     protected override void OnLastRelease(Player interactingPlayer)
     {
-        GameplayContext ctx = GamelabGame.Instance.Services.GetService<GameplayContext>();
-        if (ctx.Map != prepTrainMap)
+        Point tile = prepTrainMap.GetTileIndexFromPixels(Position);
+        bool validDrop = gameplayContext.Map == prepTrainMap
+            && tile.X >= 0 && tile.X < prepTrainMap.Width
+            && tile.Y >= 0 && tile.Y < prepTrainMap.Height
+            && !IsTileOccupied(tile);
+
+        if (!validDrop)
         {
-            SnapBackToVendor();
+            if (isOnTrain)
+            {
+                isOnTrain = false;
+                prepTrainMap.MapObjects.Remove(this);
+                hubDragOffers.Add(this);
+            }
+            PhysicsBody.BodyType = BodyType.Static;
+            PhysicsBody.Position = spawnCenterPixels.ToMeters();
+            PhysicsBody.Rotation = 0f;
             return;
         }
 
-        Point g = prepTrainMap.GetTileIndexFromPixels(Position);
-        if (g.X < 0 || g.X >= prepTrainMap.Width || g.Y < 0 || g.Y >= prepTrainMap.Height)
-        {
-            SnapBackToVendor();
-            return;
-        }
+        Position = prepTrainMap.GetTileCenterPixels(tile.X, tile.Y);
+        PhysicsBody.Rotation = 0f;
+        PhysicsBody.BodyType = BodyType.Static;
 
-        if (isTrainTileOccupied(g))
+        if (!isOnTrain)
         {
-            SnapBackToVendor();
-            return;
+            isOnTrain = true;
+            prepTrainMap.MapObjects.Add(this);
+            hubDragOffers.Remove(this);
         }
-
-        Vector2 center = prepTrainMap.GetTileCenterPixels(g.X, g.Y);
-        onPlacedOnTrain(this, center);
     }
 
-    public override void Draw(SpriteBatch spriteBatch)
+    private bool IsTileOccupied(Point tile)
     {
-        int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
-        Vector2 topLeft = Position - new Vector2(tileSize / 2f);
-        Rectangle rect = new Rectangle((int)topLeft.X + 5, (int)topLeft.Y + 5, tileSize - 10, tileSize - 10);
-        spriteBatch.Draw(AssetManager.BlankTexture, rect, DisplayColor);
-    }
-
-    public void Dispose()
-    {
-        if (PhysicsBody?.World == null)
-        {
-            return;
-        }
-
-        PhysicsBody.World.Remove(PhysicsBody);
+        foreach (IPhysicalEntity entity in prepTrainMap.MapObjects)
+            if (entity is AbstractStation station && !ReferenceEquals(station, this)
+                && prepTrainMap.GetTileIndexFromPixels(station.Position) == tile)
+                return true;
+        return false;
     }
 }
