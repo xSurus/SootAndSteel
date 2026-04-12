@@ -132,7 +132,7 @@ public class GameplayConfig
     // Train temperature configuration
     public float TrainMaxTemperature { get; set; } = 100f;
     public float TrainTemperatureDecreasePerSecondPerBreachedWall { get; set; } = 3f;
-    public float TrainTemperatureDecreasePerSecondEngineOff { get; set; } = 5f;
+    public float TrainTemperatureDecreasePerSecondEngineOff { get; set; } = 3f;
     public float TrainTemperatureIncreasePerSecond { get; set; } = 3f;
 
     // Screen shake configuration
