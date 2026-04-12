@@ -198,8 +198,8 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
             Padding = new Thickness(12, 8, 12, 8),
             Background = new SolidBrush(new Color(10, 10, 15, 180)),
             HorizontalAlignment = HorizontalAlignment.Left,
-            VerticalAlignment = VerticalAlignment.Bottom,
-            Margin = new Thickness(14, 0, 0, 14)
+            VerticalAlignment = VerticalAlignment.Top,
+            Margin = new Thickness(14, 14, 0, 0)
         };
 
         stack.Widgets.Add(new Label

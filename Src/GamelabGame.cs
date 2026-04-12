@@ -67,7 +67,7 @@ public class GamelabGame : Game
     public RunMode runMode { get; private set; }
     public bool IsDebug => runMode == RunMode.Debug;
     public bool IsRelease => runMode == RunMode.Release;
-    public bool IsDebugOverlayEnabled { get; private set; } = true;
+    public bool IsDebugOverlayEnabled { get; private set; }
 
     public float MusicVolume { get; private set; } = 0.3f;
     private AbstractGameScreen nextScreen;
