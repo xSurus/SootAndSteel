@@ -3,7 +3,10 @@ using Gamelab.Entities;
 using Gamelab.Map.Train.State;
 using Gamelab.Particles;
 using Gamelab.PhysicalEntities;
+using Gamelab.PhysicalEntities.Bullets;
+using Gamelab.PhysicalEntities.Bullets.Components;
 using Gamelab.PhysicalEntities.Projectiles;
+using Gamelab.PhysicalEntities.Stations.Cannon;
 using Gamelab.Services.Vfx;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
@@ -12,7 +15,7 @@ using nkast.Aether.Physics2D.Dynamics;
 
 namespace Gamelab.Enemies;
 
-public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable
+public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable, IBulletEmitter
 {
     public EnemyTrainSlot Slot { get; }
     public float Health { get; protected set; }
@@ -59,15 +62,14 @@ public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable
         }
     }
 
-    public void OnHit(AbstractProjectile projectile)
+    public bool OnHit(BulletEntity bullet)
     {
-        if (projectile is not CannonProjectile || !IsAlive || ShouldRemove)
+        if (bullet.Owner.GetType() == typeof(CannonStation) && IsAlive && !ShouldRemove)
         {
-            return;
+            TakeDamage(bullet.Stats.Damage);
+            return true;
         }
-
-        TakeDamage(projectile.Damage);
-        projectile.Deactivate();
+        return false;
     }
 
     public void RemovePhysicsBody()

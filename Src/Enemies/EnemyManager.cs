@@ -25,17 +25,14 @@ public class EnemyManager
     private float EnemySpawnOffsetX => GamelabGame.Instance.GameplayConfig.EnemySpawnOffsetX;
     private float EnemySize => GamelabGame.Instance.GameplayConfig.EnemySize;
     private float ShooterPreferredDistance => GamelabGame.Instance.GameplayConfig.ShooterPreferredDistance;
-    private readonly ProjectileManager projectileManager;
 
     public IReadOnlyList<AbstractEnemy> Enemies => enemies;
 
-    public EnemyManager(LevelDefinition levelDef, ProjectileManager projectileManager)
+    public EnemyManager(LevelDefinition levelDef)
     {
-        this.currentSpawnInterval = GamelabGame.Instance.GameplayConfig.EnemySpawnIntervalBase;
-        this.levelDefinition = levelDef;
-        this.slotManager = new EnemySlotManager();
-        this.projectileManager = projectileManager;
-        gameplayContext.Events.OnCannonProjectileFired += AddCannonProjectile;
+        currentSpawnInterval = GamelabGame.Instance.GameplayConfig.EnemySpawnIntervalBase;
+        levelDefinition = levelDef;
+        slotManager = new EnemySlotManager();
     }
 
     public void Update(float deltaTime)
@@ -77,11 +74,7 @@ public class EnemyManager
 
             if (enemy is ShooterEnemy shooter)
             {
-                EnemyProjectile projectile = shooter.TryShoot();
-                if (projectile != null)
-                {
-                    projectileManager.Add(projectile);
-                }
+                shooter.TryShoot();
             }
 
             if (!enemy.IsAlive || enemy.ShouldRemove)
@@ -91,11 +84,6 @@ public class EnemyManager
                 enemies.RemoveAt(i);
             }
         }
-    }
-
-    private void AddCannonProjectile(CannonProjectile projectile)
-    {
-        projectileManager.Add(projectile);
     }
 
     private void SpawnEnemy()

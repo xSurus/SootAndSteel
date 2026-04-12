@@ -1,0 +1,32 @@
+{
+  "BasicProjectile":{
+    "name": "Basic Projectile",
+    "description": "A simple projectile that moves in a straight line and can damage targets on contact.",
+    "color": "FF0000"
+  },
+  "BasicPropellant": {
+    "name": "Basic Propellant",
+    "description": "A basic gunpowder propellant that provides a moderate amount of thrust to projectiles.",
+    "color": "FFFF00"
+  },
+  "BasicCasing": {
+    "name": "Basic Casing",
+    "description": "A standard casing that holds the propellant and projectile together.",
+    "color": "00FF00"
+  },
+  "ScatterProjectile": {
+    "name": "Scatter Projectile",
+    "description": "A projectile that splits into four smaller projectiles upon firing, increasing the area of effect, but reducing damage per fragment.",
+    "color": "FF00FF"
+  },
+  "EnemyProjectile": {
+    "name": "Enemy Projectile",
+    "description": "[Internal Only] A projectile fired by enemies, which may have different properties such as speed, damage, or special effects.",
+    "color": "0000FF"
+  },
+  "HomingCasing": {
+    "name": "Homing Casing",
+    "description": "A casing that allows the projectile to home in on targets, increasing accuracy but potentially reducing speed.",
+    "color": "00FFFF"
+  }
+}

@@ -1,3 +1,4 @@
+using Gamelab.PhysicalEntities.Bullets;
 using Gamelab.PhysicalEntities.Projectiles;
 
 namespace Gamelab.Entities;
@@ -5,5 +6,5 @@ namespace Gamelab.Entities;
 public interface IDamageable
 {
     void TakeDamage(float damageAmount);
-    void OnHit(AbstractProjectile projectile);
+    bool OnHit(BulletEntity bulletEntity);
 }

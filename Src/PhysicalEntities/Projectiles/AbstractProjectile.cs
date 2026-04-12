@@ -118,7 +118,7 @@ public abstract class AbstractProjectile : AbstractPhysicalEntity
 
         if (other.Body.Tag is IDamageable hittable)
         {
-            hittable.OnHit(this);
+            // hittable.OnHit(this);
         }
 
         return false;

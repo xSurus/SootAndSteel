@@ -15,6 +15,7 @@ using Gamelab.PhysicalEntities.Stations.Resources;
 using Gamelab.PhysicalEntities.Stations.Workbenches;
 using Gamelab.PhysicalEntities.Structures;
 using Gamelab.Players;
+using Gamelab.Services.Bullet;
 using Gamelab.Services.Sound;
 using Gamelab.Services.Vfx;
 using Microsoft.Xna.Framework;
@@ -40,7 +41,6 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     private Label temperatureLabel;
     private Label cannonLabel;
     private Label distanceLabel;
-    private ProjectileManager projectileManager;
     private Panel pauseOverlay;
     private Label continueLabel;
     private Label exitLabel;
@@ -67,6 +67,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         trainMap = new TrainMap(GraphicsDevice);
         gameplayContext.Map = trainMap;
         Services.GetService<IVfxService>().AddContinuous(ParticleFactory.CreateSnowstorm());
+        Services.GetService<IBulletService>().InitializePhysics(gameplayContext.PhysicsWorld);
         
         // Sounds
         soundService = Services.GetService<ISoundService>();
@@ -87,18 +88,17 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         trainMap.MapObjects.Add(new CannonStation(trainMap.GetTileCenterPixels(5, 2)));
 
         // Two left-side work zones: top-left and bottom-left, each with an anvil.
-        trainMap.MapObjects.Add(new CopperResource(trainMap.GetTileCenterPixels(2, 0)));
-        trainMap.MapObjects.Add(new GunpowderResource(trainMap.GetTileCenterPixels(2, 4)));
-        trainMap.MapObjects.Add(new Anvil(trainMap.GetTileCenterPixels(1, 0))); // top-left crafting
-        trainMap.MapObjects.Add(new Anvil(trainMap.GetTileCenterPixels(1, 4))); // bottom-left crafting
-        trainMap.MapObjects.Add(new Counter(trainMap.GetTileCenterPixels(0, 0)));
-        trainMap.MapObjects.Add(new Counter(trainMap.GetTileCenterPixels(3, 0)));
+        trainMap.MapObjects.Add(new ComponentResource(trainMap.GetTileCenterPixels(2, 0), "BasicProjectile"));
+        trainMap.MapObjects.Add(new ComponentResource(trainMap.GetTileCenterPixels(2, 4), "BasicPropellant"));
+        trainMap.MapObjects.Add(new ComponentResource(trainMap.GetTileCenterPixels(3, 0), "BasicCasing"));
+        trainMap.MapObjects.Add(new ComponentResource(trainMap.GetTileCenterPixels(3, 4), "ScatterProjectile"));
+        trainMap.MapObjects.Add(new ComponentResource(trainMap.GetTileCenterPixels(0, 0), "HomingCasing"));
+        trainMap.MapObjects.Add(new Workbench(trainMap.GetTileCenterPixels(1, 0))); // top-left crafting
+        trainMap.MapObjects.Add(new Workbench(trainMap.GetTileCenterPixels(1, 4))); // bottom-left crafting
         trainMap.MapObjects.Add(new Counter(trainMap.GetTileCenterPixels(0, 4)));
-        trainMap.MapObjects.Add(new Counter(trainMap.GetTileCenterPixels(3, 4)));
 
         worldScroller = new WorldScroller(GraphicsDevice);
-        projectileManager = new ProjectileManager();
-        enemyManager = new EnemyManager(currentLevelDef, projectileManager);
+        enemyManager = new EnemyManager(currentLevelDef);
         levelManager = new LevelManager(currentLevelDef);
 
         gameplayContext.Events.OnWallBreached += OnWallBreached;
@@ -286,7 +286,6 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         while (accumulator >= Game.GameplayConfig.FixedTimeStep)
         {
             enemyManager.Update(fixedDt);
-            projectileManager.Update(fixedDt);
             foreach (Player player in players)
             {
                 player.Update(fixedDt);
@@ -420,7 +419,6 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         worldScroller.Draw(spriteBatch);
         trainMap.Draw(spriteBatch);
         enemyManager.Draw(spriteBatch);
-        projectileManager.Draw(spriteBatch);
 
         foreach (Player player in players)
         {
@@ -428,6 +426,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         }
 
         Services.GetService<IVfxService>().Render(spriteBatch);
+        Services.GetService<IBulletService>().Render(spriteBatch);
         spriteBatch.End();
 
         spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
@@ -454,7 +453,6 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         Services.GetService<IVfxService>().ClearAll();
         trainMap?.Dispose();
         worldScroller?.Dispose();
-        projectileManager?.Clear();
 
         trainSound?.Stop();
         ambientMusic?.Stop();

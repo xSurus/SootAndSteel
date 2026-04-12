@@ -1,7 +1,12 @@
 using System;
 using Gamelab.Config;
+using Gamelab.Items.Bullets;
 using Gamelab.Map.Train.State;
+using Gamelab.PhysicalEntities.Bullets.Components.Casings;
+using Gamelab.PhysicalEntities.Bullets.Components.Projectiles;
+using Gamelab.PhysicalEntities.Bullets.Components.Propellants;
 using Gamelab.PhysicalEntities.Projectiles;
+using Gamelab.Services.Bullet;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using nkast.Aether.Physics2D.Dynamics;
@@ -23,10 +28,6 @@ public class ShooterEnemy : AbstractEnemy
     private float HorseSpeed => GamelabGame.Instance.GameplayConfig.ShooterMaxSpeed;
     private float PreferredDistance => GamelabGame.Instance.GameplayConfig.ShooterPreferredDistance;
     private float EnemyShootSpread => GamelabGame.Instance.GameplayConfig.EnemyShootSpread;
-    private float ProjectileSpeed => GamelabGame.Instance.GameplayConfig.ProjectileSpeed;
-    private float ProjectileDamage => GamelabGame.Instance.GameplayConfig.ProjectileDamage;
-    private float ProjectileLifetime => GamelabGame.Instance.GameplayConfig.ProjectileLifetime;
-    private float ProjectileSize => GamelabGame.Instance.GameplayConfig.ProjectileSize;
     private float timeSinceLastShot;
     private readonly Random random;
     private ShooterState currentState = ShooterState.ApproachingSlot;
@@ -77,11 +78,11 @@ public class ShooterEnemy : AbstractEnemy
         timeSinceLastShot += deltaTime;
     }
     
-    public EnemyProjectile TryShoot()
+    public void TryShoot()
     {
         if (currentState == ShooterState.ApproachingSlot || timeSinceLastShot < ShootCooldown || !IsAlive || ShouldRemove)
         {
-            return null;
+            return;
         }
         
         timeSinceLastShot = 0f;
@@ -95,15 +96,13 @@ public class ShooterEnemy : AbstractEnemy
         float spread = (random.NextSingle() - 0.5f) * EnemyShootSpread;
         float angle = (float)Math.Atan2(direction.Y, direction.X) + spread;
         direction = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
-        
-        return new EnemyProjectile(
-            PhysicsBody.World,
+
+        BulletItem ammo = new BulletItem("BasicProjectile", "BasicCasing", "BasicPropellant", "EnemyProjectile");
+        GamelabGame.Instance.Services.GetService<IBulletService>().EmitBullet(
+            ammo,
             Position,
-            direction * ProjectileSpeed,
-            ProjectileDamage,
-            ProjectileLifetime,
-            ProjectileSize
-        );
+            direction,
+            this);
     }
 
     private Vector2 GetApproachAnchor(Vector2 slotAnchor)
