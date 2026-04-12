@@ -2,10 +2,13 @@ using System;
 using Gamelab.Assets;
 using Gamelab.Config;
 using Gamelab.Items;
+using Gamelab.Items.Bullets;
 using Gamelab.Particles;
-using Gamelab.PhysicalEntities;
 using Gamelab.PhysicalEntities.Projectiles;
+using Gamelab.PhysicalEntities.Bullets;
+using Gamelab.PhysicalEntities.Bullets.Components;
 using Gamelab.Players;
+using Gamelab.Services.Bullet;
 using Gamelab.Services.Vfx;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
@@ -13,7 +16,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Gamelab.PhysicalEntities.Stations.Cannon;
 
-public class CannonStation : AbstractStation, IRepairable
+public class CannonStation : AbstractStation, IRepairable, IBulletEmitter
 {
     private readonly GameplayConfig config;
     private float cooldownTimer;
@@ -53,7 +56,7 @@ public class CannonStation : AbstractStation, IRepairable
             (float)Math.Sin(AimingBar.PhysicsBody.Rotation)
         );
 
-        FireCannon(direction, HeldItem);
+        FireCannon(direction, (BulletItem)HeldItem);
         HeldItem = null;
     }
 
@@ -104,25 +107,16 @@ public class CannonStation : AbstractStation, IRepairable
         projectile.Deactivate();
     }
 
-    private void FireCannon(Vector2 direction, Item ammo)
+    private void FireCannon(Vector2 direction, BulletItem ammo)
     {
         Vector2 cannonPosition = DrawPosition + new Vector2(config.TrainTileSize / 2f);
         float barrelLength = config.TrainTileSize * 0.5f;
-        Vector2 projectileSpawn = cannonPosition + direction * barrelLength;
-        float damage = GetBulletDamage(ammo);
-
-        CannonProjectile projectile = new CannonProjectile(
-            gameplayContext.PhysicsWorld,
-            projectileSpawn,
-            direction * config.CannonProjectileSpeed,
-            damage,
-            config.CannonProjectileLifetime,
-            config.CannonProjectileSize
-        );
-
-        gameplayContext.Events.FireCannonProjectile(projectile);
+        Vector2 position = cannonPosition + direction * barrelLength;
+        
+        direction.Normalize();
+        GamelabGame.Instance.Services.GetService<IBulletService>().EmitBullet(ammo, position, direction, this);
         GamelabGame.Instance.Services.GetService<IVfxService>()
-            .EmitBurst(ParticleFactory.CreateCannonMuzzleFlash(projectileSpawn, direction));
+            .EmitBurst(ParticleFactory.CreateCannonMuzzleFlash(position, direction));
         cooldownTimer = config.CannonCooldown;
     }
 
@@ -188,16 +182,6 @@ public class CannonStation : AbstractStation, IRepairable
 
     private static bool IsBullet(Item item)
     {
-        return item.Definition is BulletDefinition;
-    }
-
-    private float GetBulletDamage(Item ammo)
-    {
-        if (ammo.Definition is BulletDefinition bulletDefinition)
-        {
-            return bulletDefinition.Damage;
-        }
-
-        return config.CannonProjectileDamage;
+        return item.Definition.Id == "Bullet" && ((BulletItem)item).Type == EComponentType.Bullet;
     }
 }

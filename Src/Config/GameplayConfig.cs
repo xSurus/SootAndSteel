@@ -141,10 +141,12 @@ public class GameplayConfig
     public float ScreenShakeDecay { get; set; } = 5f;
 
     // Cannon configuration
-    public float CannonProjectileSpeed { get; set; } = 500f;
+    public float CannonProjectileSpeed { get; set; } = 800f;
     public float CannonProjectileDamage { get; set; } = 50f;
     public float CannonProjectileLifetime { get; set; } = 3f;
     public float CannonProjectileSize { get; set; } = 12f;
+    public float CannonProjectilePierce { get; set; } = 1f;
+    public float CannonProjectileSpread { get; set; } = 0.2f;
     public float CannonCooldown { get; set; } = 0.5f;
 
     // Enemy movement behavior configuration

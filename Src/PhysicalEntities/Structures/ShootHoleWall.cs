@@ -1,8 +1,9 @@
 using System;
 using Gamelab.Assets;
+using Gamelab.Enemies;
 using Gamelab.Entities;
 using Gamelab.Map.Train.State;
-using Gamelab.PhysicalEntities.Projectiles;
+using Gamelab.PhysicalEntities.Bullets;
 using Gamelab.Players;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
@@ -47,15 +48,14 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
         }
     }
 
-    public void OnHit(AbstractProjectile projectile)
+    public bool OnHit(BulletEntity bullet)
     {
-        if (projectile is not EnemyProjectile || IsBroken)
+        if (bullet.Owner is AbstractEnemy && !IsBroken)
         {
-            return;
+            TakeDamage(bullet.Stats.Damage);
+            return true;
         }
-
-        TakeDamage(projectile.Damage);
-        projectile.Deactivate();
+        return false;
     }
 
     public void OnPickup(Player interactingPlayer)

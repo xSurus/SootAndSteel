@@ -47,11 +47,11 @@ public static class ParticleFactory
             Profile = new CircleProfile(radius: 6f, onlyRing: false, radiateOutward: false),
             Parameters = new ParticleReleaseParameters
             {
-                MinQuantity = 1, MaxQuantity = 3,
+                MinQuantity = 0, MaxQuantity = 2,
                 MinSpeed = 0f, MaxSpeed = 0f,
-                MinAge = 0.4f, MaxAge = 0.8f,
-                MinSize = 0.5f, MaxSize = 1.0f,
-                Color = Color.Red
+                MinAge = 0.2f, MaxAge = 0.4f,
+                MinSize = 0.3f, MaxSize = 0.7f,
+                Color = Color.SlateGray
             }
         };
 

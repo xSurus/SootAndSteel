@@ -1,4 +1,3 @@
-using Gamelab.Map.Train.State;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -13,7 +12,7 @@ public abstract class AbstractPhysicalEntity : IPhysicalEntity
     public Body PhysicsBody
     {
         get => physicsBody;
-        protected set
+        set
         {
             physicsBody = value;
             if (physicsBody != null)

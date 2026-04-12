@@ -32,12 +32,11 @@ public class EnemyManager
     public IReadOnlyList<AbstractEnemy> Enemies => enemies;
     public bool HasActiveThreats => enemies.Count > 0 || hazardManager.HasActiveThreats;
 
-    public EnemyManager(LevelDefinition levelDef, ProjectileManager projectileManager)
+    public EnemyManager(LevelDefinition levelDef)
     {
         currentSpawnInterval = GamelabGame.Instance.GameplayConfig.EnemySpawnIntervalBase;
         levelDefinition = levelDef;
         slotManager = new EnemySlotManager();
-        this.projectileManager = projectileManager;
         levelStartDistance = gameplayContext.State.DistanceTraveled;
         gameplayContext.Events.OnCannonProjectileFired += AddCannonProjectile;
     }
@@ -87,13 +86,8 @@ public class EnemyManager
         {
             AbstractEnemy enemy = enemies[i];
             enemy.Update(deltaTime);
-
-            EnemyProjectile projectile = enemy.TryShoot();
-            if (projectile != null)
-            {
-                projectileManager.Add(projectile);
-            }
-
+            enemy.TryShoot();
+            
             IEnemyHazard hazard = enemy.TryCreateHazard();
             if (hazard != null)
             {
@@ -107,11 +101,6 @@ public class EnemyManager
                 enemies.RemoveAt(i);
             }
         }
-    }
-
-    private void AddCannonProjectile(CannonProjectile projectile)
-    {
-        projectileManager.Add(projectile);
     }
 
     private void SpawnFallbackEnemy()

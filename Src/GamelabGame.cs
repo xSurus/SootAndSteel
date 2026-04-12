@@ -21,6 +21,10 @@ using MonoGame.Extended.Screens;
 using Myra;
 using FmodForFoxes;
 using FmodForFoxes.Studio;
+using Gamelab.Items.Bullets;
+using Gamelab.PhysicalEntities.Bullets.Components;
+using Gamelab.Services.Bullet;
+using Gamelab.Services.Random;
 
 namespace Gamelab;
 
@@ -107,6 +111,13 @@ public class GamelabGame : Game
         Services.AddService<IVfxService>(vfxService);
         systemManager.Add(soundService);
         systemManager.Add(vfxService);
+
+        IGameSystem bulletService = new BulletService();
+        Services.AddService((IBulletService)bulletService);
+        systemManager.Add(bulletService);
+
+        IRandomService randomService = new RandomService();
+        Services.AddService(randomService);
     }
 
     protected override void Initialize()
@@ -142,6 +153,7 @@ public class GamelabGame : Game
         LoadGameplayConfig();
         PhysicsUtility.Initialize(GameplayConfig.PixelsPerMeter);
         ItemRegistry.Initialize();
+        ComponentRegistry.Initialize();
         systemManager.InitializeAll(this);
         AssetManager.LoadContent(graphics.GraphicsDevice);
         screenManager.ShowScreen(new JoinScreen(this));

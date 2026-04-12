@@ -11,6 +11,7 @@ using Gamelab.Map.Train.State;
 using Gamelab.Particles;
 using Gamelab.PhysicalEntities.Projectiles;
 using Gamelab.Players;
+using Gamelab.Services.Bullet;
 using Gamelab.Services.Sound;
 using Gamelab.Services.Vfx;
 using Gamelab.UI;
@@ -65,7 +66,9 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         trainMap = new TrainMap();
         gameplayContext.Map = trainMap;
         Services.GetService<IVfxService>().AddContinuous(ParticleFactory.CreateSnowstorm());
-
+        
+        Services.GetService<IBulletService>().InitializePhysics(gameplayContext.PhysicsWorld);
+        
         // Sounds
         soundService = Services.GetService<ISoundService>();
         soundService.LoadSound(Sounds.MenuSelect);
@@ -80,7 +83,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
 
         worldScroller = new WorldScroller(GraphicsDevice);
         projectileManager = new ProjectileManager();
-        enemyManager = new EnemyManager(currentLevelDef, projectileManager);
+        enemyManager = new EnemyManager(currentLevelDef);
 
         gameplayContext.Events.OnWallBreached += OnWallBreached;
         gameplayContext.Events.OnWallRepaired += OnWallRepaired;
@@ -269,7 +272,6 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         worldScroller.Draw(spriteBatch);
         trainMap.Draw(spriteBatch);
         enemyManager.Draw(spriteBatch);
-        projectileManager.Draw(spriteBatch);
 
         foreach (Player player in players)
         {
@@ -277,6 +279,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         }
 
         Services.GetService<IVfxService>().Render(spriteBatch);
+        Services.GetService<IBulletService>().Render(spriteBatch);
         spriteBatch.End();
 
         spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
@@ -318,7 +321,6 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         Services.GetService<IVfxService>().ClearAll();
         trainMap?.Dispose();
         worldScroller?.Dispose();
-        projectileManager?.Clear();
 
         trainSound?.Stop();
         ambientMusic?.Stop();
