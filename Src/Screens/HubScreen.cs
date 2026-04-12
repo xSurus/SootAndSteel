@@ -9,7 +9,6 @@ using Gamelab.PhysicalEntities;
 using Gamelab.Players;
 using Gamelab.PhysicalEntities.Stations;
 using Gamelab.PhysicalEntities.Structures;
-using Gamelab.PhysicalEntities.Triggers;
 using Gamelab.Services.Sound;
 using Gamelab.Services.Vfx;
 using Gamelab.UI;
@@ -41,7 +40,6 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
     private HubMap hubMap;
     private TrainMap prepTrainMap;
     private Desktop desktop;
-    private ExitZone departZone;
     private Rectangle prepEntryMarker;
     private Rectangle departMarker;
     private Rectangle hubPlazaBounds;
@@ -52,6 +50,7 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
     private ParticleEmitter hubSnowEmitter;
     private WhiteFilterTransition departWhiteFilter;
     private bool isTransitioningToNextLevel;
+    private float departHoldTimer;
 
     private Vector2 cameraPosition;
     private int worldWidth;
@@ -128,7 +127,6 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
             worldWidth / 2 - 130,
             worldHeight - 300,
             260, 100);
-        departZone = new ExitZone(gameplayContext.PhysicsWorld, departMarker);
 
         players = [];
         Vector2 spawn = new Vector2(hubPlazaBounds.Center.X, hubPlazaBounds.Y + 140f);
@@ -251,10 +249,14 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
     private int ComputeUnpaidShopTotalAndPrune()
     {
         int total = 0;
+        Rectangle trainBounds = prepTrainMap.GetBounds();
         for (int i = unpaidShopPlacements.Count - 1; i >= 0; i--)
         {
             (AbstractStation station, int price) = unpaidShopPlacements[i];
-            if (!prepTrainMap.MapObjects.Contains(station))
+            bool insideTrain = station.IsBeingHeld
+                || (prepTrainMap.MapObjects.Contains(station)
+                && trainBounds.Contains((int)station.Position.X, (int)station.Position.Y));
+            if (!insideTrain)
                 unpaidShopPlacements.RemoveAt(i);
             else
                 total += price;
@@ -315,32 +317,6 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
         creditsLabel.Text = $"Credits: {Game.Credits}";
 
         int unpaidTotal = ComputeUnpaidShopTotalAndPrune();
-        bool allInDepart = phase == HubWorldPhase.Prep && players.Count > 0 && departZone.HaveAllInside(players);
-
-        if (phase == HubWorldPhase.Prep && players.Count > 0)
-        {
-            departBlockedLabel.Visible = true;
-            if (allInDepart && unpaidTotal > Game.Credits)
-            {
-                departBlockedLabel.Text = $"Need {unpaidTotal}c to depart (you have {Game.Credits}c).";
-                departBlockedLabel.TextColor = new Color(255, 120, 120);
-            }
-            else if (allInDepart)
-            {
-                departBlockedLabel.Text = "Departing…";
-                departBlockedLabel.TextColor = new Color(180, 230, 200);
-            }
-            else
-            {
-                departBlockedLabel.Text =
-                    "Depart: move all players into the green-tinted zone at the bottom. Shop items are paid when you depart (if you can afford them).";
-                departBlockedLabel.TextColor = new Color(160, 200, 170);
-            }
-        }
-        else
-        {
-            departBlockedLabel.Visible = false;
-        }
 
         if (phase == HubWorldPhase.Hub)
             prepEntryUnlockTimer = Math.Max(0f, prepEntryUnlockTimer - dt);
@@ -409,9 +385,48 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
         if (phase == HubWorldPhase.Prep)
             hubPlazaAllInsidePrev = hubPlazaAllInsideNow;
 
+        // Position-based check each frame (same as prep strip). Physics sensor callbacks were unreliable on exit.
+        bool allInDepart = phase == HubWorldPhase.Prep && players.Count > 0 && AllPlayersInRectangle(departMarker);
+
+        if (phase == HubWorldPhase.Prep && players.Count > 0)
+        {
+            departBlockedLabel.Visible = true;
+            bool canAffordDepart = unpaidTotal <= Game.Credits;
+            if (allInDepart && !canAffordDepart)
+            {
+                departBlockedLabel.Text = $"Need {unpaidTotal}c to depart (you have {Game.Credits}c).";
+                departBlockedLabel.TextColor = new Color(255, 120, 120);
+            }
+            else if (allInDepart && canAffordDepart)
+            {
+                float hold = Game.GameplayConfig.DepartHoldSeconds;
+                if (hold <= 0f || departHoldTimer >= hold)
+                    departBlockedLabel.Text = "Departing…";
+                else
+                    departBlockedLabel.Text = $"Stay in zone to depart ({hold - departHoldTimer:0.0}s)…";
+                departBlockedLabel.TextColor = new Color(180, 230, 200);
+            }
+            else
+            {
+                departBlockedLabel.Text =
+                    "Depart: move all players into the green-tinted zone at the bottom. Shop items are paid when you depart (if you can afford them).";
+                departBlockedLabel.TextColor = new Color(160, 200, 170);
+            }
+        }
+        else
+        {
+            departBlockedLabel.Visible = false;
+        }
+
         UpdateHubShopTooltip();
 
-        if (allInDepart && unpaidTotal <= Game.Credits && (unpaidTotal == 0 || Game.TrySpendCredits(unpaidTotal)))
+        bool canDepart = allInDepart && unpaidTotal <= Game.Credits;
+        if (canDepart)
+            departHoldTimer += dt;
+        else
+            departHoldTimer = 0f;
+
+        if (departHoldTimer >= Game.GameplayConfig.DepartHoldSeconds && (unpaidTotal == 0 || Game.TrySpendCredits(unpaidTotal)))
         {
             unpaidShopPlacements.Clear();
             Game.PendingPrepTrainLayout = PrepTrainLayout.Capture(prepTrainMap);
@@ -463,9 +478,6 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
 
     public override void UnloadContent()
     {
-        departZone?.Dispose();
-        departZone = null;
-
         foreach (Body b in worldBoundaryBodies)
         {
             if (b.World != null) b.World.Remove(b);

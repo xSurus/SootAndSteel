@@ -53,5 +53,6 @@
   "temperatureDecreasePerSecondPerBreachedWall": 3.0,
   "temperatureIncreasePerSecond": 3.0,
   "GrabbableLinearDamping": 100.0,
-  "GrabbableRotationalResistance": 40.0
+  "GrabbableRotationalResistance": 40.0,
+  "departHoldSeconds": 0.75
 }

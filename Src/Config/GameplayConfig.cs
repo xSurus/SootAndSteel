@@ -50,6 +50,8 @@ public class GameplayConfig
     public float WallHealthRestoredPerSecond { get; set; } = 40f;
     public float GrabbableLinearDamping { get; set; } = 100f;
     public float GrabbableRotationalResistance { get; set; } = 40f;
+    /// <summary>Hub prep: all players must stay in the depart zone this long (seconds) before leaving for gameplay.</summary>
+    public float DepartHoldSeconds { get; set; } = 0.75f;
     
     // Enemy configuration (general)
     public float EnemyHealth { get; set; } = 100f;
