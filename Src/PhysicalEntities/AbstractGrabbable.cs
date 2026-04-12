@@ -11,6 +11,7 @@ namespace Gamelab.PhysicalEntities;
 public abstract class AbstractGrabbable : AbstractPhysicalEntity, IGrabbable
 {
     protected Dictionary<Player, WeldJoint> GrabJoints { get; } = new();
+    public bool IsBeingHeld => GrabJoints.Count > 0;
     protected readonly GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
 
 

@@ -54,13 +54,14 @@ public class GameplayConfig
     public float WallHealthRestoredPerSecond { get; set; } = 40f;
     public float GrabbableLinearDamping { get; set; } = 100f;
     public float GrabbableRotationalResistance { get; set; } = 40f;
+    public float DepartHoldSeconds { get; set; } = 0.75f;
     public float RepairableCannonMaxHealth { get; set; } = 100f;
     public float RepairableCannonRepairPerSecond { get; set; } = 30f;
     public float RepairableSpeedLeverMaxHealth { get; set; } = 75f;
     public float RepairableSpeedLeverRepairPerSecond { get; set; } = 45f;
     public float RepairableAnvilMaxHealth { get; set; } = 90f;
     public float RepairableAnvilRepairPerSecond { get; set; } = 35f;
-
+    
     // Enemy configuration (general)
     public float EnemyHealth { get; set; } = 100f;
     public float EnemySpeed { get; set; } = 0f;
