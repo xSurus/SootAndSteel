@@ -27,7 +27,7 @@ public class ProceduralLevelGenerator(RunDifficultyConfig config)
         };
 
         var random = new Random(unchecked(config.RandomSeed + safeLevel * 7919));
-        float cursorDistance = config.MinSpawnSpacing;
+        float cursorDistance = MathF.Max(config.SafeZoneDistance, config.MinSpawnSpacing);
         float levelEndBuffer = MathF.Max(config.MinSpawnSpacing, 200f);
         float maxSpawnDistance = MathF.Max(config.MinSpawnSpacing, levelDistance - levelEndBuffer);
 

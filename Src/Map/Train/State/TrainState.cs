@@ -65,7 +65,13 @@ public class TrainState
             DecreaseTemperature(temperatureDecrease);
         }
 
-        if (IsCoalOvenBurning && numberBreachedWalls == 0)
+        if (!IsCoalOvenBurning)
+        {
+            float temperatureDecrease =
+                GamelabGame.Instance.GameplayConfig.TrainTemperatureDecreasePerSecondEngineOff * deltaTime;
+            DecreaseTemperature(temperatureDecrease);
+        }
+        else if (numberBreachedWalls == 0)
         {
             float temperatureIncrease = GamelabGame.Instance.GameplayConfig.TrainTemperatureIncreasePerSecond * deltaTime;
             IncreaseTemperature(temperatureIncrease);
