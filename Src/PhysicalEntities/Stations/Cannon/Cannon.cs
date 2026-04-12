@@ -3,6 +3,7 @@ using Gamelab.Assets;
 using Gamelab.Config;
 using Gamelab.Items;
 using Gamelab.Particles;
+using Gamelab.PhysicalEntities;
 using Gamelab.PhysicalEntities.Projectiles;
 using Gamelab.Players;
 using Gamelab.Services.Vfx;
@@ -12,18 +13,23 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Gamelab.PhysicalEntities.Stations.Cannon;
 
-public class CannonStation : AbstractStation
+public class CannonStation : AbstractStation, IRepairable
 {
     private readonly GameplayConfig config;
     private float cooldownTimer;
+    private readonly RepairState repairState;
 
     public CannonAimingBar AimingBar { get; private set; }
+    public bool IsBroken => repairState.IsBroken;
+    public float CurrentHealth => repairState.CurrentHealth;
+    public float MaxHealth => repairState.MaxHealth;
 
     public CannonStation(Vector2 position)
         : base("Cannon", Color.DarkRed, position)
     {
         config = GamelabGame.Instance.GameplayConfig;
         cooldownTimer = 0f;
+        repairState = new RepairState(config.RepairableCannonMaxHealth);
         AimingBar = new CannonAimingBar(PhysicsBody, position.ToMeters());
     }
 
@@ -37,7 +43,7 @@ public class CannonStation : AbstractStation
 
     public override void OnInteract(Player interactingPlayer)
     {
-        if (cooldownTimer > 0f || HeldItem == null)
+        if (IsBroken || cooldownTimer > 0f || HeldItem == null)
         {
             return;
         }
@@ -51,9 +57,19 @@ public class CannonStation : AbstractStation
         HeldItem = null;
     }
 
+    public override void OnInteractHeld(Player interactingPlayer, float dt)
+    {
+        if (!IsBroken)
+        {
+            return;
+        }
+
+        Repair(config.RepairableCannonRepairPerSecond * dt);
+    }
+
     public override void OnPickup(Player interactingPlayer)
     {
-        if (HeldItem != null || interactingPlayer.HeldItem == null)
+        if (IsBroken || HeldItem != null || interactingPlayer.HeldItem == null)
         {
             return;
         }
@@ -65,6 +81,27 @@ public class CannonStation : AbstractStation
 
         HeldItem = interactingPlayer.HeldItem;
         interactingPlayer.HeldItem = null;
+    }
+
+    public void Repair(float amount)
+    {
+        repairState.Repair(amount);
+    }
+
+    public void TakeDamage(float damageAmount)
+    {
+        repairState.ApplyDamage(damageAmount);
+    }
+
+    public void OnHit(AbstractProjectile projectile)
+    {
+        if (projectile is not EnemyProjectile || IsBroken)
+        {
+            return;
+        }
+
+        TakeDamage(projectile.Damage);
+        projectile.Deactivate();
     }
 
     private void FireCannon(Vector2 direction, Item ammo)
@@ -104,12 +141,35 @@ public class CannonStation : AbstractStation
         float lineLength = config.TrainTileSize * 4f;
         Vector2 lineEnd = Position + direction * lineLength;
 
+        Color previousColor = DisplayColor;
+        if (IsBroken)
+        {
+            DisplayColor = Color.DarkSlateGray;
+        }
+
         base.Draw(spriteBatch);
-        DrawAimLine(spriteBatch, Position, lineEnd);
+        DisplayColor = previousColor;
+        DrawAimLine(spriteBatch, Position, lineEnd, IsBroken ? Color.Gray : Color.White);
         AimingBar?.Draw(spriteBatch);
+        DrawHealthBar(spriteBatch);
     }
 
-    private static void DrawAimLine(SpriteBatch spriteBatch, Vector2 start, Vector2 end)
+    private void DrawHealthBar(SpriteBatch spriteBatch)
+    {
+        if (CurrentHealth >= MaxHealth)
+        {
+            return;
+        }
+
+        int width = config.TrainTileSize - 8;
+        int height = 6;
+        Rectangle bg = new((int)(Position.X - width / 2f), (int)(Position.Y + config.TrainTileSize / 2f - 8), width, height);
+        Rectangle fill = new(bg.X, bg.Y, (int)(width * (CurrentHealth / MaxHealth)), height);
+        spriteBatch.Draw(AssetManager.BlankTexture, bg, Color.Black);
+        spriteBatch.Draw(AssetManager.BlankTexture, fill, IsBroken ? Color.OrangeRed : Color.LimeGreen);
+    }
+
+    private static void DrawAimLine(SpriteBatch spriteBatch, Vector2 start, Vector2 end, Color color)
     {
         Vector2 edge = end - start;
         float angle = (float)Math.Atan2(edge.Y, edge.X);
@@ -118,7 +178,7 @@ public class CannonStation : AbstractStation
             AssetManager.BlankTexture,
             new Rectangle((int)start.X, (int)start.Y, (int)edge.Length(), 2),
             null,
-            Color.White,
+            color,
             angle,
             new Vector2(0f, 1f),
             SpriteEffects.None,

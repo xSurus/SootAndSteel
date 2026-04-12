@@ -5,7 +5,7 @@ namespace Gamelab.Enemies;
 
 public class EnemySlotManager()
 {
-    private static readonly EnemyTrainSlot[] ShooterSlots =
+    private static readonly EnemyTrainSlot[] SideAttackSlots =
     [
         new(EnemySlotSide.Top, 0.15f),
         new(EnemySlotSide.Top, 0.5f),
@@ -15,7 +15,7 @@ public class EnemySlotManager()
         new(EnemySlotSide.Bottom, 0.85f)
     ];
 
-    private static readonly EnemyTrainSlot[] ThiefSlots =
+    private static readonly EnemyTrainSlot[] MountSlots =
     [
         new(EnemySlotSide.Top, 0.25f),
         new(EnemySlotSide.Top, 0.75f),
@@ -23,27 +23,45 @@ public class EnemySlotManager()
         new(EnemySlotSide.Bottom, 0.75f)
     ];
 
+    private static readonly EnemyTrainSlot[] AnchorDeploySlots =
+    [
+        new(EnemySlotSide.Top, 0.35f),
+        new(EnemySlotSide.Top, 0.65f),
+        new(EnemySlotSide.Bottom, 0.35f),
+        new(EnemySlotSide.Bottom, 0.65f)
+    ];
+
     private readonly Random random = Random.Shared;
     private readonly HashSet<EnemyTrainSlot> occupiedSlots = [];
 
-    public bool TryReserveShooterSlot(out EnemyTrainSlot slot)
+    public bool TryReserveSideAttackSlot(out EnemyTrainSlot slot)
     {
-        return TryReserveSlot(ShooterSlots, out slot);
+        return TryReserveSlot(SideAttackSlots, out slot);
     }
 
-    public bool TryReserveThiefSlot(out EnemyTrainSlot slot)
+    public bool TryReserveMountSlot(out EnemyTrainSlot slot)
     {
-        return TryReserveSlot(ThiefSlots, out slot);
+        return TryReserveSlot(MountSlots, out slot);
     }
 
-    public bool TryReserveShooterSlotOnSide(EnemySlotSide side, out EnemyTrainSlot slot)
+    public bool TryReserveAnchorDeploySlot(out EnemyTrainSlot slot)
     {
-        return TryReserveSlotOnSide(ShooterSlots, side, out slot);
+        return TryReserveSlot(AnchorDeploySlots, out slot);
     }
 
-    public bool TryReserveThiefSlotOnSide(EnemySlotSide side, out EnemyTrainSlot slot)
+    public bool TryReserveSideAttackSlotOnSide(EnemySlotSide side, out EnemyTrainSlot slot)
     {
-        return TryReserveSlotOnSide(ThiefSlots, side, out slot);
+        return TryReserveSlotOnSide(SideAttackSlots, side, out slot);
+    }
+
+    public bool TryReserveMountSlotOnSide(EnemySlotSide side, out EnemyTrainSlot slot)
+    {
+        return TryReserveSlotOnSide(MountSlots, side, out slot);
+    }
+
+    public bool TryReserveAnchorDeploySlotOnSide(EnemySlotSide side, out EnemyTrainSlot slot)
+    {
+        return TryReserveSlotOnSide(AnchorDeploySlots, side, out slot);
     }
 
     public void ReleaseSlot(EnemyTrainSlot slot)
