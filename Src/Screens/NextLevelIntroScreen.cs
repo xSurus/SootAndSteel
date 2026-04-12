@@ -24,6 +24,7 @@ public class NextLevelIntroScreen(GamelabGame game) : AbstractGameScreen(game)
     private readonly WhiteFilterTransition whiteToGameplay = new WhiteFilterTransition();
     private Phase phase;
     private float holdTimer;
+    private float holdDuration;
 
     public override void LoadContent()
     {
@@ -38,22 +39,53 @@ public class NextLevelIntroScreen(GamelabGame game) : AbstractGameScreen(game)
             Background = new SolidBrush(new Color(0, 0, 0, 110))
         };
 
-        var label = new Label
+        bool isFirstLevel = nextLevelNumber == 1;
+
+        var content = new VerticalStackPanel
+        {
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center,
+            Spacing = 20
+        };
+
+        content.Widgets.Add(new Label
         {
             Text = $"Next level {nextLevelNumber}",
             Font = Game.fontSystem.GetFont(92),
             TextColor = Color.White,
-            HorizontalAlignment = HorizontalAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Center
-        };
+            HorizontalAlignment = HorizontalAlignment.Center
+        });
 
-        overlay.Widgets.Add(label);
+        if (isFirstLevel)
+        {
+            string[] tips =
+            [
+                "Keep the train moving — feed coal into the oven to keep the engine running.",
+                "Use the speed lever to shift gears: Stopped → Default → Double → Quadruple.",
+                "Enemies will attack from both sides, repair broken walls to keep the heat in.",
+                "Craft ammo at the anvil and load the cannon to fight back.",
+            ];
+
+            foreach (string tip in tips)
+            {
+                content.Widgets.Add(new Label
+                {
+                    Text = tip,
+                    Font = Game.fontSystem.GetFont(28),
+                    TextColor = new Color(200, 210, 230),
+                    HorizontalAlignment = HorizontalAlignment.Center
+                });
+            }
+        }
+
+        overlay.Widgets.Add(content);
         desktop = new Desktop { Root = overlay };
 
         var vfx = Services.GetService<IVfxService>();
         vfx.AddContinuous(ParticleFactory.CreateSnowstorm());
         phase = Phase.Hold;
         holdTimer = 0f;
+        holdDuration = isFirstLevel ? 15f : 5f;
     }
 
     protected override void Update(GameTime gameTime, KeyboardState keyboard, Dictionary<int, GamePadState> gamePads)
@@ -67,7 +99,7 @@ public class NextLevelIntroScreen(GamelabGame game) : AbstractGameScreen(game)
         {
             case Phase.Hold:
                 holdTimer += dt;
-                if (holdTimer >= 5.0f)
+                if (holdTimer >= holdDuration)
                 {
                     whiteToGameplay.FadeIn(0.8f);
                     phase = Phase.FadeOutToGameplay;
