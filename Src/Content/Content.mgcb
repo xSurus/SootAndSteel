@@ -20,9 +20,6 @@
 #begin Data/gameplay.json
 /copy:Data/gameplay.json
 
-#begin Data/levels/level1.json
-/copy:Data/levels/level1.json
-
 #begin placeholder_main_menu_background.png
 /importer:TextureImporter
 /processor:TextureProcessor

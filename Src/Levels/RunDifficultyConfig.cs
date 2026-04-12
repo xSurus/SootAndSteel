@@ -10,7 +10,7 @@ namespace Gamelab.Levels;
 public class RunDifficultyConfig
 {
     /// <summary>Distance target for the first procedural level (in world units).</summary>
-    public float BaseDistance { get; set; } = 300f;
+    public float BaseDistance { get; set; } = 15000f;
 
     /// <summary>Extra distance added per level beyond the first.</summary>
     public float DistanceGrowthPerLevel { get; set; } = 300f;
@@ -50,6 +50,9 @@ public class RunDifficultyConfig
 
     /// <summary>Hard cap on Rifle spawn probability regardless of level number.</summary>
     public float MaxRifleChance { get; set; } = 0.85f;
+
+    /// <summary>Distance (world units) at the start of each level where no enemies spawn.</summary>
+    public float SafeZoneDistance { get; set; } = 2000f;
 
     /// <summary>Minimum distance (world units) between consecutive spawn events.</summary>
     public float MinSpawnSpacing { get; set; } = 120f;

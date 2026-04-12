@@ -106,8 +106,7 @@
   "projectileSize": 8.0,
   "trainMaxTemperature": 100.0,
   "temperatureDecreasePerSecondPerBreachedWall": 3.0,
+  "temperatureDecreasePerSecondEngineOff": 5.0,
   "temperatureIncreasePerSecond": 3.0,
-  "GrabbableLinearDamping": 100.0,
-  "GrabbableRotationalResistance": 40.0,
   "departHoldSeconds": 0.75
 }
