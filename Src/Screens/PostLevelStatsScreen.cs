@@ -45,7 +45,7 @@ public class PostLevelStatsScreen(GamelabGame game) : AbstractGameScreen(game)
 
         var title = new Label
         {
-            Text = $"Level {ScreenPayloads.LastPostLevelResults.CompletedLevelNumber} complete",
+            Text = $"Stage Complete: {StageNaming.GetStageTitle(ScreenPayloads.LastPostLevelResults.CompletedLevelNumber)}",
             Font = Game.fontSystem.GetFont(72),
             TextColor = Color.White,
             HorizontalAlignment = HorizontalAlignment.Center

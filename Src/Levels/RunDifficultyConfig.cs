@@ -13,10 +13,10 @@ public class RunDifficultyConfig
     public float BaseDistance { get; set; } = 15000f;
 
     /// <summary>Extra distance added per level beyond the first.</summary>
-    public float DistanceGrowthPerLevel { get; set; } = 300f;
+    public float DistanceGrowthPerLevel { get; set; } = 4000f;
 
     /// <summary>Enemy budget for level 1. Zero means no enemies spawn on the first procedural level.</summary>
-    public float BaseEnemyBudget { get; set; } = 0f;
+    public float BaseEnemyBudget { get; set; } = 2.5f;
 
     /// <summary>Linear budget increase per level.</summary>
     public float BudgetGrowthPerLevel { get; set; } = 2.5f;
