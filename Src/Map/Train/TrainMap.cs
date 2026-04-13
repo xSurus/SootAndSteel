@@ -27,6 +27,10 @@ public class TrainMap
 
     public List<IPhysicalEntity> MapObjects { get; } = new();
 
+    public float originalSize => AssetManager.TileTexture.Width;
+    public float scale => TileSize / originalSize;
+
+
     public TrainMap() : this(ComputeDefaultTopLeftPixels())
     {
     }
@@ -162,7 +166,9 @@ public class TrainMap
             for (int y = 0; y < Height; y++)
             {
                 Vector2 drawPos = GetTileTopLeftPixels(x, y);
-                spriteBatch.Draw(AssetManager.TileTexture, drawPos, Color.White);
+                spriteBatch.Draw(AssetManager.TileTexture, drawPos, null, Color.White,
+                                0f,Vector2.Zero, scale, SpriteEffects.None, 0f);
+
             }
         }
 
