@@ -52,7 +52,7 @@ public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
         {
             gameplayContext.State.IsCoalOvenBurning = true;
             float speedMultiplier = gameplayContext.State.CurrentSpeed.BurnMultiplier;
-            currentFuel -= BurnRate * speedMultiplier * dt;
+            currentFuel -= BurnRate * gameplayContext.State.MaintenanceScale * speedMultiplier * dt;
             smokeEmitter.AutoTrigger = true;
         }
         else

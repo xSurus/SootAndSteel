@@ -30,7 +30,7 @@ public class NextLevelIntroScreen(GamelabGame game) : AbstractGameScreen(game)
     {
         base.LoadContent();
 
-        int nextLevelNumber = Game.CurrentLevel + 1;
+        int stageNumber = Game.CurrentLevel + 1;
 
         var overlay = new Panel
         {
@@ -39,7 +39,7 @@ public class NextLevelIntroScreen(GamelabGame game) : AbstractGameScreen(game)
             Background = new SolidBrush(new Color(0, 0, 0, 110))
         };
 
-        bool isFirstLevel = nextLevelNumber == 1;
+        bool isFirstStage = stageNumber == 1;
 
         var content = new VerticalStackPanel
         {
@@ -50,13 +50,13 @@ public class NextLevelIntroScreen(GamelabGame game) : AbstractGameScreen(game)
 
         content.Widgets.Add(new Label
         {
-            Text = $"Next level {nextLevelNumber}",
+            Text = StageNaming.GetStageTitle(stageNumber),
             Font = Game.fontSystem.GetFont(92),
             TextColor = Color.White,
             HorizontalAlignment = HorizontalAlignment.Center
         });
 
-        if (isFirstLevel)
+        if (isFirstStage)
         {
             string[] tips =
             [
@@ -86,7 +86,7 @@ public class NextLevelIntroScreen(GamelabGame game) : AbstractGameScreen(game)
         vfx.AddContinuous(ParticleFactory.CreateSnowstorm());
         phase = Phase.Hold;
         holdTimer = 0f;
-        holdDuration = isFirstLevel ? 15f : 5f;
+        holdDuration = isFirstStage ? 15f : 5f;
     }
 
     protected override void Update(GameTime gameTime, KeyboardState keyboard, Dictionary<int, GamePadState> gamePads)

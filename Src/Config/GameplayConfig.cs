@@ -1,7 +1,11 @@
+using System;
+
 namespace Gamelab.Config;
 
 public class GameplayConfig
 {
+    private const int MaxSupportedPlayers = 4;
+
     public float PixelsPerMeter { get; set; } = 100f;
     public float FixedTimeStep { get; set; } = 1f / 60f;
     public float MaxAccumulatedDeltaSeconds { get; set; } = 0.25f;
@@ -135,6 +139,13 @@ public class GameplayConfig
     public float TrainTemperatureDecreasePerSecondEngineOff { get; set; } = 3f;
     public float TrainTemperatureIncreasePerSecond { get; set; } = 3f;
 
+    // Per-player run scaling. Threat scales harder than maintenance to keep co-op challenging without
+    // turning fuel/temperature management into pure busywork at high player counts.
+    public float ThreatScalePerExtraPlayer { get; set; } = 0.75f;
+    public float ThreatScaleExponent { get; set; } = 0.85f;
+    public float EnemySpawnPacingScaleStrength { get; set; } = 0.6f;
+    public float MaintenanceScalePerExtraPlayer { get; set; } = 0.35f;
+
     // Screen shake configuration
     public float ScreenShakeIntensity { get; set; } = 8f;
     public float ScreenShakeDuration { get; set; } = 0.15f;
@@ -156,4 +167,38 @@ public class GameplayConfig
     public float PatrolSpeedRatio { get; set; } = 0.5f;
     public float TrainCollisionDeathThreshold { get; set; } = 0.5f;
     public float TrainAvoidanceStrength { get; set; } = 50f;
+
+    public float GetThreatScaleForPlayerCount(int playerCount)
+    {
+        int clampedCount = Math.Clamp(playerCount, 1, MaxSupportedPlayers);
+        int extraPlayers = clampedCount - 1;
+        if (extraPlayers <= 0)
+        {
+            return 1f;
+        }
+
+        float exponent = Math.Max(0.01f, ThreatScaleExponent);
+        float additionalThreat = ThreatScalePerExtraPlayer * MathF.Pow(extraPlayers, exponent);
+        return Math.Max(1f, 1f + additionalThreat);
+    }
+
+    public float GetEnemySpawnSpacingScaleForPlayerCount(int playerCount)
+    {
+        float threatScale = GetThreatScaleForPlayerCount(playerCount);
+        float pacingStrength = Math.Clamp(EnemySpawnPacingScaleStrength, 0f, 1f);
+        float blendedThreat = Lerp(1f, threatScale, pacingStrength);
+        return Math.Clamp(1f / blendedThreat, 0.4f, 1f);
+    }
+
+    public float GetMaintenanceScaleForPlayerCount(int playerCount)
+    {
+        int clampedCount = Math.Clamp(playerCount, 1, MaxSupportedPlayers);
+        int extraPlayers = clampedCount - 1;
+        return Math.Max(1f, 1f + extraPlayers * MaintenanceScalePerExtraPlayer);
+    }
+
+    private static float Lerp(float a, float b, float t)
+    {
+        return a + (b - a) * t;
+    }
 }

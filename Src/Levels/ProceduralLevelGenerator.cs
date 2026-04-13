@@ -7,6 +7,14 @@ namespace Gamelab.Levels;
 public class ProceduralLevelGenerator(RunDifficultyConfig config)
 {
     private readonly RunDifficultyConfig config = config ?? new RunDifficultyConfig();
+    private readonly float threatScale = 1f;
+    private readonly float spawnSpacingScale = 1f;
+
+    public ProceduralLevelGenerator(RunDifficultyConfig config, float threatScale, float spawnSpacingScale) : this(config)
+    {
+        this.threatScale = Math.Max(1f, threatScale);
+        this.spawnSpacingScale = Math.Clamp(spawnSpacingScale, 0.4f, 1f);
+    }
 
     /// <summary>
     /// Builds a level definition from the configured scaling model for a given level number.
@@ -18,6 +26,7 @@ public class ProceduralLevelGenerator(RunDifficultyConfig config)
         float levelDistance = config.BaseDistance + (safeLevel - 1) * config.DistanceGrowthPerLevel;
         float floatBudget = config.BaseEnemyBudget * MathF.Pow(config.BudgetMultiplierPerLevel, safeLevel - 1) +
                             (safeLevel - 1) * config.BudgetGrowthPerLevel;
+        floatBudget *= threatScale;
         int minCost = GetMinProceduralCost(safeLevel);
         int budget = Math.Max(minCost, (int)MathF.Round(floatBudget));
 
@@ -50,6 +59,7 @@ public class ProceduralLevelGenerator(RunDifficultyConfig config)
             });
 
             float spacing = Lerp(config.MaxSpawnSpacing, config.MinSpawnSpacing, MathF.Min(1f, safeLevel / 20f));
+            spacing *= spawnSpacingScale;
             spacing *= 0.8f + random.NextSingle() * 0.4f;
             cursorDistance += MathF.Max(config.MinSpawnSpacing, spacing);
         }
