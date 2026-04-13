@@ -57,9 +57,11 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     public override void LoadContent()
     {
         base.LoadContent();
+        int playerCount = Math.Max(1, Game.playerManager.Configs.Count);
         gameplayContext = new GameplayContext(virtualScreenSize);
         Services.AddService(gameplayContext);
-        runManager = new RunManager(Game.CurrentLevel, new ProgressiveRunLevelProvider());
+        gameplayContext.State.ConfigurePlayerScaling(playerCount);
+        runManager = new RunManager(Game.CurrentLevel, new ProgressiveRunLevelProvider(playerCount));
         runManager.OnIntermissionStarted += OnIntermissionStarted;
         currentLevelDef = runManager.CurrentLevelDefinition;
         levelStartDistance = 0f;

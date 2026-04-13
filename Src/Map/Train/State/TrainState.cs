@@ -38,6 +38,7 @@ public class TrainState
 
     public bool IsFrozen => Temperature <= 0;
     public float DistanceTraveled { get; private set; }
+    public float MaintenanceScale { get; private set; } = 1f;
 
     public TrainState()
     {
@@ -60,15 +61,18 @@ public class TrainState
 
         if (numberBreachedWalls > 0)
         {
-            float temperatureDecrease =
-                GamelabGame.Instance.GameplayConfig.TrainTemperatureDecreasePerSecondPerBreachedWall * numberBreachedWalls * deltaTime;
+            float temperatureDecrease = GamelabGame.Instance.GameplayConfig.TrainTemperatureDecreasePerSecondPerBreachedWall *
+                                        MaintenanceScale *
+                                        numberBreachedWalls *
+                                        deltaTime;
             DecreaseTemperature(temperatureDecrease);
         }
 
         if (!IsCoalOvenBurning)
         {
-            float temperatureDecrease =
-                GamelabGame.Instance.GameplayConfig.TrainTemperatureDecreasePerSecondEngineOff * deltaTime;
+            float temperatureDecrease = GamelabGame.Instance.GameplayConfig.TrainTemperatureDecreasePerSecondEngineOff *
+                                        MaintenanceScale *
+                                        deltaTime;
             DecreaseTemperature(temperatureDecrease);
         }
         else if (numberBreachedWalls == 0)
@@ -78,6 +82,11 @@ public class TrainState
         }
 
         DistanceTraveled += actualSpeed * deltaTime;
+    }
+
+    public void ConfigurePlayerScaling(int playerCount)
+    {
+        MaintenanceScale = GamelabGame.Instance.GameplayConfig.GetMaintenanceScaleForPlayerCount(playerCount);
     }
 
     public void AddAnchor()
