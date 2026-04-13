@@ -9,6 +9,7 @@ public static class AssetManager
     public static Texture2D BlankTexture { get; private set; }
     public static Texture2D PlayerTexture { get; private set; }
     public static Texture2D TileTexture { get; private set; }
+    public static Texture2D[] TrainTrackTexture { get; private set; }
     public static Texture2D EnemyTexture { get; private set; }
     public static Texture2D SmokeTexture { get; private set; }
     public static Texture2D SparkTexture { get; private set; }
@@ -23,6 +24,7 @@ public static class AssetManager
 
         LoadPlayerTexture(graphicsDevice);
         LoadTileTexture(graphicsDevice);
+        LoadTrainTrackTexture(graphicsDevice);
         LoadParticleTextures(graphicsDevice);
         // TODO add texture loading from json
     }
@@ -66,20 +68,39 @@ public static class AssetManager
         EnemyTexture.SetData(enemyData);
     }
 
+    private static Texture2D LoadTexture(GraphicsDevice gd, string name)
+    {
+        string path = System.IO.Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "Assets", name);
+        
+        if (!System.IO.File.Exists(path))
+        {
+            Texture2D errorTex = new Texture2D(gd, 1, 1);
+            errorTex.SetData(new Color[] { Color.HotPink });
+            return errorTex;
+        }
+
+        using (System.IO.Stream stream = System.IO.File.OpenRead(path))
+        {
+            return Texture2D.FromStream(gd, stream);
+        }
+    }
+
+    private static void LoadTrainTrackTexture(GraphicsDevice graphicsDevice)
+    {
+        int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
+        
+        TrainTrackTexture = new Texture2D[2];
+        TrainTrackTexture[0] = LoadTexture(graphicsDevice, "Rail_Tile_01.png");
+        TrainTrackTexture[1] = LoadTexture(graphicsDevice, "Rail_Tile_02.png");
+    }
+
     private static void LoadTileTexture(GraphicsDevice graphicsDevice)
     {
         int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
-        TileTexture = new Texture2D(graphicsDevice, tileSize, tileSize);
-        Color[] data = new Color[tileSize * tileSize];
-        for (int i = 0; i < data.Length; i++)
-        {
-            int x = i % tileSize;
-            int y = i / tileSize;
-            bool isBorder = x == 0 || y == 0 || x == tileSize - 1 || y == tileSize - 1;
-            data[i] = isBorder ? Color.DarkGray : Color.Gray;
-        }
-
-        TileTexture.SetData(data);
+        
+        // TileTexture = new Texture2D[2];
+        TileTexture = LoadTexture(graphicsDevice, "Train_Tile_A.png");
+        // TileTexture[1] = LoadTexture(graphicsDevice, "Train_Tile_B.png");
     }
 
     private static void LoadParticleTextures(GraphicsDevice graphicsDevice)
@@ -130,6 +151,18 @@ public static class AssetManager
 
         TileTexture?.Dispose();
         TileTexture = null;
+
+        // TileTexture[0]?.Dispose();
+        // TileTexture[0] = null;
+        
+        // TileTexture[1]?.Dispose();
+        // TileTexture[1] = null;
+
+        TrainTrackTexture[0]?.Dispose();
+        TrainTrackTexture[0] = null;
+        
+        TrainTrackTexture[1]?.Dispose();
+        TrainTrackTexture[1] = null;
 
         EnemyTexture?.Dispose();
         EnemyTexture = null;
