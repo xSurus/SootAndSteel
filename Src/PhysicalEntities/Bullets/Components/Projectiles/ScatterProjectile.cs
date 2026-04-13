@@ -14,9 +14,9 @@ public class ScatterProjectile : AbstractComponent
     
     public override void OnCreate(BulletEntity bulletEntity)
     {
-        bulletEntity.Stats.Spread *= 2.0f;
-        bulletEntity.Stats.Damage *= 0.1f;
-        bulletEntity.Stats.Speed += random.Next(-150, 151);
+        bulletEntity.Stats.Spread *= 3.0f;
+        bulletEntity.Stats.Damage *= 0.2f;
+        bulletEntity.Stats.Speed += (random.NextSingle() * 0.4f - 0.2f) * bulletEntity.Stats.Speed;
         
         if (bulletEntity.IsRootEntity)
         {

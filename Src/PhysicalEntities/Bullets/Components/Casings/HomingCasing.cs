@@ -16,7 +16,8 @@ public class HomingCasing : AbstractComponent
 
     public override void OnCreate(BulletEntity bulletEntity)
     {
-        bulletEntity.Stats.Speed *= 0.67f; // 67!!!
+        bulletEntity.Stats.Speed *= 0.5f;
+        bulletEntity.Stats.Spread *= 1.5f;
     }
 
     public override void OnUpdate(BulletEntity bulletEntity, float deltaTime)
@@ -26,7 +27,7 @@ public class HomingCasing : AbstractComponent
 
         if (target == null) return;
         
-        float maxRotation = 1f;
+        float maxRotation = 1.5f;
         
         Vector2 desiredDirection = target.Position - body.Position;
         float targetAngle = (float)Math.Atan2(desiredDirection.Y, desiredDirection.X);
