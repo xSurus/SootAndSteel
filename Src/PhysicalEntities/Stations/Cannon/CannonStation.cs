@@ -1,6 +1,7 @@
 using System;
 using Gamelab.Assets;
 using Gamelab.Config;
+using Gamelab.Enemies;
 using Gamelab.Items;
 using Gamelab.Items.Bullets;
 using Gamelab.Particles;
@@ -96,15 +97,15 @@ public class CannonStation : AbstractStation, IRepairable, IBulletEmitter
         repairState.ApplyDamage(damageAmount);
     }
 
-    public void OnHit(AbstractProjectile projectile)
+    public bool OnHit(BulletEntity bullet)
     {
-        if (projectile is not EnemyProjectile || IsBroken)
+        if (bullet.Owner is not AbstractEnemy || IsBroken)
         {
-            return;
+            return false;
         }
 
-        TakeDamage(projectile.Damage);
-        projectile.Deactivate();
+        TakeDamage(bullet.Stats.Damage);
+        return true;
     }
 
     private void FireCannon(Vector2 direction, BulletItem ammo)

@@ -38,7 +38,6 @@ public class EnemyManager
         levelDefinition = levelDef;
         slotManager = new EnemySlotManager();
         levelStartDistance = gameplayContext.State.DistanceTraveled;
-        gameplayContext.Events.OnCannonProjectileFired += AddCannonProjectile;
     }
 
     public void SetLevel(LevelDefinition levelDef)

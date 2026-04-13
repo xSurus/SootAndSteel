@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel;
 using Gamelab.Map.Train;
 using Gamelab.PhysicalEntities;
 using Gamelab.PhysicalEntities.Stations;
@@ -38,8 +39,7 @@ public static class PrepTrainLayout
     public static string ToKindId(AbstractStation station) =>
         station switch
         {
-            GunpowderResource => YardStationKindIds.Gunpowder,
-            CopperResource => YardStationKindIds.Copper,
+            ComponentResource resource => resource.componentId,
             _ => station.Type
         };
 

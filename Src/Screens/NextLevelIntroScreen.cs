@@ -63,7 +63,8 @@ public class NextLevelIntroScreen(GamelabGame game) : AbstractGameScreen(game)
                 "Keep the train moving — feed coal into the oven to keep the engine running.",
                 "Use the speed lever to shift gears: Stopped → Default → Double → Quadruple.",
                 "Enemies will attack from both sides, repair broken walls to keep the heat in.",
-                "Craft ammo at the anvil and load the cannon to fight back.",
+                "Combine projectile, casing, and propellant at a workbench to craft bullets.",
+                "Upgrade bullets by combining components with unlocked upgrades."
             ];
 
             foreach (string tip in tips)

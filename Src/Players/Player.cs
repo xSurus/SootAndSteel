@@ -1,9 +1,11 @@
 using System;
 using Gamelab.Assets;
+using Gamelab.Enemies;
 using Gamelab.Entities;
 using Gamelab.Items;
 using Gamelab.Map.Train.State;
 using Gamelab.PhysicalEntities;
+using Gamelab.PhysicalEntities.Bullets;
 using Gamelab.PhysicalEntities.Projectiles;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
@@ -137,15 +139,14 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
         Stun(PlayerStunDurationSeconds);
     }
 
-    public void OnHit(AbstractProjectile projectile)
+    public bool OnHit(BulletEntity bullet)
     {
-        if (projectile is not EnemyProjectile || IsStunned)
+        if (bullet.Owner is not AbstractEnemy || IsStunned)
         {
-            return;
+            return false;
         }
-
-        TakeDamage(projectile.Damage);
-        projectile.Deactivate();
+        TakeDamage(bullet.Stats.Damage);
+        return true;
     }
 
     private void UpdateStunned(float dt)

@@ -13,7 +13,7 @@ public class ComponentResource(Vector2 position, string componentId)
         position)
 {
 
-    private string componentId = componentId;
+    public string componentId = componentId;
     
     public override void OnPickup(Player interactingPlayer)
     {

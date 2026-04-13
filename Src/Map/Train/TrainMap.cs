@@ -7,7 +7,6 @@ using Gamelab.PhysicalEntities;
 using Gamelab.PhysicalEntities.Stations;
 using Gamelab.PhysicalEntities.Stations.Cannon;
 using Gamelab.PhysicalEntities.Stations.Resources;
-using Gamelab.PhysicalEntities.Stations.Workbenches;
 using Gamelab.PhysicalEntities.Structures;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
@@ -121,12 +120,12 @@ public class TrainMap
     {
         MapObjects.Add(new SpeedLever(GetTileCenterPixels(7, 3)));
         MapObjects.Add(new CannonStation(GetTileCenterPixels(5, 2)));
-        MapObjects.Add(new CopperResource(GetTileCenterPixels(2, 0)));
-        MapObjects.Add(new GunpowderResource(GetTileCenterPixels(2, 4)));
-        MapObjects.Add(new Anvil(GetTileCenterPixels(1, 0)));
-        MapObjects.Add(new Anvil(GetTileCenterPixels(1, 4)));
+        MapObjects.Add(new ComponentResource(GetTileCenterPixels(2, 0), "BasicCasing"));
+        MapObjects.Add(new ComponentResource(GetTileCenterPixels(2, 4), "BasicProjectile"));
+        MapObjects.Add(new ComponentResource(GetTileCenterPixels(3, 0), "BasicPropellant"));
+        MapObjects.Add(new Workbench(GetTileCenterPixels(1, 0)));
+        MapObjects.Add(new Workbench(GetTileCenterPixels(1, 4)));
         MapObjects.Add(new Counter(GetTileCenterPixels(0, 0)));
-        MapObjects.Add(new Counter(GetTileCenterPixels(3, 0)));
         MapObjects.Add(new Counter(GetTileCenterPixels(0, 4)));
         MapObjects.Add(new Counter(GetTileCenterPixels(3, 4)));
     }

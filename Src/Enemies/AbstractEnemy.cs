@@ -82,9 +82,9 @@ public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable, IBull
         return false;
     }
 
-    public virtual EnemyProjectile TryShoot()
+    public virtual void TryShoot()
     {
-        return null;
+        return;
     }
 
     public virtual IEnemyHazard TryCreateHazard()

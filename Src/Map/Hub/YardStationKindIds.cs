@@ -8,11 +8,14 @@ namespace Gamelab.Map.Hub;
 public static class YardStationKindIds
 {
     public const string Cannon = "Cannon";
-    public const string Anvil = "Anvil";
+    public const string Workbench = "Workbench";
     public const string Counter = "Counter";
     public const string Coal = "Coal";
-    public const string Gunpowder = "Gunpowder";
     public const string CoalOven = "CoalOven";
     public const string SpeedLever = "SpeedLever";
-    public const string Copper = "Copper";
+    public const string BasicProjectile = "BasicProjectile";
+    public const string BasicCasing = "BasicCasing";
+    public const string BasicPropellant = "BasicPropellant";
+    public const string HomingCasing = "HomingCasing";
+    public const string ScatterProjectile = "ScatterProjectile";
 }

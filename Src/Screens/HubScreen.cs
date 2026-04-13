@@ -255,9 +255,11 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
         float dragRowY = hubPlazaBounds.Bottom - 195;
         HubShopOfferTemplate[] offers =
         [
-            new(YardStationKindIds.Gunpowder, "Gunpowder",    18, new Color(45, 45, 50),    0f, pickupY),
+            new(YardStationKindIds.BasicProjectile, "Basic projectile",    18, new Color(45, 45, 50),    0f, pickupY),
             new(YardStationKindIds.Cannon,    "Extra cannon", 45, Color.DarkRed,          -170f, dragRowY),
-            new(YardStationKindIds.Anvil,     "Extra anvil",  38, Color.DarkSlateGray,     170f, dragRowY),
+            new(YardStationKindIds.Workbench,     "Extra workbench",  38, Color.DarkSlateGray,     170f, dragRowY),
+            new(YardStationKindIds.HomingCasing, "Homing casing upgrade",   50, new Color(120, 200, 120), -85f, pickupY),
+            new(YardStationKindIds.ScatterProjectile, "Scatter projectile upgrade",  25, new Color(120, 200, 120), 85f, pickupY),
         ];
 
         foreach (HubShopOfferTemplate offer in offers)

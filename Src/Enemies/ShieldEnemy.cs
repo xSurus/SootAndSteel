@@ -1,6 +1,10 @@
 using System;
+using Gamelab.Items.Bullets;
 using Gamelab.Map.Train.State;
+using Gamelab.PhysicalEntities.Bullets;
 using Gamelab.PhysicalEntities.Projectiles;
+using Gamelab.PhysicalEntities.Stations.Cannon;
+using Gamelab.Services.Bullet;
 using Microsoft.Xna.Framework;
 
 namespace Gamelab.Enemies;
@@ -26,10 +30,6 @@ public class ShieldEnemy : AbstractEnemy
 
     private float PreferredDistance => GamelabGame.Instance.GameplayConfig.ShieldPreferredDistance;
     private float EnemyShootSpread => GamelabGame.Instance.GameplayConfig.EnemyShootSpread;
-    private float ProjectileSpeed => GamelabGame.Instance.GameplayConfig.ProjectileSpeed;
-    private float ProjectileDamage => GamelabGame.Instance.GameplayConfig.ProjectileDamage;
-    private float ProjectileLifetime => GamelabGame.Instance.GameplayConfig.ProjectileLifetime;
-    private float ProjectileSize => GamelabGame.Instance.GameplayConfig.ProjectileSize;
     private float ShieldDurationSeconds => GamelabGame.Instance.GameplayConfig.ShieldDurationSeconds;
     private float ShieldAimDurationSeconds => GamelabGame.Instance.GameplayConfig.ShieldAimDurationSeconds;
     private float ShieldRecoverDurationSeconds => GamelabGame.Instance.GameplayConfig.ShieldRecoverDurationSeconds;
@@ -102,11 +102,11 @@ public class ShieldEnemy : AbstractEnemy
         }
     }
 
-    public override EnemyProjectile TryShoot()
+    public override void TryShoot()
     {
         if (!pendingShot || !IsAlive || ShouldRemove)
         {
-            return null;
+            return;
         }
 
         pendingShot = false;
@@ -122,33 +122,30 @@ public class ShieldEnemy : AbstractEnemy
         float angle = (float)Math.Atan2(direction.Y, direction.X) + spread;
         direction = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
 
-        return new EnemyProjectile(
-            PhysicsBody.World,
+        BulletItem ammo = new BulletItem("BasicProjectile", "BasicCasing", "BasicPropellant", "EnemyProjectile");
+        GamelabGame.Instance.Services.GetService<IBulletService>().EmitBullet(
+            ammo,
             Position,
-            direction * ProjectileSpeed,
-            ProjectileDamage,
-            ProjectileLifetime,
-            ProjectileSize
-        );
+            direction,
+            this);
     }
 
-    public override void OnHit(AbstractProjectile projectile)
+    public override bool OnHit(BulletEntity bullet)
     {
-        if (projectile is not CannonProjectile || !IsAlive || ShouldRemove)
+        if (bullet.Owner is not CannonStation || !IsAlive || ShouldRemove)
         {
-            return;
+            return false;
         }
 
-        if (currentState == ShieldState.Shielding && IsProjectileBlocked(projectile))
+        if (currentState == ShieldState.Shielding && IsProjectileBlocked(bullet))
         {
-            projectile.Deactivate();
-            return;
+            return true;
         }
 
-        base.OnHit(projectile);
+        return base.OnHit(bullet);
     }
 
-    private bool IsProjectileBlocked(AbstractProjectile projectile)
+    private bool IsProjectileBlocked(BulletEntity bullet)
     {
         Vector2 shieldForward = gameplayContext.Map.GetBounds().Center.ToVector2() - Position;
         if (shieldForward == Vector2.Zero)
@@ -157,7 +154,7 @@ public class ShieldEnemy : AbstractEnemy
         }
 
         shieldForward.Normalize();
-        Vector2 incomingDirection = Position - projectile.Position;
+        Vector2 incomingDirection = Position - bullet.Position;
         if (incomingDirection == Vector2.Zero)
         {
             return false;

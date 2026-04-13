@@ -2,7 +2,6 @@ using Gamelab.Map.Train.State;
 using Gamelab.PhysicalEntities;
 using Gamelab.PhysicalEntities.Stations;
 using Gamelab.PhysicalEntities.Stations.Cannon;
-using Gamelab.PhysicalEntities.Stations.Workbenches;
 using Gamelab.PhysicalEntities.Structures;
 using Gamelab.Players;
 using Microsoft.Xna.Framework;
@@ -63,8 +62,9 @@ public static class EnemyTargetingHelper
         target = GetNearestUsableRepairable<SpeedLever>(gameplayContext, enemyPosition);
         if (target != null) return target;
 
-        target = GetNearestUsableRepairable<Anvil>(gameplayContext, enemyPosition);
-        if (target != null) return target;
+        // TODO make Workbench repairable
+        // target = GetNearestUsableRepairable<Workbench>(gameplayContext, enemyPosition);
+        // if (target != null) return target;
 
         target = GetNearestUsablePlayer(gameplayContext, enemyPosition);
         return target;

@@ -1,6 +1,8 @@
+using Gamelab.Enemies;
 using Gamelab.Entities;
 using Gamelab.Map.Train.State;
 using Gamelab.PhysicalEntities;
+using Gamelab.PhysicalEntities.Bullets;
 using Gamelab.PhysicalEntities.Projectiles;
 using Gamelab.Players;
 using Microsoft.Xna.Framework;
@@ -63,15 +65,14 @@ public class SpeedLever(Vector2 position)
         repairState.ApplyDamage(damageAmount);
     }
 
-    public void OnHit(AbstractProjectile projectile)
+    public bool OnHit(BulletEntity bullet)
     {
-        if (projectile is not EnemyProjectile || IsBroken)
+        if (bullet.Owner is not AbstractEnemy || IsBroken)
         {
-            return;
+            return false;
         }
-
-        TakeDamage(projectile.Damage);
-        projectile.Deactivate();
+        TakeDamage(bullet.Stats.Damage);
+        return true;
     }
 
     public override void Draw(SpriteBatch spriteBatch)
