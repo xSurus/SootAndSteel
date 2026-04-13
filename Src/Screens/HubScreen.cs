@@ -4,10 +4,13 @@ using Gamelab.Assets;
 using Gamelab.Map.Hub;
 using Gamelab.Map.Train;
 using Gamelab.Map.Train.State;
+using Gamelab.Items.Bullets;
 using Gamelab.Particles;
 using Gamelab.PhysicalEntities;
 using Gamelab.Players;
 using Gamelab.PhysicalEntities.Stations;
+using Gamelab.PhysicalEntities.Stations.Cannon;
+using Gamelab.PhysicalEntities.Stations.Resources;
 using Gamelab.PhysicalEntities.Structures;
 using Gamelab.Services.Sound;
 using Gamelab.Services.Vfx;
@@ -291,10 +294,18 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
         return count;
     }
 
-    private void UpdateHubShopTooltips()
+    private void UpdateContextualTooltips()
     {
         hubShopTooltip.Clear();
 
+        TryOfferHubShopTooltip();
+
+        if (Game.CurrentLevel == 0)
+            TryOfferPrepStationTooltips();
+    }
+
+    private void TryOfferHubShopTooltip()
+    {
         float reach = Game.GameplayConfig.PlayerInteractDistancePixels * 1.4f;
         float reachSq = reach * reach;
         float liftPx = Game.GameplayConfig.TrainTileSize * 0.55f;
@@ -312,6 +323,71 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
                     if (entity is HubShopOffer offer && !offer.IsPurchased)
                         TryOfferTooltip(player, offer, reachSq, liftPx);
             }
+        }
+    }
+
+    private void TryOfferPrepStationTooltips()
+    {
+        if (phase != HubWorldPhase.Prep) return;
+
+        float reach = Game.GameplayConfig.PlayerInteractDistancePixels * 1.7f;
+        float reachSq = reach * reach;
+        float liftPx = Game.GameplayConfig.TrainTileSize * 0.60f;
+
+        foreach (Player player in players)
+        {
+            foreach (IPhysicalEntity entity in prepTrainMap.MapObjects)
+            {
+                string tooltip = BuildPrepStationTooltip(entity);
+                if (string.IsNullOrEmpty(tooltip)) continue;
+
+                Vector2 to = entity.Position - player.Position;
+                float dsq = to.LengthSquared();
+                if (dsq > reachSq || dsq < 4f) continue;
+                to.Normalize();
+                if (Vector2.Dot(player.LookDirection, to) < 0.42f) continue;
+
+                hubShopTooltip.OfferCloser(
+                    dsq,
+                    tooltip,
+                    (entity.Position - cameraPosition) + new Vector2(0f, -liftPx));
+            }
+        }
+    }
+
+    private static string BuildPrepStationTooltip(IPhysicalEntity entity)
+    {
+        return entity switch
+        {
+            CannonStation => "Cannon\nLoad ammo with A, then Interact (X) to fire.",
+            AbstractStation station when station.Type is "Anvil" or "Workbench" =>
+                "Workbench (Anvil)\nPlace ingredients with A.\nHold Interact (X) to craft or repair.",
+            ComponentResource componentResource => BuildComponentResourceTooltip(componentResource),
+            SpeedLever => "Speed Lever\nInteract (X) to cycle train speed.\nHold Interact (X) to repair.",
+            CopperResource => "Copper Pile\nPickup (A) to take or return copper.",
+            GunpowderResource => "Gunpowder Pile\nPickup (A) to take or return gunpowder.",
+            CoalWagon => "Coal Wagon\nPickup (A) to take or return coal.",
+            TrainNose => "Furnace\nBring coal here and Pickup (A) to refuel the engine.",
+            Counter => "Counter\nPickup (A) swaps your item with the counter item.",
+            _ => ""
+        };
+    }
+
+    private static string BuildComponentResourceTooltip(ComponentResource resource)
+    {
+        string componentName = GetComponentDisplayName(resource.componentId);
+        return $"Component Bench ({componentName})\nPickup (A) to take or return this component.";
+    }
+
+    private static string GetComponentDisplayName(string componentId)
+    {
+        try
+        {
+            return ComponentRegistry.GetName(componentId);
+        }
+        catch
+        {
+            return componentId;
         }
     }
 
@@ -449,7 +525,7 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
             departBlockedLabel.Visible = false;
         }
 
-        UpdateHubShopTooltips();
+        UpdateContextualTooltips();
 
         bool canDepart = allInDepart && pendingShopCount == 0;
         if (canDepart)
