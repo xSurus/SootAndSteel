@@ -7,17 +7,17 @@
   "BasicPropellant": {
     "name": "Basic Propellant",
     "description": "A basic gunpowder propellant that provides a moderate amount of thrust to projectiles.",
-    "color": "FFFF00"
+    "color": "00FF00"
   },
   "BasicCasing": {
     "name": "Basic Casing",
     "description": "A standard casing that holds the propellant and projectile together.",
-    "color": "00FF00"
+    "color": "0000FF"
   },
   "ScatterProjectile": {
     "name": "Scatter Projectile",
     "description": "A projectile that splits into four smaller projectiles upon firing, increasing the area of effect, but reducing damage per fragment.",
-    "color": "FF00FF"
+    "color": "FF7700"
   },
   "EnemyProjectile": {
     "name": "Enemy Projectile",
@@ -27,6 +27,6 @@
   "HomingCasing": {
     "name": "Homing Casing",
     "description": "A casing that allows the projectile to home in on targets, increasing accuracy but potentially reducing speed.",
-    "color": "00FFFF"
+    "color": "0077FF"
   }
 }
