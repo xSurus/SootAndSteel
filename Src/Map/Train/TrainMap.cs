@@ -57,7 +57,8 @@ public class TrainMap
     private static Vector2 ComputeDefaultTopLeftPixels()
     {
         GameplayContext ctx = GamelabGame.Instance.Services.GetService<GameplayContext>()
-            ?? throw new InvalidOperationException("GameplayContext must exist before TrainMap is created.");
+                              ?? throw new InvalidOperationException(
+                                  "GameplayContext must exist before TrainMap is created.");
         GameplayConfig cfg = GamelabGame.Instance.GameplayConfig;
         int w = ctx.ScreenWidth;
         int h = ctx.ScreenHeight;
@@ -86,6 +87,7 @@ public class TrainMap
         Vector2 localPos = pixelPosition - Position;
         return new Point((int)(localPos.X / TileSize), (int)(localPos.Y / TileSize));
     }
+
     private void InitializeBoundaryWalls(DoorSpec[] doors)
     {
         float halfTile = TileSize / 2f;
@@ -205,15 +207,14 @@ public class TrainMap
             for (int y = 0; y < Height; y++)
             {
                 Vector2 drawPos = GetTileTopLeftPixels(x, y);
-                spriteBatch.Draw(AssetManager.TileTexture[tileTypes[x*Height + y]], drawPos, null, Color.White,
-                                0f,Vector2.Zero, scale, SpriteEffects.None, 0f);
-
+                spriteBatch.Draw(AssetManager.TileTexture[tileTypes[x * Height + y]], drawPos, null, Color.White,
+                    0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
             }
         }
 
         Vector2 bridgePos = GetTileTopLeftPixels(-1, 2);
         spriteBatch.Draw(AssetManager.TileTexture[0], bridgePos, null, Color.White,
-                            0f,Vector2.Zero, scale, SpriteEffects.None, 0f);
+            0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
     }
 
     public void Update(float dt)

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Gamelab.Enemies;
 
 namespace Gamelab.Levels;
@@ -10,7 +11,8 @@ public class ProceduralLevelGenerator(RunDifficultyConfig config)
     private readonly float threatScale = 1f;
     private readonly float spawnSpacingScale = 1f;
 
-    public ProceduralLevelGenerator(RunDifficultyConfig config, float threatScale, float spawnSpacingScale) : this(config)
+    public ProceduralLevelGenerator(RunDifficultyConfig config, float threatScale, float spawnSpacingScale) :
+        this(config)
     {
         this.threatScale = Math.Max(1f, threatScale);
         this.spawnSpacingScale = Math.Clamp(spawnSpacingScale, 0.4f, 1f);
@@ -24,6 +26,7 @@ public class ProceduralLevelGenerator(RunDifficultyConfig config)
     {
         int safeLevel = Math.Max(1, levelNumber);
         float levelDistance = config.BaseDistance + (safeLevel - 1) * config.DistanceGrowthPerLevel;
+        float safeZoneDistance = config.SafeZoneDistance;
         float floatBudget = config.BaseEnemyBudget * MathF.Pow(config.BudgetMultiplierPerLevel, safeLevel - 1) +
                             (safeLevel - 1) * config.BudgetGrowthPerLevel;
         floatBudget *= threatScale;
@@ -36,12 +39,15 @@ public class ProceduralLevelGenerator(RunDifficultyConfig config)
         };
 
         var random = new Random(unchecked(config.RandomSeed + safeLevel * 7919));
-        float cursorDistance = MathF.Max(config.SafeZoneDistance, config.MinSpawnSpacing);
         float levelEndBuffer = MathF.Max(config.MinSpawnSpacing, 200f);
         float maxSpawnDistance = MathF.Max(config.MinSpawnSpacing, levelDistance - levelEndBuffer);
-
-        while (budget >= minCost && cursorDistance <= maxSpawnDistance)
+        List<float> distances = [];
+        while (budget >= minCost)
         {
+            float spawnDistance = random.NextSingle() * (maxSpawnDistance - safeZoneDistance) + safeZoneDistance;
+            if (distances.Any(d => MathF.Abs(d - spawnDistance) < config.MinSpawnSpacing)) continue;
+            distances.Add(spawnDistance);
+
             EnemyType? selectedType = SelectEnemyType(random, safeLevel, budget);
             if (selectedType == null)
             {
@@ -53,15 +59,10 @@ public class ProceduralLevelGenerator(RunDifficultyConfig config)
 
             definition.SpawnEvents.Add(new SpawnEvent
             {
-                Distance = cursorDistance,
+                Distance = spawnDistance,
                 Type = new EnemyDefinition(enemyType).Id,
                 Side = random.NextSingle() < 0.5f ? "Top" : "Bottom"
             });
-
-            float spacing = Lerp(config.MaxSpawnSpacing, config.MinSpawnSpacing, MathF.Min(1f, safeLevel / 20f));
-            spacing *= spawnSpacingScale;
-            spacing *= 0.8f + random.NextSingle() * 0.4f;
-            cursorDistance += MathF.Max(config.MinSpawnSpacing, spacing);
         }
 
         return definition;

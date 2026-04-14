@@ -68,9 +68,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         trainMap = new TrainMap();
         gameplayContext.Map = trainMap;
         Services.GetService<IVfxService>().AddContinuous(ParticleFactory.CreateSnowstorm());
-        
-        Services.GetService<IBulletService>().InitializePhysics(gameplayContext.PhysicsWorld);
-        
+
         // Sounds
         soundService = Services.GetService<ISoundService>();
         soundService.LoadSound(Sounds.MenuSelect);
@@ -328,7 +326,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         ambientMusic?.Stop();
         trainSound?.Dispose();
         ambientMusic?.Dispose();
-        
+
         base.UnloadContent();
     }
 }
