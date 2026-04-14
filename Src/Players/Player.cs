@@ -274,7 +274,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
     {
         // Texture2D texture = AssetManager.PlayerTexture;
         int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
-        Texture2D texture = AssetManager.GetPlayerTexture(idleFrames[currentFrame]);
+        Texture2D texture = AssetManager.GetPlayerTexture($"{idleFrames[(currentFrame+PlayerConfiguration.PlayerIndex) % idleFrames.Length]}{PlayerConfiguration.PlayerIndex}");
         // float scale = tileSize / texture.Width;
         Vector2 origin = new Vector2(texture.Width / 2f, texture.Height / 2f);
         Color drawColor = IsStunned ? Color.Goldenrod : Color.White;

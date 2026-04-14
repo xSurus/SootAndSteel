@@ -23,7 +23,7 @@ public class GameplayConfig
     public float TrainAccelerationRate { get; set; } = 50f;
     public int TrainInitialCoalAmount { get; set; } = 50;
     public float SpawnOffsetPixels { get; set; } = 100f;
-    public float PlayerRadiusPixels { get; set; } = 24f;
+    public float PlayerRadiusPixels { get; set; } = 10f;
     public float PlayerDensity { get; set; } = 3f;
     public float PlayerLinearDamping { get; set; } = 20f;
     public float PlayerMaxVelocity { get; set; } = 5f;

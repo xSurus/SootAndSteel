@@ -11,7 +11,7 @@ public static class AssetManager
 
     public static Texture2D BlankTexture { get; private set; }
     public static Texture2D PlayerTexture { get; private set; }
-    public static Texture2D TileTexture { get; private set; }
+    public static Texture2D[] TileTexture { get; private set; }
     public static Texture2D[] TrainTrackTexture { get; private set; }
     public static Texture2D EnemyTexture { get; private set; }
     public static Texture2D SmokeTexture { get; private set; }
@@ -185,9 +185,9 @@ public static class AssetManager
     {
         int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
         
-        // TileTexture = new Texture2D[2];
-        TileTexture = LoadTexture(graphicsDevice, "Train_Tile_A.png");
-        // TileTexture[1] = LoadTexture(graphicsDevice, "Train_Tile_B.png");
+        TileTexture = new Texture2D[2];
+        TileTexture[0] = LoadTexture(graphicsDevice, "Train_Tile_A.png");
+        TileTexture[1] = LoadTexture(graphicsDevice, "Train_Tile_B.png");
     }
 
     private static void LoadWallTextures(GraphicsDevice graphicsDevice)
@@ -261,8 +261,11 @@ public static class AssetManager
         PlayerTexture?.Dispose();
         PlayerTexture = null;
 
-        TileTexture?.Dispose();
-        TileTexture = null;
+        TileTexture[0]?.Dispose();
+        TileTexture[0] = null;
+        
+        TileTexture[1]?.Dispose();
+        TileTexture[1] = null;
 
         TrainTrackTexture[0]?.Dispose();
         TrainTrackTexture[0] = null;

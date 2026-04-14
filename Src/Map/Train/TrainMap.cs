@@ -24,12 +24,14 @@ public class TrainMap
     public int TileSize => GamelabGame.Instance.GameplayConfig.TrainTileSize;
     public Vector2 Position { get; private set; }
     private readonly GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
+    private System.Random randomizer = new System.Random();
 
     public List<IPhysicalEntity> MapObjects { get; } = new();
 
-    public float originalSize => AssetManager.TileTexture.Width;
+    public float originalSize => AssetManager.TileTexture[0].Width;
     public float scale => TileSize / originalSize;
 
+    private int[] tileTypes;
 
     public TrainMap() : this(ComputeDefaultTopLeftPixels())
     {
@@ -40,6 +42,16 @@ public class TrainMap
     {
         Position = topLeftPixels;
         InitializeBoundaryWalls(doors);
+
+        tileTypes = new int[Width * Height];
+        for (int x = 0; x < Width; x++)
+        {
+            for (int y = 0; y < Height; y++)
+            {
+                tileTypes[x*Height + y] = randomizer.Next(0, 2);
+            }
+        }
+
     }
 
     private static Vector2 ComputeDefaultTopLeftPixels()
@@ -84,14 +96,14 @@ public class TrainMap
             // top walls
             Vector2 topPos = GetTileCenterPixels(x, 0) - new Vector2(0, halfTile + halfTile / 2f);
             if (Array.Exists(doors, d => !d.OnBottom && d.Column == x))
-                MapObjects.Add(new DoorWall(wallSize, topPos));
+                MapObjects.Add(new DoorWall(wallSize, topPos, true));
             else
                 MapObjects.Add(new ShootHoleWall(wallSize, topPos, true));
 
             // bottom walls
             Vector2 bottomPos = GetTileCenterPixels(x, Height - 1) + new Vector2(0, halfTile + halfTile / 2f);
             if (Array.Exists(doors, d => d.OnBottom && d.Column == x))
-                MapObjects.Add(new DoorWall(wallSize, bottomPos));
+                MapObjects.Add(new DoorWall(wallSize, bottomPos, false));
             else
                 MapObjects.Add(new ShootHoleWall(wallSize, bottomPos, false));
         }
@@ -180,6 +192,9 @@ public class TrainMap
         spriteBatch.Draw(AssetManager.GetWallTexture("WallTileTop"), 
                             GetTileTopLeftPixels(-1,2) + new Vector2(0,-tileSize * 2f), null, Color.White,
                                 0f,Vector2.Zero, scale, SpriteEffects.None, 0f);
+        spriteBatch.Draw(AssetManager.GetWallTexture("WallTileBottom"), 
+                            GetTileTopLeftPixels(-1,2) + new Vector2(0,-tileSize * 1f), null, Color.White,
+                                0f,Vector2.Zero, scale, SpriteEffects.None, 0f);
 
     }
 
@@ -190,14 +205,14 @@ public class TrainMap
             for (int y = 0; y < Height; y++)
             {
                 Vector2 drawPos = GetTileTopLeftPixels(x, y);
-                spriteBatch.Draw(AssetManager.TileTexture, drawPos, null, Color.White,
+                spriteBatch.Draw(AssetManager.TileTexture[tileTypes[x*Height + y]], drawPos, null, Color.White,
                                 0f,Vector2.Zero, scale, SpriteEffects.None, 0f);
 
             }
         }
 
         Vector2 bridgePos = GetTileTopLeftPixels(-1, 2);
-        spriteBatch.Draw(AssetManager.TileTexture, bridgePos, null, Color.White,
+        spriteBatch.Draw(AssetManager.TileTexture[0], bridgePos, null, Color.White,
                             0f,Vector2.Zero, scale, SpriteEffects.None, 0f);
     }
 
