@@ -1,3 +1,5 @@
+using System;
+
 namespace Gamelab.Levels;
 
 /// <summary>
@@ -61,5 +63,5 @@ public class RunDifficultyConfig
     public float MaxSpawnSpacing { get; set; } = 450f;
 
     /// <summary>RNG seed for deterministic level generation across runs.</summary>
-    public int RandomSeed { get; set; } = 1337;
+    public int RandomSeed { get; set; } = Random.Shared.Next();
 }
