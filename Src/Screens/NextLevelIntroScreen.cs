@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Gamelab.Assets;
 using Gamelab.Particles;
 using Gamelab.Services.Vfx;
@@ -79,6 +80,15 @@ public class NextLevelIntroScreen(GamelabGame game) : AbstractGameScreen(game)
             }
         }
 
+        content.Widgets.Add(new Label
+        {
+            Text = "Press Start / Enter to skip",
+            Font = Game.fontSystem.GetFont(34),
+            TextColor = Color.LightBlue,
+            HorizontalAlignment = HorizontalAlignment.Center,
+            Margin = new Thickness(0, 18, 0, 0)
+        });
+
         overlay.Widgets.Add(content);
         desktop = new Desktop { Root = overlay };
 
@@ -86,7 +96,7 @@ public class NextLevelIntroScreen(GamelabGame game) : AbstractGameScreen(game)
         vfx.AddContinuous(ParticleFactory.CreateSnowstorm());
         phase = Phase.Hold;
         holdTimer = 0f;
-        holdDuration = isFirstStage ? 1f : 1f;
+        holdDuration = isFirstStage ? 12f : 5f;
     }
 
     protected override void Update(GameTime gameTime, KeyboardState keyboard, Dictionary<int, GamePadState> gamePads)
@@ -100,7 +110,7 @@ public class NextLevelIntroScreen(GamelabGame game) : AbstractGameScreen(game)
         {
             case Phase.Hold:
                 holdTimer += dt;
-                if (holdTimer >= holdDuration)
+                if (holdTimer >= holdDuration || IsSkipRequested(keyboard))
                 {
                     whiteToGameplay.FadeIn(0.8f);
                     phase = Phase.FadeOutToGameplay;
@@ -114,6 +124,13 @@ public class NextLevelIntroScreen(GamelabGame game) : AbstractGameScreen(game)
                 }
                 break;
         }
+    }
+
+    private bool IsSkipRequested(KeyboardState keyboard)
+    {
+        bool pressedByInput = Game.playerManager.Configs.Any(c => c.Input.IsStartJustPressed());
+        bool pressedByKeyboard = keyboard.IsKeyDown(Keys.Enter) && previousKeyboardState.IsKeyUp(Keys.Enter);
+        return pressedByInput || pressedByKeyboard;
     }
 
     public override void Draw(GameTime gameTime)
