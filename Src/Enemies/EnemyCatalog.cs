@@ -48,7 +48,8 @@ public static class EnemyCatalog
             EnemyType.Rifle => 1.2f + levelNumber * 0.05f,
             EnemyType.Shield => levelNumber >= 5 ? 0.75f : 0f,
             EnemyType.Anchor => levelNumber >= 6 ? 0.5f : 0f,
-            EnemyType.Molotov => levelNumber >= 3 ? 0.7f : 0f,
+            //DISABLE MOLOTOV FOR NOW
+            EnemyType.Molotov => levelNumber >= 3 ? 0f : 0f,
             //DISABLE TAR THROWER FOR NOW
             EnemyType.TarThrower => levelNumber >= 3 ? 0f : 0f,
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, "Unknown enemy type.")
