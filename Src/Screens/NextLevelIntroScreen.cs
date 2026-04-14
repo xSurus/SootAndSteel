@@ -86,7 +86,7 @@ public class NextLevelIntroScreen(GamelabGame game) : AbstractGameScreen(game)
         vfx.AddContinuous(ParticleFactory.CreateSnowstorm());
         phase = Phase.Hold;
         holdTimer = 0f;
-        holdDuration = isFirstStage ? 15f : 5f;
+        holdDuration = isFirstStage ? 1f : 1f;
     }
 
     protected override void Update(GameTime gameTime, KeyboardState keyboard, Dictionary<int, GamePadState> gamePads)
