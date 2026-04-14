@@ -1,11 +1,14 @@
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Gamelab.Utils.Logging;
 
 namespace Gamelab.Assets;
 
 public static class AssetManager
 {
+    private static readonly Logger logger = new ("Assets");
+
     public static Texture2D BlankTexture { get; private set; }
     public static Texture2D PlayerTexture { get; private set; }
     public static Texture2D TileTexture { get; private set; }
@@ -13,6 +16,14 @@ public static class AssetManager
     public static Texture2D EnemyTexture { get; private set; }
     public static Texture2D SmokeTexture { get; private set; }
     public static Texture2D SparkTexture { get; private set; }
+    public static System.Collections.Generic.Dictionary<string, Texture2D> StationTextures { get; private set; }
+    = new System.Collections.Generic.Dictionary<string, Texture2D>();
+    public static System.Collections.Generic.Dictionary<string, Texture2D> WallTextures { get; private set; }
+    = new System.Collections.Generic.Dictionary<string, Texture2D>();
+    public static System.Collections.Generic.Dictionary<string, Texture2D> CharacterTextures { get; private set; }
+    = new System.Collections.Generic.Dictionary<string, Texture2D>();
+    public static System.Collections.Generic.Dictionary<string, Texture2D> StructureTextures { get; private set; }
+    = new System.Collections.Generic.Dictionary<string, Texture2D>();
 
     public static void LoadContent(GraphicsDevice graphicsDevice)
     {
@@ -25,12 +36,33 @@ public static class AssetManager
         LoadPlayerTexture(graphicsDevice);
         LoadTileTexture(graphicsDevice);
         LoadTrainTrackTexture(graphicsDevice);
+        LoadWallTextures(graphicsDevice);
         LoadParticleTextures(graphicsDevice);
+        LoadStructureTextures(graphicsDevice);
+        LoadStationTextures(graphicsDevice);
         // TODO add texture loading from json
     }
 
     private static void LoadPlayerTexture(GraphicsDevice graphicsDevice)
-    {
+    {   
+
+        string dir = System.IO.Path.Combine(
+            System.AppDomain.CurrentDomain.BaseDirectory, "Assets", "Characters");
+
+        if (!System.IO.Directory.Exists(dir))
+        {
+            System.Console.WriteLine($"[AssetManager] Characters folder not found: {dir}");
+            return;
+        }
+
+        foreach (string path in System.IO.Directory.GetFiles(dir, "*.png"))
+        {
+            string key = System.IO.Path.GetFileNameWithoutExtension(path);
+            using System.IO.Stream stream = System.IO.File.OpenRead(path);
+            CharacterTextures[key] = Texture2D.FromStream(graphicsDevice, stream);
+            logger.Info($"Loading character texture for '{key}'");
+        }
+
         // player texture
         int textureSize = 128;
         PlayerTexture = new Texture2D(graphicsDevice, textureSize, textureSize);
@@ -68,6 +100,11 @@ public static class AssetManager
         EnemyTexture.SetData(enemyData);
     }
 
+    public static Texture2D GetPlayerTexture(string type)
+    {
+        return CharacterTextures.TryGetValue(type, out var tex) ? tex : BlankTexture;
+    }
+
     private static Texture2D LoadTexture(GraphicsDevice gd, string name)
     {
         string path = System.IO.Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "Assets", name);
@@ -83,6 +120,56 @@ public static class AssetManager
         {
             return Texture2D.FromStream(gd, stream);
         }
+    }
+
+    private static void LoadStationTextures(GraphicsDevice graphicsDevice)
+    {
+        string dir = System.IO.Path.Combine(
+            System.AppDomain.CurrentDomain.BaseDirectory, "Assets", "Stations");
+
+        if (!System.IO.Directory.Exists(dir))
+        {
+            System.Console.WriteLine($"[AssetManager] Stations folder not found: {dir}");
+            return;
+        }
+
+        foreach (string path in System.IO.Directory.GetFiles(dir, "*.png"))
+        {
+            string key = System.IO.Path.GetFileNameWithoutExtension(path);
+            using System.IO.Stream stream = System.IO.File.OpenRead(path);
+            StationTextures[key] = Texture2D.FromStream(graphicsDevice, stream);
+            logger.Info($"Loading station texture for '{key}'");
+        }
+    }
+
+    private static void LoadStructureTextures(GraphicsDevice graphicsDevice)
+    {
+        string dir = System.IO.Path.Combine(
+            System.AppDomain.CurrentDomain.BaseDirectory, "Assets", "Structures");
+
+        if (!System.IO.Directory.Exists(dir))
+        {
+            System.Console.WriteLine($"[AssetManager] Structures folder not found: {dir}");
+            return;
+        }
+
+        foreach (string path in System.IO.Directory.GetFiles(dir, "*.png"))
+        {
+            string key = System.IO.Path.GetFileNameWithoutExtension(path);
+            using System.IO.Stream stream = System.IO.File.OpenRead(path);
+            StructureTextures[key] = Texture2D.FromStream(graphicsDevice, stream);
+            logger.Info($"Loading structure texture for '{key}'");
+        }
+    }
+
+    public static Texture2D GetStructureTexture(string type)
+    {
+        return StructureTextures.TryGetValue(type, out var tex) ? tex : BlankTexture;
+    }
+
+    public static Texture2D GetStationTexture(string type)
+    {
+        return StationTextures.TryGetValue(type, out var tex) ? tex : BlankTexture;
     }
 
     private static void LoadTrainTrackTexture(GraphicsDevice graphicsDevice)
@@ -101,6 +188,31 @@ public static class AssetManager
         // TileTexture = new Texture2D[2];
         TileTexture = LoadTexture(graphicsDevice, "Train_Tile_A.png");
         // TileTexture[1] = LoadTexture(graphicsDevice, "Train_Tile_B.png");
+    }
+
+    private static void LoadWallTextures(GraphicsDevice graphicsDevice)
+    {
+        string dir = System.IO.Path.Combine(
+            System.AppDomain.CurrentDomain.BaseDirectory, "Assets", "Walls");
+
+        if (!System.IO.Directory.Exists(dir))
+        {
+            System.Console.WriteLine($"[AssetManager] Stations folder not found: {dir}");
+            return;
+        }
+
+        foreach (string path in System.IO.Directory.GetFiles(dir, "*.png"))
+        {
+            string key = System.IO.Path.GetFileNameWithoutExtension(path);
+            using System.IO.Stream stream = System.IO.File.OpenRead(path);
+            WallTextures[key] = Texture2D.FromStream(graphicsDevice, stream);
+            logger.Info($"Loading wall texture for '{key}'");
+        }
+    }
+
+    public static Texture2D GetWallTexture(string type)
+    {
+        return WallTextures.TryGetValue(type, out var tex) ? tex : BlankTexture;
     }
 
     private static void LoadParticleTextures(GraphicsDevice graphicsDevice)
@@ -152,12 +264,6 @@ public static class AssetManager
         TileTexture?.Dispose();
         TileTexture = null;
 
-        // TileTexture[0]?.Dispose();
-        // TileTexture[0] = null;
-        
-        // TileTexture[1]?.Dispose();
-        // TileTexture[1] = null;
-
         TrainTrackTexture[0]?.Dispose();
         TrainTrackTexture[0] = null;
         
@@ -172,5 +278,21 @@ public static class AssetManager
 
         SmokeTexture?.Dispose();
         SmokeTexture = null;
+
+        foreach (var tex in StationTextures.Values)
+            tex?.Dispose();
+        StationTextures.Clear();
+
+        foreach (var tex in WallTextures.Values)
+            tex?.Dispose();
+        WallTextures.Clear();
+
+        foreach (var tex in CharacterTextures.Values)
+            tex?.Dispose();
+        CharacterTextures.Clear();
+
+        foreach (var tex in StructureTextures.Values)
+            tex?.Dispose();
+        StructureTextures.Clear();
     }
 }

@@ -43,7 +43,8 @@ public class DoorWall : AbstractPhysicalEntity, IInteractable
     }
 
     public override void Draw(SpriteBatch spriteBatch)
-    {
+    {   
+        
         Color color = isOpen ? OpenColor : ClosedColor;
         Vector2 origin = new Vector2(dimensionsPixels.X / 2f, dimensionsPixels.Y / 2f);
         Rectangle sourceRect = new Rectangle(0, 0, (int)dimensionsPixels.X, (int)dimensionsPixels.Y);

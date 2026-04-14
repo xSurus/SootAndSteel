@@ -56,11 +56,19 @@ public class Workbench(Vector2 position) : AbstractStation("Workbench", Color.Da
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        base.Draw(spriteBatch);
+        
         int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
         float itemSizeFloat = tileSize * 0.4f;
         int drawItemSize = (int)itemSizeFloat;
         float quadOffset = tileSize * 0.25f;
+        // float originalSize = AssetManager.TileTexture.Width;
+        // float scale = tileSize / originalSize;
+
+        // Vector2 drawingPos = Position + new Vector2(-tileSize * 0.5f, -tileSize * 1.5f);
+        // spriteBatch.Draw(AssetManager.BenchTexture, drawingPos, null, Color.White,
+        //                         0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+
+        base.Draw(spriteBatch);
         Vector2[] gridOffsets =
         {
             new Vector2(-quadOffset, -quadOffset),
@@ -94,8 +102,10 @@ public class Workbench(Vector2 position) : AbstractStation("Workbench", Color.Da
                 (int)(barWidth * progressPercentage),
                 barHeight
             );
-
-            spriteBatch.Draw(AssetManager.BlankTexture, bgBar, Color.Black);
+            // spriteBatch.Draw(AssetManager.BenchTexture, drawingPos, null, Color.Black,
+            //                     0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+            base.Draw(spriteBatch);
+            // spriteBatch.Draw(AssetManager.BlankTexture, bgBar, Color.Black);
             spriteBatch.Draw(AssetManager.BlankTexture, fillBar, Color.Yellow);
         }
     }

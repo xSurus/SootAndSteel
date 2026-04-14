@@ -86,14 +86,14 @@ public class TrainMap
             if (Array.Exists(doors, d => !d.OnBottom && d.Column == x))
                 MapObjects.Add(new DoorWall(wallSize, topPos));
             else
-                MapObjects.Add(new ShootHoleWall(wallSize, topPos));
+                MapObjects.Add(new ShootHoleWall(wallSize, topPos, true));
 
             // bottom walls
             Vector2 bottomPos = GetTileCenterPixels(x, Height - 1) + new Vector2(0, halfTile + halfTile / 2f);
             if (Array.Exists(doors, d => d.OnBottom && d.Column == x))
                 MapObjects.Add(new DoorWall(wallSize, bottomPos));
             else
-                MapObjects.Add(new ShootHoleWall(wallSize, bottomPos));
+                MapObjects.Add(new ShootHoleWall(wallSize, bottomPos, false));
         }
 
         // blockers above and below the bridge
@@ -153,10 +153,34 @@ public class TrainMap
     public void Draw(SpriteBatch spriteBatch)
     {
         DrawTrainTiles(spriteBatch);
+        DrawSideWalls(spriteBatch);
         foreach (var mapObject in MapObjects)
         {
             mapObject.Draw(spriteBatch);
         }
+    }
+
+    public void DrawSideWalls(SpriteBatch spriteBatch)
+    {
+        int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
+        Vector2 offset = new Vector2(- scale * 0.9f * AssetManager.GetWallTexture("WallTileUpperSide").Width, 0);
+        
+        spriteBatch.Draw(AssetManager.GetWallTexture("WallTileUpperLeftCorner"), 
+                            GetTileTopLeftPixels(0,0) + offset + new Vector2(0,-tileSize * 2f), null, Color.White,
+                                0f,Vector2.Zero, scale, SpriteEffects.None, 0f);
+
+        for (int y = 0; y < Height; y++)
+        {   
+            Vector2 Position = GetTileCenterPixels(0,y);
+            Vector2 drawPos = Position + new Vector2(-tileSize * 0.5f,-tileSize * 1.5f) + offset;
+            spriteBatch.Draw(AssetManager.GetWallTexture("WallTileUpperSide"), drawPos, null, Color.White,
+                                0f,Vector2.Zero, scale, SpriteEffects.None, 0f);
+        }
+
+        spriteBatch.Draw(AssetManager.GetWallTexture("WallTileTop"), 
+                            GetTileTopLeftPixels(-1,2) + new Vector2(0,-tileSize * 2f), null, Color.White,
+                                0f,Vector2.Zero, scale, SpriteEffects.None, 0f);
+
     }
 
     private void DrawTrainTiles(SpriteBatch spriteBatch)
@@ -173,7 +197,8 @@ public class TrainMap
         }
 
         Vector2 bridgePos = GetTileTopLeftPixels(-1, 2);
-        spriteBatch.Draw(AssetManager.TileTexture, bridgePos, Color.White);
+        spriteBatch.Draw(AssetManager.TileTexture, bridgePos, null, Color.White,
+                            0f,Vector2.Zero, scale, SpriteEffects.None, 0f);
     }
 
     public void Update(float dt)

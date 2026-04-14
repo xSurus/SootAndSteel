@@ -46,6 +46,13 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
     private float stunTimer;
     private bool revivedThisFrame;
 
+
+    private string[] idleFrames = {"IdleA","IdleB","IdleC","IdleD"};
+
+    private int currentFrame = 0;
+    private float animationTimer = 0f;
+    private float timePerFrame = 0.2f;
+
     public Player(Vector2 startPosition, PlayerConfiguration playerConfig)
     {
         PlayerConfiguration = playerConfig;
@@ -57,7 +64,19 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
     }
 
     public void Update(float dt)
-    {
+    {   
+        animationTimer += dt;
+        if (animationTimer >= timePerFrame)
+        {
+            currentFrame++;
+            if (currentFrame >= idleFrames.Length)
+            {
+                currentFrame = 0;
+            }
+            
+            animationTimer -= timePerFrame; 
+        }
+
         if (IsStunned)
         {
             UpdateStunned(dt);
@@ -253,11 +272,17 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        Texture2D texture = AssetManager.PlayerTexture;
-        float scale = (Radius * 2) / texture.Width;
+        // Texture2D texture = AssetManager.PlayerTexture;
+        int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
+        Texture2D texture = AssetManager.GetPlayerTexture(idleFrames[currentFrame]);
+        // float scale = tileSize / texture.Width;
         Vector2 origin = new Vector2(texture.Width / 2f, texture.Height / 2f);
         Color drawColor = IsStunned ? Color.Goldenrod : Color.White;
-        spriteBatch.Draw(texture, Position, null, drawColor, PhysicsBody.Rotation, origin, scale, SpriteEffects.None,
+
+        bool IsFacingRight = LookDirection.X > 0;
+        SpriteEffects flipEffect = IsFacingRight ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+
+        spriteBatch.Draw(texture, Position + new Vector2(0, -tileSize * 0.75f), null, drawColor, 0f, origin, 0.3f, flipEffect,
             0f);
         DrawInteractionTarget(spriteBatch);
         DrawHeldItem(spriteBatch);

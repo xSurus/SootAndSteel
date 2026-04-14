@@ -21,8 +21,9 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
     public bool IsBroken => CurrentHealth <= 0f;
     private readonly GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
     private readonly Vector2 dimensionsPixels;
+    private bool isTop;
 
-    public ShootHoleWall(Vector2 dimensionsPixels, Vector2 positionPixels)
+    public ShootHoleWall(Vector2 dimensionsPixels, Vector2 positionPixels, bool isTop)
     {
         this.dimensionsPixels = dimensionsPixels;
         CurrentHealth = MaxHealth;
@@ -30,6 +31,7 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
             dimensionsPixels.Y.ToMeters(), 1f,
             positionPixels.ToMeters(), 0f, BodyType.Static);
         PhysicsBody.Tag = this;
+        this.isTop = isTop;
     }
 
     public void TakeDamage(float damageAmount)
@@ -86,17 +88,32 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
         Color wallColor = IsBroken ? Color.DarkRed : Color.DarkSlateGray;
         Vector2 snappedPosition = new Vector2(MathF.Round(Position.X), MathF.Round(Position.Y));
 
-        spriteBatch.Draw(
-            texture: AssetManager.BlankTexture,
-            position: snappedPosition,
-            sourceRectangle: sourceRect,
-            color: wallColor,
-            rotation: PhysicsBody.Rotation,
-            origin: origin,
-            scale: 1f,
-            effects: SpriteEffects.None,
-            layerDepth: 0f
-        );
+        int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
+        float originalSize = AssetManager.GetWallTexture("WallTileTop").Width;
+        float scale = tileSize / originalSize;
+
+        if (isTop){
+            Vector2 drawingPos = Position + new Vector2(-tileSize * 0.5f, -tileSize * 1.75f);
+            spriteBatch.Draw(AssetManager.GetWallTexture("WallTileTop"), drawingPos, null, Color.White,
+                                0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+        } else {
+            Vector2 drawingPos = Position + new Vector2(-tileSize * 0.5f, -tileSize * 1f);
+            spriteBatch.Draw(AssetManager.GetWallTexture("WallTileBottom"), drawingPos, null, Color.White,
+                                0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+        }
+        
+
+        // spriteBatch.Draw(
+        //     texture: AssetManager.BlankTexture,
+        //     position: snappedPosition,
+        //     sourceRectangle: sourceRect,
+        //     color: wallColor,
+        //     rotation: PhysicsBody.Rotation,
+        //     origin: origin,
+        //     scale: 1f,
+        //     effects: SpriteEffects.None,
+        //     layerDepth: 0f
+        // );
 
         if (CurrentHealth < MaxHealth)
         {
