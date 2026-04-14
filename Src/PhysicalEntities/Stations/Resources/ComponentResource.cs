@@ -7,7 +7,7 @@ namespace Gamelab.PhysicalEntities.Stations.Resources;
 
 public class ComponentResource(Vector2 position, string componentId)
     : AbstractResource(
-        "ComponentResource",
+        ComponentRegistry.GetSprite(componentId),
         ComponentRegistry.GetColor(componentId),
         "Bullet",
         position)

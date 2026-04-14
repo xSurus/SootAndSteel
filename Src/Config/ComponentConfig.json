@@ -7,7 +7,8 @@
   "BasicPropellant": {
     "name": "Basic Propellant",
     "description": "A basic gunpowder propellant that provides a moderate amount of thrust to projectiles.",
-    "color": "00FF00"
+    "color": "00FF00",
+    "sprite": "Gunpowder"
   },
   "BasicCasing": {
     "name": "Basic Casing",

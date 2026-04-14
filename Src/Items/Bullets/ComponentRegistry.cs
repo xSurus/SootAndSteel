@@ -22,6 +22,7 @@ public static class ComponentRegistry
     private class ComponentDescription {
         public string Name { get; set; }
         public string Description { get; set; }
+        public string Sprite { get; set; }
 
         [JsonIgnore]
         public Color Color { get; set; }
@@ -99,5 +100,12 @@ public static class ComponentRegistry
     {
         return _texts.TryGetValue(componentId, out var value) ? value.Color 
             : throw new Exception($"Component '{componentId}' does not exist in the registry."); 
+    }
+
+    public static string GetSprite(string componentId)
+    {
+        return _texts.TryGetValue(componentId, out var value) && value.Sprite != null
+            ? value.Sprite
+            : "ComponentResource";
     }
 }
