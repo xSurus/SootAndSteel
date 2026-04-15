@@ -551,11 +551,21 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
             * viewportAdapter.GetScaleMatrix();
         float scale = worldWidth * 1.0f / AssetManager.HubTexture.Width;
         spriteBatch.Begin(transformMatrix: worldMatrix);
+        spriteBatch.Draw(AssetManager.BlankTexture, new Rectangle(0, 0, worldWidth, worldHeight), new Color(208,232,242));
         spriteBatch.Draw(AssetManager.HubTexture, new Vector2(0), null, Color.White,
                                 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
 
+        float tilescale = 1.6f;
         
-        // spriteBatch.Draw(AssetManager.BlankTexture, new Rectangle(0, 0, worldWidth, worldHeight), new Color(15, 15, 20));
+        int tileWidth = (int) (AssetManager.TrainTrackTexture[0].Width * tilescale);
+        int numCopies = (worldWidth / tileWidth) + 3;
+        Vector2 drawPos = new Vector2(0,1200);
+        for (int i = 0; i < numCopies; i++)
+        {
+            spriteBatch.Draw(AssetManager.TrainTrackTexture[0], drawPos, null, Color.White, 0f, Vector2.Zero, tilescale, SpriteEffects.None, 0f);
+            drawPos += new Vector2(tileWidth,0);
+        }                        
+
         // hubMap.Draw(spriteBatch);
 
         if (phase is HubWorldPhase.Hub or HubWorldPhase.ScrollingToPrep or HubWorldPhase.ScrollingToHub)

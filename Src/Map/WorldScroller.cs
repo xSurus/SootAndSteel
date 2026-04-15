@@ -18,12 +18,14 @@ public class WorldScroller
     private int ScreenWidth => gameplayContext.ScreenWidth;
     private int ScreenHeight => gameplayContext.ScreenHeight;
 
-    private int TileWidth => AssetManager.TrainTrackTexture[0].Width;
-    private float centerY;
+    private float tileScale => 1.6f;
+    private int TileWidth => (int) (AssetManager.TrainTrackTexture[0].Width * tileScale);
+    private float posY;
+    
 
     public WorldScroller(GraphicsDevice graphicsDevice)
     {
-        centerY = (gameplayContext.ScreenHeight / 2) - (AssetManager.TrainTrackTexture[0].Height / 2);
+        posY = (gameplayContext.ScreenHeight / 2) - (AssetManager.TrainTrackTexture[0].Height / 2) -30;
         int numTilesNeeded = (gameplayContext.ScreenWidth /TileWidth) + 3;
         for (int i = 0; i < numTilesNeeded; i++)
         {
@@ -60,7 +62,7 @@ public class WorldScroller
     private void SpawnTile(float xOffset)
     {   
         
-        tilePositions.Add(new Vector2(xOffset, centerY));
+        tilePositions.Add(new Vector2(xOffset, posY));
         tileTypes.Add(randomizer.Next(0, 2));
     }
 
@@ -70,7 +72,7 @@ public class WorldScroller
 
         for (int i = 0; i < tilePositions.Count; i++)
         {
-            tilePositions[i] = new Vector2(tilePositions[i].X - (speed * deltaTime), centerY + 20);
+            tilePositions[i] = new Vector2(tilePositions[i].X - (speed * deltaTime), posY);
         }
 
         if (tilePositions.Count > 0 && tilePositions[0].X < -TileWidth)
@@ -99,7 +101,7 @@ public class WorldScroller
 
         for (int i = 0; i < tilePositions.Count; i++)
         {
-            spriteBatch.Draw(AssetManager.TrainTrackTexture[tileTypes[i]], tilePositions[i], null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(AssetManager.TrainTrackTexture[tileTypes[i]], tilePositions[i], null, Color.White, 0f, Vector2.Zero, tileScale, SpriteEffects.None, 0f);
         }
     }
 
