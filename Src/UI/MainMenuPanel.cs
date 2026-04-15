@@ -31,12 +31,12 @@ public class MainMenuPanel(GamelabGame game, Action onStartSelected, Action onQu
         // Keep menu controls lower so they don't cover key parts of the background image.
         var panelRect = new Rectangle(
             0,
-            virtualScreenSize.Y - 330,
+            virtualScreenSize.Y - 660,
             virtualScreenSize.X,
             250);
 
         int firstItemY = panelRect.Y + 20;
-        int itemSpacing = 85;
+        int itemSpacing = 70;
 
         DrawMenuItem(
             spriteBatch,

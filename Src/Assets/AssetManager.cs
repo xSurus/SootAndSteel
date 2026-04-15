@@ -11,6 +11,7 @@ public static class AssetManager
 
     public static Texture2D BlankTexture { get; private set; }
     public static Texture2D PlayerTexture { get; private set; }
+    public static Texture2D TitleTexture { get; private set; }
     public static Texture2D[] TileTexture { get; private set; }
     public static Texture2D[] TrainTrackTexture { get; private set; }
     public static Texture2D EnemyTexture { get; private set; }
@@ -37,6 +38,7 @@ public static class AssetManager
         BlankTexture.SetData([Color.White]);
 
         LoadPlayerTexture(graphicsDevice);
+        LoadTitleTexture(graphicsDevice);
         LoadTileTexture(graphicsDevice);
         LoadTrainTrackTexture(graphicsDevice);
         LoadWallTextures(graphicsDevice);
@@ -215,6 +217,11 @@ public static class AssetManager
         HubTexture = LoadTexture(graphicsDevice, "Hub.png");
     }
 
+    private static void LoadTitleTexture(GraphicsDevice graphicsDevice)
+    {
+        TitleTexture = LoadTexture(graphicsDevice, "Title.png");
+    }
+
     private static void LoadTileTexture(GraphicsDevice graphicsDevice)
     {
         TileTexture = new Texture2D[2];
@@ -292,6 +299,9 @@ public static class AssetManager
 
         PlayerTexture?.Dispose();
         PlayerTexture = null;
+
+        TitleTexture?.Dispose();
+        TitleTexture = null;
 
         TileTexture[0]?.Dispose();
         TileTexture[0] = null;

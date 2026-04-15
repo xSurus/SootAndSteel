@@ -1,4 +1,5 @@
 using Gamelab.Services.Sound;
+using Gamelab.Assets;
 using Gamelab.UI;
 using Gamelab.Utils.Logging;
 using Microsoft.Xna.Framework;
@@ -44,9 +45,11 @@ public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
     {
         // Scale to fit the virtual screen size to the actual window size
         spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
+        float scale = virtualScreenSize.X * 1.0f / AssetManager.HubTexture.Width;
 
         // Rendering is done in the virtual screen space
-        spriteBatch.Draw(bgTexture, new Rectangle(0, 0, virtualScreenSize.X, virtualScreenSize.Y), Color.White);
+        spriteBatch.Draw(AssetManager.TitleTexture, new Vector2(0), null, Color.White,
+                                0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
 
         mainMenuPanel.Draw(
             spriteBatch,
