@@ -32,7 +32,7 @@ public class ComponentResource(Vector2 position, string componentId)
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        Texture2D tex = AssetManager.GetStationTexture(componentId);
+        Texture2D tex = AssetManager.GetStationTexture(ComponentRegistry.GetSprite(componentId));
         int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
         float originalSize = tex.Width;
         float scale = tileSize / originalSize;
