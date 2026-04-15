@@ -4,6 +4,8 @@ using Gamelab.UI;
 using Gamelab.Utils.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Gamelab.Services.Vfx;
+using Gamelab.Particles;
 
 namespace Gamelab.Screens;
 
@@ -25,6 +27,8 @@ public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
         mainMenuPanel = new MainMenuPanel(Game, StartGame, Game.Exit);
         soundService = Services.GetService<ISoundService>();
         soundService.LoadSound(Sounds.MenuSelect);
+        soundService.GetSoundInstance(Sounds.AmbientSong)?.Start();
+        Services.GetService<IVfxService>().AddContinuous(ParticleFactory.CreateSnowstorm());
     }
 
     public override void Update(GameTime gameTime) 
@@ -50,6 +54,8 @@ public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
         // Rendering is done in the virtual screen space
         spriteBatch.Draw(AssetManager.TitleTexture, new Vector2(0), null, Color.White,
                                 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+
+        Services.GetService<IVfxService>().Render(spriteBatch);
 
         mainMenuPanel.Draw(
             spriteBatch,
