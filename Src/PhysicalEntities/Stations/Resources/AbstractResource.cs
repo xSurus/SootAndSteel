@@ -2,6 +2,7 @@ using Gamelab.Items;
 using Gamelab.Players;
 using Microsoft.Xna.Framework;
 
+
 namespace Gamelab.PhysicalEntities.Stations.Resources;
 
 public abstract class AbstractResource(

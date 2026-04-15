@@ -2,9 +2,11 @@ using System.Collections.Generic;
 using Gamelab.Map.Train;
 using Gamelab.Map.Train.State;
 using Gamelab.Players;
+using Gamelab.Assets;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using nkast.Aether.Physics2D.Dynamics;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Gamelab.PhysicalEntities.Stations;
 
@@ -94,5 +96,17 @@ public sealed class HubShopOffer : AbstractStation
                 && prepTrainMap.GetTileIndexFromPixels(station.Position) == tile)
                 return true;
         return false;
+    }
+
+    public override void Draw(SpriteBatch spriteBatch)
+    {   
+        Texture2D tex = AssetManager.GetStationTexture(Type);
+        int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
+        float originalSize = tex.Width;
+        float scale = tileSize / originalSize;
+
+        Vector2 drawingPos = Position + new Vector2(-tileSize * 0.5f, -tileSize * 1.5f);
+        spriteBatch.Draw(tex, drawingPos, null, Color.White,
+                                0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
     }
 }

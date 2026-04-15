@@ -546,12 +546,17 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
     {
         GraphicsDevice.Clear(new Color(15, 15, 20));
 
+
         Matrix worldMatrix = Matrix.CreateTranslation(-cameraPosition.X, -cameraPosition.Y, 0f)
             * viewportAdapter.GetScaleMatrix();
-
+        float scale = worldWidth * 1.0f / AssetManager.HubTexture.Width;
         spriteBatch.Begin(transformMatrix: worldMatrix);
-        spriteBatch.Draw(AssetManager.BlankTexture, new Rectangle(0, 0, worldWidth, worldHeight), new Color(15, 15, 20));
-        hubMap.Draw(spriteBatch);
+        spriteBatch.Draw(AssetManager.HubTexture, new Vector2(0), null, Color.White,
+                                0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+
+        
+        // spriteBatch.Draw(AssetManager.BlankTexture, new Rectangle(0, 0, worldWidth, worldHeight), new Color(15, 15, 20));
+        // hubMap.Draw(spriteBatch);
 
         if (phase is HubWorldPhase.Hub or HubWorldPhase.ScrollingToPrep or HubWorldPhase.ScrollingToHub)
             spriteBatch.Draw(AssetManager.BlankTexture, prepEntryMarker, new Color(40, 120, 90) * 0.35f);
@@ -560,6 +565,9 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
 
         foreach (HubShopOffer offer in hubDragOffers)
             offer.Draw(spriteBatch);
+
+        spriteBatch.Draw(AssetManager.GetNPCTexture("Vendor"), new Vector2(1040,580), null, Color.White,
+                                0f, Vector2.Zero, 0.3f, SpriteEffects.None, 0f);
 
         if (phase is HubWorldPhase.Prep or HubWorldPhase.ScrollingToPrep or HubWorldPhase.ScrollingToHub)
             spriteBatch.Draw(AssetManager.BlankTexture, departMarker, Color.Lime * 0.18f);

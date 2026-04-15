@@ -16,6 +16,7 @@ public static class AssetManager
     public static Texture2D EnemyTexture { get; private set; }
     public static Texture2D SmokeTexture { get; private set; }
     public static Texture2D SparkTexture { get; private set; }
+    public static Texture2D HubTexture { get; private set; }
     public static System.Collections.Generic.Dictionary<string, Texture2D> StationTextures { get; private set; }
     = new System.Collections.Generic.Dictionary<string, Texture2D>();
     public static System.Collections.Generic.Dictionary<string, Texture2D> WallTextures { get; private set; }
@@ -23,6 +24,8 @@ public static class AssetManager
     public static System.Collections.Generic.Dictionary<string, Texture2D> CharacterTextures { get; private set; }
     = new System.Collections.Generic.Dictionary<string, Texture2D>();
     public static System.Collections.Generic.Dictionary<string, Texture2D> StructureTextures { get; private set; }
+    = new System.Collections.Generic.Dictionary<string, Texture2D>();
+    public static System.Collections.Generic.Dictionary<string, Texture2D> NPCTextures { get; private set; }
     = new System.Collections.Generic.Dictionary<string, Texture2D>();
 
     public static void LoadContent(GraphicsDevice graphicsDevice)
@@ -40,6 +43,8 @@ public static class AssetManager
         LoadParticleTextures(graphicsDevice);
         LoadStructureTextures(graphicsDevice);
         LoadStationTextures(graphicsDevice);
+        LoadHubTexture(graphicsDevice);
+        LoadNPCTextures(graphicsDevice);
         // TODO add texture loading from json
     }
 
@@ -167,6 +172,32 @@ public static class AssetManager
         return StructureTextures.TryGetValue(type, out var tex) ? tex : BlankTexture;
     }
 
+    private static void LoadNPCTextures(GraphicsDevice graphicsDevice)
+    {
+        string dir = System.IO.Path.Combine(
+            System.AppDomain.CurrentDomain.BaseDirectory, "Assets", "NPCs");
+
+        if (!System.IO.Directory.Exists(dir))
+        {
+            System.Console.WriteLine($"[AssetManager] NPCs folder not found: {dir}");
+            return;
+        }
+
+        foreach (string path in System.IO.Directory.GetFiles(dir, "*.png"))
+        {
+            string key = System.IO.Path.GetFileNameWithoutExtension(path);
+            using System.IO.Stream stream = System.IO.File.OpenRead(path);
+            NPCTextures[key] = Texture2D.FromStream(graphicsDevice, stream);
+            logger.Info($"Loading NPC texture for '{key}'");
+        }
+    }
+
+    public static Texture2D GetNPCTexture(string type)
+    {
+        return NPCTextures.TryGetValue(type, out var tex) ? tex : BlankTexture;
+    }
+
+
     public static Texture2D GetStationTexture(string type)
     {
         return StationTextures.TryGetValue(type, out var tex) ? tex : BlankTexture;
@@ -174,17 +205,18 @@ public static class AssetManager
 
     private static void LoadTrainTrackTexture(GraphicsDevice graphicsDevice)
     {
-        int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
-        
         TrainTrackTexture = new Texture2D[2];
         TrainTrackTexture[0] = LoadTexture(graphicsDevice, "Rail_Tile_01.png");
         TrainTrackTexture[1] = LoadTexture(graphicsDevice, "Rail_Tile_02.png");
     }
 
+    private static void LoadHubTexture(GraphicsDevice graphicsDevice)
+    {
+        HubTexture = LoadTexture(graphicsDevice, "Hub.png");
+    }
+
     private static void LoadTileTexture(GraphicsDevice graphicsDevice)
     {
-        int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
-        
         TileTexture = new Texture2D[2];
         TileTexture[0] = LoadTexture(graphicsDevice, "Train_Tile_A.png");
         TileTexture[1] = LoadTexture(graphicsDevice, "Train_Tile_B.png");
@@ -282,6 +314,9 @@ public static class AssetManager
         SmokeTexture?.Dispose();
         SmokeTexture = null;
 
+        HubTexture?.Dispose();
+        HubTexture = null;
+
         foreach (var tex in StationTextures.Values)
             tex?.Dispose();
         StationTextures.Clear();
@@ -297,5 +332,9 @@ public static class AssetManager
         foreach (var tex in StructureTextures.Values)
             tex?.Dispose();
         StructureTextures.Clear();
+
+        foreach (var tex in NPCTextures.Values)
+            tex?.Dispose();
+        NPCTextures.Clear();
     }
 }

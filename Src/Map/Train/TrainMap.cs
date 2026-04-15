@@ -171,6 +171,7 @@ public class TrainMap
         foreach (var mapObject in MapObjects)
         {
             mapObject.Draw(spriteBatch);
+            
         }
     }
 

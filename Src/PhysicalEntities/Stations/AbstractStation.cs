@@ -10,7 +10,7 @@ namespace Gamelab.PhysicalEntities.Stations;
 
 public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPickable, IUpdatable
 {
-    
+    private static readonly Logger logger = new ("Station");
     public string Type { get; protected set; }
 
     // TODO swap to a texture instead of display color at some point
@@ -57,8 +57,7 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
     public override void Draw(SpriteBatch spriteBatch)
     {
         Texture2D tex = AssetManager.GetStationTexture(Type);
-        
-        
+        // logger.Info($"Drawing '{Type}'");
 
         if (tex == AssetManager.BlankTexture){
             int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
