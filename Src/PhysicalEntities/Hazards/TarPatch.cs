@@ -1,7 +1,8 @@
+using System;
 using Gamelab.Assets;
 using Gamelab.Enemies;
 using Gamelab.Map.Train.State;
-using Gamelab.PhysicalEntities;
+using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
@@ -27,7 +28,8 @@ public class TarPatch : AbstractPhysicalEntity, IEnemyHazard, IInteractable
         this.cleanDurationSeconds = cleanDurationSeconds;
 
         Vector2 position = GetPatchCenter();
-        PhysicsBody = gameplayContext.PhysicsWorld.CreateRectangle(0.5f, 0.5f, 1f, position.ToMeters(), 0f, BodyType.Static);
+        PhysicsBody =
+            gameplayContext.PhysicsWorld.CreateRectangle(0.5f, 0.5f, 1f, position.ToMeters(), 0f, BodyType.Static);
         foreach (var fixture in PhysicsBody.FixtureList)
         {
             fixture.IsSensor = true;
@@ -50,7 +52,7 @@ public class TarPatch : AbstractPhysicalEntity, IEnemyHazard, IInteractable
             return;
         }
 
-        cleanProgress += dt / System.Math.Max(0.01f, cleanDurationSeconds);
+        cleanProgress += dt / Math.Max(0.01f, cleanDurationSeconds);
         if (cleanProgress >= 1f)
         {
             ShouldRemove = true;
@@ -88,7 +90,7 @@ public class TarPatch : AbstractPhysicalEntity, IEnemyHazard, IInteractable
         if (cleanProgress > 0f)
         {
             Rectangle bg = new((int)(center.X - 20f), (int)(center.Y + 24f), 40, 6);
-            Rectangle fill = new(bg.X, bg.Y, (int)(40 * System.Math.Clamp(cleanProgress, 0f, 1f)), 6);
+            Rectangle fill = new(bg.X, bg.Y, (int)(40 * Math.Clamp(cleanProgress, 0f, 1f)), 6);
             spriteBatch.Draw(AssetManager.BlankTexture, bg, Color.DarkGray);
             spriteBatch.Draw(AssetManager.BlankTexture, fill, Color.LightBlue);
         }

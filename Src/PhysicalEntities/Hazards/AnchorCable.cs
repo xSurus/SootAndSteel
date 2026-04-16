@@ -1,7 +1,8 @@
+using System;
 using Gamelab.Assets;
 using Gamelab.Enemies;
 using Gamelab.Map.Train.State;
-using Gamelab.PhysicalEntities;
+using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
@@ -22,7 +23,8 @@ public class AnchorCable : AbstractPhysicalEntity, IEnemyHazard, IInteractable
     public bool ShouldRemove { get; private set; }
     public bool CountsAsActiveThreat => !ShouldRemove;
 
-    public AnchorCable(GameplayContext gameplayContext, EnemyTrainSlot slot, float distanceFromTrain, float cutDurationSeconds)
+    public AnchorCable(GameplayContext gameplayContext, EnemyTrainSlot slot, float distanceFromTrain,
+        float cutDurationSeconds)
     {
         this.gameplayContext = gameplayContext;
         this.slot = slot;
@@ -30,7 +32,9 @@ public class AnchorCable : AbstractPhysicalEntity, IEnemyHazard, IInteractable
         this.cutDurationSeconds = cutDurationSeconds;
 
         Vector2 anchorPosition = slot.GetAnchor(gameplayContext, distanceFromTrain);
-        PhysicsBody = gameplayContext.PhysicsWorld.CreateRectangle(0.5f, 0.5f, 1f, anchorPosition.ToMeters(), 0f, BodyType.Static);
+        PhysicsBody =
+            gameplayContext.PhysicsWorld.CreateRectangle(0.5f, 0.5f, 1f, anchorPosition.ToMeters(), 0f,
+                BodyType.Static);
         foreach (var fixture in PhysicsBody.FixtureList)
         {
             fixture.IsSensor = true;
@@ -55,7 +59,7 @@ public class AnchorCable : AbstractPhysicalEntity, IEnemyHazard, IInteractable
             return;
         }
 
-        cutProgress += dt / System.Math.Max(0.01f, cutDurationSeconds);
+        cutProgress += dt / Math.Max(0.01f, cutDurationSeconds);
         if (cutProgress >= 1f)
         {
             RemoveAnchorEffect();
@@ -94,7 +98,7 @@ public class AnchorCable : AbstractPhysicalEntity, IEnemyHazard, IInteractable
         if (cutProgress > 0f)
         {
             Rectangle bg = new((int)(anchor.X - 20f), (int)(anchor.Y + 20f), 40, 6);
-            Rectangle fill = new(bg.X, bg.Y, (int)(40 * System.Math.Clamp(cutProgress, 0f, 1f)), 6);
+            Rectangle fill = new(bg.X, bg.Y, (int)(40 * Math.Clamp(cutProgress, 0f, 1f)), 6);
             spriteBatch.Draw(AssetManager.BlankTexture, bg, Color.Black);
             spriteBatch.Draw(AssetManager.BlankTexture, fill, Color.LightGreen);
         }
@@ -125,7 +129,7 @@ public class AnchorCable : AbstractPhysicalEntity, IEnemyHazard, IInteractable
     private static void DrawLine(SpriteBatch spriteBatch, Vector2 start, Vector2 end, Color color, int thickness)
     {
         Vector2 edge = end - start;
-        float angle = (float)System.Math.Atan2(edge.Y, edge.X);
+        float angle = (float)Math.Atan2(edge.Y, edge.X);
         spriteBatch.Draw(
             AssetManager.BlankTexture,
             new Rectangle((int)start.X, (int)start.Y, (int)edge.Length(), thickness),

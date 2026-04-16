@@ -1,6 +1,6 @@
 using Gamelab.Players;
 
-namespace Gamelab.PhysicalEntities;
+namespace Gamelab.PhysicalEntities.Interfaces;
 
 public interface IInteractable : IPhysicalEntity
 {

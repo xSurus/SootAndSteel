@@ -7,17 +7,38 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Gamelab.UI;
 
-public class MainMenuPanel(GamelabGame game, Action onStartSelected, Action onQuitSelected)
+public class MainMenuPanel
 {
-    private const int VolumeMenuIndex = 1;
+    private readonly GamelabGame game;
+    private readonly MenuList menuList;
+    private readonly int volumeMenuIndex;
+    private readonly List<string> baseLabels = new();
 
-    private readonly MenuList menuList = new([
-        new MenuList.MenuEntry("Start Game", onStartSelected),
-        new MenuList.MenuEntry("Music Volume", () => { }),
-        new MenuList.MenuEntry("Quit Game", onQuitSelected),
-    ]);
+    private float MenuVolumeStep => game.GameplayConfig.MenuVolumeStep;
 
-    private float MenuVolumeStep => GamelabGame.Instance.GameplayConfig.MenuVolumeStep;
+    public MainMenuPanel(GamelabGame game, Action onContinueSelected, Action onStartNewSelected, Action onQuitSelected)
+    {
+        this.game = game;
+        var entries = new List<MenuList.MenuEntry>();
+
+        if (onContinueSelected != null)
+        {
+            entries.Add(new MenuList.MenuEntry("Continue Game", onContinueSelected));
+            baseLabels.Add("Continue Game");
+        }
+
+        entries.Add(new MenuList.MenuEntry("New Game", onStartNewSelected));
+        baseLabels.Add("New Game");
+
+        volumeMenuIndex = entries.Count;
+        entries.Add(new MenuList.MenuEntry("Music Volume", () => { }));
+        baseLabels.Add("Music Volume");
+
+        entries.Add(new MenuList.MenuEntry("Quit Game", onQuitSelected));
+        baseLabels.Add("Quit Game");
+
+        menuList = new MenuList([.. entries]);
+    }
 
     public void Update(GameTime gameTime)
     {
@@ -35,33 +56,27 @@ public class MainMenuPanel(GamelabGame game, Action onStartSelected, Action onQu
             virtualScreenSize.X,
             250);
 
-        int firstItemY = panelRect.Y + 20;
+        int firstItemY = panelRect.Y + (baseLabels.Count > 3 ? -20 : 20);
         int itemSpacing = 85;
 
-        DrawMenuItem(
-            spriteBatch,
-            buttonFont,
-            panelRect,
-            firstItemY + 0 * itemSpacing,
-            "Start Game",
-            0);
+        for (int i = 0; i < baseLabels.Count; i++)
+        {
+            string label = baseLabels[i];
 
-        int volumePercent = (int)(game.MusicVolume * 100f);
-        DrawMenuItem(
-            spriteBatch,
-            buttonFont,
-            panelRect,
-            firstItemY + 1 * itemSpacing,
-            $"Music Volume   < {volumePercent}% >",
-            1);
+            if (i == volumeMenuIndex)
+            {
+                int volumePercent = (int)(game.MusicVolume * 100f);
+                label = $"Music Volume   < {volumePercent}% >";
+            }
 
-        DrawMenuItem(
-            spriteBatch,
-            buttonFont,
-            panelRect,
-            firstItemY + 2 * itemSpacing,
-            "Quit Game",
-            2);
+            DrawMenuItem(
+                spriteBatch,
+                buttonFont,
+                panelRect,
+                firstItemY + i * itemSpacing,
+                label,
+                i);
+        }
     }
 
     private void HandleVolumeInput()
@@ -75,8 +90,7 @@ public class MainMenuPanel(GamelabGame game, Action onStartSelected, Action onQu
                 continue;
             }
 
-            // only listen to Left/Right if specific player is doing the input
-            if (selectedIndex == VolumeMenuIndex)
+            if (selectedIndex == volumeMenuIndex)
             {
                 if (player.Input.IsLeftJustPressed())
                 {

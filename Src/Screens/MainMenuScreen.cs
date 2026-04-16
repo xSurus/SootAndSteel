@@ -1,3 +1,5 @@
+using System;
+using Gamelab.Serialization;
 using Gamelab.Services.Sound;
 using Gamelab.UI;
 using Gamelab.Utils.Logging;
@@ -9,9 +11,9 @@ namespace Gamelab.Screens;
 public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
 {
     private Logger logger = new Logger("MainMenuScreen");
-    
+
     private const string MainMenuBackgroundAsset = "placeholder_main_menu_background";
-    
+
     protected Texture2D bgTexture;
     private MainMenuPanel mainMenuPanel;
     private ISoundService soundService;
@@ -19,14 +21,15 @@ public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
     public override void LoadContent()
     {
         base.LoadContent();
-        
+
         TryLoadBackgroundTexture();
-        mainMenuPanel = new MainMenuPanel(Game, StartGame, Game.Exit);
         soundService = Services.GetService<ISoundService>();
         soundService.LoadSound(Sounds.MenuSelect);
+        Action continueAction = SaveManager.HasSave() ? ContinueGame : null;
+        mainMenuPanel = new MainMenuPanel(Game, continueAction, StartNewGame, Game.Exit);
     }
 
-    public override void Update(GameTime gameTime) 
+    public override void Update(GameTime gameTime)
     {
         base.Update(gameTime);
         mainMenuPanel.Update(gameTime);
@@ -59,13 +62,26 @@ public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
         base.Draw(gameTime);
     }
 
-    private void StartGame()
+    private void StartNewGame()
     {
-        Game.CurrentLevel = 0;
-        Game.ResetCredits();
-        Game.TrainLayoutSeedForHub = null;
-        Game.PendingPrepTrainLayout = null;
+        SaveManager.DeleteSave();
+        Game.CurrentRun = new RunSession();
         Game.SwitchToScreen(new HubScreen(Game));
+    }
+
+    private void ContinueGame()
+    {
+        RunSession loadedSession = SaveManager.LoadRun();
+        if (loadedSession != null)
+        {
+            Game.CurrentRun = loadedSession;
+            Game.SwitchToScreen(new HubScreen(Game));
+        }
+        else
+        {
+            logger.Warning("Save file corrupted or missing. Defaulting to New Game.");
+            StartNewGame();
+        }
     }
 
     private void TryLoadBackgroundTexture()

@@ -1,3 +1,4 @@
+using Gamelab.PhysicalEntities.Interfaces;
 
 namespace Gamelab.PhysicalEntities.Bullets.Components;
 
@@ -9,7 +10,7 @@ public class AbstractComponent : IBulletEffect
     public virtual void OnCreate(BulletEntity bulletEntity)
     {
     }
-    
+
     public virtual void OnSpawn(BulletEntity bulletEntity)
     {
     }

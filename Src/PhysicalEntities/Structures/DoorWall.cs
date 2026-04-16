@@ -1,6 +1,7 @@
 using System;
 using Gamelab.Assets;
 using Gamelab.Map.Train.State;
+using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
@@ -45,8 +46,7 @@ public class DoorWall : AbstractPhysicalEntity, IInteractable
     }
 
     public override void Draw(SpriteBatch spriteBatch)
-    {   
-        
+    {
         Color color = isOpen ? OpenColor : ClosedColor;
         Vector2 origin = new Vector2(dimensionsPixels.X / 2f, dimensionsPixels.Y / 2f);
         Rectangle sourceRect = new Rectangle(0, 0, (int)dimensionsPixels.X, (int)dimensionsPixels.Y);
@@ -56,19 +56,26 @@ public class DoorWall : AbstractPhysicalEntity, IInteractable
         float originalSize = AssetManager.GetWallTexture("WallTileTop").Width;
         float scale = tileSize / originalSize;
 
-        if (isTop){
+        if (isTop)
+        {
             Vector2 drawingPos = Position + new Vector2(-tileSize * 0.5f, -tileSize * 1.75f);
-            Texture2D tex = isOpen ? AssetManager.GetWallTexture("WallTileTopDoorOpen") : AssetManager.GetWallTexture("WallTileTopDoorClosed");
+            Texture2D tex = isOpen
+                ? AssetManager.GetWallTexture("WallTileTopDoorOpen")
+                : AssetManager.GetWallTexture("WallTileTopDoorClosed");
             spriteBatch.Draw(tex, drawingPos, null, Color.White,
-                                0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
-        } else {
+                0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+        }
+        else
+        {
             Vector2 drawingPos = Position + new Vector2(-tileSize * 0.5f, -tileSize * 2f);
-            Texture2D tex = isOpen ? AssetManager.GetWallTexture("WallTileBottomDoorOpen") : AssetManager.GetWallTexture("WallTileBottomDoorClosed");
+            Texture2D tex = isOpen
+                ? AssetManager.GetWallTexture("WallTileBottomDoorOpen")
+                : AssetManager.GetWallTexture("WallTileBottomDoorClosed");
             spriteBatch.Draw(tex, drawingPos, null, Color.White,
-                                0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+                0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
         }
 
-        
+
         // Open/closed indicator dot
         int dot = 8;
         var dotRect = new Rectangle(

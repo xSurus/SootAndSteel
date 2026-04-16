@@ -5,6 +5,7 @@ using Gamelab.Items;
 using Gamelab.Map.Train.State;
 using Gamelab.PhysicalEntities;
 using Gamelab.PhysicalEntities.Bullets;
+using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

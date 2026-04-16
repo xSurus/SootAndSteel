@@ -1,3 +1,4 @@
+using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;

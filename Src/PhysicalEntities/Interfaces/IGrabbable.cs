@@ -1,7 +1,7 @@
 using Gamelab.Players;
 using Microsoft.Xna.Framework;
 
-namespace Gamelab.PhysicalEntities;
+namespace Gamelab.PhysicalEntities.Interfaces;
 
 public interface IGrabbable : IPhysicalEntity
 {

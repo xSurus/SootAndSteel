@@ -4,7 +4,7 @@ using Gamelab.Particles;
 using Gamelab.PhysicalEntities;
 using Gamelab.PhysicalEntities.Bullets;
 using Gamelab.PhysicalEntities.Bullets.Components;
-using Gamelab.PhysicalEntities.Projectiles;
+using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.PhysicalEntities.Stations.Cannon;
 using Gamelab.Services.Vfx;
 using Gamelab.Utils;
@@ -78,6 +78,7 @@ public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable, IBull
             TakeDamage(bullet.Stats.Damage);
             return true;
         }
+
         return false;
     }
 

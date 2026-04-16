@@ -1,4 +1,4 @@
-using Gamelab.PhysicalEntities;
+using Gamelab.PhysicalEntities.Interfaces;
 
 namespace Gamelab.Enemies;
 

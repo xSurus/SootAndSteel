@@ -1,5 +1,6 @@
 using Gamelab.Assets;
 using Gamelab.Items;
+using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
 using Gamelab.Utils;
 using Gamelab.Utils.Logging;

@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using Gamelab.Assets;
 using Gamelab.Items.Bullets;
-using Gamelab.Map.Hub;
+using Gamelab.Map;
 using Gamelab.Map.Train;
 using Gamelab.Map.Train.State;
 using Gamelab.Particles;
+using Gamelab.PhysicalEntities.Stations;
 using Gamelab.PhysicalEntities.Structures;
 using Gamelab.Players;
 using Gamelab.Screens.Camera;
+using Gamelab.Serialization;
 using Gamelab.Services.Sound;
 using Gamelab.Services.Vfx;
 using Gamelab.UI;
@@ -24,7 +26,6 @@ using Thickness = Myra.Graphics2D.Thickness;
 
 namespace Gamelab.Screens;
 
-/// <param name="RelX">Offset from hub plaza center X.</param>
 record struct HubShopOfferTemplate(string KindId, string DisplayName, int Cost, Color Color, float RelX, float SpawnY);
 
 public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
@@ -59,7 +60,8 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
     {
         base.LoadContent();
 
-        gameplayContext = new GameplayContext(virtualScreenSize);
+        gameplayContext = new GameplayContext(virtualScreenSize, Game.CurrentRun);
+        SaveManager.SaveRun(Game.CurrentRun);
         Services.AddService(gameplayContext);
         gameplayContext.State.IsCoalOvenBurning = false;
         gameplayContext.State.FuelBurningEnabled = false;
@@ -85,15 +87,7 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
             new DoorSpec(OnBottom: false, Column: gapMid),
             new DoorSpec(OnBottom: true, Column: gapMid));
 
-        prepTrainMap.AddDefaultStructures();
-
-        List<PrepStationEntry> hubSeed = Game.TrainLayoutSeedForHub;
-        Game.TrainLayoutSeedForHub = null;
-        if (hubSeed != null && hubSeed.Count > 0)
-            PrepTrainLayout.ApplyLayout(prepTrainMap, hubSeed);
-        else
-            prepTrainMap.AddDefaultStationLoadout();
-
+        prepTrainMap.LoadLayout(Game.CurrentRun.TrainLayout);
         gameplayContext.Map = prepTrainMap;
 
         RestockHubDragOffers();
@@ -121,7 +115,7 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
 
         creditsLabel = new Label
         {
-            Text = $"Credits: {Game.Credits}",
+            Text = $"Credits: {Game.CurrentRun.Credits}",
             Font = Game.fontSystem.GetFont(40),
             TextColor = new Color(230, 200, 120),
             HorizontalAlignment = HorizontalAlignment.Right,
@@ -148,7 +142,7 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
         rootPanel.Widgets.Add(creditsLabel);
         rootPanel.Widgets.Add(departBlockedLabel);
 
-        if (Game.CurrentLevel == 0)
+        if (Game.CurrentRun.CurrentLevel == 0)
             rootPanel.Widgets.Add(BuildControlsHelpPanel());
 
         desktop = new Desktop { Root = rootPanel };
@@ -229,11 +223,11 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
         float dragRowY = hubPlazaBounds.Bottom - 195;
         HubShopOfferTemplate[] offers =
         [
-            new(YardStationKindIds.BasicProjectile, "Basic projectile", 18, new Color(255, 0, 0), 0f, pickupY),
-            new(YardStationKindIds.Cannon, "Extra cannon", 45, Color.DarkRed, -170f, dragRowY),
-            new(YardStationKindIds.Workbench, "Extra workbench", 38, Color.DarkSlateGray, 170f, dragRowY),
-            new(YardStationKindIds.HomingCasing, "Homing casing upgrade", 50, new Color(0, 119, 255), -85f, pickupY),
-            new(YardStationKindIds.ScatterProjectile, "Scatter projectile upgrade", 25, new Color(255, 119, 0), 85f,
+            new(StationIds.BasicProjectile, "Basic projectile", 18, new Color(255, 0, 0), 0f, pickupY),
+            new(StationIds.Cannon, "Extra cannon", 45, Color.DarkRed, -170f, dragRowY),
+            new(StationIds.Workbench, "Extra workbench", 38, Color.DarkSlateGray, 170f, dragRowY),
+            new(StationIds.HomingCasing, "Homing casing upgrade", 50, new Color(0, 119, 255), -85f, pickupY),
+            new(StationIds.ScatterProjectile, "Scatter projectile upgrade", 25, new Color(255, 119, 0), 85f,
                 pickupY),
         ];
 
@@ -272,7 +266,7 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
             return;
         }
 
-        creditsLabel.Text = $"Credits: {Game.Credits}";
+        creditsLabel.Text = $"Credits: {Game.CurrentRun.Credits}";
 
         accumulator += Math.Min(dt, Game.GameplayConfig.MaxAccumulatedDeltaSeconds);
         while (accumulator >= Game.GameplayConfig.FixedTimeStep)
@@ -339,7 +333,7 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
 
         if (departHoldTimer >= Game.GameplayConfig.DepartHoldSeconds)
         {
-            Game.PendingPrepTrainLayout = PrepTrainLayout.Capture(prepTrainMap);
+            Game.CurrentRun.TrainLayout = prepTrainMap.CaptureLayout();
             departWhiteFilter ??= new WhiteFilterTransition();
             departWhiteFilter.FadeIn(0.8f);
             isTransitioningToNextLevel = true;

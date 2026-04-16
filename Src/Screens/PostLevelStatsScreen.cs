@@ -1,13 +1,8 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using Gamelab.Assets;
 using Gamelab.Particles;
 using Gamelab.Services.Vfx;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Myra.Graphics2D;
 using Myra.Graphics2D.Brushes;
 using Myra.Graphics2D.UI;
 
@@ -45,7 +40,7 @@ public class PostLevelStatsScreen(GamelabGame game) : AbstractGameScreen(game)
 
         var title = new Label
         {
-            Text = $"Stage Complete: {StageNaming.GetStageTitle(ScreenPayloads.LastPostLevelResults.CompletedLevelNumber)}",
+            Text = $"Stage Complete: {StageNaming.GetStageTitle(Game.CurrentRun.CurrentLevel)}",
             Font = Game.fontSystem.GetFont(72),
             TextColor = Color.White,
             HorizontalAlignment = HorizontalAlignment.Center
@@ -53,7 +48,7 @@ public class PostLevelStatsScreen(GamelabGame game) : AbstractGameScreen(game)
 
         var coal = new Label
         {
-            Text = $"Coal remaining: {ScreenPayloads.LastPostLevelResults.CoalRemaining}",
+            Text = $"Coal remaining: {Game.CurrentRun.CoalRemaining}",
             Font = Game.fontSystem.GetFont(56),
             TextColor = Color.White,
             HorizontalAlignment = HorizontalAlignment.Center
@@ -91,8 +86,9 @@ public class PostLevelStatsScreen(GamelabGame game) : AbstractGameScreen(game)
             if (Game.playerManager.Configs.Any(c => c.Input.IsPickupJustPressed() || c.Input.IsStartJustPressed()))
             {
                 // TODO: Calculate reward based on level difficulty and coal remaining.
-                int reward = 25 + ScreenPayloads.LastPostLevelResults.CoalRemaining * 3;
-                Game.AddCredits(reward);
+                int reward = 25 + Game.CurrentRun.CoalRemaining * 3;
+                Game.CurrentRun.AddCredits(reward);
+                Game.CurrentRun.CoalRemaining = 0;
                 whiteToHub.FadeIn(0.8f);
                 phase = Phase.FadeOutToHub;
             }
@@ -134,4 +130,3 @@ public class PostLevelStatsScreen(GamelabGame game) : AbstractGameScreen(game)
         base.UnloadContent();
     }
 }
-
