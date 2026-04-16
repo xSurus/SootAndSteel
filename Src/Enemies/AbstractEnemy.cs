@@ -1,9 +1,11 @@
 using Gamelab.Assets;
-using Gamelab.Entities;
 using Gamelab.Map.Train.State;
 using Gamelab.Particles;
 using Gamelab.PhysicalEntities;
+using Gamelab.PhysicalEntities.Bullets;
+using Gamelab.PhysicalEntities.Bullets.Components;
 using Gamelab.PhysicalEntities.Projectiles;
+using Gamelab.PhysicalEntities.Stations.Cannon;
 using Gamelab.Services.Vfx;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
@@ -12,8 +14,10 @@ using nkast.Aether.Physics2D.Dynamics;
 
 namespace Gamelab.Enemies;
 
-public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable
+public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable, IBulletEmitter
 {
+    public EnemyDefinition Definition { get; }
+    public EnemyType EnemyType => Definition.Type;
     public EnemyTrainSlot Slot { get; }
     public float Health { get; protected set; }
     public bool IsAlive => Health > 0;
@@ -22,10 +26,17 @@ public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable
 
     protected float Size => GamelabGame.Instance.GameplayConfig.EnemySize;
     protected readonly GameplayContext gameplayContext;
+    protected readonly EnemyMovementController EnemyMovement;
 
-    protected AbstractEnemy(GameplayContext gameplayContext, Vector2 spawnPosition, EnemyTrainSlot slot)
+    protected AbstractEnemy(
+        GameplayContext gameplayContext,
+        EnemyDefinition definition,
+        Vector2 spawnPosition,
+        EnemyTrainSlot slot,
+        EnemyMovementProfile movementProfile)
     {
         Health = GamelabGame.Instance.GameplayConfig.EnemyHealth;
+        Definition = definition;
         Slot = slot;
         this.gameplayContext = gameplayContext;
         PhysicsBody = gameplayContext.PhysicsWorld.CreateCircle((Size / 2f).ToMeters(), 1f, spawnPosition.ToMeters(),
@@ -37,11 +48,12 @@ public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable
         {
             fixture.IsSensor = true;
         }
+
+        EnemyMovement = new EnemyMovementController(PhysicsBody, gameplayContext, movementProfile);
     }
 
     public virtual void Update(float deltaTime)
     {
-        // TODO: Implement off-screen removal, for now just remove if off screen left.
         if (IsOffScreenLeft())
         {
             ShouldRemove = true;
@@ -52,22 +64,31 @@ public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable
     {
         Health -= damage;
         var vfxService = GamelabGame.Instance.Services.GetService<IVfxService>();
-        vfxService.EmitBurst(ParticleFactory.CreateBloodSplatter(this.Position));
+        vfxService.EmitBurst(ParticleFactory.CreateBloodSplatter(Position));
         if (Health <= 0)
         {
             ShouldRemove = true;
         }
     }
 
-    public void OnHit(AbstractProjectile projectile)
+    public virtual bool OnHit(BulletEntity bullet)
     {
-        if (projectile is not CannonProjectile || !IsAlive || ShouldRemove)
+        if (bullet.Owner.GetType() == typeof(CannonStation) && IsAlive && !ShouldRemove)
         {
-            return;
+            TakeDamage(bullet.Stats.Damage);
+            return true;
         }
+        return false;
+    }
 
-        TakeDamage(projectile.Damage);
-        projectile.Deactivate();
+    public virtual void TryShoot()
+    {
+        return;
+    }
+
+    public virtual IEnemyHazard TryCreateHazard()
+    {
+        return null;
     }
 
     public void RemovePhysicsBody()
@@ -96,6 +117,11 @@ public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable
         spriteBatch.Draw(texture, destRect, EnemyColor);
     }
 
+    protected bool HasReached(Vector2 targetPosition, float radius)
+    {
+        return Vector2.DistanceSquared(Position, targetPosition) <= radius * radius;
+    }
+
     protected bool IsOffScreenLeft()
     {
         return Position.X < -Size;
@@ -106,7 +132,6 @@ public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable
         return Position.X > gameplayContext.ScreenWidth + Size;
     }
 
-
     protected bool IsOffScreenTop()
     {
         return Position.Y < -Size;
@@ -115,19 +140,5 @@ public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable
     protected bool IsOffScreenBottom()
     {
         return Position.Y > gameplayContext.ScreenHeight + Size;
-    }
-
-    protected void MoveTowards(Vector2 targetPosition, float maxDistance)
-    {
-        Vector2 offset = targetPosition - Position;
-        float distance = offset.Length();
-
-        if (distance <= maxDistance || distance <= 0.001f)
-        {
-            Position = targetPosition;
-            return;
-        }
-
-        Position += offset / distance * maxDistance;
     }
 }

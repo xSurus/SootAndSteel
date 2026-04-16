@@ -5,12 +5,14 @@ public class SpawnEvent
     /// <summary>Distance traveled (pixels) at which this enemy spawns.</summary>
     public float Distance { get; set; }
 
-    /// <summary>"Shooter" or "Thief"</summary>
-    public string Type { get; set; } = "Shooter";
+    /// <summary>
+    /// Enemy type id. Valid values are: "Mounter", "Rifle", "Shield", "Anchor", "Molotov", "TarThrower".
+    /// </summary>
+    public string Type { get; set; } = "Rifle";
 
     /// <summary>
-    /// Optional approach side. For Thief: "Top", "Bottom", "Right".
-    /// For Shooter: "Top" or "Bottom" forces spawn above/below train; omit for random.
+    /// Optional approach side. Valid values for this branch are "Top" and "Bottom".
+    /// Omit to let runtime/procedural generation choose randomly.
     /// </summary>
     public string Side { get; set; }
 }

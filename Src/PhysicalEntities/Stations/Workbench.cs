@@ -1,0 +1,165 @@
+using System.Collections.Generic;
+using System.Linq;
+using Gamelab.Assets;
+using Gamelab.Items;
+using Gamelab.Items.Bullets;
+using Gamelab.PhysicalEntities.Bullets;
+using Gamelab.Players;
+using Gamelab.Utils.Logging;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+
+namespace Gamelab.PhysicalEntities.Stations;
+
+public class Workbench(Vector2 position) : AbstractStation("Workbench", Color.DarkSlateGray, position)
+{
+    private static readonly Logger Logger = new("Workbench");
+    protected List<BulletItem> PlacedItems { get; } = new();
+    
+    private float craftProgress = 0f;
+    
+    public override void OnPickup(Player interactingPlayer)
+    {
+        if (craftProgress > 0f) return;
+        
+        // player picks up item from workbench
+        if (interactingPlayer.HeldItem == null && PlacedItems.Any())
+        {
+            interactingPlayer.HeldItem = PlacedItems.Last();
+            PlacedItems.RemoveAt(PlacedItems.Count - 1);
+            return;
+        }
+        
+        // player places item onto workbench
+        if (ValidatePlace(interactingPlayer.HeldItem))
+        {
+            PlacedItems.Add((BulletItem) interactingPlayer.HeldItem);
+            interactingPlayer.HeldItem = null;
+        }
+    }
+
+    public override void OnInteractHeld(Player interactingPlayer, float dt)
+    {
+        if (craftProgress > 0f || ValidateCraft())
+        {
+            craftProgress += dt;
+        }
+
+        if (craftProgress >= 2f) // TODO add dynamic craft time
+        {
+            BulletItem craftedItem = new BulletItem(PlacedItems.ToArray());
+            PlacedItems.Clear();
+            PlacedItems.Add(craftedItem);
+            craftProgress = 0f;
+        }
+    }
+
+    public override void Draw(SpriteBatch spriteBatch)
+    {
+        
+        int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
+        float itemSizeFloat = tileSize * 0.4f;
+        int drawItemSize = (int)itemSizeFloat;
+        float quadOffset = tileSize * 0.25f;
+        // float originalSize = AssetManager.TileTexture.Width;
+        // float scale = tileSize / originalSize;
+
+        // Vector2 drawingPos = Position + new Vector2(-tileSize * 0.5f, -tileSize * 1.5f);
+        // spriteBatch.Draw(AssetManager.BenchTexture, drawingPos, null, Color.White,
+        //                         0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+
+        base.Draw(spriteBatch);
+        Vector2[] gridOffsets =
+        {
+            new Vector2(-quadOffset, -quadOffset),
+            new Vector2(quadOffset, -quadOffset),
+            new Vector2(-quadOffset, quadOffset),
+            new Vector2(quadOffset, quadOffset)
+        };
+
+        for (int i = 0; i < PlacedItems.Count; i++)
+        {
+            Vector2 itemPos = Position + gridOffsets[i];
+            PlacedItems[i].Draw(spriteBatch, itemPos, drawItemSize);
+        }
+
+        if (craftProgress > 0f)
+        {
+            int barWidth = tileSize - 4;
+            int barHeight = 6;
+            float progressPercentage = craftProgress / 2f; // TODO add dynamic craft time
+
+            Rectangle bgBar = new Rectangle(
+                (int)(Position.X - barWidth / 2f),
+                (int)(Position.Y + (tileSize / 2f) - barHeight - 2),
+                barWidth,
+                barHeight
+            );
+
+            Rectangle fillBar = new Rectangle(
+                bgBar.X,
+                bgBar.Y,
+                (int)(barWidth * progressPercentage),
+                barHeight
+            );
+            // spriteBatch.Draw(AssetManager.BenchTexture, drawingPos, null, Color.Black,
+            //                     0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+            base.Draw(spriteBatch);
+            // spriteBatch.Draw(AssetManager.BlankTexture, bgBar, Color.Black);
+            spriteBatch.Draw(AssetManager.BlankTexture, fillBar, Color.Yellow);
+        }
+    }
+
+    private List<EComponentType> GetContainedComponents()
+    {
+        return PlacedItems.Select(x => x.Type).Distinct().ToList();
+    }
+    
+    private bool ValidatePlace(Item item)
+    {
+        if (item == null) return false;
+        
+        if (PlacedItems.Count >= 3) return false;
+        
+        if (item.Id != "Bullet") return false;
+        BulletItem bulletItem = (BulletItem) item;
+        
+        // ComponentId may not be on table already
+        if (PlacedItems.Any(placedItem => placedItem.ComponentIds.Any(compId => bulletItem.ComponentIds.Contains(compId)))) return false;
+        
+        List<EComponentType> components = GetContainedComponents();
+        
+        // Check if item can be placed as upgrade
+        if (!components.Any() || 
+            (components.Count() == 1 && components.Contains(bulletItem.Type)))
+            return true;
+        
+        // Check if item can be placed for final bullet
+        if (!components.Contains(bulletItem.Type) &&
+            PlacedItems.All(x => x.HasBasic) &&
+            bulletItem.HasBasic)
+            return true;
+
+        return false;
+    }
+
+    private bool ValidateCraft()
+    {
+        List<EComponentType> components = GetContainedComponents();
+        
+        // check if valid upgrade
+        if (PlacedItems.Count() == 2 &&
+            components.Count() == 1 && 
+            components.First() != EComponentType.Bullet) 
+            return true;
+        
+        // check if valid bullet
+        if (PlacedItems.Count() == 3 &&
+            components.Count() == 3 && 
+            components.All(x => x != EComponentType.Bullet) &&
+            PlacedItems.All(x => x.HasBasic))
+            return true;
+
+        return false;
+    }
+}
