@@ -1,52 +1,42 @@
 using System;
 using Gamelab.Enemies;
 using Gamelab.Map.Train.State;
+using Gamelab.Serialization;
 
 namespace Gamelab.Levels;
 
 public class RunManager
 {
     private readonly IRunLevelProvider levelProvider;
-    private LevelManager levelManager;
+    private readonly RunSession session;
 
-    public int CurrentLevelNumber { get; private set; }
     public LevelDefinition CurrentLevelDefinition { get; private set; }
     public RunPhase CurrentPhase { get; private set; } = RunPhase.LevelActive;
     public event Action<int> OnIntermissionStarted;
 
-    /// <summary>
-    /// Creates a run manager, clamps the initial level to at least 1, and loads that first level.
-    /// </summary>
-    public RunManager(int startingLevel, IRunLevelProvider levelProvider)
+    public RunManager(RunSession session, IRunLevelProvider levelProvider)
     {
+        this.session = session ?? throw new ArgumentNullException(nameof(session));
         this.levelProvider = levelProvider ?? throw new ArgumentNullException(nameof(levelProvider));
-        CurrentLevelNumber = Math.Max(1, startingLevel);
-        LoadLevel(CurrentLevelNumber, 0f);
+
+        LoadLevel(session.CurrentLevel);
     }
 
-    /// <summary>
-    /// Advances run state while a level is active and switches to intermission when completion conditions are met.
-    /// </summary>
     public void Update(GameplayContext gameplayContext, EnemyManager enemyManager)
     {
-        if (CurrentPhase != RunPhase.LevelActive || CurrentLevelDefinition == null)
-        {
-            return;
-        }
+        if (CurrentPhase != RunPhase.LevelActive || CurrentLevelDefinition == null) return;
+        bool isLevelComplete = gameplayContext.State.DistanceTraveled >= CurrentLevelDefinition.LevelDistance &&
+                               !enemyManager.HasActiveThreats;
 
-        if (levelManager.IsLevelComplete(gameplayContext, enemyManager))
+        if (isLevelComplete)
         {
             CurrentPhase = RunPhase.Intermission;
-            OnIntermissionStarted?.Invoke(CurrentLevelNumber);
+            OnIntermissionStarted?.Invoke(session.CurrentLevel);
         }
     }
 
-    /// <summary>
-    /// Loads a level definition from the provider and rebuilds level-completion tracking for that level baseline.
-    /// </summary>
-    private void LoadLevel(int levelNumber, float levelStartDistance)
+    private void LoadLevel(int levelNumber)
     {
         CurrentLevelDefinition = levelProvider.GetLevel(levelNumber);
-        levelManager = new LevelManager(CurrentLevelDefinition, levelStartDistance);
     }
 }

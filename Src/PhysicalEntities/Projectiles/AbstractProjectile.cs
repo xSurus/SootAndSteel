@@ -1,4 +1,5 @@
 using Gamelab.Assets;
+using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

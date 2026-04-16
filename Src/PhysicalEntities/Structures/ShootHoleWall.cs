@@ -3,6 +3,7 @@ using Gamelab.Assets;
 using Gamelab.Enemies;
 using Gamelab.Map.Train.State;
 using Gamelab.PhysicalEntities.Bullets;
+using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
@@ -51,6 +52,7 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
             TakeDamage(bullet.Stats.Damage);
             return true;
         }
+
         return false;
     }
 
@@ -86,16 +88,19 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
         float originalSize = AssetManager.GetWallTexture("WallTileTop").Width;
         float scale = tileSize / originalSize;
 
-        if (isTop){
+        if (isTop)
+        {
             Vector2 drawingPos = Position + new Vector2(-tileSize * 0.5f, -tileSize * 1.75f);
             spriteBatch.Draw(AssetManager.GetWallTexture("WallTileTop"), drawingPos, null, Color.White,
-                                0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
-        } else {
+                0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+        }
+        else
+        {
             Vector2 drawingPos = Position + new Vector2(-tileSize * 0.5f, -tileSize * 1f);
             spriteBatch.Draw(AssetManager.GetWallTexture("WallTileBottom"), drawingPos, null, Color.White,
-                                0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+                0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
         }
-        
+
 
         // spriteBatch.Draw(
         //     texture: AssetManager.BlankTexture,

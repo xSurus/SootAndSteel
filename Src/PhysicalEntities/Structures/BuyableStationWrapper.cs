@@ -1,6 +1,6 @@
 using Gamelab.Assets;
-using Gamelab.Map.Hub;
 using Gamelab.Map.Train.State;
+using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.PhysicalEntities.Stations;
 using Gamelab.Players;
 using Microsoft.Xna.Framework;
@@ -17,20 +17,20 @@ public class BuyableStationWrapper : AbstractPhysicalEntity, IInteractable, IGra
     public bool IsTooltipVisible => IsHighlighted;
     public string GetTooltipTitle() => $"Buy {StationKindId}";
     public string GetTooltipDescription() => $"{Cost} Gold";
-    public Color GetTooltipTextColor() => GamelabGame.Instance.Credits >= Cost ? Color.White : Color.Red;
+    public Color GetTooltipTextColor() => GamelabGame.Instance.CurrentRun.Credits >= Cost ? Color.White : Color.Red;
 
     public BuyableStationWrapper(string stationKindId, int cost, Vector2 position)
     {
         StationKindId = stationKindId;
         Cost = cost;
-        WrappedStation = StationYardFactory.CreateYardStation(StationKindId, position);
+        WrappedStation = StationFactory.CreateStation(StationKindId, position);
         PhysicsBody = WrappedStation.PhysicsBody;
         PhysicsBody.Tag = this;
     }
 
     public void OnInteract(Player interactingPlayer)
     {
-        if (GamelabGame.Instance.TrySpendCredits(Cost))
+        if (GamelabGame.Instance.CurrentRun.TrySpendCredits(Cost))
         {
             PhysicsBody.Tag = WrappedStation;
             gameplayContext.Map.MapObjects.Add(WrappedStation);

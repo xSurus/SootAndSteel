@@ -2,6 +2,7 @@ using System;
 using Gamelab.Assets;
 using Gamelab.Map.Train.State;
 using Gamelab.Particles;
+using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
 using Gamelab.Services.Vfx;
 using Gamelab.Utils;

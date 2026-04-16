@@ -5,18 +5,17 @@ using Gamelab.Assets;
 using Gamelab.Enemies;
 using Gamelab.Levels;
 using Gamelab.Map;
-using Gamelab.Map.Hub;
 using Gamelab.Map.Train;
 using Gamelab.Map.Train.State;
 using Gamelab.Particles;
 using Gamelab.PhysicalEntities.Projectiles;
 using Gamelab.Players;
 using Gamelab.Screens.Camera;
+using Gamelab.Serialization;
 using Gamelab.Services.Bullet;
 using Gamelab.Services.Sound;
 using Gamelab.Services.Vfx;
 using Gamelab.UI;
-using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended;
 using Myra.Graphics2D.UI;
@@ -46,7 +45,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     private ISoundService soundService;
     private EventInstance trainSound;
     private EventInstance ambientMusic;
-    
+
     private OrthographicCamera camera;
     private CameraDirector cameraDirector;
 
@@ -64,17 +63,17 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     {
         base.LoadContent();
         int playerCount = Math.Max(1, Game.playerManager.Configs.Count);
-        gameplayContext = new GameplayContext(virtualScreenSize);
+        gameplayContext = new GameplayContext(virtualScreenSize, Game.CurrentRun);
         Services.AddService(gameplayContext);
         gameplayContext.State.ConfigurePlayerScaling(playerCount);
-        runManager = new RunManager(Game.CurrentLevel, new ProgressiveRunLevelProvider(playerCount));
+        runManager = new RunManager(Game.CurrentRun, new ProgressiveRunLevelProvider(playerCount, Game.CurrentRun));
         runManager.OnIntermissionStarted += OnIntermissionStarted;
         currentLevelDef = runManager.CurrentLevelDefinition;
         levelStartDistance = 0f;
         trainMap = new TrainMap();
         gameplayContext.Map = trainMap;
         Services.GetService<IVfxService>().AddContinuous(ParticleFactory.CreateSnowstorm());
-        
+
         camera = new OrthographicCamera(viewportAdapter);
         cameraDirector = new CameraDirector(virtualScreenSize);
 
@@ -87,8 +86,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         trainSound?.Start();
         ambientMusic?.Start();
 
-        trainMap.AddDefaultStructures();
-        PrepTrainLayout.ApplyFromPendingOrDefault(Game, trainMap);
+        trainMap.LoadLayout(Game.CurrentRun.TrainLayout);
 
         worldScroller = new WorldScroller(GraphicsDevice);
         projectileManager = new ProjectileManager();
@@ -103,7 +101,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         {
             players.Add(new Player(trainMap.GetTileCenterPixels(playerConfig.PlayerIndex, 1), playerConfig));
         }
-        
+
         cameraDirector.Update(camera, 100f, players, trainMap.GetBounds());
 
         hud = new GameplayHud();
@@ -146,6 +144,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     {
         if (isFailureTriggered) return;
         isFailureTriggered = true;
+        SaveManager.DeleteSave();
         Game.SwitchToScreen(new FailScreen(Game));
     }
 
@@ -211,7 +210,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
 
         if (isEndOfLevelOutro && endLevelWhiteFilter.IsDone)
         {
-            Game.TrainLayoutSeedForHub = PrepTrainLayout.Capture(trainMap);
+            Game.CurrentRun.TrainLayout = trainMap.CaptureLayout();
             Game.SwitchToScreen(new PostLevelStatsScreen(Game));
         }
     }
@@ -265,11 +264,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     {
         trainSound?.Stop();
         gameplayContext.State.VictoryLapActive = true;
-        ScreenPayloads.LastPostLevelResults = new ScreenPayloads.PostLevelResults
-        {
-            CompletedLevelNumber = Game.CurrentLevel,
-            CoalRemaining = gameplayContext.State.CoalAmount
-        };
+        Game.CurrentRun.CoalRemaining = gameplayContext.State.CoalAmount;
         endLevelWhiteFilter.FadeIn(4f);
         phase = GameplayPhase.EndOfLevelOutro;
     }

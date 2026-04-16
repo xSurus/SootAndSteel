@@ -1,9 +1,6 @@
 using Gamelab.Map.Train.State;
-using Gamelab.PhysicalEntities;
-using Gamelab.PhysicalEntities.Stations;
-using Gamelab.PhysicalEntities.Stations.Cannon;
+using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.PhysicalEntities.Structures;
-using Gamelab.Players;
 using Microsoft.Xna.Framework;
 
 namespace Gamelab.Enemies;
@@ -16,7 +13,8 @@ public static class EnemyTargetingHelper
         return localWall?.Position ?? gameplayContext.Map.GetBounds().Center.ToVector2();
     }
 
-    private static ShootHoleWall GetNearestWallOnSide(GameplayContext gameplayContext, EnemySlotSide side, Vector2 enemyPosition)
+    private static ShootHoleWall GetNearestWallOnSide(GameplayContext gameplayContext, EnemySlotSide side,
+        Vector2 enemyPosition)
     {
         ShootHoleWall bestWall = null;
         float bestDistanceSquared = float.MaxValue;

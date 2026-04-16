@@ -1,13 +1,10 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using FontStashSharp.Rasterizers.StbTrueTypeSharp;
 using Gamelab.Assets;
-using Gamelab.Config;
-using Gamelab.Items;
 using Gamelab.Items.Bullets;
 using Gamelab.PhysicalEntities.Bullets.Components;
+using Gamelab.PhysicalEntities.Interfaces;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using nkast.Aether.Physics2D.Dynamics;
@@ -25,7 +22,7 @@ public class BulletEntity : AbstractPhysicalEntity
     public IBulletEmitter Owner { get; set; }
     public float Age { get; set; } = 0f;
     public World World { get; set; }
-    
+
     private float pierceCount;
 
     private Dictionary<IDamageable, float> hitCooldown = new();
@@ -54,14 +51,14 @@ public class BulletEntity : AbstractPhysicalEntity
             (int)Stats.Size,
             (int)Stats.Size
         );
-        
+
         spriteBatch.Draw(AssetManager.BlankTexture, destinationRectangle, Stats.Color);
     }
 
     public void OnCreate()
     {
         foreach (var effect in Effects) effect.OnCreate(this);
-        
+
         Debug.Assert(PhysicsBody != null, "PhysicsBody needs to be defined on create by one of the effects.");
 
         PhysicsBody.OnCollision += OnCollision;
@@ -80,11 +77,11 @@ public class BulletEntity : AbstractPhysicalEntity
             hitCooldown[hittable] -= deltaTime;
         hitCooldown = hitCooldown.Where(kvp => kvp.Value > 0).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
     }
-    
+
     public bool OnCollision(Fixture sender, Fixture other, Contact contact)
     {
-        if (IsActive 
-            && other.Body.Tag != PhysicsBody.Tag 
+        if (IsActive
+            && other.Body.Tag != PhysicsBody.Tag
             && other.Body.Tag is IDamageable hittable
             && !hitCooldown.ContainsKey(hittable)
             && hittable.OnHit(this))
@@ -92,7 +89,7 @@ public class BulletEntity : AbstractPhysicalEntity
             foreach (var effect in Effects) effect.OnHit(this, hittable);
             pierceCount++;
             hitCooldown[hittable] = 1.0f;
-            
+
             if (Stats.Pierce <= pierceCount)
             {
                 IsActive = false;

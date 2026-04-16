@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using Gamelab.PhysicalEntities;
+using Gamelab.PhysicalEntities.Interfaces;
 using Microsoft.Xna.Framework;
 using Myra.Graphics2D;
 using Myra.Graphics2D.Brushes;

@@ -1,4 +1,5 @@
 using System;
+using Gamelab.Serialization;
 
 namespace Gamelab.Map.Train.State;
 
@@ -35,13 +36,14 @@ public class TrainState
     /// When true (level complete outro), the train keeps moving but stations must not consume coal/fuel.
     /// </summary>
     public bool VictoryLapActive { get; set; }
+
     public float DistanceTraveled { get; private set; }
     public float MaintenanceScale { get; private set; } = 1f;
 
-    public TrainState()
+    public TrainState(RunSession session)
     {
         actualSpeed = currentSpeed.TargetSpeed;
-        CoalAmount = GamelabGame.Instance.GameplayConfig.TrainInitialCoalAmount;
+        CoalAmount = session.CoalRemaining;
         Temperature = GamelabGame.Instance.GameplayConfig.TrainMaxTemperature;
     }
 
@@ -59,10 +61,11 @@ public class TrainState
 
         if (numberBreachedWalls > 0)
         {
-            float temperatureDecrease = GamelabGame.Instance.GameplayConfig.TrainTemperatureDecreasePerSecondPerBreachedWall *
-                                        MaintenanceScale *
-                                        numberBreachedWalls *
-                                        deltaTime;
+            float temperatureDecrease =
+                GamelabGame.Instance.GameplayConfig.TrainTemperatureDecreasePerSecondPerBreachedWall *
+                MaintenanceScale *
+                numberBreachedWalls *
+                deltaTime;
             DecreaseTemperature(temperatureDecrease);
         }
 
@@ -75,7 +78,8 @@ public class TrainState
         }
         else if (numberBreachedWalls == 0)
         {
-            float temperatureIncrease = GamelabGame.Instance.GameplayConfig.TrainTemperatureIncreasePerSecond * deltaTime;
+            float temperatureIncrease =
+                GamelabGame.Instance.GameplayConfig.TrainTemperatureIncreasePerSecond * deltaTime;
             IncreaseTemperature(temperatureIncrease);
         }
 

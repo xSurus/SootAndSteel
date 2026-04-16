@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using nkast.Aether.Physics2D.Dynamics;
 
-namespace Gamelab.Map.Hub;
+namespace Gamelab.Map;
 
 public class HubMap : IDisposable
 {
@@ -93,4 +93,3 @@ public class HubMap : IDisposable
         bottomWall = null;
     }
 }
-

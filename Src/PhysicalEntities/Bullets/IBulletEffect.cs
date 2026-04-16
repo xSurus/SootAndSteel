@@ -1,10 +1,11 @@
+using Gamelab.PhysicalEntities.Interfaces;
 
 namespace Gamelab.PhysicalEntities.Bullets;
 
 public interface IBulletEffect
 {
     bool IsBasic { get; }
-    
+
     void OnCreate(BulletEntity bulletEntity);
     void OnSpawn(BulletEntity bulletEntity);
     void OnUpdate(BulletEntity bulletEntity, float deltaTime);

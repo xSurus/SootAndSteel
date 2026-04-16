@@ -1,4 +1,4 @@
-namespace Gamelab.PhysicalEntities;
+namespace Gamelab.PhysicalEntities.Interfaces;
 
 public interface IUpdatable
 {

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Gamelab.Map.Train.State;
+using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

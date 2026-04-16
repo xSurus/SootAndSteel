@@ -1,11 +1,6 @@
-namespace Gamelab.Map.Hub;
+namespace Gamelab.PhysicalEntities.Stations;
 
-/// <summary>
-/// Stable ids for prep/hub serialization (<see cref="PrepStationEntry"/>), <see cref="StationYardFactory"/>,
-/// and hub shop offers. Must stay aligned with each station's <c>Type</c> string where layout capture uses
-/// <c>Type</c> directly (non-resource stations).
-/// </summary>
-public static class YardStationKindIds
+public static class StationIds
 {
     public const string Cannon = "Cannon";
     public const string Workbench = "Workbench";

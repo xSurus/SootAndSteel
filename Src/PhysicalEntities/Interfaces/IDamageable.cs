@@ -1,7 +1,6 @@
 using Gamelab.PhysicalEntities.Bullets;
-using Gamelab.PhysicalEntities.Projectiles;
 
-namespace Gamelab.PhysicalEntities;
+namespace Gamelab.PhysicalEntities.Interfaces;
 
 public interface IDamageable
 {

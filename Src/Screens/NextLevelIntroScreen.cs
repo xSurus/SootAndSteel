@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using Gamelab.Assets;
 using Gamelab.Particles;
 using Gamelab.Services.Vfx;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using Myra.Graphics2D;
 using Myra.Graphics2D.Brushes;
 using Myra.Graphics2D.UI;
@@ -29,7 +25,7 @@ public class NextLevelIntroScreen(GamelabGame game) : AbstractGameScreen(game)
     {
         base.LoadContent();
 
-        int stageNumber = Game.CurrentLevel + 1;
+        int stageNumber = Game.CurrentRun.CurrentLevel + 1;
 
         var overlay = new Panel
         {
@@ -97,13 +93,16 @@ public class NextLevelIntroScreen(GamelabGame game) : AbstractGameScreen(game)
                     whiteToGameplay.FadeIn(0.8f);
                     phase = Phase.FadeOutToGameplay;
                 }
+
                 break;
             case Phase.FadeOutToGameplay:
                 if (whiteToGameplay.IsDone)
                 {
-                    Game.CurrentLevel++;
+                    Game.CurrentRun.CurrentLevel++;
+                    Game.CurrentRun.ResetCoalAmount();
                     Game.SwitchToScreen(new GameplayScreen(Game));
                 }
+
                 break;
         }
     }
@@ -151,4 +150,3 @@ public class NextLevelIntroScreen(GamelabGame game) : AbstractGameScreen(game)
         base.UnloadContent();
     }
 }
-
