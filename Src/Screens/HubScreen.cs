@@ -578,6 +578,8 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
 
         spriteBatch.Draw(AssetManager.GetNPCTexture("Vendor"), new Vector2(1040,580), null, Color.White,
                                 0f, Vector2.Zero, 0.3f, SpriteEffects.None, 0f);
+        spriteBatch.Draw(AssetManager.GetNPCTexture("Town1"), new Vector2(800,200), null, Color.White,
+                                0f, Vector2.Zero, 0.3f, SpriteEffects.None, 0f);
 
         if (phase is HubWorldPhase.Prep or HubWorldPhase.ScrollingToPrep or HubWorldPhase.ScrollingToHub)
             spriteBatch.Draw(AssetManager.BlankTexture, departMarker, Color.Lime * 0.18f);
