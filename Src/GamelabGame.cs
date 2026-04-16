@@ -17,6 +17,7 @@ using Gamelab.Services.Random;
 using Gamelab.Services.Sound;
 using Gamelab.Services.Vfx;
 using Gamelab.Systems;
+using Gamelab.UI;
 using Gamelab.Utils;
 using Gamelab.Utils.Logging;
 using Microsoft.Xna.Framework;
@@ -57,6 +58,7 @@ public class GamelabGame : Game
 
     public readonly JsonLoader jsonLoader;
     public GameplayConfig GameplayConfig { get; private set; } = new();
+    public TooltipRegistry TooltipRegistry { get; private set; } = new();
     public int CurrentLevel { get; set; } = 1;
 
     public int Credits { get; private set; }
@@ -249,6 +251,18 @@ public class GamelabGame : Game
         {
             GameplayConfig = new GameplayConfig();
             logger.Warning("Failed to load Data/gameplay.json, using defaults.");
+            logger.Exception("Gameplay config load error", ex);
+        }
+
+        try
+        {
+            TooltipRegistry.Load(jsonLoader);
+            logger.Info("Loaded tooltips from Data/tooltips.json");
+        }
+        catch (Exception ex)
+        {
+            GameplayConfig = new GameplayConfig();
+            logger.Warning("Failed to load Data/tooltips.json, using defaults.");
             logger.Exception("Gameplay config load error", ex);
         }
     }
