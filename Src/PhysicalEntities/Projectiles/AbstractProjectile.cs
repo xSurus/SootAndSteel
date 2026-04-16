@@ -1,5 +1,4 @@
 using Gamelab.Assets;
-using Gamelab.Entities;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -118,7 +117,7 @@ public abstract class AbstractProjectile : AbstractPhysicalEntity
 
         if (other.Body.Tag is IDamageable hittable)
         {
-            hittable.OnHit(this);
+            // hittable.OnHit(this);
         }
 
         return false;

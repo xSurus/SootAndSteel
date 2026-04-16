@@ -1,5 +1,4 @@
 using Gamelab.Assets;
-using Gamelab.Map.Train.State;
 using Gamelab.Particles.Modifiers;
 using Gamelab.Particles.Profiles;
 using Microsoft.Xna.Framework;
@@ -8,15 +7,17 @@ namespace Gamelab.Particles;
 
 public static class ParticleFactory
 {
-    public static ParticleEmitter CreateSnowstorm()
+    public static ParticleEmitter CreateSnowstorm(Point area = default)
     {
-        GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
+        if (area == default)
+            area = new Point(1920, 1080);
+
         var emitter = new ParticleEmitter(1000, AssetManager.SparkTexture)
         {
-            Position = new Vector2(gameplayContext.ScreenWidth / 2f, gameplayContext.ScreenHeight / 2f),
+            Position = new Vector2(area.X / 2f, area.Y / 2f),
             AutoTrigger = true,
             AutoTriggerFrequency = 0.05f,
-            Profile = new BoxProfile(gameplayContext.ScreenWidth * 1.5f, gameplayContext.ScreenHeight, Vector2.UnitY),
+            Profile = new BoxProfile(area.X * 1.5f, area.Y, Vector2.UnitY),
 
             Parameters = new ParticleReleaseParameters
             {
@@ -46,11 +47,11 @@ public static class ParticleFactory
             Profile = new CircleProfile(radius: 6f, onlyRing: false, radiateOutward: false),
             Parameters = new ParticleReleaseParameters
             {
-                MinQuantity = 1, MaxQuantity = 3,
+                MinQuantity = 0, MaxQuantity = 2,
                 MinSpeed = 0f, MaxSpeed = 0f,
-                MinAge = 0.4f, MaxAge = 0.8f,
-                MinSize = 0.5f, MaxSize = 1.0f,
-                Color = Color.Red
+                MinAge = 0.2f, MaxAge = 0.4f,
+                MinSize = 0.3f, MaxSize = 0.7f,
+                Color = Color.SlateGray
             }
         };
 

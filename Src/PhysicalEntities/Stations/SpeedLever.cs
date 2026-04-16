@@ -1,14 +1,25 @@
+using Gamelab.Enemies;
 using Gamelab.Map.Train.State;
+using Gamelab.PhysicalEntities;
+using Gamelab.PhysicalEntities.Bullets;
+using Gamelab.PhysicalEntities.Projectiles;
 using Gamelab.Players;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Gamelab.PhysicalEntities.Stations;
 
 public class SpeedLever(Vector2 position)
     : AbstractStation("SpeedLever", Color.LightGreen, position)
 {
+
     public override void OnInteract(Player interactingPlayer)
     {
+        if (gameplayContext.State.VictoryLapActive)
+        {
+            return;
+        }
+
         if (!gameplayContext.State.IsCoalOvenBurning)
         {
             gameplayContext.State.CurrentSpeed = TrainSpeedSetting.Stopped;

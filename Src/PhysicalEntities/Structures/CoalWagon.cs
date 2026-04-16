@@ -3,6 +3,7 @@ using Gamelab.Items;
 using Gamelab.Map.Train.State;
 using Gamelab.Players;
 using Gamelab.Utils;
+using Gamelab.Utils.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -13,6 +14,8 @@ public class CoalWagon : AbstractPhysicalEntity, IPickable
     private readonly GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
     private readonly float heightPixels;
     private readonly float widthPixels;
+
+    private static readonly Logger logger = new ("CoalWagon");
 
     public CoalWagon(Vector2 position)
     {
@@ -40,9 +43,20 @@ public class CoalWagon : AbstractPhysicalEntity, IPickable
     }
 
     public override void Draw(SpriteBatch spriteBatch)
-    {
-        Rectangle destRect = new Rectangle((int)(Position.X - widthPixels / 2f), (int)(Position.Y - heightPixels / 2f),
-            (int)widthPixels, (int)heightPixels);
-        spriteBatch.Draw(AssetManager.BlankTexture, destRect, Color.Black);
+    {   
+        
+        // logger.Info($"Drawing texture for Wagon");
+        int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
+        // float scale = tileSize / AssetManager.TileTexture.Width;
+
+        Vector2 drawPos = Position + new Vector2(- widthPixels / 2f + tileSize, - heightPixels / 2f - tileSize * 2.25f);
+        spriteBatch.Draw(AssetManager.GetStructureTexture("CoalWagon"), 
+                            drawPos, null, Color.White,
+                                0f,Vector2.Zero, 0.85f, SpriteEffects.None, 0f);
+
+
+        // Rectangle destRect = new Rectangle((int)(Position.X - widthPixels / 2f), (int)(Position.Y - heightPixels / 2f),
+        //     (int)widthPixels, (int)heightPixels);
+        // spriteBatch.Draw(AssetManager., destRect, Color.Black);
     }
 }

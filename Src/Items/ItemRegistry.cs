@@ -11,14 +11,7 @@ public static class ItemRegistry
     public static void Initialize()
     {
         Register(new ItemDefinition("Coal", Color.Black));
-        Register(new ItemDefinition("Copper", Color.Orange));
-        Register(new ItemDefinition("HammeredCopper", Color.DarkOrange));
-        Register(new ItemDefinition("Core", Color.Cyan));
-        Register(new ItemDefinition("CoredHammeredCopper", Color.DarkCyan));
-        Register(new ItemDefinition("Gunpowder", Color.DarkGray));
-
-        Register(new BulletDefinition("StandardBullet", Color.LightGray, damage: 50f));
-        Register(new BulletDefinition("HeavyBullet", Color.DimGray, damage: 100f));
+        Register(new ItemDefinition("Bullet", Color.LightGray));
     }
 
     private static void Register(ItemDefinition def)

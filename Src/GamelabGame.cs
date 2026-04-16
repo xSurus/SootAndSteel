@@ -1,12 +1,19 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using FmodForFoxes;
+using FmodForFoxes.Studio;
 using FontStashSharp;
 using Gamelab.Assets;
 using Gamelab.Config;
 using Gamelab.Items;
+using Gamelab.Items.Bullets;
+using Gamelab.Map.Hub;
 using Gamelab.Map.Train.State;
 using Gamelab.Players;
 using Gamelab.Screens;
+using Gamelab.Services.Bullet;
+using Gamelab.Services.Random;
 using Gamelab.Services.Sound;
 using Gamelab.Services.Vfx;
 using Gamelab.Systems;
@@ -17,8 +24,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
 using MonoGame.Extended.Screens;
 using Myra;
-using FmodForFoxes;
-using FmodForFoxes.Studio;
 
 namespace Gamelab;
 
@@ -54,17 +59,25 @@ public class GamelabGame : Game
     public GameplayConfig GameplayConfig { get; private set; } = new();
     public int CurrentLevel { get; set; } = 1;
 
+    public int Credits { get; private set; }
+
+    /// <summary>When set, next <see cref="Screens.GameplayScreen"/> builds the train from hub prep instead of the default loadout.</summary>
+    public List<PrepStationEntry>? PendingPrepTrainLayout { get; set; }
+
+    /// <summary>When set (after a level win), next <see cref="Screens.HubScreen"/> seeds prep with this layout from the last gameplay train.</summary>
+    public List<PrepStationEntry>? TrainLayoutSeedForHub { get; set; }
+
     public RunMode runMode { get; private set; }
     public bool IsDebug => runMode == RunMode.Debug;
     public bool IsRelease => runMode == RunMode.Release;
-    public bool IsDebugOverlayEnabled { get; private set; } = true;
+    public bool IsDebugOverlayEnabled { get; private set; }
 
     public float MusicVolume { get; private set; } = 0.3f;
     private AbstractGameScreen nextScreen;
     private string screenshotPath;
 
     public bool IsRunning => screenManager.ActiveScreen != null;
-    
+
     public readonly INativeFmodLibrary nativeFmodLibrary;
     public EventInstance menuStabInstance;
 
@@ -97,6 +110,13 @@ public class GamelabGame : Game
         Services.AddService<IVfxService>(vfxService);
         systemManager.Add(soundService);
         systemManager.Add(vfxService);
+
+        IGameSystem bulletService = new BulletService();
+        Services.AddService((IBulletService)bulletService);
+        systemManager.Add(bulletService);
+
+        IRandomService randomService = new RandomService();
+        Services.AddService(randomService);
     }
 
     protected override void Initialize()
@@ -132,6 +152,7 @@ public class GamelabGame : Game
         LoadGameplayConfig();
         PhysicsUtility.Initialize(GameplayConfig.PixelsPerMeter);
         ItemRegistry.Initialize();
+        ComponentRegistry.Initialize();
         systemManager.InitializeAll(this);
         AssetManager.LoadContent(graphics.GraphicsDevice);
         screenManager.ShowScreen(new JoinScreen(this));
@@ -235,6 +256,25 @@ public class GamelabGame : Game
     public void ToggleDebugOverlay()
     {
         IsDebugOverlayEnabled = !IsDebugOverlayEnabled;
+    }
+
+    public void AddCredits(int amount)
+    {
+        if (amount <= 0) return;
+        Credits += amount;
+    }
+
+    public bool TrySpendCredits(int amount)
+    {
+        if (amount <= 0 || Credits < amount) return false;
+        Credits -= amount;
+        return true;
+    }
+
+    /// <summary>Clears credits when starting a fresh run from the main menu.</summary>
+    public void ResetCredits()
+    {
+        Credits = 0;
     }
 
     protected override void Dispose(bool disposing)

@@ -11,6 +11,8 @@ public class TrainState
     private float AccelerationRate => GamelabGame.Instance.GameplayConfig.TrainAccelerationRate;
     public int numberBreachedWalls;
 
+    public int ActiveAnchorCount { get; private set; }
+
     public TrainSpeedSetting CurrentSpeed
     {
         get => currentSpeed;
@@ -27,9 +29,14 @@ public class TrainState
     public int CoalAmount { get; set; }
     public float Temperature { get; set; } = GamelabGame.Instance.GameplayConfig.TrainMaxTemperature;
     public bool IsCoalOvenBurning { get; set; } = true;
-    
-    public bool IsFrozen => Temperature <= 0;
+    public bool FuelBurningEnabled { get; set; } = true;
+
+    /// <summary>
+    /// When true (level complete outro), the train keeps moving but stations must not consume coal/fuel.
+    /// </summary>
+    public bool VictoryLapActive { get; set; }
     public float DistanceTraveled { get; private set; }
+    public float MaintenanceScale { get; private set; } = 1f;
 
     public TrainState()
     {
@@ -40,29 +47,54 @@ public class TrainState
 
     public void Update(float deltaTime)
     {
-        if (actualSpeed < currentSpeed.TargetSpeed)
+        float targetSpeed = GetAnchoredTargetSpeed();
+        if (actualSpeed < targetSpeed)
         {
-            actualSpeed = Math.Min(actualSpeed + AccelerationRate * deltaTime, currentSpeed.TargetSpeed);
+            actualSpeed = Math.Min(actualSpeed + AccelerationRate * deltaTime, targetSpeed);
         }
-        else if (actualSpeed > currentSpeed.TargetSpeed)
+        else if (actualSpeed > targetSpeed)
         {
-            actualSpeed = Math.Max(actualSpeed - AccelerationRate * deltaTime, currentSpeed.TargetSpeed);
+            actualSpeed = Math.Max(actualSpeed - AccelerationRate * deltaTime, targetSpeed);
         }
 
         if (numberBreachedWalls > 0)
         {
-            float temperatureDecrease =
-                GamelabGame.Instance.GameplayConfig.TrainTemperatureDecreasePerSecondPerBreachedWall * numberBreachedWalls * deltaTime;
+            float temperatureDecrease = GamelabGame.Instance.GameplayConfig.TrainTemperatureDecreasePerSecondPerBreachedWall *
+                                        MaintenanceScale *
+                                        numberBreachedWalls *
+                                        deltaTime;
             DecreaseTemperature(temperatureDecrease);
         }
 
-        if (IsCoalOvenBurning && numberBreachedWalls == 0)
+        if (!IsCoalOvenBurning)
+        {
+            float temperatureDecrease = GamelabGame.Instance.GameplayConfig.TrainTemperatureDecreasePerSecondEngineOff *
+                                        MaintenanceScale *
+                                        deltaTime;
+            DecreaseTemperature(temperatureDecrease);
+        }
+        else if (numberBreachedWalls == 0)
         {
             float temperatureIncrease = GamelabGame.Instance.GameplayConfig.TrainTemperatureIncreasePerSecond * deltaTime;
             IncreaseTemperature(temperatureIncrease);
         }
 
         DistanceTraveled += actualSpeed * deltaTime;
+    }
+
+    public void ConfigurePlayerScaling(int playerCount)
+    {
+        MaintenanceScale = GamelabGame.Instance.GameplayConfig.GetMaintenanceScaleForPlayerCount(playerCount);
+    }
+
+    public void AddAnchor()
+    {
+        ActiveAnchorCount++;
+    }
+
+    public void RemoveAnchor()
+    {
+        ActiveAnchorCount = Math.Max(0, ActiveAnchorCount - 1);
     }
 
     public void ConsumeCoal(int amount)
@@ -74,7 +106,7 @@ public class TrainState
     {
         CoalAmount += amount;
     }
-    
+
     public void DecreaseTemperature(float amount)
     {
         float newTemperature = Temperature - amount;
@@ -87,7 +119,7 @@ public class TrainState
             OnTrainFrozen?.Invoke();
         }
     }
-    
+
     public void IncreaseTemperature(float amount)
     {
         float newTemperature = Temperature + amount;
@@ -95,5 +127,19 @@ public class TrainState
             GamelabGame.Instance.GameplayConfig.TrainMaxTemperature,
             Math.Max(0, newTemperature)
         );
+    }
+
+    private float GetAnchoredTargetSpeed()
+    {
+        if (ActiveAnchorCount <= 0)
+        {
+            return currentSpeed.TargetSpeed;
+        }
+
+        float multiplierPerAnchor = GamelabGame.Instance.GameplayConfig.AnchorSpeedMultiplierPerActiveAnchor;
+        float minimumMultiplier = GamelabGame.Instance.GameplayConfig.AnchorMinimumSpeedMultiplier;
+        float multiplier = MathF.Pow(multiplierPerAnchor, ActiveAnchorCount);
+        multiplier = Math.Clamp(multiplier, minimumMultiplier, 1f);
+        return currentSpeed.TargetSpeed * multiplier;
     }
 }

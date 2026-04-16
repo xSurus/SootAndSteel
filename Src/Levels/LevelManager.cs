@@ -6,16 +6,18 @@ namespace Gamelab.Levels;
 public class LevelManager
 {
     private readonly LevelDefinition levelDefinition;
+    private readonly float levelStartDistance;
 
-    public LevelManager(LevelDefinition levelDefinition)
+    public LevelManager(LevelDefinition levelDefinition, float levelStartDistance)
     {
         this.levelDefinition = levelDefinition;
+        this.levelStartDistance = levelStartDistance;
     }
 
     public bool IsLevelComplete(GameplayContext gameplayContext, EnemyManager enemyManager)
     {
-        return gameplayContext.State.DistanceTraveled >= levelDefinition.LevelDistance &&
-               enemyManager.Enemies.Count == 0;
+        float distanceInCurrentLevel = gameplayContext.State.DistanceTraveled - levelStartDistance;
+        return distanceInCurrentLevel >= levelDefinition.LevelDistance &&
+               !enemyManager.HasActiveThreats;
     }
 }
-
