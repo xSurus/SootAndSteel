@@ -38,3 +38,6 @@
 
 #begin Data/levels/basic_easy_level.json
 /copy:Data/levels/basic_easy_level.json
+#begin Data/tooltips.json
+/copy:Data/tooltips.json
+

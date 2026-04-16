@@ -2,8 +2,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Gamelab.PhysicalEntities;
 using Microsoft.Xna.Framework;
-using Myra.Graphics2D.UI;
+using Myra.Graphics2D;
 using Myra.Graphics2D.Brushes;
+using Myra.Graphics2D.UI;
 
 namespace Gamelab.UI;
 
@@ -14,7 +15,7 @@ public class WorldUiManager(Desktop desktop, GamelabGame game)
     public void Update(IEnumerable<IPhysicalEntity> mapObjects, Matrix cameraMatrix)
     {
         var tooltipables = mapObjects.OfType<ITooltipable>().ToList();
-        var itemsToRemove = activeTooltips.Keys.Where(k => !k.IsActive || !tooltipables.Contains(k)).ToList();
+        var itemsToRemove = activeTooltips.Keys.Where(k => !tooltipables.Contains(k)).ToList();
         foreach (var item in itemsToRemove)
         {
             RemoveTooltip(item);
@@ -22,13 +23,13 @@ public class WorldUiManager(Desktop desktop, GamelabGame game)
 
         foreach (var item in tooltipables)
         {
-            if (!item.IsActive) continue;
             if (!activeTooltips.ContainsKey(item))
             {
                 CreateTooltip(item);
             }
 
-            UpdateTooltipPosition(item, cameraMatrix);
+            if (item.IsTooltipVisible) UpdateTooltipPosition(item, cameraMatrix);
+            activeTooltips[item].Visible = item.IsTooltipVisible;
         }
     }
 
@@ -39,14 +40,14 @@ public class WorldUiManager(Desktop desktop, GamelabGame game)
             Spacing = 2,
             HorizontalAlignment = HorizontalAlignment.Left,
             VerticalAlignment = VerticalAlignment.Top,
-            Background = new SolidBrush(new Color(0, 0, 0, 150)), 
-            Padding = new Myra.Graphics2D.Thickness(5)
+            Background = new SolidBrush(new Color(0, 0, 0, 150)),
+            Padding = new Thickness(5)
         };
 
         var titleLabel = new Label
         {
             Id = "Title",
-            Text = item.GetTitle(),
+            Text = item.GetTooltipTitle(),
             Font = game.fontSystem.GetFont(24),
             TextColor = Color.White
         };
@@ -54,9 +55,9 @@ public class WorldUiManager(Desktop desktop, GamelabGame game)
         var descLabel = new Label
         {
             Id = "Desc",
-            Text = item.GetDescription(),
+            Text = item.GetTooltipDescription(),
             Font = game.fontSystem.GetFont(24),
-            TextColor = item.GetTextColor()
+            TextColor = item.GetTooltipTextColor()
         };
 
         panel.Widgets.Add(titleLabel);
@@ -72,11 +73,20 @@ public class WorldUiManager(Desktop desktop, GamelabGame game)
         var descLabel = (Label)panel.FindChildById("Desc");
         if (descLabel != null)
         {
-            descLabel.Text = item.GetDescription();
-            descLabel.TextColor = item.GetTextColor();
+            descLabel.Text = item.GetTooltipDescription();
+            descLabel.TextColor = item.GetTooltipTextColor();
         }
 
-        Vector2 screenPos = Vector2.Transform(item.WorldPosition, cameraMatrix);
+        // myra needs to calculate the size of new UI panels after creation, so the first frame is not always where it should be
+        // we spawn it offscreen so this is not visble
+        if (panel.Bounds.Width == 0 || panel.Bounds.Height == 0)
+        {
+            panel.Left = -10000;
+            panel.Top = -10000;
+            return;
+        }
+
+        Vector2 screenPos = Vector2.Transform(item.Position, cameraMatrix);
 
         int tileSize = game.GameplayConfig.TrainTileSize;
         float liftAmount = 25f;
@@ -100,6 +110,7 @@ public class WorldUiManager(Desktop desktop, GamelabGame game)
         {
             desktop.Widgets.Remove(panel);
         }
+
         activeTooltips.Clear();
     }
 }

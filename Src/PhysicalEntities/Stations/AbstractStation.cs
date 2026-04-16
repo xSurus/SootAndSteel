@@ -8,9 +8,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Gamelab.PhysicalEntities.Stations;
 
-public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPickable, IUpdatable
+public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPickable, IUpdatable, ITooltipable
 {
-    private static readonly Logger logger = new ("Station");
+    private static readonly Logger logger = new("Station");
     public string Type { get; protected set; }
 
     // TODO swap to a texture instead of display color at some point
@@ -18,6 +18,19 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
     public Item HeldItem { get; set; }
     public Vector2 DrawPosition => Position - new Vector2(GamelabGame.Instance.GameplayConfig.TrainTileSize / 2f);
     protected override bool AllowPlayerRotation { get; } = false;
+    public virtual bool IsTooltipVisible => IsHighlighted && GamelabGame.Instance.TooltipRegistry.Get(Type) != null;
+
+    public virtual string GetTooltipTitle()
+    {
+        return GamelabGame.Instance.TooltipRegistry.Get(Type)?.Title ?? Type;
+    }
+
+    public virtual string GetTooltipDescription()
+    {
+        return GamelabGame.Instance.TooltipRegistry.Get(Type)?.Description ?? "";
+    }
+
+    public virtual Color GetTooltipTextColor() => Color.White;
 
     protected AbstractStation(string type, Color displayColor, Vector2 position)
     {
@@ -59,7 +72,8 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
         Texture2D tex = AssetManager.GetStationTexture(Type);
         // logger.Info($"Drawing '{Type}'");
 
-        if (tex == AssetManager.BlankTexture){
+        if (tex == AssetManager.BlankTexture)
+        {
             int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
             int drawSize = tileSize - 10;
 
@@ -79,15 +93,16 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
             );
 
             HeldItem?.Draw(spriteBatch, Position, tileSize / 2);
-        } else {
-            
+        }
+        else
+        {
             int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
             float originalSize = tex.Width;
             float scale = tileSize / originalSize;
 
             Vector2 drawingPos = Position + new Vector2(-tileSize * 0.5f, -tileSize * 1.5f);
             spriteBatch.Draw(tex, drawingPos, null, Color.White,
-                                    0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+                0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
         }
     }
 }
