@@ -1,6 +1,5 @@
 using Gamelab.Assets;
 using Gamelab.Items;
-using Gamelab.Map.Train.State;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
 using Gamelab.Utils;
@@ -12,7 +11,6 @@ namespace Gamelab.PhysicalEntities.Structures;
 
 public class CoalWagon : AbstractPhysicalEntity, IPickable
 {
-    private readonly GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
     private readonly float heightPixels;
     private readonly float widthPixels;
 

@@ -1,5 +1,4 @@
 using Gamelab.Assets;
-using Gamelab.Map.Train.State;
 using Gamelab.Particles;
 using Gamelab.PhysicalEntities;
 using Gamelab.PhysicalEntities.Bullets;
@@ -25,11 +24,9 @@ public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable, IBull
     public abstract Color EnemyColor { get; }
 
     protected float Size => GamelabGame.Instance.GameplayConfig.EnemySize;
-    protected readonly GameplayContext gameplayContext;
     protected readonly EnemyMovementController EnemyMovement;
 
     protected AbstractEnemy(
-        GameplayContext gameplayContext,
         EnemyDefinition definition,
         Vector2 spawnPosition,
         EnemyTrainSlot slot,
@@ -38,7 +35,6 @@ public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable, IBull
         Health = GamelabGame.Instance.GameplayConfig.EnemyHealth;
         Definition = definition;
         Slot = slot;
-        this.gameplayContext = gameplayContext;
         PhysicsBody = gameplayContext.PhysicsWorld.CreateCircle((Size / 2f).ToMeters(), 1f, spawnPosition.ToMeters(),
             BodyType.Dynamic);
         PhysicsBody.IgnoreGravity = true;
@@ -49,7 +45,7 @@ public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable, IBull
             fixture.IsSensor = true;
         }
 
-        EnemyMovement = new EnemyMovementController(PhysicsBody, gameplayContext, movementProfile);
+        EnemyMovement = new EnemyMovementController(PhysicsBody, movementProfile);
     }
 
     public virtual void Update(float deltaTime)

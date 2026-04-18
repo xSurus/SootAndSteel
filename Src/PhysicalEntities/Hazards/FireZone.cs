@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using Gamelab.Assets;
 using Gamelab.Enemies;
-using Gamelab.Map.Train.State;
 using Gamelab.Players;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
@@ -12,7 +11,6 @@ namespace Gamelab.PhysicalEntities.Hazards;
 
 public class FireZone : AbstractPhysicalEntity, IEnemyHazard
 {
-    private readonly GameplayContext gameplayContext;
     private readonly float radius;
     private readonly float durationSeconds;
     private readonly Dictionary<Player, float> exposureTimes = [];
@@ -21,14 +19,15 @@ public class FireZone : AbstractPhysicalEntity, IEnemyHazard
     public bool ShouldRemove { get; private set; }
     public bool CountsAsActiveThreat => false;
 
-    public FireZone(GameplayContext gameplayContext, Vector2 position, float radius, float durationSeconds)
+    public FireZone(Vector2 position, float radius, float durationSeconds)
     {
-        this.gameplayContext = gameplayContext;
         this.radius = radius;
         this.durationSeconds = durationSeconds;
         remainingTime = durationSeconds;
 
-        PhysicsBody = gameplayContext.PhysicsWorld.CreateCircle((radius / 2f).ToMeters(), 1f, position.ToMeters(), BodyType.Static);
+        PhysicsBody =
+            gameplayContext.PhysicsWorld.CreateCircle((radius / 2f).ToMeters(), 1f, position.ToMeters(),
+                BodyType.Static);
         foreach (var fixture in PhysicsBody.FixtureList)
         {
             fixture.IsSensor = true;

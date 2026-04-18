@@ -1,22 +1,20 @@
 using System;
-using Gamelab.Map.Train.State;
 using Microsoft.Xna.Framework;
 
 namespace Gamelab.Enemies;
 
 public static class EnemyFactory
 {
-    public static AbstractEnemy Create(GameplayContext gameplayContext, EnemyDefinition definition, Vector2 spawnPosition,
-        Random random, EnemyTrainSlot slot)
+    public static AbstractEnemy Create(EnemyDefinition definition, Vector2 spawnPosition, EnemyTrainSlot slot)
     {
         return definition.Type switch
         {
-            EnemyType.Mounter => new MounterEnemy(gameplayContext, spawnPosition, slot),
-            EnemyType.Rifle => new RifleEnemy(gameplayContext, spawnPosition, random, slot),
-            EnemyType.Shield => new ShieldEnemy(gameplayContext, spawnPosition, random, slot),
-            EnemyType.Anchor => new AnchorEnemy(gameplayContext, spawnPosition, slot),
-            EnemyType.Molotov => new MolotovEnemy(gameplayContext, spawnPosition, slot),
-            EnemyType.TarThrower => new TarThrowerEnemy(gameplayContext, spawnPosition, slot),
+            EnemyType.Mounter => new MounterEnemy(spawnPosition, slot),
+            EnemyType.Rifle => new RifleEnemy(spawnPosition, slot),
+            EnemyType.Shield => new ShieldEnemy(spawnPosition, slot),
+            EnemyType.Anchor => new AnchorEnemy(spawnPosition, slot),
+            EnemyType.Molotov => new MolotovEnemy(spawnPosition, slot),
+            EnemyType.TarThrower => new TarThrowerEnemy(spawnPosition, slot),
             _ => throw new ArgumentOutOfRangeException(nameof(definition), definition, "Unknown enemy definition.")
         };
     }

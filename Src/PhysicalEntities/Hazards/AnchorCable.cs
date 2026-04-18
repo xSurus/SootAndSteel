@@ -1,7 +1,6 @@
 using System;
 using Gamelab.Assets;
 using Gamelab.Enemies;
-using Gamelab.Map.Train.State;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
 using Gamelab.Utils;
@@ -13,7 +12,6 @@ namespace Gamelab.PhysicalEntities.Hazards;
 
 public class AnchorCable : AbstractPhysicalEntity, IEnemyHazard, IInteractable
 {
-    private readonly GameplayContext gameplayContext;
     private readonly EnemyTrainSlot slot;
     private readonly float distanceFromTrain;
     private readonly float cutDurationSeconds;
@@ -23,15 +21,14 @@ public class AnchorCable : AbstractPhysicalEntity, IEnemyHazard, IInteractable
     public bool ShouldRemove { get; private set; }
     public bool CountsAsActiveThreat => !ShouldRemove;
 
-    public AnchorCable(GameplayContext gameplayContext, EnemyTrainSlot slot, float distanceFromTrain,
+    public AnchorCable(EnemyTrainSlot slot, float distanceFromTrain,
         float cutDurationSeconds)
     {
-        this.gameplayContext = gameplayContext;
         this.slot = slot;
         this.distanceFromTrain = distanceFromTrain;
         this.cutDurationSeconds = cutDurationSeconds;
 
-        Vector2 anchorPosition = slot.GetAnchor(gameplayContext, distanceFromTrain);
+        Vector2 anchorPosition = slot.GetAnchor(distanceFromTrain);
         PhysicsBody =
             gameplayContext.PhysicsWorld.CreateRectangle(0.5f, 0.5f, 1f, anchorPosition.ToMeters(), 0f,
                 BodyType.Static);
@@ -45,7 +42,7 @@ public class AnchorCable : AbstractPhysicalEntity, IEnemyHazard, IInteractable
 
     public void Update(float dt)
     {
-        Position = slot.GetAnchor(gameplayContext, distanceFromTrain);
+        Position = slot.GetAnchor(distanceFromTrain);
     }
 
     public void OnInteract(Player interactingPlayer)

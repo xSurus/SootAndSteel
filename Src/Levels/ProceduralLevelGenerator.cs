@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Gamelab.Enemies;
-using Gamelab.Utils.Logging;    
+using Gamelab.Utils.Logging;
 
 namespace Gamelab.Levels;
 
@@ -11,7 +11,8 @@ public class ProceduralLevelGenerator(RunDifficultyConfig config)
     private readonly RunDifficultyConfig config = config ?? new RunDifficultyConfig();
     private readonly float threatScale = 1f;
     private readonly float spawnSpacingScale = 1f;
-    private readonly Logger logger = new("ProceduralLevelGenerator");   
+    private readonly Logger logger = new("ProceduralLevelGenerator");
+
     public ProceduralLevelGenerator(RunDifficultyConfig config, float threatScale, float spawnSpacingScale) :
         this(config)
     {
@@ -34,15 +35,16 @@ public class ProceduralLevelGenerator(RunDifficultyConfig config)
         floatBudget *= threatScale;
         int minCost = GetMinProceduralCost(currentLevel);
         int budget = Math.Max(minCost, (int)MathF.Round(floatBudget));
+        int levelSeed = unchecked(config.RandomSeed + currentLevel * 7919);
 
         var definition = new LevelDefinition
         {
-            LevelDistance = currentLevelDistance
+            LevelDistance = currentLevelDistance,
+            LevelSeed = levelSeed
         };
 
-        
-        var random = new Random(unchecked(config.RandomSeed + currentLevel * 7919));
 
+        Random random = new Random(levelSeed);
         float levelEndBuffer = MathF.Max(config.SafeZoneDistance, 200f);
         float maxSpawnDistance = MathF.Max(config.MinSpawnSpacing, currentLevelDistance - levelEndBuffer);
 
@@ -70,6 +72,7 @@ public class ProceduralLevelGenerator(RunDifficultyConfig config)
                 Side = random.NextSingle() < 0.5f ? "Top" : "Bottom"
             });
         }
+
         logger.Info($"Generated level definition: {definition}");
         return definition;
     }
@@ -112,7 +115,7 @@ public class ProceduralLevelGenerator(RunDifficultyConfig config)
                 return type;
             }
         }
-    
+
         return affordableTypes[^1];
     }
 
@@ -123,6 +126,7 @@ public class ProceduralLevelGenerator(RunDifficultyConfig config)
         {
             minCost = Math.Min(minCost, EnemyCatalog.GetCost(config, type));
         }
+
         return minCost == int.MaxValue ? 0 : minCost;
     }
 }

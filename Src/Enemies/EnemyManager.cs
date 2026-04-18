@@ -11,7 +11,7 @@ namespace Gamelab.Enemies;
 public class EnemyManager
 {
     private readonly List<AbstractEnemy> enemies = [];
-    private readonly Random random = Random.Shared;
+    private Random random;
     private readonly EnemySlotManager slotManager;
     private readonly EnemyHazardManager hazardManager = new();
     private LevelDefinition levelDefinition;
@@ -38,6 +38,7 @@ public class EnemyManager
         levelDefinition = levelDef;
         slotManager = new EnemySlotManager();
         levelStartDistance = gameplayContext.State.DistanceTraveled;
+        random = new Random(levelDef.LevelSeed);
     }
 
     public void SetLevel(LevelDefinition levelDef)
@@ -74,7 +75,7 @@ public class EnemyManager
             AbstractEnemy enemy = enemies[i];
             enemy.Update(deltaTime);
             enemy.TryShoot();
-            
+
             IEnemyHazard hazard = enemy.TryCreateHazard();
             if (hazard != null)
             {
@@ -127,7 +128,7 @@ public class EnemyManager
         Vector2 spawnPosition = GetSpawnPosition(definition.Type, slot);
         try
         {
-            AbstractEnemy enemy = EnemyFactory.Create(gameplayContext, definition, spawnPosition, random, slot);
+            AbstractEnemy enemy = EnemyFactory.Create(definition, spawnPosition, slot);
             enemies.Add(enemy);
         }
         catch (NotSupportedException)
@@ -162,7 +163,7 @@ public class EnemyManager
     private Vector2 GetSideAttackSpawnPosition(EnemyTrainSlot slot)
     {
         float spawnX = gameplayContext.ScreenWidth + EnemySpawnOffsetX;
-        Vector2 anchor = slot.GetAnchor(gameplayContext, EnemySize + RiflePreferredDistance);
+        Vector2 anchor = slot.GetAnchor(EnemySize + RiflePreferredDistance);
         return new Vector2(spawnX, anchor.Y);
     }
 

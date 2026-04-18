@@ -5,9 +5,10 @@ using nkast.Aether.Physics2D.Dynamics;
 
 namespace Gamelab.Enemies;
 
-public class EnemyMovementController(Body physicsBody, GameplayContext gameplayContext, EnemyMovementProfile profile)
+public class EnemyMovementController(Body physicsBody, EnemyMovementProfile profile)
 {
     public EnemyMovementProfile Profile { get; } = profile;
+    protected readonly GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
 
     public void UpdateTowardPoint(Vector2 targetPosition, float deltaTime, bool includeTrainDrift = true)
     {
@@ -32,7 +33,8 @@ public class EnemyMovementController(Body physicsBody, GameplayContext gameplayC
         UpdateTowardDirection(direction, desiredSpeed, deltaTime, includeTrainDrift);
     }
 
-    public void UpdateTowardDirection(Vector2 direction, float desiredSpeed, float deltaTime, bool includeTrainDrift = true)
+    public void UpdateTowardDirection(Vector2 direction, float desiredSpeed, float deltaTime,
+        bool includeTrainDrift = true)
     {
         if (direction == Vector2.Zero || desiredSpeed <= 0f)
         {

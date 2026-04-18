@@ -1,7 +1,6 @@
 using System;
 using Gamelab.Assets;
 using Gamelab.Enemies;
-using Gamelab.Map.Train.State;
 using Gamelab.PhysicalEntities.Bullets;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
@@ -19,7 +18,6 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
     private float HealthRestoredPerSecond => GamelabGame.Instance.GameplayConfig.WallHealthRestoredPerSecond;
     public float CurrentHealth { get; private set; }
     public bool IsBroken => CurrentHealth <= 0f;
-    private readonly GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
     private readonly Vector2 dimensionsPixels;
     private bool isTop;
 

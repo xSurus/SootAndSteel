@@ -13,8 +13,9 @@ public readonly struct EnemyTrainSlot(EnemySlotSide side, float positionRatio)
 {
     public EnemySlotSide Side { get; } = side;
     public float PositionRatio { get; } = positionRatio;
+    private readonly GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
 
-    public Vector2 GetAnchor(GameplayContext gameplayContext, float distanceFromTrain)
+    public Vector2 GetAnchor(float distanceFromTrain)
     {
         return Side switch
         {
@@ -26,7 +27,8 @@ public readonly struct EnemyTrainSlot(EnemySlotSide side, float positionRatio)
                 gameplayContext.Map.GetBounds().Left + gameplayContext.Map.GetBounds().Width * PositionRatio,
                 gameplayContext.Map.GetBounds().Bottom + distanceFromTrain
             ),
-            _ => new Vector2(gameplayContext.Map.GetBounds().Right + distanceFromTrain, gameplayContext.Map.GetBounds().Center.Y)
+            _ => new Vector2(gameplayContext.Map.GetBounds().Right + distanceFromTrain,
+                gameplayContext.Map.GetBounds().Center.Y)
         };
     }
 }

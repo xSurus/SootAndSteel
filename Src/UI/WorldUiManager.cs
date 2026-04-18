@@ -104,6 +104,14 @@ public class WorldUiManager(Desktop desktop, GamelabGame game)
         }
     }
 
+    public void SetAllVisible(bool isVisible)
+    {
+        foreach (var panel in activeTooltips.Values)
+        {
+            panel.Visible = isVisible;
+        }
+    }
+
     public void ClearAll()
     {
         foreach (var panel in activeTooltips.Values)

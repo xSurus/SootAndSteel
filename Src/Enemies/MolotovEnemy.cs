@@ -1,4 +1,3 @@
-using Gamelab.Map.Train.State;
 using Gamelab.PhysicalEntities.Projectiles;
 using Microsoft.Xna.Framework;
 
@@ -11,7 +10,11 @@ public enum MolotovState
     Recovering
 }
 
-public class MolotovEnemy : AbstractEnemy
+public class MolotovEnemy(Vector2 spawnPosition, EnemyTrainSlot slot) : AbstractEnemy(
+    new EnemyDefinition(EnemyType.Molotov),
+    spawnPosition,
+    slot,
+    EnemyMovementProfile.CreateDefault(GamelabGame.Instance.GameplayConfig.MolotovMaxSpeed))
 {
     public override Color EnemyColor => currentState switch
     {
@@ -34,21 +37,11 @@ public class MolotovEnemy : AbstractEnemy
     private float stateTimer;
     private MolotovProjectile pendingProjectile;
 
-    public MolotovEnemy(GameplayContext gameplayContext, Vector2 spawnPosition, EnemyTrainSlot slot)
-        : base(
-            gameplayContext,
-            new EnemyDefinition(EnemyType.Molotov),
-            spawnPosition,
-            slot,
-            EnemyMovementProfile.CreateDefault(GamelabGame.Instance.GameplayConfig.MolotovMaxSpeed))
-    {
-    }
-
     public override void Update(float deltaTime)
     {
         base.Update(deltaTime);
 
-        Vector2 slotAnchor = Slot.GetAnchor(gameplayContext, Size + PreferredDistance);
+        Vector2 slotAnchor = Slot.GetAnchor(Size + PreferredDistance);
         Vector2 approachAnchor = GetApproachAnchor(slotAnchor);
 
         switch (currentState)
@@ -60,6 +53,7 @@ public class MolotovEnemy : AbstractEnemy
                     currentState = MolotovState.AimingThrow;
                     stateTimer = AimDurationSeconds;
                 }
+
                 break;
 
             case MolotovState.AimingThrow:
@@ -71,6 +65,7 @@ public class MolotovEnemy : AbstractEnemy
                     currentState = MolotovState.Recovering;
                     stateTimer = RecoverDurationSeconds;
                 }
+
                 break;
 
             case MolotovState.Recovering:
@@ -81,6 +76,7 @@ public class MolotovEnemy : AbstractEnemy
                     currentState = MolotovState.AimingThrow;
                     stateTimer = AimDurationSeconds;
                 }
+
                 break;
         }
     }
@@ -107,7 +103,6 @@ public class MolotovEnemy : AbstractEnemy
         }
 
         return new MolotovProjectile(
-            gameplayContext,
             Position,
             direction * ProjectileSpeed,
             ProjectileLifetime,

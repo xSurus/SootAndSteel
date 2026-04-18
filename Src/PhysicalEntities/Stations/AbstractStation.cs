@@ -1,5 +1,6 @@
 using Gamelab.Assets;
 using Gamelab.Items;
+using Gamelab.PhysicalEntities.Configurable;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
 using Gamelab.Utils;
@@ -12,6 +13,8 @@ namespace Gamelab.PhysicalEntities.Stations;
 public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPickable, IUpdatable, ITooltipable
 {
     private static readonly Logger logger = new("Station");
+    protected StationConfig StationConfig => GamelabGame.Instance.ConfigurableStationRegistry.Get(Type);
+
     public string Type { get; protected set; }
 
     // TODO swap to a texture instead of display color at some point
@@ -19,16 +22,16 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
     public Item HeldItem { get; set; }
     public Vector2 DrawPosition => Position - new Vector2(GamelabGame.Instance.GameplayConfig.TrainTileSize / 2f);
     protected override bool AllowPlayerRotation { get; } = false;
-    public virtual bool IsTooltipVisible => IsHighlighted && GamelabGame.Instance.TooltipRegistry.Get(Type) != null;
+    public virtual bool IsTooltipVisible => IsHighlighted && StationConfig != null;
 
     public virtual string GetTooltipTitle()
     {
-        return GamelabGame.Instance.TooltipRegistry.Get(Type)?.Title ?? Type;
+        return StationConfig?.Title ?? Type;
     }
 
     public virtual string GetTooltipDescription()
     {
-        return GamelabGame.Instance.TooltipRegistry.Get(Type)?.Description ?? "";
+        return StationConfig?.Description ?? "";
     }
 
     public virtual Color GetTooltipTextColor() => Color.White;

@@ -1,4 +1,3 @@
-using Gamelab.Map.Train.State;
 using Gamelab.PhysicalEntities.Hazards;
 using Microsoft.Xna.Framework;
 
@@ -11,7 +10,11 @@ public enum AnchorState
     Retreating
 }
 
-public class AnchorEnemy : AbstractEnemy
+public class AnchorEnemy(Vector2 spawnPosition, EnemyTrainSlot slot) : AbstractEnemy(
+    new EnemyDefinition(EnemyType.Anchor),
+    spawnPosition,
+    slot,
+    EnemyMovementProfile.CreateDefault(GamelabGame.Instance.GameplayConfig.AnchorMaxSpeed))
 {
     public override Color EnemyColor => currentState switch
     {
@@ -30,21 +33,11 @@ public class AnchorEnemy : AbstractEnemy
     private float stateTimer;
     private AnchorCable pendingCable;
 
-    public AnchorEnemy(GameplayContext gameplayContext, Vector2 spawnPosition, EnemyTrainSlot slot)
-        : base(
-            gameplayContext,
-            new EnemyDefinition(EnemyType.Anchor),
-            spawnPosition,
-            slot,
-            EnemyMovementProfile.CreateDefault(GamelabGame.Instance.GameplayConfig.AnchorMaxSpeed))
-    {
-    }
-
     public override void Update(float deltaTime)
     {
         base.Update(deltaTime);
 
-        Vector2 deployAnchor = Slot.GetAnchor(gameplayContext, Size + PreferredDistance);
+        Vector2 deployAnchor = Slot.GetAnchor(Size + PreferredDistance);
         Vector2 approachAnchor = GetApproachAnchor(deployAnchor);
 
         switch (currentState)
@@ -56,6 +49,7 @@ public class AnchorEnemy : AbstractEnemy
                     currentState = AnchorState.Deploying;
                     stateTimer = 0f;
                 }
+
                 break;
 
             case AnchorState.Deploying:
@@ -63,9 +57,10 @@ public class AnchorEnemy : AbstractEnemy
                 stateTimer += deltaTime;
                 if (stateTimer >= DeployDurationSeconds && pendingCable == null)
                 {
-                    pendingCable = new AnchorCable(gameplayContext, Slot, Size + 10f, CutDurationSeconds);
+                    pendingCable = new AnchorCable(Slot, Size + 10f, CutDurationSeconds);
                     currentState = AnchorState.Retreating;
                 }
+
                 break;
 
             case AnchorState.Retreating:
@@ -76,6 +71,7 @@ public class AnchorEnemy : AbstractEnemy
                 {
                     ShouldRemove = true;
                 }
+
                 break;
         }
     }

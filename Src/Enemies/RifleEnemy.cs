@@ -1,10 +1,5 @@
 using System;
-using Gamelab.Config;
 using Gamelab.Items.Bullets;
-using Gamelab.Map.Train.State;
-using Gamelab.PhysicalEntities.Bullets.Components.Casings;
-using Gamelab.PhysicalEntities.Bullets.Components.Projectiles;
-using Gamelab.PhysicalEntities.Bullets.Components.Propellants;
 using Gamelab.Services.Bullet;
 using Microsoft.Xna.Framework;
 
@@ -19,24 +14,20 @@ public enum RifleState
 public class RifleEnemy : AbstractEnemy
 {
     public override Color EnemyColor => Color.Red;
-
     private float ShootCooldown => GamelabGame.Instance.GameplayConfig.EnemyShootCooldown;
     private float PreferredDistance => GamelabGame.Instance.GameplayConfig.RiflePreferredDistance;
     private float EnemyShootSpread => GamelabGame.Instance.GameplayConfig.EnemyShootSpread;
 
-    private readonly Random random;
+    private readonly Random random = Random.Shared;
     private float timeSinceLastShot;
     private RifleState currentState = RifleState.ApproachingSideAttackSlot;
 
-    public RifleEnemy(GameplayContext gameplayContext, Vector2 spawnPosition, Random random, EnemyTrainSlot slot)
-        : base(
-            gameplayContext,
-            new EnemyDefinition(EnemyType.Rifle),
+    public RifleEnemy(Vector2 spawnPosition, EnemyTrainSlot slot)
+        : base(new EnemyDefinition(EnemyType.Rifle),
             spawnPosition,
             slot,
             EnemyMovementProfile.CreateDefault(GamelabGame.Instance.GameplayConfig.RifleMaxSpeed))
     {
-        this.random = random;
         timeSinceLastShot = random.NextSingle() * ShootCooldown;
     }
 
@@ -44,7 +35,7 @@ public class RifleEnemy : AbstractEnemy
     {
         base.Update(deltaTime);
 
-        Vector2 slotAnchor = Slot.GetAnchor(gameplayContext, Size + PreferredDistance);
+        Vector2 slotAnchor = Slot.GetAnchor(Size + PreferredDistance);
         Vector2 approachAnchor = GetApproachAnchor(slotAnchor);
 
         switch (currentState)
@@ -55,6 +46,7 @@ public class RifleEnemy : AbstractEnemy
                 {
                     currentState = RifleState.HoldingSideAttackSlot;
                 }
+
                 break;
 
             case RifleState.HoldingSideAttackSlot:
@@ -64,10 +56,11 @@ public class RifleEnemy : AbstractEnemy
 
         timeSinceLastShot += deltaTime;
     }
-    
+
     public override void TryShoot()
     {
-        if (currentState == RifleState.ApproachingSideAttackSlot || timeSinceLastShot < ShootCooldown || !IsAlive || ShouldRemove)
+        if (currentState == RifleState.ApproachingSideAttackSlot || timeSinceLastShot < ShootCooldown || !IsAlive ||
+            ShouldRemove)
         {
             return;
         }
@@ -84,7 +77,7 @@ public class RifleEnemy : AbstractEnemy
         float spread = (random.NextSingle() - 0.5f) * EnemyShootSpread;
         float angle = (float)Math.Atan2(direction.Y, direction.X) + spread;
         direction = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
-        
+
         BulletItem ammo = new BulletItem("BasicProjectile", "BasicCasing", "BasicPropellant", "EnemyProjectile");
         GamelabGame.Instance.Services.GetService<IBulletService>().EmitBullet(
             ammo,

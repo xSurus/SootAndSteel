@@ -1,4 +1,3 @@
-using Gamelab.Map.Train.State;
 using Gamelab.PhysicalEntities.Projectiles;
 using Microsoft.Xna.Framework;
 
@@ -11,7 +10,11 @@ public enum TarThrowerState
     Recovering
 }
 
-public class TarThrowerEnemy : AbstractEnemy
+public class TarThrowerEnemy(Vector2 spawnPosition, EnemyTrainSlot slot) : AbstractEnemy(
+    new EnemyDefinition(EnemyType.TarThrower),
+    spawnPosition,
+    slot,
+    EnemyMovementProfile.CreateDefault(GamelabGame.Instance.GameplayConfig.TarThrowerMaxSpeed))
 {
     public override Color EnemyColor => currentState switch
     {
@@ -33,21 +36,11 @@ public class TarThrowerEnemy : AbstractEnemy
     private float stateTimer;
     private TarProjectile pendingProjectile;
 
-    public TarThrowerEnemy(GameplayContext gameplayContext, Vector2 spawnPosition, EnemyTrainSlot slot)
-        : base(
-            gameplayContext,
-            new EnemyDefinition(EnemyType.TarThrower),
-            spawnPosition,
-            slot,
-            EnemyMovementProfile.CreateDefault(GamelabGame.Instance.GameplayConfig.TarThrowerMaxSpeed))
-    {
-    }
-
     public override void Update(float deltaTime)
     {
         base.Update(deltaTime);
 
-        Vector2 slotAnchor = Slot.GetAnchor(gameplayContext, Size + PreferredDistance);
+        Vector2 slotAnchor = Slot.GetAnchor(Size + PreferredDistance);
         Vector2 approachAnchor = GetApproachAnchor(slotAnchor);
 
         switch (currentState)
@@ -59,6 +52,7 @@ public class TarThrowerEnemy : AbstractEnemy
                     currentState = TarThrowerState.AimingThrow;
                     stateTimer = AimDurationSeconds;
                 }
+
                 break;
 
             case TarThrowerState.AimingThrow:
@@ -70,6 +64,7 @@ public class TarThrowerEnemy : AbstractEnemy
                     currentState = TarThrowerState.Recovering;
                     stateTimer = RecoverDurationSeconds;
                 }
+
                 break;
 
             case TarThrowerState.Recovering:
@@ -80,6 +75,7 @@ public class TarThrowerEnemy : AbstractEnemy
                     currentState = TarThrowerState.AimingThrow;
                     stateTimer = AimDurationSeconds;
                 }
+
                 break;
         }
     }

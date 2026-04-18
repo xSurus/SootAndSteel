@@ -8,6 +8,7 @@ using Gamelab.Config;
 using Gamelab.Items;
 using Gamelab.Items.Bullets;
 using Gamelab.Map.Train.State;
+using Gamelab.PhysicalEntities.Configurable;
 using Gamelab.Players;
 using Gamelab.Screens;
 using Gamelab.Serialization;
@@ -16,7 +17,6 @@ using Gamelab.Services.Random;
 using Gamelab.Services.Sound;
 using Gamelab.Services.Vfx;
 using Gamelab.Systems;
-using Gamelab.UI;
 using Gamelab.Utils;
 using Gamelab.Utils.Logging;
 using Microsoft.Xna.Framework;
@@ -57,7 +57,7 @@ public class GamelabGame : Game
 
     public readonly JsonLoader jsonLoader;
     public GameplayConfig GameplayConfig { get; private set; } = new();
-    public TooltipRegistry TooltipRegistry { get; private set; } = new();
+    public ConfigurableStationRegistry ConfigurableStationRegistry { get; private set; } = new();
     public RunSession CurrentRun { get; set; }
 
     public RunMode runMode { get; private set; }
@@ -248,14 +248,12 @@ public class GamelabGame : Game
 
         try
         {
-            TooltipRegistry.Load(jsonLoader);
-            logger.Info("Loaded tooltips from Data/tooltips.json");
+            ConfigurableStationRegistry.Load(jsonLoader);
+            logger.Info("Loaded config from Data/configurableEntities.json");
         }
         catch (Exception ex)
         {
-            GameplayConfig = new GameplayConfig();
-            logger.Warning("Failed to load Data/tooltips.json, using defaults.");
-            logger.Exception("Gameplay config load error", ex);
+            logger.Exception("Failed to load Data/configurableEntities.json", ex);
         }
     }
 

@@ -1,4 +1,4 @@
-using Gamelab.Map.Train.State;
+using System;
 using Microsoft.Xna.Framework;
 
 namespace Gamelab.Enemies;
@@ -11,7 +11,13 @@ public enum MounterState
     Escaping
 }
 
-public class MounterEnemy : AbstractEnemy
+public class MounterEnemy(Vector2 spawnPosition, EnemyTrainSlot slot) : AbstractEnemy(
+    new EnemyDefinition(EnemyType.Mounter),
+    spawnPosition,
+    slot,
+    EnemyMovementProfile.CreateDefault(Math.Max(
+        GamelabGame.Instance.GameplayConfig.MounterApproachSpeed,
+        GamelabGame.Instance.GameplayConfig.MounterFleeSpeed)))
 {
     public override Color EnemyColor => currentState switch
     {
@@ -31,18 +37,6 @@ public class MounterEnemy : AbstractEnemy
     private MounterState currentState = MounterState.Approaching;
     private float stateTimer;
     private bool hasStolen;
-
-    public MounterEnemy(GameplayContext gameplayContext, Vector2 spawnPosition, EnemyTrainSlot slot)
-        : base(
-            gameplayContext,
-            new EnemyDefinition(EnemyType.Mounter),
-            spawnPosition,
-            slot,
-            EnemyMovementProfile.CreateDefault(System.Math.Max(
-                GamelabGame.Instance.GameplayConfig.MounterApproachSpeed,
-                GamelabGame.Instance.GameplayConfig.MounterFleeSpeed)))
-    {
-    }
 
     public override void Update(float deltaTime)
     {
@@ -98,7 +92,7 @@ public class MounterEnemy : AbstractEnemy
         {
             if (gameplayContext.State.CoalAmount > 0)
             {
-                int stolen = System.Math.Min(CoalToSteal, gameplayContext.State.CoalAmount);
+                int stolen = Math.Min(CoalToSteal, gameplayContext.State.CoalAmount);
                 gameplayContext.State.ConsumeCoal(stolen);
             }
 
@@ -124,6 +118,6 @@ public class MounterEnemy : AbstractEnemy
     private Vector2 GetTargetPosition()
     {
         float margin = Size / 2f + 10f;
-        return Slot.GetAnchor(gameplayContext, margin);
+        return Slot.GetAnchor(margin);
     }
 }
