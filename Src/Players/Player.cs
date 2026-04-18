@@ -2,7 +2,6 @@ using System;
 using Gamelab.Assets;
 using Gamelab.Enemies;
 using Gamelab.Items;
-using Gamelab.Map.Train.State;
 using Gamelab.PhysicalEntities;
 using Gamelab.PhysicalEntities.Bullets;
 using Gamelab.PhysicalEntities.Interfaces;
@@ -41,7 +40,6 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
     private float Radius => GamelabGame.Instance.GameplayConfig.PlayerRadiusPixels;
     private float Density => GamelabGame.Instance.GameplayConfig.PlayerDensity;
     private float LinearDampening => GamelabGame.Instance.GameplayConfig.PlayerLinearDamping;
-    private readonly GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
 
     private float stunTimer;
     private bool revivedThisFrame;

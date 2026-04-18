@@ -13,7 +13,6 @@ namespace Gamelab.PhysicalEntities.Structures;
 
 public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
 {
-    private readonly GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
     private readonly float maxFuel;
     private float currentFuel;
     private float BurnRate => GamelabGame.Instance.GameplayConfig.CoalOvenBurnRate;

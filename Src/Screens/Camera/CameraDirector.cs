@@ -12,6 +12,17 @@ public class CameraDirector(Point virtualScreenSize)
     private float LerpSpeed => GamelabGame.Instance.GameplayConfig.CameraLerpFactor;
     private float Padding => GamelabGame.Instance.GameplayConfig.TrainTileSize;
 
+    private float screenShakeTimer;
+    private float screenShakeIntensity;
+    public Vector2 ShakeOffset { get; private set; }
+    private readonly Random random = Random.Shared;
+
+    public void TriggerShake(float intensity, float duration)
+    {
+        screenShakeIntensity = intensity;
+        screenShakeTimer = duration;
+    }
+
     public void Update(OrthographicCamera camera, float dt, List<Player> players, Rectangle baseWindow)
     {
         if (players.Count == 0) return;
@@ -60,9 +71,28 @@ public class CameraDirector(Point virtualScreenSize)
         }
 
         float lerpFactor = 1f - MathF.Exp(-LerpSpeed * dt);
-        Vector2 currentCenter = camera.Position + camera.Origin;
-        Vector2 newCenter = Vector2.Lerp(currentCenter, targetPosition, lerpFactor);
-        camera.Position = newCenter - camera.Origin;
+        Vector2 trueCurrentCenter = camera.Position + camera.Origin - ShakeOffset;
+        Vector2 trueNewCenter = Vector2.Lerp(trueCurrentCenter, targetPosition, lerpFactor);
+        UpdateScreenShake(dt);
+        camera.Position = trueNewCenter - camera.Origin + ShakeOffset;
         camera.Zoom = MathHelper.Lerp(camera.Zoom, targetZoom, lerpFactor);
+    }
+
+    private void UpdateScreenShake(float dt)
+    {
+        if (screenShakeTimer <= 0)
+        {
+            ShakeOffset = Vector2.Zero;
+            screenShakeIntensity = 0;
+            return;
+        }
+
+        screenShakeTimer -= dt;
+        ShakeOffset = new Vector2(
+            (float)(random.NextDouble() * 2 - 1) * screenShakeIntensity,
+            (float)(random.NextDouble() * 2 - 1) * screenShakeIntensity
+        );
+
+        screenShakeIntensity *= 1f - GamelabGame.Instance.GameplayConfig.ScreenShakeDecay * dt;
     }
 }

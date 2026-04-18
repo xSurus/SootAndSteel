@@ -1,5 +1,5 @@
 using Gamelab.Assets;
-using Gamelab.Map.Train.State;
+using Gamelab.PhysicalEntities.Configurable;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.PhysicalEntities.Stations;
 using Gamelab.Players;
@@ -10,19 +10,29 @@ namespace Gamelab.PhysicalEntities.Structures;
 
 public class BuyableStationWrapper : AbstractPhysicalEntity, IInteractable, IGrabbable, ITooltipable
 {
-    private readonly GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
+    protected StationConfig WrappedStationConfig => GamelabGame.Instance.ConfigurableStationRegistry.Get(StationKindId);
     public string StationKindId { get; }
     private int Cost { get; }
     private AbstractStation WrappedStation { get; set; }
     public bool IsTooltipVisible => IsHighlighted;
-    public string GetTooltipTitle() => $"Buy {StationKindId}";
-    public string GetTooltipDescription() => $"{Cost} Gold";
+
+    public string GetTooltipTitle()
+    {
+        return WrappedStationConfig != null ? $"Buy {WrappedStationConfig.Title}" : $"Buy {StationKindId}";
+    }
+
+    public string GetTooltipDescription()
+    {
+        return $"{Cost} Credits\n{(WrappedStationConfig?.Description ?? "")}";
+    }
+
     public Color GetTooltipTextColor() => GamelabGame.Instance.CurrentRun.Credits >= Cost ? Color.White : Color.Red;
 
-    public BuyableStationWrapper(string stationKindId, int cost, Vector2 position)
+    public BuyableStationWrapper(string stationKindId, Vector2 position)
     {
         StationKindId = stationKindId;
-        Cost = cost;
+        var config = GamelabGame.Instance.ConfigurableStationRegistry.Get(stationKindId);
+        Cost = config?.ShopPrice ?? 0;
         WrappedStation = StationFactory.CreateStation(StationKindId, position);
         PhysicsBody = WrappedStation.PhysicsBody;
         PhysicsBody.Tag = this;

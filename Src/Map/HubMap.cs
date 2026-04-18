@@ -1,6 +1,10 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Gamelab.Assets;
 using Gamelab.Map.Train.State;
+using Gamelab.PhysicalEntities.Configurable;
+using Gamelab.PhysicalEntities.Structures;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -11,85 +15,83 @@ namespace Gamelab.Map;
 public class HubMap : IDisposable
 {
     private readonly GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
+    private readonly int worldWidth;
+    private readonly int worldHeight;
+    private readonly List<Body> worldBoundaryBodies = [];
+    private Rectangle shoppingArea;
 
-    public Rectangle BoundsPixels { get; }
-
-    private Body leftWall;
-    private Body rightWall;
-    private Body topWall;
-    private Body bottomWall;
-
-    public HubMap(Rectangle boundsPixels, bool openBottom = false)
+    public HubMap(int worldWidth, int worldHeight)
     {
-        BoundsPixels = boundsPixels;
-        CreateBoundaryWalls(openBottom);
+        int hubPad = 120;
+        this.worldWidth = worldWidth;
+        this.worldHeight = worldHeight;
+
+        shoppingArea = new Rectangle(
+            hubPad, hubPad,
+            worldWidth - hubPad * 2,
+            worldHeight / 2 - hubPad - 160);
+        CreateWorldBoundaryWalls();
     }
 
-    private void CreateBoundaryWalls(bool openBottom)
+    public void RestockHubDragOffers(Random hubRandom, int offerCount)
     {
-        float thicknessPixels = 40f;
-        float thicknessMeters = thicknessPixels.ToMeters();
+        List<KeyValuePair<string, StationConfig>> selectedOffers = GamelabGame.Instance.ConfigurableStationRegistry
+            .GetShopCatalog()
+            .OrderBy(x => hubRandom.Next())
+            .Take(offerCount)
+            .ToList();
 
-        float widthMeters = BoundsPixels.Width.ToMeters();
-        float heightMeters = BoundsPixels.Height.ToMeters();
+        Vector2 shopCenter = new Vector2(shoppingArea.Center.X, shoppingArea.Bottom - 350);
+        float spacingX = 100f;
 
-        Vector2 centerPixels = new Vector2(BoundsPixels.Center.X, BoundsPixels.Center.Y);
-        Vector2 centerMeters = centerPixels.ToMeters();
-
-        leftWall = gameplayContext.PhysicsWorld.CreateRectangle(
-            thicknessMeters,
-            heightMeters,
-            1f,
-            (centerMeters + new Vector2(-widthMeters / 2f - thicknessMeters / 2f, 0f)),
-            0f,
-            BodyType.Static
-        );
-
-        rightWall = gameplayContext.PhysicsWorld.CreateRectangle(
-            thicknessMeters,
-            heightMeters,
-            1f,
-            (centerMeters + new Vector2(widthMeters / 2f + thicknessMeters / 2f, 0f)),
-            0f,
-            BodyType.Static
-        );
-
-        topWall = gameplayContext.PhysicsWorld.CreateRectangle(
-            widthMeters,
-            thicknessMeters,
-            1f,
-            (centerMeters + new Vector2(0f, -heightMeters / 2f - thicknessMeters / 2f)),
-            0f,
-            BodyType.Static
-        );
-
-        if (!openBottom)
+        for (int i = 0; i < selectedOffers.Count; i++)
         {
-            bottomWall = gameplayContext.PhysicsWorld.CreateRectangle(
-                widthMeters,
-                thicknessMeters,
-                1f,
-                (centerMeters + new Vector2(0f, heightMeters / 2f + thicknessMeters / 2f)),
-                0f,
-                BodyType.Static
-            );
+            var offer = selectedOffers[i];
+            float totalRowWidth = (offerCount - 1) * spacingX;
+            float startX = shopCenter.X - (totalRowWidth / 2f);
+            Vector2 spawnPos = new Vector2(startX + (i * spacingX), shopCenter.Y);
+
+            gameplayContext.Map.MapObjects.Add(new BuyableStationWrapper(offer.Key, spawnPos));
         }
+    }
+
+
+    private void CreateWorldBoundaryWalls()
+    {
+        float boundaryThickness = 1;
+        float boundaryThicknessMeters = boundaryThickness.ToMeters();
+
+        AddWorldWallSegment(worldWidth.ToMeters(), boundaryThicknessMeters,
+            new Vector2(worldWidth / 2f, -boundaryThickness / 2f));
+        AddWorldWallSegment(worldWidth.ToMeters(), boundaryThicknessMeters,
+            new Vector2(worldWidth / 2f, worldHeight + boundaryThickness / 2f));
+        AddWorldWallSegment(boundaryThicknessMeters, worldHeight.ToMeters(),
+            new Vector2(-boundaryThickness / 2f, worldHeight / 2f));
+        AddWorldWallSegment(boundaryThicknessMeters, worldHeight.ToMeters(),
+            new Vector2(worldWidth + boundaryThickness / 2f, worldHeight / 2f));
+    }
+
+    private void AddWorldWallSegment(float widthMeters, float heightMeters, Vector2 centerPixels)
+    {
+        Body b = gameplayContext.PhysicsWorld.CreateRectangle(widthMeters, heightMeters, 1f, centerPixels.ToMeters(),
+            0f, BodyType.Static);
+        worldBoundaryBodies.Add(b);
     }
 
     public void Draw(SpriteBatch spriteBatch)
     {
-        spriteBatch.Draw(AssetManager.BlankTexture, BoundsPixels, new Color(30, 30, 40));
+        float scale = worldWidth * 1.0f / AssetManager.HubTexture.Width;
+        spriteBatch.Draw(AssetManager.HubTexture, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, scale,
+            SpriteEffects.None, 0f);
     }
 
     public void Dispose()
     {
-        if (leftWall != null) gameplayContext.PhysicsWorld.Remove(leftWall);
-        if (rightWall != null) gameplayContext.PhysicsWorld.Remove(rightWall);
-        if (topWall != null) gameplayContext.PhysicsWorld.Remove(topWall);
-        if (bottomWall != null) gameplayContext.PhysicsWorld.Remove(bottomWall);
-        leftWall = null;
-        rightWall = null;
-        topWall = null;
-        bottomWall = null;
+        foreach (Body b in worldBoundaryBodies)
+        {
+            if (b.World != null) b.World.Remove(b);
+        }
+
+        worldBoundaryBodies.Clear();
     }
 }

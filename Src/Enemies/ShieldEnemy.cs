@@ -1,8 +1,6 @@
 using System;
 using Gamelab.Items.Bullets;
-using Gamelab.Map.Train.State;
 using Gamelab.PhysicalEntities.Bullets;
-using Gamelab.PhysicalEntities.Projectiles;
 using Gamelab.PhysicalEntities.Stations.Cannon;
 using Gamelab.Services.Bullet;
 using Microsoft.Xna.Framework;
@@ -17,7 +15,11 @@ public enum ShieldState
     Recovering
 }
 
-public class ShieldEnemy : AbstractEnemy
+public class ShieldEnemy(Vector2 spawnPosition, EnemyTrainSlot slot) : AbstractEnemy(
+    new EnemyDefinition(EnemyType.Shield),
+    spawnPosition,
+    slot,
+    EnemyMovementProfile.CreateDefault(GamelabGame.Instance.GameplayConfig.ShieldMaxSpeed))
 {
     public override Color EnemyColor => currentState switch
     {
@@ -35,27 +37,15 @@ public class ShieldEnemy : AbstractEnemy
     private float ShieldRecoverDurationSeconds => GamelabGame.Instance.GameplayConfig.ShieldRecoverDurationSeconds;
     private float ShieldBlockArcDegrees => GamelabGame.Instance.GameplayConfig.ShieldBlockArcDegrees;
 
-    private readonly Random random;
     private ShieldState currentState = ShieldState.ApproachingSideAttackSlot;
     private float stateTimer;
     private bool pendingShot;
-
-    public ShieldEnemy(GameplayContext gameplayContext, Vector2 spawnPosition, Random random, EnemyTrainSlot slot)
-        : base(
-            gameplayContext,
-            new EnemyDefinition(EnemyType.Shield),
-            spawnPosition,
-            slot,
-            EnemyMovementProfile.CreateDefault(GamelabGame.Instance.GameplayConfig.ShieldMaxSpeed))
-    {
-        this.random = random;
-    }
 
     public override void Update(float deltaTime)
     {
         base.Update(deltaTime);
 
-        Vector2 slotAnchor = Slot.GetAnchor(gameplayContext, Size + PreferredDistance);
+        Vector2 slotAnchor = Slot.GetAnchor(Size + PreferredDistance);
         Vector2 approachAnchor = GetApproachAnchor(slotAnchor);
 
         switch (currentState)
@@ -67,6 +57,7 @@ public class ShieldEnemy : AbstractEnemy
                     currentState = ShieldState.Shielding;
                     stateTimer = ShieldDurationSeconds;
                 }
+
                 break;
 
             case ShieldState.Shielding:
@@ -77,6 +68,7 @@ public class ShieldEnemy : AbstractEnemy
                     currentState = ShieldState.Aiming;
                     stateTimer = ShieldAimDurationSeconds;
                 }
+
                 break;
 
             case ShieldState.Aiming:
@@ -88,6 +80,7 @@ public class ShieldEnemy : AbstractEnemy
                     currentState = ShieldState.Recovering;
                     stateTimer = ShieldRecoverDurationSeconds;
                 }
+
                 break;
 
             case ShieldState.Recovering:
@@ -98,6 +91,7 @@ public class ShieldEnemy : AbstractEnemy
                     currentState = ShieldState.Shielding;
                     stateTimer = ShieldDurationSeconds;
                 }
+
                 break;
         }
     }
@@ -118,7 +112,7 @@ public class ShieldEnemy : AbstractEnemy
             direction.Normalize();
         }
 
-        float spread = (random.NextSingle() - 0.5f) * EnemyShootSpread;
+        float spread = (Random.Shared.NextSingle() - 0.5f) * EnemyShootSpread;
         float angle = (float)Math.Atan2(direction.Y, direction.X) + spread;
         direction = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
 

@@ -1,7 +1,6 @@
 using System;
 using Gamelab.Assets;
 using Gamelab.Enemies;
-using Gamelab.Map.Train.State;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
 using Gamelab.Utils;
@@ -13,7 +12,6 @@ namespace Gamelab.PhysicalEntities.Hazards;
 
 public class TarPatch : AbstractPhysicalEntity, IEnemyHazard, IInteractable
 {
-    private readonly GameplayContext gameplayContext;
     private readonly EnemySlotSide side;
     private readonly float cleanDurationSeconds;
     private float cleanProgress;
@@ -21,9 +19,8 @@ public class TarPatch : AbstractPhysicalEntity, IEnemyHazard, IInteractable
     public bool ShouldRemove { get; private set; }
     public bool CountsAsActiveThreat => false;
 
-    public TarPatch(GameplayContext gameplayContext, EnemySlotSide side, float cleanDurationSeconds)
+    public TarPatch(EnemySlotSide side, float cleanDurationSeconds)
     {
-        this.gameplayContext = gameplayContext;
         this.side = side;
         this.cleanDurationSeconds = cleanDurationSeconds;
 

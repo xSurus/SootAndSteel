@@ -24,7 +24,7 @@ public class TrainMap
     public int TileSize => GamelabGame.Instance.GameplayConfig.TrainTileSize;
     public Vector2 Position { get; private set; }
     private readonly GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
-    private Random random = Random.Shared;
+    private readonly Random random = Random.Shared;
 
     public List<IPhysicalEntity> MapObjects { get; } = new();
 

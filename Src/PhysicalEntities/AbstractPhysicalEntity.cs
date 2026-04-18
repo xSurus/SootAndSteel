@@ -1,3 +1,4 @@
+using Gamelab.Map.Train.State;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
 using Gamelab.Utils;
@@ -9,6 +10,7 @@ namespace Gamelab.PhysicalEntities;
 
 public abstract class AbstractPhysicalEntity : IPhysicalEntity, IHighlightable
 {
+    protected readonly GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
     private Body physicsBody;
 
     public Body PhysicsBody

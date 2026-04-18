@@ -9,6 +9,7 @@ public class RunManager
 {
     private readonly IRunLevelProvider levelProvider;
     private readonly RunSession session;
+    private readonly GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
 
     public LevelDefinition CurrentLevelDefinition { get; private set; }
     public RunPhase CurrentPhase { get; private set; } = RunPhase.LevelActive;
@@ -22,7 +23,7 @@ public class RunManager
         LoadLevel(session.CurrentLevel);
     }
 
-    public void Update(GameplayContext gameplayContext, EnemyManager enemyManager)
+    public void Update(EnemyManager enemyManager)
     {
         if (CurrentPhase != RunPhase.LevelActive || CurrentLevelDefinition == null) return;
         bool isLevelComplete = gameplayContext.State.DistanceTraveled >= CurrentLevelDefinition.LevelDistance &&

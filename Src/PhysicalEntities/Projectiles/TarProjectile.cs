@@ -38,7 +38,9 @@ public class TarProjectile : AbstractPhysicalEntity, IEnemyHazard
         this.side = side;
         this.cleanDurationSeconds = cleanDurationSeconds;
 
-        PhysicsBody = gameplayContext.PhysicsWorld.CreateCircle((radius / 2f).ToMeters(), 1f, position.ToMeters(), BodyType.Static);
+        PhysicsBody =
+            gameplayContext.PhysicsWorld.CreateCircle((radius / 2f).ToMeters(), 1f, position.ToMeters(),
+                BodyType.Static);
         foreach (var fixture in PhysicsBody.FixtureList)
         {
             fixture.IsSensor = true;
@@ -59,7 +61,7 @@ public class TarProjectile : AbstractPhysicalEntity, IEnemyHazard
             return;
         }
 
-        pendingTarPatch = new TarPatch(gameplayContext, side, cleanDurationSeconds);
+        pendingTarPatch = new TarPatch(side, cleanDurationSeconds);
         ShouldRemove = true;
     }
 

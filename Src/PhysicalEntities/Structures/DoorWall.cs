@@ -1,6 +1,5 @@
 using System;
 using Gamelab.Assets;
-using Gamelab.Map.Train.State;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
 using Gamelab.Utils;
@@ -19,7 +18,6 @@ public class DoorWall : AbstractPhysicalEntity, IInteractable
     private static readonly Color ClosedColor = new Color(60, 100, 130);
     private static readonly Color OpenColor = new Color(50, 150, 60);
 
-    private readonly GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
     private readonly Vector2 dimensionsPixels;
     private bool isOpen = false;
     private bool isTop;
