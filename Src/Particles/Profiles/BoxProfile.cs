@@ -5,8 +5,8 @@ namespace Gamelab.Particles.Profiles;
 
 public class BoxProfile(float width, float height, Vector2 baseDirection) : IParticleProfile
 {
-    public float Width { get; set; } = width;
-    public float Height { get; set; } = height;
+    private float Width { get; set; } = width;
+    private float Height { get; set; } = height;
     private Vector2 BaseDirection { get; set; } = baseDirection;
 
     public void GetOffsetAndDirection(Random random, out Vector2 offset, out Vector2 direction)

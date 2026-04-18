@@ -6,7 +6,6 @@ using Gamelab.Map;
 using Gamelab.Map.Train;
 using Gamelab.Map.Train.State;
 using Gamelab.Particles;
-using Gamelab.Particles.Profiles;
 using Gamelab.PhysicalEntities.Structures;
 using Gamelab.Players;
 using Gamelab.Screens.Camera;
@@ -54,8 +53,7 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
 
         camera = new OrthographicCamera(viewportAdapter);
         cameraDirector = new CameraDirector(virtualScreenSize);
-        cameraDirector.Update(camera, 100f, players, prepTrainMap.GetBounds());
-
+        cameraDirector.SnapToCenter(camera, prepTrainMap.GetBounds(), worldHeight);
         hubSnowEmitter = ParticleFactory.CreateSnowstorm();
         Services.GetService<IVfxService>().AddContinuous(hubSnowEmitter);
 
@@ -95,16 +93,8 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
 
         UpdatePhysics(dt);
 
-        cameraDirector.Update(camera, dt, players, prepTrainMap.GetBounds());
-        float viewWidth = virtualScreenSize.X / camera.Zoom;
-        float viewHeight = virtualScreenSize.Y / camera.Zoom;
+        cameraDirector.Update(camera, dt, players, prepTrainMap.GetBounds(), worldHeight);
         hubSnowEmitter.Position = camera.Position + camera.Origin;
-        if (hubSnowEmitter.Profile is BoxProfile boxProfile)
-        {
-            boxProfile.Width = viewWidth * 1.5f;
-            boxProfile.Height = viewHeight * 1.5f;
-        }
-
         worldUiManager.Update(prepTrainMap.MapObjects, camera.GetViewMatrix());
 
         UpdateDepartureLogic(dt);
@@ -142,6 +132,8 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
         SaveManager.SaveRun(Game.CurrentRun);
         gameplayContext = new GameplayContext(virtualScreenSize, Game.CurrentRun);
         Services.AddService(gameplayContext);
+        gameplayContext.State.CurrentSpeed = TrainSpeedSetting.Stopped;
+        gameplayContext.State.actualSpeed = 0;
         gameplayContext.State.IsCoalOvenBurning = false;
         gameplayContext.State.FuelBurningEnabled = false;
     }
