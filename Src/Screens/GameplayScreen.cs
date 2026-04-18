@@ -161,8 +161,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     {
         camera = new OrthographicCamera(viewportAdapter);
         cameraDirector = new CameraDirector(virtualScreenSize);
-        cameraDirector.Update(camera, 100f, players, trainMap.GetBounds());
-
+        cameraDirector.SnapToCenter(camera, trainMap.GetBounds(), virtualScreenSize.Y);
         Services.GetService<IVfxService>().AddContinuous(ParticleFactory.CreateSnowstorm());
     }
 
@@ -235,7 +234,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         worldScroller.Update(dt);
         hud.Update(currentLevelDef, levelStartDistance);
         runManager.Update(enemyManager);
-        cameraDirector.Update(camera, dt, players, trainMap.GetBounds());
+        cameraDirector.Update(camera, dt, players, trainMap.GetBounds(), virtualScreenSize.Y);
     }
 
     private void HandleLevelTransition(float dt)
@@ -251,7 +250,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
             accumulator -= fixedDt;
         }
 
-        cameraDirector.Update(camera, dt, players, trainMap.GetBounds());
+        cameraDirector.Update(camera, dt, players, trainMap.GetBounds(), virtualScreenSize.Y);
         endLevelWhiteFilter.Update(dt);
 
         if (endLevelWhiteFilter.IsDone)
