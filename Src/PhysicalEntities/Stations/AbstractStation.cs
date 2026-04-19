@@ -4,7 +4,6 @@ using Gamelab.PhysicalEntities.Configurable;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
 using Gamelab.Utils;
-using Gamelab.Utils.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -13,9 +12,9 @@ namespace Gamelab.PhysicalEntities.Stations;
 public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPickable, IUpdatable, ITooltipable
 {
     private static readonly Logger logger = new("Station");
-    protected StationConfig StationConfig => GamelabGame.Instance.ConfigurableStationRegistry.Get(Type);
+    protected StationConfig StationConfig => GamelabGame.Instance.StationRegistry.Get(StationId);
 
-    public string Type { get; protected set; }
+    public string StationId { get; protected set; }
 
     // TODO swap to a texture instead of display color at some point
     public Color DisplayColor { get; protected set; }
@@ -26,7 +25,7 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
 
     public virtual string GetTooltipTitle()
     {
-        return StationConfig?.Title ?? Type;
+        return StationConfig?.Name ?? StationId;
     }
 
     public virtual string GetTooltipDescription()
@@ -36,9 +35,9 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
 
     public virtual Color GetTooltipTextColor() => Color.White;
 
-    protected AbstractStation(string type, Color displayColor, Vector2 position)
+    protected AbstractStation(string stationId, Color displayColor, Vector2 position)
     {
-        Type = type;
+        StationId = stationId;
         DisplayColor = displayColor;
         float collisionSizePixels = GamelabGame.Instance.GameplayConfig.TrainTileSize * 0.90f;
         float simSize = collisionSizePixels.ToMeters();
@@ -73,7 +72,7 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        Texture2D tex = AssetManager.GetStationTexture(Type);
+        Texture2D tex = AssetManager.GetStationTexture(StationId);
         // logger.Info($"Drawing '{Type}'");
 
         if (tex == AssetManager.BlankTexture)

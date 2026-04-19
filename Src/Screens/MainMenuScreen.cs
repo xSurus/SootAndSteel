@@ -2,7 +2,7 @@ using System;
 using Gamelab.Serialization;
 using Gamelab.Services.Sound;
 using Gamelab.UI;
-using Gamelab.Utils.Logging;
+using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 

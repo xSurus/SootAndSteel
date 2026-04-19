@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Gamelab.Items.Bullets;
 using Gamelab.Particles;
 using Gamelab.Services.Vfx;
 
@@ -8,11 +9,12 @@ public class BasicProjectile : AbstractComponent
 {
     private readonly IVfxService vfxService = GamelabGame.Instance.Services.GetService<IVfxService>();
     private Dictionary<BulletEntity, ParticleEmitter> trailEmitter = new();
-    
+
     public BasicProjectile()
     {
         Type = EComponentType.Projectile;
         IsBasic = true;
+        ComponentId = ComponentIds.BasicProjectile;
     }
 
     public override void OnCreate(BulletEntity bulletEntity)

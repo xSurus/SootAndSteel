@@ -96,12 +96,7 @@ public class TrainMap
                 continue;
             }
 
-            string kindId = station switch
-            {
-                ComponentResource resource => resource.componentId,
-                _ => station.Type
-            };
-
+            string kindId = station.StationId;
             Point t = GetTileIndexFromPixels(station.Position);
             if (t.X >= 0 && t.X < Width && t.Y >= 0 && t.Y < Height)
             {

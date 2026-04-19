@@ -1,38 +1,32 @@
-using Gamelab.Assets;
-using Gamelab.PhysicalEntities.Configurable;
+using Gamelab.Data;
 using Gamelab.PhysicalEntities.Interfaces;
-using Gamelab.PhysicalEntities.Stations;
 using Gamelab.Players;
+using Gamelab.Services.IShopService;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Gamelab.PhysicalEntities.Structures;
+namespace Gamelab.PhysicalEntities.Stations;
 
 public class BuyableStationWrapper : AbstractPhysicalEntity, IInteractable, IGrabbable, ITooltipable
 {
-    protected StationConfig WrappedStationConfig => GamelabGame.Instance.ConfigurableStationRegistry.Get(StationKindId);
     public string StationKindId { get; }
     private int Cost { get; }
     private AbstractStation WrappedStation { get; set; }
     public bool IsTooltipVisible => IsHighlighted;
-
-    public string GetTooltipTitle()
-    {
-        return WrappedStationConfig != null ? $"Buy {WrappedStationConfig.Title}" : $"Buy {StationKindId}";
-    }
-
-    public string GetTooltipDescription()
-    {
-        return $"{Cost} Credits\n{(WrappedStationConfig?.Description ?? "")}";
-    }
+    private string TooltipTitle { get; }
+    private string TooltipDescription { get; }
+    public string GetTooltipTitle() => TooltipTitle;
+    public string GetTooltipDescription() => TooltipDescription;
 
     public Color GetTooltipTextColor() => GamelabGame.Instance.CurrentRun.Credits >= Cost ? Color.White : Color.Red;
 
     public BuyableStationWrapper(string stationKindId, Vector2 position)
     {
         StationKindId = stationKindId;
-        var config = GamelabGame.Instance.ConfigurableStationRegistry.Get(stationKindId);
-        Cost = config?.ShopPrice ?? 0;
+        CatalogItem item = GamelabGame.Instance.Services.GetService<IShopService>().GetCatalogItem(stationKindId);
+        Cost = item?.Price ?? 0;
+        TooltipTitle = item != null ? $"Buy {item.Name}" : $"Buy {StationKindId}";
+        TooltipDescription = $"{Cost} Credits\n{(item?.Description ?? "")}";
         WrappedStation = StationFactory.CreateStation(StationKindId, position);
         PhysicsBody = WrappedStation.PhysicsBody;
         PhysicsBody.Tag = this;
@@ -51,14 +45,7 @@ public class BuyableStationWrapper : AbstractPhysicalEntity, IInteractable, IGra
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        Texture2D tex = AssetManager.GetStationTexture(StationKindId);
-        int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
-        float originalSize = tex.Width;
-        float scale = tileSize / originalSize;
-
-        Vector2 drawingPos = Position + new Vector2(-tileSize * 0.5f, -tileSize * 1.5f);
-        spriteBatch.Draw(tex, drawingPos, null, Color.White,
-            0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+        WrappedStation.Draw(spriteBatch);
     }
 
     public bool OnGrab(Player player, Vector2 grabPointWorldMeters)

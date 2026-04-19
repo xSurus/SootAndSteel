@@ -1,3 +1,5 @@
+using Gamelab.Items.Bullets;
+
 namespace Gamelab.PhysicalEntities.Bullets.Components.Casings;
 
 public class BasicCasing : AbstractComponent
@@ -6,5 +8,6 @@ public class BasicCasing : AbstractComponent
     {
         Type = EComponentType.Casing;
         IsBasic = true;
+        ComponentId = ComponentIds.BasicCasing;
     }
 }

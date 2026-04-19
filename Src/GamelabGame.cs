@@ -13,12 +13,12 @@ using Gamelab.Players;
 using Gamelab.Screens;
 using Gamelab.Serialization;
 using Gamelab.Services.Bullet;
+using Gamelab.Services.IShopService;
 using Gamelab.Services.Random;
 using Gamelab.Services.Sound;
 using Gamelab.Services.Vfx;
 using Gamelab.Systems;
 using Gamelab.Utils;
-using Gamelab.Utils.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
@@ -57,7 +57,8 @@ public class GamelabGame : Game
 
     public readonly JsonLoader jsonLoader;
     public GameplayConfig GameplayConfig { get; private set; } = new();
-    public ConfigurableStationRegistry ConfigurableStationRegistry { get; private set; } = new();
+    public StationRegistry StationRegistry { get; private set; } = new();
+    public ComponentRegistry ComponentRegistry { get; private set; } = new();
     public RunSession CurrentRun { get; set; }
 
     public RunMode runMode { get; private set; }
@@ -142,10 +143,10 @@ public class GamelabGame : Game
         var fontPath = Path.Combine(contentDir, "promptfont.ttf");
         var fontBytes = File.ReadAllBytes(fontPath);
         fontSystem.AddFont(fontBytes);
-        LoadGameplayConfig();
+        LoadConfigs();
+        Services.AddService(typeof(IShopService), new ShopManager());
         PhysicsUtility.Initialize(GameplayConfig.PixelsPerMeter);
         ItemRegistry.Initialize();
-        ComponentRegistry.Initialize();
         systemManager.InitializeAll(this);
         AssetManager.LoadContent(graphics.GraphicsDevice);
         CurrentRun = new RunSession();
@@ -231,7 +232,7 @@ public class GamelabGame : Game
         MediaPlayer.Volume = MusicVolume;
     }
 
-    public void LoadGameplayConfig()
+    public void LoadConfigs()
     {
         try
         {
@@ -248,12 +249,22 @@ public class GamelabGame : Game
 
         try
         {
-            ConfigurableStationRegistry.Load(jsonLoader);
-            logger.Info("Loaded config from Data/configurableEntities.json");
+            StationRegistry.Load(jsonLoader);
+            logger.Info("Loaded station configs from Data/StationConfig.json");
         }
         catch (Exception ex)
         {
-            logger.Exception("Failed to load Data/configurableEntities.json", ex);
+            logger.Exception("Failed to load Data/StationConfig.json", ex);
+        }
+
+        try
+        {
+            ComponentRegistry.Load(jsonLoader);
+            logger.Info("Loaded config from Data/ComponentConfig.json");
+        }
+        catch (Exception ex)
+        {
+            logger.Exception("Failed to load Data/ComponentConfig.json", ex);
         }
     }
 

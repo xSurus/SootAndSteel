@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Gamelab.Enemies;
-using Gamelab.Utils.Logging;
+using Gamelab.Utils;
 
 namespace Gamelab.Levels;
 

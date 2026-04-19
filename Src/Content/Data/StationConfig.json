@@ -1,0 +1,24 @@
+{
+  "Cannon": {
+    "name": "Cannon",
+    "description": "Load ammo with A, then Interact (X) to fire."
+  },
+  "Workbench": {
+    "name": "Workbench",
+    "description": "Place ingredients with A.\nHold Interact (X) to craft or repair.",
+    "appearsInShop": true,
+    "shopPrice": 38
+  },
+  "Anvil": {
+    "name": "Anvil",
+    "description": "Place ingredients with A.\nHold Interact (X) to craft."
+  },
+  "SpeedLever": {
+    "name": "Speed Lever",
+    "description": "Interact (X) to cycle train speed.\nHold Interact (X) to repair."
+  },
+  "Counter": {
+    "name": "Counter",
+    "description": "Pickup (A) swaps your item with the counter item."
+  }
+}

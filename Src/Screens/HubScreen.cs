@@ -6,7 +6,7 @@ using Gamelab.Map;
 using Gamelab.Map.Train;
 using Gamelab.Map.Train.State;
 using Gamelab.Particles;
-using Gamelab.PhysicalEntities.Structures;
+using Gamelab.PhysicalEntities.Stations;
 using Gamelab.Players;
 using Gamelab.Screens.Camera;
 using Gamelab.Serialization;
