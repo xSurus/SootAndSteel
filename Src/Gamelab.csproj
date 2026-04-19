@@ -47,6 +47,9 @@
     <Content Include="Config\*.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Update="Content\Data\ComponentConfig.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Aether.Physics2D.MG" Version="2.2.0" />
@@ -91,5 +94,12 @@
     <None Update="Assets\NPCs\*.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="PhysicalEntities\Structures\BuyableStationWrapper.cs"/>
+    <Compile Remove="PhysicalEntities\Configurable\StationConfig.cs"/>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Content\Data\levels\"/>
   </ItemGroup>
 </Project>

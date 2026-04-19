@@ -4,7 +4,7 @@ using System.IO;
 using FmodForFoxes;
 using FmodForFoxes.Studio;
 using Gamelab.Systems;
-using Gamelab.Utils.Logging;
+using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 
 namespace Gamelab.Services.Sound;
@@ -13,11 +13,11 @@ public class SoundService : ISoundService,
     IDisposable,
     IGameSystem
 {
-    private readonly Logger logger = new ("SoundService");
+    private readonly Logger logger = new("SoundService");
     private readonly List<Bank> banks = [];
     private readonly List<ParameterBinding> parameterUpdates = [];
-    private readonly Dictionary<string, EventDescription> eventDescriptions = new ();
-    
+    private readonly Dictionary<string, EventDescription> eventDescriptions = new();
+
     private class ParameterBinding(EventInstance eventInstance, string parameterName, Func<float> valueGetter)
     {
         public EventInstance EventInstance { get; } = eventInstance;
@@ -66,7 +66,8 @@ public class SoundService : ISoundService,
 
     public void Initialize(GamelabGame game)
     {
-        FmodManager.Init(game.nativeFmodLibrary, FmodInitMode.CoreAndStudio, Path.Combine(game.Content.RootDirectory, "soundbanks"));
+        FmodManager.Init(game.nativeFmodLibrary, FmodInitMode.CoreAndStudio,
+            Path.Combine(game.Content.RootDirectory, "soundbanks"));
         banks.Add(StudioSystem.LoadBank("Master.bank"));
         banks.Add(StudioSystem.LoadBank("Master.strings.bank"));
         banks.Add(StudioSystem.LoadBank("sfx.bank"));
@@ -79,6 +80,7 @@ public class SoundService : ISoundService,
         {
             binding.EventInstance.SetParameterValue(binding.ParameterName, binding.ValueGetter());
         }
+
         FmodManager.Update();
     }
 
@@ -97,11 +99,12 @@ public class SoundService : ISoundService,
         {
             UnloadSound(id);
         }
-        
+
         foreach (var bank in banks)
         {
             bank.Unload();
         }
+
         banks.Clear();
         parameterUpdates.Clear();
         eventDescriptions.Clear();

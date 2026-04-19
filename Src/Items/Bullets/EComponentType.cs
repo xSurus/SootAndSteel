@@ -1,4 +1,4 @@
-namespace Gamelab.PhysicalEntities.Bullets;
+namespace Gamelab.Items.Bullets;
 
 public enum EComponentType
 {

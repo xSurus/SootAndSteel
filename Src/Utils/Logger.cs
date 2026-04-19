@@ -1,12 +1,13 @@
 using System;
 using System.Text.Json.Serialization;
 
-namespace Gamelab.Utils.Logging;
+namespace Gamelab.Utils;
 
 public class Logger
 {
     [JsonConverter(typeof(JsonStringEnumConverter<Level>))]
-    public enum Level {
+    public enum Level
+    {
         Debug,
         Info,
         Warning,

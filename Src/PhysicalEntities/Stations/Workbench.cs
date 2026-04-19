@@ -3,9 +3,8 @@ using System.Linq;
 using Gamelab.Assets;
 using Gamelab.Items;
 using Gamelab.Items.Bullets;
-using Gamelab.PhysicalEntities.Bullets;
 using Gamelab.Players;
-using Gamelab.Utils.Logging;
+using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -15,13 +14,13 @@ public class Workbench(Vector2 position) : AbstractStation("Workbench", Color.Da
 {
     private static readonly Logger Logger = new("Workbench");
     protected List<BulletItem> PlacedItems { get; } = new();
-    
+
     private float craftProgress = 0f;
-    
+
     public override void OnPickup(Player interactingPlayer)
     {
         if (craftProgress > 0f) return;
-        
+
         // player picks up item from workbench
         if (interactingPlayer.HeldItem == null && PlacedItems.Any())
         {
@@ -29,11 +28,11 @@ public class Workbench(Vector2 position) : AbstractStation("Workbench", Color.Da
             PlacedItems.RemoveAt(PlacedItems.Count - 1);
             return;
         }
-        
+
         // player places item onto workbench
         if (ValidatePlace(interactingPlayer.HeldItem))
         {
-            PlacedItems.Add((BulletItem) interactingPlayer.HeldItem);
+            PlacedItems.Add((BulletItem)interactingPlayer.HeldItem);
             interactingPlayer.HeldItem = null;
         }
     }
@@ -56,7 +55,6 @@ public class Workbench(Vector2 position) : AbstractStation("Workbench", Color.Da
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        
         int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
         float itemSizeFloat = tileSize * 0.4f;
         int drawItemSize = (int)itemSizeFloat;
@@ -114,26 +112,27 @@ public class Workbench(Vector2 position) : AbstractStation("Workbench", Color.Da
     {
         return PlacedItems.Select(x => x.Type).Distinct().ToList();
     }
-    
+
     private bool ValidatePlace(Item item)
     {
         if (item == null) return false;
-        
+
         if (PlacedItems.Count >= 3) return false;
-        
+
         if (item.Id != "Bullet") return false;
-        BulletItem bulletItem = (BulletItem) item;
-        
+        BulletItem bulletItem = (BulletItem)item;
+
         // ComponentId may not be on table already
-        if (PlacedItems.Any(placedItem => placedItem.ComponentIds.Any(compId => bulletItem.ComponentIds.Contains(compId)))) return false;
-        
+        if (PlacedItems.Any(placedItem =>
+                placedItem.ComponentIds.Any(compId => bulletItem.ComponentIds.Contains(compId)))) return false;
+
         List<EComponentType> components = GetContainedComponents();
-        
+
         // Check if item can be placed as upgrade
-        if (!components.Any() || 
+        if (!components.Any() ||
             (components.Count() == 1 && components.Contains(bulletItem.Type)))
             return true;
-        
+
         // Check if item can be placed for final bullet
         if (!components.Contains(bulletItem.Type) &&
             PlacedItems.All(x => x.HasBasic) &&
@@ -146,16 +145,16 @@ public class Workbench(Vector2 position) : AbstractStation("Workbench", Color.Da
     private bool ValidateCraft()
     {
         List<EComponentType> components = GetContainedComponents();
-        
+
         // check if valid upgrade
         if (PlacedItems.Count() == 2 &&
-            components.Count() == 1 && 
-            components.First() != EComponentType.Bullet) 
+            components.Count() == 1 &&
+            components.First() != EComponentType.Bullet)
             return true;
-        
+
         // check if valid bullet
         if (PlacedItems.Count() == 3 &&
-            components.Count() == 3 && 
+            components.Count() == 3 &&
             components.All(x => x != EComponentType.Bullet) &&
             PlacedItems.All(x => x.HasBasic))
             return true;

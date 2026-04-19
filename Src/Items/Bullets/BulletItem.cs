@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Gamelab.Assets;
 using Gamelab.PhysicalEntities.Bullets;
+using Gamelab.PhysicalEntities.Bullets.Components;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -19,11 +19,11 @@ public class BulletItem : Item
 
     public BulletItem(string componentId) : base("Bullet")
     {
-        ComponentDefinition definition = ComponentRegistry.GetDefinition(componentId);
-        Type = definition.Component.Type;
+        AbstractComponent definition = ComponentFactory.CreateDefinition(componentId);
+        Type = definition.Type;
         ComponentIds.Add(componentId);
-        effects.Add(definition.Component);
-        HasBasic = definition.Component.IsBasic;
+        effects.Add(definition);
+        HasBasic = definition.IsBasic;
         ComputeColor();
     }
 
@@ -35,9 +35,9 @@ public class BulletItem : Item
     {
         if (components == null) return;
         if (!components.Any()) return;
-        
+
         // Copy
-        if (components.Count() == 1) 
+        if (components.Count() == 1)
         {
             Type = components[0].Type;
             ComponentIds.AddRange(components[0].ComponentIds);
@@ -47,7 +47,7 @@ public class BulletItem : Item
         }
 
         List<EComponentType> types = components.Select(c => c.Type).Distinct().ToList();
-        
+
         // Upgrade to existing type
         if (types.Count == 1)
         {
@@ -78,7 +78,7 @@ public class BulletItem : Item
             EnsureBasicIsFirst();
             return;
         }
-        
+
         throw new Exception("Invalid combination of components for combining bullet item");
     }
 
@@ -91,9 +91,9 @@ public class BulletItem : Item
     {
         if (other == null) return false;
         if (other.GetType() != GetType()) return false;
-        return ((BulletItem) other).ComponentIds.SequenceEqual(ComponentIds);
+        return ((BulletItem)other).ComponentIds.SequenceEqual(ComponentIds);
     }
-    
+
     public override void Draw(SpriteBatch spriteBatch, Vector2 position, int size)
     {
         Vector2 origin = new Vector2(size / 2f, size / 2f);
@@ -114,10 +114,12 @@ public class BulletItem : Item
 
     private void ComputeColor()
     {
+        ComponentRegistry registry = GamelabGame.Instance.ComponentRegistry;
         List<float> colorComponents = ComponentIds
-            .Select(ComponentRegistry.GetColor)
+            .Select(id => registry.Get(id).Color) // Ask the registry for the config, then get Color
             .Select(x => (List<float>)[x.R, x.G, x.B])
             .Aggregate((a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]]);
+
         color = new Color(
             (byte)(colorComponents[0] / ComponentIds.Count),
             (byte)(colorComponents[1] / ComponentIds.Count),

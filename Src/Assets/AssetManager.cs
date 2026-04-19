@@ -1,13 +1,15 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
+using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Gamelab.Utils.Logging;
 
 namespace Gamelab.Assets;
 
 public static class AssetManager
 {
-    private static readonly Logger logger = new ("Assets");
+    private static readonly Logger logger = new("Assets");
 
     public static Texture2D BlankTexture { get; private set; }
     public static Texture2D PlayerTexture { get; private set; }
@@ -17,16 +19,21 @@ public static class AssetManager
     public static Texture2D SmokeTexture { get; private set; }
     public static Texture2D SparkTexture { get; private set; }
     public static Texture2D HubTexture { get; private set; }
-    public static System.Collections.Generic.Dictionary<string, Texture2D> StationTextures { get; private set; }
-    = new System.Collections.Generic.Dictionary<string, Texture2D>();
-    public static System.Collections.Generic.Dictionary<string, Texture2D> WallTextures { get; private set; }
-    = new System.Collections.Generic.Dictionary<string, Texture2D>();
-    public static System.Collections.Generic.Dictionary<string, Texture2D> CharacterTextures { get; private set; }
-    = new System.Collections.Generic.Dictionary<string, Texture2D>();
-    public static System.Collections.Generic.Dictionary<string, Texture2D> StructureTextures { get; private set; }
-    = new System.Collections.Generic.Dictionary<string, Texture2D>();
-    public static System.Collections.Generic.Dictionary<string, Texture2D> NPCTextures { get; private set; }
-    = new System.Collections.Generic.Dictionary<string, Texture2D>();
+
+    public static Dictionary<string, Texture2D> StationTextures { get; private set; }
+        = new Dictionary<string, Texture2D>();
+
+    public static Dictionary<string, Texture2D> WallTextures { get; private set; }
+        = new Dictionary<string, Texture2D>();
+
+    public static Dictionary<string, Texture2D> CharacterTextures { get; private set; }
+        = new Dictionary<string, Texture2D>();
+
+    public static Dictionary<string, Texture2D> StructureTextures { get; private set; }
+        = new Dictionary<string, Texture2D>();
+
+    public static Dictionary<string, Texture2D> NPCTextures { get; private set; }
+        = new Dictionary<string, Texture2D>();
 
     public static void LoadContent(GraphicsDevice graphicsDevice)
     {
@@ -49,21 +56,20 @@ public static class AssetManager
     }
 
     private static void LoadPlayerTexture(GraphicsDevice graphicsDevice)
-    {   
+    {
+        string dir = Path.Combine(
+            AppDomain.CurrentDomain.BaseDirectory, "Assets", "Characters");
 
-        string dir = System.IO.Path.Combine(
-            System.AppDomain.CurrentDomain.BaseDirectory, "Assets", "Characters");
-
-        if (!System.IO.Directory.Exists(dir))
+        if (!Directory.Exists(dir))
         {
-            System.Console.WriteLine($"[AssetManager] Characters folder not found: {dir}");
+            Console.WriteLine($"[AssetManager] Characters folder not found: {dir}");
             return;
         }
 
-        foreach (string path in System.IO.Directory.GetFiles(dir, "*.png"))
+        foreach (string path in Directory.GetFiles(dir, "*.png"))
         {
-            string key = System.IO.Path.GetFileNameWithoutExtension(path);
-            using System.IO.Stream stream = System.IO.File.OpenRead(path);
+            string key = Path.GetFileNameWithoutExtension(path);
+            using Stream stream = File.OpenRead(path);
             CharacterTextures[key] = Texture2D.FromStream(graphicsDevice, stream);
             logger.Info($"Loading character texture for '{key}'");
         }
@@ -112,16 +118,16 @@ public static class AssetManager
 
     private static Texture2D LoadTexture(GraphicsDevice gd, string name)
     {
-        string path = System.IO.Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "Assets", name);
-        
-        if (!System.IO.File.Exists(path))
+        string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", name);
+
+        if (!File.Exists(path))
         {
             Texture2D errorTex = new Texture2D(gd, 1, 1);
             errorTex.SetData(new Color[] { Color.HotPink });
             return errorTex;
         }
 
-        using (System.IO.Stream stream = System.IO.File.OpenRead(path))
+        using (Stream stream = File.OpenRead(path))
         {
             return Texture2D.FromStream(gd, stream);
         }
@@ -129,19 +135,19 @@ public static class AssetManager
 
     private static void LoadStationTextures(GraphicsDevice graphicsDevice)
     {
-        string dir = System.IO.Path.Combine(
-            System.AppDomain.CurrentDomain.BaseDirectory, "Assets", "Stations");
+        string dir = Path.Combine(
+            AppDomain.CurrentDomain.BaseDirectory, "Assets", "Stations");
 
-        if (!System.IO.Directory.Exists(dir))
+        if (!Directory.Exists(dir))
         {
-            System.Console.WriteLine($"[AssetManager] Stations folder not found: {dir}");
+            Console.WriteLine($"[AssetManager] Stations folder not found: {dir}");
             return;
         }
 
-        foreach (string path in System.IO.Directory.GetFiles(dir, "*.png"))
+        foreach (string path in Directory.GetFiles(dir, "*.png"))
         {
-            string key = System.IO.Path.GetFileNameWithoutExtension(path);
-            using System.IO.Stream stream = System.IO.File.OpenRead(path);
+            string key = Path.GetFileNameWithoutExtension(path);
+            using Stream stream = File.OpenRead(path);
             StationTextures[key] = Texture2D.FromStream(graphicsDevice, stream);
             logger.Info($"Loading station texture for '{key}'");
         }
@@ -149,19 +155,19 @@ public static class AssetManager
 
     private static void LoadStructureTextures(GraphicsDevice graphicsDevice)
     {
-        string dir = System.IO.Path.Combine(
-            System.AppDomain.CurrentDomain.BaseDirectory, "Assets", "Structures");
+        string dir = Path.Combine(
+            AppDomain.CurrentDomain.BaseDirectory, "Assets", "Structures");
 
-        if (!System.IO.Directory.Exists(dir))
+        if (!Directory.Exists(dir))
         {
-            System.Console.WriteLine($"[AssetManager] Structures folder not found: {dir}");
+            Console.WriteLine($"[AssetManager] Structures folder not found: {dir}");
             return;
         }
 
-        foreach (string path in System.IO.Directory.GetFiles(dir, "*.png"))
+        foreach (string path in Directory.GetFiles(dir, "*.png"))
         {
-            string key = System.IO.Path.GetFileNameWithoutExtension(path);
-            using System.IO.Stream stream = System.IO.File.OpenRead(path);
+            string key = Path.GetFileNameWithoutExtension(path);
+            using Stream stream = File.OpenRead(path);
             StructureTextures[key] = Texture2D.FromStream(graphicsDevice, stream);
             logger.Info($"Loading structure texture for '{key}'");
         }
@@ -174,19 +180,19 @@ public static class AssetManager
 
     private static void LoadNPCTextures(GraphicsDevice graphicsDevice)
     {
-        string dir = System.IO.Path.Combine(
-            System.AppDomain.CurrentDomain.BaseDirectory, "Assets", "NPCs");
+        string dir = Path.Combine(
+            AppDomain.CurrentDomain.BaseDirectory, "Assets", "NPCs");
 
-        if (!System.IO.Directory.Exists(dir))
+        if (!Directory.Exists(dir))
         {
-            System.Console.WriteLine($"[AssetManager] NPCs folder not found: {dir}");
+            Console.WriteLine($"[AssetManager] NPCs folder not found: {dir}");
             return;
         }
 
-        foreach (string path in System.IO.Directory.GetFiles(dir, "*.png"))
+        foreach (string path in Directory.GetFiles(dir, "*.png"))
         {
-            string key = System.IO.Path.GetFileNameWithoutExtension(path);
-            using System.IO.Stream stream = System.IO.File.OpenRead(path);
+            string key = Path.GetFileNameWithoutExtension(path);
+            using Stream stream = File.OpenRead(path);
             NPCTextures[key] = Texture2D.FromStream(graphicsDevice, stream);
             logger.Info($"Loading NPC texture for '{key}'");
         }
@@ -224,19 +230,19 @@ public static class AssetManager
 
     private static void LoadWallTextures(GraphicsDevice graphicsDevice)
     {
-        string dir = System.IO.Path.Combine(
-            System.AppDomain.CurrentDomain.BaseDirectory, "Assets", "Walls");
+        string dir = Path.Combine(
+            AppDomain.CurrentDomain.BaseDirectory, "Assets", "Walls");
 
-        if (!System.IO.Directory.Exists(dir))
+        if (!Directory.Exists(dir))
         {
-            System.Console.WriteLine($"[AssetManager] Stations folder not found: {dir}");
+            Console.WriteLine($"[AssetManager] Stations folder not found: {dir}");
             return;
         }
 
-        foreach (string path in System.IO.Directory.GetFiles(dir, "*.png"))
+        foreach (string path in Directory.GetFiles(dir, "*.png"))
         {
-            string key = System.IO.Path.GetFileNameWithoutExtension(path);
-            using System.IO.Stream stream = System.IO.File.OpenRead(path);
+            string key = Path.GetFileNameWithoutExtension(path);
+            using Stream stream = File.OpenRead(path);
             WallTextures[key] = Texture2D.FromStream(graphicsDevice, stream);
             logger.Info($"Loading wall texture for '{key}'");
         }
@@ -295,13 +301,13 @@ public static class AssetManager
 
         TileTexture[0]?.Dispose();
         TileTexture[0] = null;
-        
+
         TileTexture[1]?.Dispose();
         TileTexture[1] = null;
 
         TrainTrackTexture[0]?.Dispose();
         TrainTrackTexture[0] = null;
-        
+
         TrainTrackTexture[1]?.Dispose();
         TrainTrackTexture[1] = null;
 

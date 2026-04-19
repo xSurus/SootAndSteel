@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Gamelab.Assets;
+using Gamelab.Data;
 using Gamelab.Map.Train.State;
-using Gamelab.PhysicalEntities.Configurable;
-using Gamelab.PhysicalEntities.Structures;
+using Gamelab.PhysicalEntities.Stations;
+using Gamelab.Services.IShopService;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -35,8 +36,8 @@ public class HubMap : IDisposable
 
     public void RestockHubDragOffers(Random hubRandom, int offerCount)
     {
-        List<KeyValuePair<string, StationConfig>> selectedOffers = GamelabGame.Instance.ConfigurableStationRegistry
-            .GetShopCatalog()
+        List<CatalogItem> selectedOffers = GamelabGame.Instance.Services.GetService<IShopService>()
+            .GenerateCatalog()
             .OrderBy(x => hubRandom.Next())
             .Take(offerCount)
             .ToList();
@@ -51,7 +52,7 @@ public class HubMap : IDisposable
             float startX = shopCenter.X - (totalRowWidth / 2f);
             Vector2 spawnPos = new Vector2(startX + (i * spacingX), shopCenter.Y);
 
-            gameplayContext.Map.MapObjects.Add(new BuyableStationWrapper(offer.Key, spawnPos));
+            gameplayContext.Map.MapObjects.Add(new BuyableStationWrapper(offer.ItemId, spawnPos));
         }
     }
 
