@@ -83,7 +83,7 @@ public class HubMap : IDisposable
     {
         float scale = worldWidth * 1.0f / AssetManager.HubTexture.Width;
         spriteBatch.Draw(AssetManager.HubTexture, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, scale,
-            SpriteEffects.None, 0f);
+            SpriteEffects.None, RenderUtility.BackgroundLayer);
     }
 
     public void Dispose()

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Gamelab.Assets;
 using Gamelab.Map.Train.State;
+using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -82,7 +83,7 @@ public class WorldScroller
         for (int i = 0; i < tilePositions.Count; i++)
         {
             spriteBatch.Draw(AssetManager.TrainTrackTexture[tileTypes[i]], tilePositions[i], null, Color.White, 0f,
-                Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                Vector2.Zero, 1f, SpriteEffects.None, RenderUtility.BackgroundLayer);
         }
     }
 

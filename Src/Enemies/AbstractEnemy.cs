@@ -104,14 +104,22 @@ public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable, IBull
         if (!IsAlive || ShouldRemove) return;
 
         Texture2D texture = AssetManager.EnemyTexture;
-        Rectangle destRect = new Rectangle(
-            (int)(Position.X - Size / 2),
-            (int)(Position.Y - Size / 2),
-            (int)Size,
-            (int)Size
-        );
+        Vector2 origin = new Vector2(texture.Width / 2f, texture.Height);
+        Vector2 feetPosition = Position + new Vector2(0, Size / 2f);
+        float depth = RenderUtility.CalculateDepth(feetPosition.Y);
+        float scale = Size / texture.Width;
 
-        spriteBatch.Draw(texture, destRect, EnemyColor);
+        spriteBatch.Draw(
+            texture: texture,
+            position: feetPosition,
+            sourceRectangle: null,
+            color: EnemyColor,
+            rotation: 0f,
+            origin: origin,
+            scale: scale,
+            effects: SpriteEffects.None,
+            layerDepth: depth
+        );
     }
 
     protected bool HasReached(Vector2 targetPosition, float radius)

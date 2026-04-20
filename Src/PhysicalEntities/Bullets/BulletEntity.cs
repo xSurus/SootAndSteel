@@ -5,6 +5,7 @@ using Gamelab.Assets;
 using Gamelab.Items.Bullets;
 using Gamelab.PhysicalEntities.Bullets.Components;
 using Gamelab.PhysicalEntities.Interfaces;
+using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using nkast.Aether.Physics2D.Dynamics;
@@ -43,16 +44,21 @@ public class BulletEntity : AbstractPhysicalEntity
     public override void Draw(SpriteBatch spriteBatch)
     {
         if (!IsActive) return;
+        Vector2 bottomCenter = Position + new Vector2(0, Stats.Size / 2f);
+        float renderDepth = RenderUtility.CalculateDepth(bottomCenter.Y);
+        Vector2 origin = new Vector2(0.5f, 1f);
 
-        Vector2 position = Position;
-        Rectangle destinationRectangle = new Rectangle(
-            (int)(position.X - Stats.Size / 2f),
-            (int)(position.Y - Stats.Size / 2f),
-            (int)Stats.Size,
-            (int)Stats.Size
+        spriteBatch.Draw(
+            texture: AssetManager.BlankTexture,
+            position: bottomCenter,
+            sourceRectangle: null,
+            color: Stats.Color,
+            rotation: 0f,
+            origin: origin,
+            scale: new Vector2(Stats.Size, Stats.Size),
+            effects: SpriteEffects.None,
+            layerDepth: renderDepth
         );
-
-        spriteBatch.Draw(AssetManager.BlankTexture, destinationRectangle, Stats.Color);
     }
 
     public void OnCreate()

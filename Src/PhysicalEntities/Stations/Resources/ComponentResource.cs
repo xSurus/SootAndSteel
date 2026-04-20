@@ -2,6 +2,7 @@ using System.Linq;
 using Gamelab.Assets;
 using Gamelab.Items.Bullets;
 using Gamelab.Players;
+using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -45,11 +46,21 @@ public class ComponentResource(Vector2 position, string componentId)
     {
         Texture2D tex = AssetManager.GetStationTexture(GamelabGame.Instance.ComponentRegistry.Get(ComponentId).Sprite);
         int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
-        float originalSize = tex.Width;
-        float scale = tileSize / originalSize;
+        float scale = tileSize / (float)tex.Width;
+        Vector2 origin = new Vector2(tex.Width / 2f, tex.Height);
+        Vector2 bottomCenter = Position + new Vector2(0, tileSize / 2f);
+        float depth = RenderUtility.CalculateDepth(bottomCenter.Y);
 
-        Vector2 drawingPos = Position + new Vector2(-tileSize * 0.5f, -tileSize * 1.5f);
-        spriteBatch.Draw(tex, drawingPos, null, Color.White,
-            0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+        spriteBatch.Draw(
+            texture: tex,
+            position: bottomCenter,
+            sourceRectangle: null,
+            color: Color.White,
+            rotation: 0f,
+            origin: origin,
+            scale: scale,
+            effects: SpriteEffects.None,
+            layerDepth: depth
+        );
     }
 }

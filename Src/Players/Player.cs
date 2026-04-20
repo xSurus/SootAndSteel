@@ -268,44 +268,53 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        // Texture2D texture = AssetManager.PlayerTexture;
-        int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
         Texture2D texture = AssetManager.GetPlayerTexture(
             $"{idleFrames[(currentFrame + PlayerConfiguration.PlayerIndex) % idleFrames.Length]}{PlayerConfiguration.PlayerIndex}");
-        // float scale = tileSize / texture.Width;
-        Vector2 origin = new Vector2(texture.Width / 2f, texture.Height / 2f);
+
+        Vector2 origin = new Vector2(texture.Width / 2f, texture.Height);
+        Vector2 feetPosition = Position + new Vector2(0, Radius);
+
         Color drawColor = IsStunned ? Color.Goldenrod : Color.White;
+        bool isFacingRight = LookDirection.X > 0;
+        SpriteEffects flipEffect = isFacingRight ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+        float renderDepth = RenderUtility.CalculateDepth(feetPosition.Y);
+        spriteBatch.Draw(
+            texture: texture,
+            position: feetPosition,
+            sourceRectangle: null,
+            color: drawColor,
+            rotation: 0f,
+            origin: origin,
+            scale: 0.3f,
+            effects: flipEffect,
+            layerDepth: renderDepth
+        );
 
-        bool IsFacingRight = LookDirection.X > 0;
-        SpriteEffects flipEffect = IsFacingRight ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-
-        spriteBatch.Draw(texture, Position + new Vector2(0, -tileSize * 0.75f), null, drawColor, 0f, origin, 0.3f,
-            flipEffect,
-            0f);
         DrawInteractionTarget(spriteBatch);
-        DrawHeldItem(spriteBatch);
-        DrawStunProgress(spriteBatch);
+        DrawHeldItem(spriteBatch, renderDepth + RenderUtility.Eps);
+
+        float playerVisualHeight = texture.Height * 0.3f;
+        DrawStunProgress(spriteBatch, playerVisualHeight);
     }
 
-    private void DrawHeldItem(SpriteBatch spriteBatch)
+    private void DrawHeldItem(SpriteBatch spriteBatch, float renderDepth)
     {
         if (HeldItem != null)
         {
             Vector2 itemOffset = LookDirection * (Radius * HeldItemOffsetRadiusMultiplier);
             Vector2 itemPosition = Position + itemOffset;
             int itemSize = (int)(Radius * HeldItemSizeRadiusMultiplier);
-
-            HeldItem.Draw(spriteBatch, itemPosition, itemSize);
+            HeldItem.Draw(spriteBatch, itemPosition, itemSize, renderDepth);
         }
     }
 
     private void DrawInteractionTarget(SpriteBatch spriteBatch)
     {
         Vector2 targetPointPixels = Position + (LookDirection * InteractDistancePixels);
-        spriteBatch.DrawCircle(targetPointPixels, 5f, 12, Color.Red, 2f);
+        spriteBatch.DrawCircle(targetPointPixels, 5f, 12, Color.Red, 2f, layerDepth: RenderUtility.OverlayTopLayer);
     }
 
-    private void DrawStunProgress(SpriteBatch spriteBatch)
+    private void DrawStunProgress(SpriteBatch spriteBatch, float playerVisualHeight)
     {
         if (!IsStunned)
         {
@@ -314,10 +323,14 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
 
         int barWidth = 42;
         int barHeight = 6;
-        Vector2 anchor = Position + new Vector2(-barWidth / 2f, -(Radius + 18f));
+        Vector2 feetPosition = Position + new Vector2(0, Radius);
+        Vector2 anchor = feetPosition + new Vector2(-barWidth / 2f, -playerVisualHeight - 15f);
+
         var bg = new Rectangle((int)anchor.X, (int)anchor.Y, barWidth, barHeight);
         var fill = new Rectangle(bg.X, bg.Y, (int)(barWidth * Math.Clamp(ReviveProgress, 0f, 1f)), barHeight);
-        spriteBatch.Draw(AssetManager.BlankTexture, bg, Color.Black);
-        spriteBatch.Draw(AssetManager.BlankTexture, fill, Color.LimeGreen);
+        spriteBatch.Draw(AssetManager.BlankTexture, bg, null, Color.Black, 0f, Vector2.Zero, SpriteEffects.None,
+            RenderUtility.OverlayBackLayer);
+        spriteBatch.Draw(AssetManager.BlankTexture, fill, null, Color.LimeGreen, 0f, Vector2.Zero, SpriteEffects.None,
+            RenderUtility.OverlayTopLayer);
     }
 }

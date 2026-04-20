@@ -1,5 +1,6 @@
 using Gamelab.Assets;
 using Gamelab.Players;
+using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using nkast.Aether.Physics2D.Dynamics;
@@ -43,6 +44,10 @@ public class CannonAimingBar : AbstractGrabbable
         Texture2D texture = AssetManager.BlankTexture;
         Vector2 scale = new Vector2(barPixelWidth / texture.Width, barPixelHeight / texture.Height);
         Vector2 origin = new Vector2(texture.Width / 2f, texture.Height / 2f);
+        Texture2D cannonTex = AssetManager.GetStationTexture(StationIds.Cannon);
+        Vector2 bottomCenter = Position + new Vector2(0, tileSize / 2f);
+        float depth = RenderUtility.CalculateDepth(bottomCenter.Y);
+
 
         spriteBatch.Draw(
             texture: texture,
@@ -53,7 +58,7 @@ public class CannonAimingBar : AbstractGrabbable
             origin: origin,
             scale: scale,
             effects: SpriteEffects.None,
-            layerDepth: 0f
+            layerDepth: depth + RenderUtility.Eps
         );
     }
 

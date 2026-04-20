@@ -106,7 +106,22 @@ public class FireZone : AbstractPhysicalEntity, IEnemyHazard
     {
         float alpha = MathHelper.Clamp(remainingTime / durationSeconds, 0.25f, 1f);
         int diameter = (int)(radius * 2f);
-        Rectangle rect = new((int)(Position.X - radius), (int)(Position.Y - radius), diameter, diameter);
-        spriteBatch.Draw(AssetManager.BlankTexture, rect, Color.OrangeRed * alpha);
+
+        Vector2 feetPosition = Position + new Vector2(0, radius);
+        float depth = RenderUtility.CalculateDepth(feetPosition.Y);
+
+        Vector2 origin = new Vector2(0.5f, 1f);
+
+        spriteBatch.Draw(
+            AssetManager.BlankTexture,
+            feetPosition,
+            null,
+            Color.OrangeRed * alpha,
+            0f,
+            origin,
+            new Vector2(diameter, diameter),
+            SpriteEffects.None,
+            depth
+        );
     }
 }

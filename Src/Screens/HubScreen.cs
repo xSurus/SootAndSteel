@@ -13,6 +13,7 @@ using Gamelab.Serialization;
 using Gamelab.Services.Sound;
 using Gamelab.Services.Vfx;
 using Gamelab.UI;
+using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
@@ -46,8 +47,8 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
     {
         base.LoadContent();
 
-        InitializeContextAndSave();
         InitializeDimensions();
+        InitializeContextAndSave();
         InitializeMaps();
         InitializePlayers();
 
@@ -104,11 +105,30 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
     {
         GraphicsDevice.Clear(new Color(15, 15, 20));
 
-        spriteBatch.Begin(transformMatrix: camera.GetViewMatrix());
+        spriteBatch.Begin(
+            sortMode: SpriteSortMode.FrontToBack,
+            blendState: BlendState.AlphaBlend,
+            transformMatrix: camera.GetViewMatrix()
+        );
+
         hubMap.Draw(spriteBatch);
         prepTrainMap.Draw(spriteBatch);
-        spriteBatch.Draw(AssetManager.GetNPCTexture("Vendor"), new Vector2(1040, 580), null, Color.White, 0f,
-            Vector2.Zero, 0.3f, SpriteEffects.None, 0f);
+        Vector2 vendorPosition = new Vector2(1160, 580);
+        Texture2D vendorTex = AssetManager.GetNPCTexture("Vendor");
+        Vector2 bottomCenterOrigin = new Vector2(vendorTex.Width / 2f, vendorTex.Height);
+        float vendorScale = 0.3f;
+        float vendorDepth = RenderUtility.CalculateDepth(vendorPosition.Y);
+        spriteBatch.Draw(
+            texture: vendorTex,
+            position: vendorPosition,
+            sourceRectangle: null,
+            color: Color.White,
+            rotation: 0f,
+            origin: bottomCenterOrigin,
+            scale: vendorScale,
+            effects: SpriteEffects.None,
+            layerDepth: vendorDepth
+        );
         spriteBatch.Draw(AssetManager.BlankTexture, departMarker, Color.Lime * 0.18f);
 
         Services.GetService<IVfxService>().Render(spriteBatch);
@@ -132,6 +152,7 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
         SaveManager.SaveRun(Game.CurrentRun);
         gameplayContext = new GameplayContext(virtualScreenSize, Game.CurrentRun);
         Services.AddService(gameplayContext);
+        gameplayContext.WorldHeight = worldHeight;
         gameplayContext.State.CurrentSpeed = TrainSpeedSetting.Stopped;
         gameplayContext.State.actualSpeed = 0;
         gameplayContext.State.IsCoalOvenBurning = false;

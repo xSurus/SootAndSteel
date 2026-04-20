@@ -55,30 +55,30 @@ public class Workbench(Vector2 position) : AbstractStation("Workbench", Color.Da
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
-        float itemSizeFloat = tileSize * 0.4f;
-        int drawItemSize = (int)itemSizeFloat;
-        float quadOffset = tileSize * 0.25f;
-        // float originalSize = AssetManager.TileTexture.Width;
-        // float scale = tileSize / originalSize;
-
-        // Vector2 drawingPos = Position + new Vector2(-tileSize * 0.5f, -tileSize * 1.5f);
-        // spriteBatch.Draw(AssetManager.BenchTexture, drawingPos, null, Color.White,
-        //                         0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
-
         base.Draw(spriteBatch);
-        Vector2[] gridOffsets =
-        {
-            new Vector2(-quadOffset, -quadOffset),
-            new Vector2(quadOffset, -quadOffset),
-            new Vector2(-quadOffset, quadOffset),
-            new Vector2(quadOffset, quadOffset)
-        };
+        int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
 
-        for (int i = 0; i < PlacedItems.Count; i++)
+        Vector2 feetPosition = Position + new Vector2(0, tileSize / 2f);
+        float depth = RenderUtility.CalculateDepth(feetPosition.Y);
+
+        if (PlacedItems.Count > 0)
         {
-            Vector2 itemPos = Position + gridOffsets[i];
-            PlacedItems[i].Draw(spriteBatch, itemPos, drawItemSize);
+            int drawItemSize = (int)(tileSize * 0.4f);
+            float quadOffset = tileSize * 0.2f;
+            Vector2 tableTopCenter = feetPosition + new Vector2(0, -tileSize * 0.8f);
+            Vector2[] gridOffsets =
+            {
+                new Vector2(-quadOffset, -quadOffset),
+                new Vector2(quadOffset, -quadOffset),
+                new Vector2(-quadOffset, quadOffset),
+                new Vector2(quadOffset, quadOffset)
+            };
+
+            for (int i = 0; i < PlacedItems.Count; i++)
+            {
+                Vector2 itemPos = tableTopCenter + gridOffsets[i];
+                PlacedItems[i].Draw(spriteBatch, itemPos, drawItemSize, depth + RenderUtility.Eps);
+            }
         }
 
         if (craftProgress > 0f)
@@ -87,24 +87,15 @@ public class Workbench(Vector2 position) : AbstractStation("Workbench", Color.Da
             int barHeight = 6;
             float progressPercentage = craftProgress / 2f; // TODO add dynamic craft time
 
-            Rectangle bgBar = new Rectangle(
-                (int)(Position.X - barWidth / 2f),
-                (int)(Position.Y + (tileSize / 2f) - barHeight - 2),
-                barWidth,
-                barHeight
-            );
+            Vector2 barPos = feetPosition + new Vector2(-barWidth / 2f, -tileSize - 10f);
 
-            Rectangle fillBar = new Rectangle(
-                bgBar.X,
-                bgBar.Y,
-                (int)(barWidth * progressPercentage),
-                barHeight
-            );
-            // spriteBatch.Draw(AssetManager.BenchTexture, drawingPos, null, Color.Black,
-            //                     0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
-            base.Draw(spriteBatch);
-            // spriteBatch.Draw(AssetManager.BlankTexture, bgBar, Color.Black);
-            spriteBatch.Draw(AssetManager.BlankTexture, fillBar, Color.Yellow);
+            Rectangle bgBar = new Rectangle((int)barPos.X, (int)barPos.Y, barWidth, barHeight);
+            Rectangle fillBar = new Rectangle(bgBar.X, bgBar.Y, (int)(barWidth * progressPercentage), barHeight);
+
+            spriteBatch.Draw(AssetManager.BlankTexture, bgBar, null, Color.Black, 0f, Vector2.Zero, SpriteEffects.None,
+                depth + 2 * RenderUtility.Eps);
+            spriteBatch.Draw(AssetManager.BlankTexture, fillBar, null, Color.Yellow, 0f, Vector2.Zero,
+                SpriteEffects.None, depth + 3 * RenderUtility.Eps);
         }
     }
 
