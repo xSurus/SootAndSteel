@@ -13,4 +13,5 @@ public class GameplayContext(Point virtualScreenSize, RunSession runSession)
     public GameEvents Events { get; } = new GameEvents();
     public int ScreenWidth { get; } = virtualScreenSize.X;
     public int ScreenHeight { get; } = virtualScreenSize.Y;
+    public int WorldHeight { get; set; }
 }

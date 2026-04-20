@@ -1,12 +1,9 @@
 using System;
 using Gamelab.Assets;
 using Gamelab.Config;
-using Gamelab.Enemies;
 using Gamelab.Items;
 using Gamelab.Items.Bullets;
 using Gamelab.Particles;
-using Gamelab.PhysicalEntities.Projectiles;
-using Gamelab.PhysicalEntities.Bullets;
 using Gamelab.PhysicalEntities.Bullets.Components;
 using Gamelab.Players;
 using Gamelab.Services.Bullet;
@@ -77,7 +74,7 @@ public class CannonStation : AbstractStation, IBulletEmitter
         Vector2 cannonPosition = DrawPosition + new Vector2(config.TrainTileSize / 2f);
         float barrelLength = config.TrainTileSize * 0.5f;
         Vector2 position = cannonPosition + direction * barrelLength;
-        
+
         direction.Normalize();
         GamelabGame.Instance.Services.GetService<IBulletService>().EmitBullet(ammo, position, direction, this);
         GamelabGame.Instance.Services.GetService<IVfxService>()
@@ -87,11 +84,9 @@ public class CannonStation : AbstractStation, IBulletEmitter
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        if (AimingBar?.PhysicsBody == null)
-        {
-            base.Draw(spriteBatch);
-            return;
-        }
+        base.Draw(spriteBatch);
+
+        if (AimingBar?.PhysicsBody == null) return;
 
         Vector2 direction = new Vector2(
             (float)Math.Cos(AimingBar.PhysicsBody.Rotation),
@@ -99,8 +94,8 @@ public class CannonStation : AbstractStation, IBulletEmitter
         );
         float lineLength = config.TrainTileSize * 4f;
         Vector2 lineEnd = Position + direction * lineLength;
-        base.Draw(spriteBatch);
         DrawAimLine(spriteBatch, Position, lineEnd, Color.White);
+
         AimingBar?.Draw(spriteBatch);
     }
 
@@ -117,7 +112,7 @@ public class CannonStation : AbstractStation, IBulletEmitter
             angle,
             new Vector2(0f, 1f),
             SpriteEffects.None,
-            0f
+            RenderUtility.TopEntityLayer
         );
     }
 

@@ -31,7 +31,7 @@ public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
         int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
 
         widthPixels = tileSize;
-        heightPixels = (trainHeightTiles + 1) * tileSize;
+        heightPixels = trainHeightTiles * tileSize;
 
         PhysicsBody = gameplayContext.PhysicsWorld.CreateRectangle(widthPixels.ToMeters(), heightPixels.ToMeters(), 1f,
             position.ToMeters());
@@ -75,27 +75,25 @@ public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        Vector2 centerPixels = Position;
-
-        Rectangle boxRect = new Rectangle(
-            (int)(centerPixels.X - widthPixels / 2f),
-            (int)(centerPixels.Y - heightPixels / 2f),
-            (int)widthPixels,
-            (int)heightPixels
-        );
-        spriteBatch.Draw(AssetManager.BlankTexture, boxRect, Color.DarkGray);
+        Vector2 centerBottom = Position + new Vector2(0, heightPixels / 2f);
+        float depth = RenderUtility.CalculateDepth(centerBottom.Y);
+        Vector2 origin = new Vector2(0.5f, 1f);
+        spriteBatch.Draw(AssetManager.BlankTexture, centerBottom, null, Color.DarkGray, 0f, origin,
+            new Vector2(widthPixels, heightPixels), SpriteEffects.None, depth);
 
         int barMaxWidth = (int)(widthPixels * 0.8f);
         int barHeight = 12;
-        int barX = (int)(centerPixels.X - barMaxWidth / 2f);
-        int barY = (int)(centerPixels.Y + (heightPixels / 2));
+        Vector2 barPos = centerBottom + new Vector2(-barMaxWidth / 2f, -barHeight - 5f);
 
         float fuelRatio = Math.Max(0f, currentFuel / maxFuel);
         int currentBarWidth = (int)(barMaxWidth * fuelRatio);
 
-        spriteBatch.Draw(AssetManager.BlankTexture, new Rectangle(barX, barY, barMaxWidth, barHeight), Color.Black);
+        spriteBatch.Draw(AssetManager.BlankTexture, new Rectangle((int)barPos.X, (int)barPos.Y, barMaxWidth, barHeight),
+            null, Color.Black, 0f, Vector2.Zero, SpriteEffects.None, depth + RenderUtility.Eps);
 
         Color barColor = currentFuel <= LowFuelThreshold ? Color.Red : Color.DarkOrange;
-        spriteBatch.Draw(AssetManager.BlankTexture, new Rectangle(barX, barY, currentBarWidth, barHeight), barColor);
+        spriteBatch.Draw(AssetManager.BlankTexture,
+            new Rectangle((int)barPos.X, (int)barPos.Y, currentBarWidth, barHeight), null, barColor, 0f, Vector2.Zero,
+            SpriteEffects.None, depth + 2 * RenderUtility.Eps);
     }
 }

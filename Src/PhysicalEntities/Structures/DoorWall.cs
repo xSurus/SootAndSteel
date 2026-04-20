@@ -1,4 +1,3 @@
-using System;
 using Gamelab.Assets;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
@@ -15,14 +14,10 @@ namespace Gamelab.PhysicalEntities.Structures;
 /// </summary>
 public class DoorWall : AbstractPhysicalEntity, IInteractable
 {
-    private static readonly Color ClosedColor = new Color(60, 100, 130);
-    private static readonly Color OpenColor = new Color(50, 150, 60);
-
     private readonly Vector2 dimensionsPixels;
     private bool isOpen = false;
-    private bool isTop;
 
-    public DoorWall(Vector2 dimensionsPixels, Vector2 positionPixels, bool isTop)
+    public DoorWall(Vector2 dimensionsPixels, Vector2 positionPixels)
     {
         this.dimensionsPixels = dimensionsPixels;
         PhysicsBody = gameplayContext.PhysicsWorld.CreateRectangle(
@@ -33,7 +28,6 @@ public class DoorWall : AbstractPhysicalEntity, IInteractable
             0f,
             BodyType.Static);
         PhysicsBody.Tag = this;
-        this.isTop = isTop;
     }
 
     public void OnInteract(Player interactingPlayer)
@@ -45,41 +39,17 @@ public class DoorWall : AbstractPhysicalEntity, IInteractable
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        Color color = isOpen ? OpenColor : ClosedColor;
-        Vector2 origin = new Vector2(dimensionsPixels.X / 2f, dimensionsPixels.Y / 2f);
-        Rectangle sourceRect = new Rectangle(0, 0, (int)dimensionsPixels.X, (int)dimensionsPixels.Y);
-        Vector2 snappedPos = new Vector2(MathF.Round(Position.X), MathF.Round(Position.Y));
+        Texture2D tex;
+        tex = isOpen
+            ? AssetManager.GetWallTexture("WallTileTopDoorOpen")
+            : AssetManager.GetWallTexture("WallTileTopDoorClosed");
 
         int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
-        float originalSize = AssetManager.GetWallTexture("WallTileTop").Width;
-        float scale = tileSize / originalSize;
+        float scale = tileSize / (float)AssetManager.GetWallTexture("WallTileTop").Width;
+        Vector2 origin = new Vector2(tex.Width / 2f, tex.Height);
+        Vector2 bottomCenter = Position + new Vector2(0, dimensionsPixels.Y / 2f);
+        float depth = RenderUtility.CalculateDepth(bottomCenter.Y);
 
-        if (isTop)
-        {
-            Vector2 drawingPos = Position + new Vector2(-tileSize * 0.5f, -tileSize * 1.75f);
-            Texture2D tex = isOpen
-                ? AssetManager.GetWallTexture("WallTileTopDoorOpen")
-                : AssetManager.GetWallTexture("WallTileTopDoorClosed");
-            spriteBatch.Draw(tex, drawingPos, null, Color.White,
-                0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
-        }
-        else
-        {
-            Vector2 drawingPos = Position + new Vector2(-tileSize * 0.5f, -tileSize * 2f);
-            Texture2D tex = isOpen
-                ? AssetManager.GetWallTexture("WallTileBottomDoorOpen")
-                : AssetManager.GetWallTexture("WallTileBottomDoorClosed");
-            spriteBatch.Draw(tex, drawingPos, null, Color.White,
-                0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
-        }
-
-
-        // Open/closed indicator dot
-        int dot = 8;
-        var dotRect = new Rectangle(
-            (int)(snappedPos.X + dimensionsPixels.X / 2f) - dot - 3,
-            (int)(snappedPos.Y - dot / 2),
-            dot, dot);
-        spriteBatch.Draw(AssetManager.BlankTexture, dotRect, isOpen ? Color.LimeGreen : Color.Red);
+        spriteBatch.Draw(tex, bottomCenter, null, Color.White, 0f, origin, scale, SpriteEffects.None, depth);
     }
 }

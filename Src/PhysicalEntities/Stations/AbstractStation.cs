@@ -73,39 +73,49 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
     public override void Draw(SpriteBatch spriteBatch)
     {
         Texture2D tex = AssetManager.GetStationTexture(StationId);
-        // logger.Info($"Drawing '{Type}'");
-
+        int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
+        Vector2 bottomCenter = Position + new Vector2(0, tileSize / 2f);
+        float depth = RenderUtility.CalculateDepth(bottomCenter.Y);
         if (tex == AssetManager.BlankTexture)
         {
-            int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
             int drawSize = tileSize - 10;
-
-            Vector2 origin = new Vector2(drawSize / 2f, drawSize / 2f);
+            Vector2 origin = new Vector2(drawSize / 2f, drawSize);
             Rectangle sourceRect = new Rectangle(0, 0, drawSize, drawSize);
 
             spriteBatch.Draw(
                 texture: AssetManager.BlankTexture,
-                position: Position,
+                position: bottomCenter,
                 sourceRectangle: sourceRect,
                 color: DisplayColor,
                 rotation: PhysicsBody.Rotation,
                 origin: origin,
                 scale: 1f,
                 effects: SpriteEffects.None,
-                layerDepth: 0f
+                layerDepth: depth
             );
-
-            HeldItem?.Draw(spriteBatch, Position, tileSize / 2);
         }
         else
         {
-            int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
-            float originalSize = tex.Width;
-            float scale = tileSize / originalSize;
+            float scale = tileSize / (float)tex.Width;
+            Vector2 origin = new Vector2(tex.Width / 2f, tex.Height);
 
-            Vector2 drawingPos = Position + new Vector2(-tileSize * 0.5f, -tileSize * 1.5f);
-            spriteBatch.Draw(tex, drawingPos, null, Color.White,
-                0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(
+                texture: tex,
+                position: bottomCenter,
+                sourceRectangle: null,
+                color: Color.White,
+                rotation: 0f,
+                origin: origin,
+                scale: scale,
+                effects: SpriteEffects.None,
+                layerDepth: depth
+            );
+        }
+
+        if (HeldItem != null)
+        {
+            Vector2 itemHoverPosition = bottomCenter + new Vector2(0, -tileSize * 0.8f);
+            HeldItem.Draw(spriteBatch, itemHoverPosition, tileSize / 2, depth + RenderUtility.Eps);
         }
     }
 }

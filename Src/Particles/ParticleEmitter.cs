@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Gamelab.Particles.Modifiers;
 using Gamelab.Particles.Profiles;
+using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -116,7 +117,7 @@ public class ParticleEmitter
         for (int i = 0; i < activeParticles; i++)
         {
             spriteBatch.Draw(Texture, particles[i].Position, null, particles[i].Color,
-                particles[i].Rotation, origin, particles[i].Size, SpriteEffects.None, 0f);
+                particles[i].Rotation, origin, particles[i].Size, SpriteEffects.None, RenderUtility.ParticlesLayer);
         }
     }
 }

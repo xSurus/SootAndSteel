@@ -8,7 +8,6 @@ using Gamelab.Map;
 using Gamelab.Map.Train;
 using Gamelab.Map.Train.State;
 using Gamelab.Particles;
-using Gamelab.PhysicalEntities.Projectiles;
 using Gamelab.Players;
 using Gamelab.Screens.Camera;
 using Gamelab.Serialization;
@@ -17,6 +16,7 @@ using Gamelab.Services.Sound;
 using Gamelab.Services.Vfx;
 using Gamelab.UI;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using Myra.Graphics2D.UI;
 
@@ -38,7 +38,6 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     private TrainMap trainMap;
     private WorldScroller worldScroller;
     private EnemyManager enemyManager;
-    private ProjectileManager projectileManager;
     private List<Player> players;
 
     private OrthographicCamera camera;
@@ -129,6 +128,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         int playerCount = Math.Max(1, Game.playerManager.Configs.Count);
         gameplayContext = new GameplayContext(virtualScreenSize, Game.CurrentRun);
         Services.AddService(gameplayContext);
+        gameplayContext.WorldHeight = virtualScreenSize.Y;
         gameplayContext.State.ConfigurePlayerScaling(playerCount);
         gameplayContext.Events.OnWallBreached += OnWallBreached;
         gameplayContext.Events.OnWallRepaired += OnWallRepaired;
@@ -147,7 +147,6 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         gameplayContext.Map = trainMap;
 
         worldScroller = new WorldScroller(GraphicsDevice);
-        projectileManager = new ProjectileManager();
         enemyManager = new EnemyManager(currentLevelDef);
 
         players = [];
@@ -215,7 +214,6 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
             foreach (Player player in players) player.Update(fixedDt);
 
             enemyManager.Update(fixedDt);
-            projectileManager.Update(fixedDt);
             gameplayContext.State.Update(fixedDt);
 
             if (isFailureTriggered) return;
@@ -288,8 +286,11 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
 
     private void DrawWorld()
     {
-        Matrix finalTransform = camera.GetViewMatrix();
-        spriteBatch.Begin(transformMatrix: finalTransform);
+        spriteBatch.Begin(
+            sortMode: SpriteSortMode.FrontToBack,
+            blendState: BlendState.AlphaBlend,
+            transformMatrix: camera.GetViewMatrix()
+        );
         worldScroller.Draw(spriteBatch);
         trainMap.Draw(spriteBatch);
         enemyManager.Draw(spriteBatch);

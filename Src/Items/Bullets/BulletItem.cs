@@ -94,9 +94,9 @@ public class BulletItem : Item
         return ((BulletItem)other).ComponentIds.SequenceEqual(ComponentIds);
     }
 
-    public override void Draw(SpriteBatch spriteBatch, Vector2 position, int size)
+    public override void Draw(SpriteBatch spriteBatch, Vector2 position, int size, float depth)
     {
-        Vector2 origin = new Vector2(size / 2f, size / 2f);
+        Vector2 origin = new Vector2(size / 2f, size);
         Rectangle sourceRect = new Rectangle(0, 0, size, size);
 
         spriteBatch.Draw(
@@ -108,7 +108,7 @@ public class BulletItem : Item
             origin: origin,
             scale: 1f,
             effects: SpriteEffects.None,
-            layerDepth: 0f
+            layerDepth: depth
         );
     }
 

@@ -42,18 +42,21 @@ public class CoalWagon : AbstractPhysicalEntity, IPickable
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        // logger.Info($"Drawing texture for Wagon");
-        int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
-        // float scale = tileSize / AssetManager.TileTexture.Width;
+        Texture2D tex = AssetManager.GetStructureTexture("CoalWagon");
+        Vector2 origin = new Vector2(tex.Width / 2f, tex.Height);
+        Vector2 bottomCenter = Position + new Vector2(0, heightPixels / 2f);
+        float depth = RenderUtility.CalculateDepth(bottomCenter.Y);
 
-        Vector2 drawPos = Position + new Vector2(-widthPixels / 2f + tileSize, -heightPixels / 2f - tileSize * 2.25f);
-        spriteBatch.Draw(AssetManager.GetStructureTexture("CoalWagon"),
-            drawPos, null, Color.White,
-            0f, Vector2.Zero, 0.85f, SpriteEffects.None, 0f);
-
-
-        // Rectangle destRect = new Rectangle((int)(Position.X - widthPixels / 2f), (int)(Position.Y - heightPixels / 2f),
-        //     (int)widthPixels, (int)heightPixels);
-        // spriteBatch.Draw(AssetManager., destRect, Color.Black);
+        spriteBatch.Draw(
+            texture: tex,
+            position: bottomCenter,
+            sourceRectangle: null,
+            color: Color.White,
+            rotation: 0f,
+            origin: origin,
+            scale: 0.85f,
+            effects: SpriteEffects.None,
+            layerDepth: depth
+        );
     }
 }

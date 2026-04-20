@@ -87,18 +87,41 @@ public class AnchorCable : AbstractPhysicalEntity, IEnemyHazard, IInteractable
         Vector2 groundPoint = slot.Side == EnemySlotSide.Top
             ? new Vector2(anchor.X - 80f, 0f)
             : new Vector2(anchor.X - 80f, gameplayContext.ScreenHeight);
-        DrawLine(spriteBatch, groundPoint, anchor, Color.SaddleBrown, 4);
 
-        Rectangle box = new((int)(anchor.X - 14f), (int)(anchor.Y - 14f), 28, 28);
-        spriteBatch.Draw(AssetManager.BlankTexture, box, Color.Brown);
+        Vector2 feetPosition = anchor + new Vector2(0, 14f);
+        float depth = RenderUtility.CalculateDepth(feetPosition.Y);
+        DrawLine(spriteBatch, groundPoint, anchor, Color.SaddleBrown, 4, depth);
+        Vector2 boxOrigin = new Vector2(0.5f, 1f);
+        spriteBatch.Draw(AssetManager.BlankTexture, feetPosition, null, Color.Brown, 0f, boxOrigin,
+            new Vector2(28f, 28f), SpriteEffects.None, depth + RenderUtility.Eps);
 
         if (cutProgress > 0f)
         {
             Rectangle bg = new((int)(anchor.X - 20f), (int)(anchor.Y + 20f), 40, 6);
             Rectangle fill = new(bg.X, bg.Y, (int)(40 * Math.Clamp(cutProgress, 0f, 1f)), 6);
-            spriteBatch.Draw(AssetManager.BlankTexture, bg, Color.Black);
-            spriteBatch.Draw(AssetManager.BlankTexture, fill, Color.LightGreen);
+
+            spriteBatch.Draw(AssetManager.BlankTexture, bg, null, Color.Black, 0f, Vector2.Zero, SpriteEffects.None,
+                depth + 2 * RenderUtility.Eps);
+            spriteBatch.Draw(AssetManager.BlankTexture, fill, null, Color.LightGreen, 0f, Vector2.Zero,
+                SpriteEffects.None, depth + 3 * RenderUtility.Eps);
         }
+    }
+
+    private static void DrawLine(SpriteBatch spriteBatch, Vector2 start, Vector2 end, Color color, int thickness,
+        float depth)
+    {
+        Vector2 edge = end - start;
+        float angle = (float)Math.Atan2(edge.Y, edge.X);
+        spriteBatch.Draw(
+            AssetManager.BlankTexture,
+            new Rectangle((int)start.X, (int)start.Y, (int)edge.Length(), thickness),
+            null,
+            color,
+            angle,
+            new Vector2(0f, 0.5f),
+            SpriteEffects.None,
+            depth
+        );
     }
 
     private void ApplyAnchorEffect()
@@ -121,20 +144,5 @@ public class AnchorCable : AbstractPhysicalEntity, IEnemyHazard, IInteractable
 
         gameplayContext.State.RemoveAnchor();
         anchorApplied = false;
-    }
-
-    private static void DrawLine(SpriteBatch spriteBatch, Vector2 start, Vector2 end, Color color, int thickness)
-    {
-        Vector2 edge = end - start;
-        float angle = (float)Math.Atan2(edge.Y, edge.X);
-        spriteBatch.Draw(
-            AssetManager.BlankTexture,
-            new Rectangle((int)start.X, (int)start.Y, (int)edge.Length(), thickness),
-            null,
-            color,
-            angle,
-            new Vector2(0f, thickness / 2f),
-            SpriteEffects.None,
-            0f);
     }
 }
