@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Gamelab.Enemies;
+using Gamelab.Enemies.Core;
 using Gamelab.Items.Bullets;
 using Microsoft.Xna.Framework;
 using nkast.Aether.Physics2D.Dynamics;

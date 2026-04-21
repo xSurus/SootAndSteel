@@ -1,4 +1,4 @@
-namespace Gamelab.Enemies;
+namespace Gamelab.Enemies.Movement;
 
 public readonly record struct EnemyMovementProfile(
     float MaxForwardSpeed,

@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using Gamelab.Enemies.Core;
+using Gamelab.Enemies.Hazards;
+using Gamelab.Enemies.Slots;
 using Gamelab.Levels;
 using Gamelab.Map.Train.State;
 using Gamelab.PhysicalEntities.Projectiles;
@@ -8,54 +11,29 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Gamelab.Enemies;
 
-public class EnemyManager
+public class EnemyManager(LevelDefinition levelDef)
 {
     private readonly List<AbstractEnemy> enemies = [];
-    private Random random;
-    private readonly EnemySlotManager slotManager;
+    private readonly Random random = new(levelDef.LevelSeed);
+    private readonly EnemySlotManager slotManager = new();
     private readonly EnemyHazardManager hazardManager = new();
-    private LevelDefinition levelDefinition;
     private readonly GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
 
-    private float timeSinceLastSpawn;
-    private float currentSpawnInterval;
     private int nextSpawnIndex;
-    private float RifleSpawnChance => GamelabGame.Instance.GameplayConfig.RifleSpawnChance;
-    private float EnemySpawnIntervalBase => GamelabGame.Instance.GameplayConfig.EnemySpawnIntervalBase;
-    private float EnemySpawnIntervalVariance => GamelabGame.Instance.GameplayConfig.EnemySpawnIntervalVariance;
     private float EnemySpawnOffsetX => GamelabGame.Instance.GameplayConfig.EnemySpawnOffsetX;
     private float EnemySize => GamelabGame.Instance.GameplayConfig.EnemySize;
     private float RiflePreferredDistance => GamelabGame.Instance.GameplayConfig.RiflePreferredDistance;
-    private readonly ProjectileManager projectileManager;
-
-    public IReadOnlyList<AbstractEnemy> Enemies => enemies;
     public bool HasActiveThreats => enemies.Count > 0 || hazardManager.HasActiveThreats;
-
-    public EnemyManager(LevelDefinition levelDef)
-    {
-        currentSpawnInterval = GamelabGame.Instance.GameplayConfig.EnemySpawnIntervalBase;
-        levelDefinition = levelDef;
-        slotManager = new EnemySlotManager();
-        random = new Random(levelDef.LevelSeed);
-    }
-
-    public void SetLevel(LevelDefinition levelDef)
-    {
-        levelDefinition = levelDef;
-        nextSpawnIndex = 0;
-        timeSinceLastSpawn = 0f;
-        currentSpawnInterval = EnemySpawnIntervalBase;
-    }
 
     public void Update(float deltaTime)
     {
         
-        if (levelDefinition != null)
+        if (levelDef != null)
         {
-            while (nextSpawnIndex < levelDefinition.SpawnEvents.Count &&
-                   gameplayContext.State.DistanceTraveled >= levelDefinition.SpawnEvents[nextSpawnIndex].Distance)
+            while (nextSpawnIndex < levelDef.SpawnEvents.Count &&
+                   gameplayContext.State.DistanceTraveled >= levelDef.SpawnEvents[nextSpawnIndex].Distance)
             {
-                SpawnFromEvent(levelDefinition.SpawnEvents[nextSpawnIndex]);
+                SpawnFromEvent(levelDef.SpawnEvents[nextSpawnIndex]);
                 nextSpawnIndex++;
             }
         }

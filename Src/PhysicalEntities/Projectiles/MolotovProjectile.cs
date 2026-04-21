@@ -1,5 +1,6 @@
 using Gamelab.Assets;
 using Gamelab.Enemies;
+using Gamelab.Enemies.Hazards;
 using Gamelab.PhysicalEntities.Hazards;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;

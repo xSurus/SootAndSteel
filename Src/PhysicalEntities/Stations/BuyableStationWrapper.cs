@@ -1,7 +1,7 @@
 using Gamelab.Data;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
-using Gamelab.Services.IShopService;
+using Gamelab.Services.Shop;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 

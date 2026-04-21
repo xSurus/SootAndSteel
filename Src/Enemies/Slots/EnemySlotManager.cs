@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Gamelab.Enemies;
+namespace Gamelab.Enemies.Slots;
 
 public class EnemySlotManager()
 {

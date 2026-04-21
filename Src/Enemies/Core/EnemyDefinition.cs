@@ -1,6 +1,6 @@
 using System;
 
-namespace Gamelab.Enemies;
+namespace Gamelab.Enemies.Core;
 
 public readonly record struct EnemyDefinition(EnemyType Type)
 {

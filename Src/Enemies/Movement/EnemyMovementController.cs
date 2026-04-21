@@ -3,7 +3,7 @@ using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using nkast.Aether.Physics2D.Dynamics;
 
-namespace Gamelab.Enemies;
+namespace Gamelab.Enemies.Movement;
 
 public class EnemyMovementController(Body physicsBody, EnemyMovementProfile profile)
 {

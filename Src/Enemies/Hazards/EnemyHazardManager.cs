@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Gamelab.Enemies;
+namespace Gamelab.Enemies.Hazards;
 
 public class EnemyHazardManager
 {

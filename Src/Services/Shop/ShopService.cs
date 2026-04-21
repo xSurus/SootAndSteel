@@ -5,7 +5,7 @@ using Gamelab.Items.Bullets;
 using Gamelab.PhysicalEntities.Configurable;
 using Gamelab.PhysicalEntities.Stations;
 
-namespace Gamelab.Services.IShopService;
+namespace Gamelab.Services.Shop;
 
 public class ShopManager : IShopService
 {

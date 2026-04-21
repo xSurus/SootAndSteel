@@ -1,6 +1,8 @@
 using System;
 using Gamelab.Assets;
 using Gamelab.Enemies;
+using Gamelab.Enemies.Hazards;
+using Gamelab.Enemies.Slots;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
 using Gamelab.Utils;

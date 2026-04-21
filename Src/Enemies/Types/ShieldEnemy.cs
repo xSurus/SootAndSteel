@@ -1,11 +1,14 @@
 using System;
+using Gamelab.Enemies.Core;
+using Gamelab.Enemies.Movement;
+using Gamelab.Enemies.Slots;
 using Gamelab.Items.Bullets;
 using Gamelab.PhysicalEntities.Bullets;
 using Gamelab.PhysicalEntities.Stations.Cannon;
 using Gamelab.Services.Bullet;
 using Microsoft.Xna.Framework;
 
-namespace Gamelab.Enemies;
+namespace Gamelab.Enemies.Types;
 
 public enum ShieldState
 {

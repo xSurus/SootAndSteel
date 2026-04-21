@@ -1,6 +1,6 @@
 using Gamelab.PhysicalEntities.Interfaces;
 
-namespace Gamelab.Enemies;
+namespace Gamelab.Enemies.Hazards;
 
 public interface IEnemyHazard : IPhysicalEntity, IUpdatable
 {

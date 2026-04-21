@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Gamelab.Assets;
 using Gamelab.Enemies;
+using Gamelab.Enemies.Hazards;
 using Gamelab.Players;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;

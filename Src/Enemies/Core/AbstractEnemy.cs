@@ -1,4 +1,7 @@
 using Gamelab.Assets;
+using Gamelab.Enemies.Hazards;
+using Gamelab.Enemies.Movement;
+using Gamelab.Enemies.Slots;
 using Gamelab.Particles;
 using Gamelab.PhysicalEntities;
 using Gamelab.PhysicalEntities.Bullets;
@@ -11,7 +14,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using nkast.Aether.Physics2D.Dynamics;
 
-namespace Gamelab.Enemies;
+namespace Gamelab.Enemies.Core;
 
 public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable, IBulletEmitter
 {

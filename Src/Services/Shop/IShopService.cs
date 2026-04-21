@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Gamelab.Data;
 
-namespace Gamelab.Services.IShopService;
+namespace Gamelab.Services.Shop;
 
 public interface IShopService
 {
