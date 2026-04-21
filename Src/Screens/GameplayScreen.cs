@@ -315,6 +315,12 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
                 Color.White * w);
         }
 
+        pauseMenu.OptionsPanel.Draw(
+            spriteBatch,
+            virtualScreenSize,
+            Game.fontSystem.GetFont(72),
+            Game.fontSystem.GetFont(40));
+
         spriteBatch.End();
     }
 
