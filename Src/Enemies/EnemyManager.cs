@@ -20,7 +20,6 @@ public class EnemyManager
     private float timeSinceLastSpawn;
     private float currentSpawnInterval;
     private int nextSpawnIndex;
-    private float levelStartDistance;
     private float RifleSpawnChance => GamelabGame.Instance.GameplayConfig.RifleSpawnChance;
     private float EnemySpawnIntervalBase => GamelabGame.Instance.GameplayConfig.EnemySpawnIntervalBase;
     private float EnemySpawnIntervalVariance => GamelabGame.Instance.GameplayConfig.EnemySpawnIntervalVariance;
@@ -37,7 +36,6 @@ public class EnemyManager
         currentSpawnInterval = GamelabGame.Instance.GameplayConfig.EnemySpawnIntervalBase;
         levelDefinition = levelDef;
         slotManager = new EnemySlotManager();
-        levelStartDistance = gameplayContext.State.DistanceTraveled;
         random = new Random(levelDef.LevelSeed);
     }
 
@@ -47,17 +45,15 @@ public class EnemyManager
         nextSpawnIndex = 0;
         timeSinceLastSpawn = 0f;
         currentSpawnInterval = EnemySpawnIntervalBase;
-        levelStartDistance = gameplayContext.State.DistanceTraveled;
     }
 
     public void Update(float deltaTime)
     {
-        float distanceInCurrentLevel = gameplayContext.State.DistanceTraveled - levelStartDistance;
-
+        
         if (levelDefinition != null)
         {
             while (nextSpawnIndex < levelDefinition.SpawnEvents.Count &&
-                   distanceInCurrentLevel >= levelDefinition.SpawnEvents[nextSpawnIndex].Distance)
+                   gameplayContext.State.DistanceTraveled >= levelDefinition.SpawnEvents[nextSpawnIndex].Distance)
             {
                 SpawnFromEvent(levelDefinition.SpawnEvents[nextSpawnIndex]);
                 nextSpawnIndex++;
@@ -90,21 +86,7 @@ public class EnemyManager
             }
         }
     }
-
-    private void SpawnFallbackEnemy()
-    {
-        float roll = random.NextSingle();
-        EnemyType enemyType = roll switch
-        {
-            < 0.1f => EnemyType.TarThrower,
-            < 0.25f => EnemyType.Molotov,
-            _ => random.NextSingle() < RifleSpawnChance ? EnemyType.Rifle : EnemyType.Mounter
-        };
-        EnemyDefinition definition = new EnemyDefinition(enemyType);
-        EnemySlotSide side = random.NextSingle() < 0.5f ? EnemySlotSide.Top : EnemySlotSide.Bottom;
-        SpawnEnemy(definition, side);
-    }
-
+    
     private void SpawnFromEvent(SpawnEvent spawnEvent)
     {
         EnemyDefinition definition = EnemyDefinition.Parse(spawnEvent.Type);

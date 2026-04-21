@@ -31,9 +31,8 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     }
 
     private GameplayContext gameplayContext;
-    private RunManager runManager;
+    private LevelCompletionWatcher levelWatcher;
     private LevelDefinition currentLevelDef;
-    private float levelStartDistance;
 
     private TrainMap trainMap;
     private WorldScroller worldScroller;
@@ -107,8 +106,8 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         if (gameplayContext?.State != null)
             gameplayContext.State.OnTrainFrozen -= OnTrainFrozen;
 
-        if (runManager != null)
-            runManager.OnIntermissionStarted -= OnIntermissionStarted;
+        if (levelWatcher != null)
+            levelWatcher.OnLevelCompleted -= OnLevelCompleted;
 
         Game.Services.RemoveService(typeof(GameplayContext));
         Services.GetService<IVfxService>().ClearAll();
@@ -134,10 +133,10 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         gameplayContext.Events.OnWallRepaired += OnWallRepaired;
         gameplayContext.State.OnTrainFrozen += OnTrainFrozen;
 
-        runManager = new RunManager(Game.CurrentRun, new ProgressiveRunLevelProvider(playerCount, Game.CurrentRun));
-        runManager.OnIntermissionStarted += OnIntermissionStarted;
-        currentLevelDef = runManager.CurrentLevelDefinition;
-        levelStartDistance = 0f;
+        var proceduralLevels = new ProceduralLevelProvider(playerCount, Game.CurrentRun);
+        currentLevelDef = proceduralLevels.GetLevel(Game.CurrentRun.CurrentLevel);
+        levelWatcher = new LevelCompletionWatcher(currentLevelDef);
+        levelWatcher.OnLevelCompleted += OnLevelCompleted;
     }
 
     private void InitializeMapAndEntities()
@@ -230,8 +229,8 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     private void UpdateSystems(float dt)
     {
         worldScroller.Update(dt);
-        hud.Update(currentLevelDef, levelStartDistance);
-        runManager.Update(enemyManager);
+        hud.Update(currentLevelDef);
+        levelWatcher.Update(enemyManager);
         cameraDirector.Update(camera, dt, players, trainMap.GetBounds(), virtualScreenSize.Y);
     }
 
@@ -345,7 +344,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         Game.SwitchToScreen(new FailScreen(Game));
     }
 
-    private void OnIntermissionStarted(int _)
+    private void OnLevelCompleted()
     {
         trainSound?.Stop();
         gameplayContext.State.VictoryLapActive = true;

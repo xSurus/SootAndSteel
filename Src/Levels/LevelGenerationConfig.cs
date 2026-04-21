@@ -9,7 +9,7 @@ namespace Gamelab.Levels;
 /// <c>BaseEnemyBudget * BudgetMultiplierPerLevel ^ (level - 1) + BudgetGrowthPerLevel * (level - 1)</c>.
 /// Early procedural levels currently bias toward rifles while mounters remain the cheaper filler threat.
 /// </summary>
-public class RunDifficultyConfig
+public class LevelGenerationConfig
 {
     /// <summary>Distance target for the first procedural level (in world units).</summary>
     public float BaseDistance { get; set; } = 15000f;

@@ -2,18 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Gamelab.Enemies;
-using Gamelab.Utils;
 
 namespace Gamelab.Levels;
 
-public class ProceduralLevelGenerator(RunDifficultyConfig config)
+public class ProceduralLevelGenerator(LevelGenerationConfig config)
 {
-    private readonly RunDifficultyConfig config = config ?? new RunDifficultyConfig();
+    private readonly LevelGenerationConfig config = config ?? new LevelGenerationConfig();
     private readonly float threatScale = 1f;
     private readonly float spawnSpacingScale = 1f;
-    private readonly Logger logger = new("ProceduralLevelGenerator");
 
-    public ProceduralLevelGenerator(RunDifficultyConfig config, float threatScale, float spawnSpacingScale) :
+    public ProceduralLevelGenerator(LevelGenerationConfig config, float threatScale, float spawnSpacingScale) :
         this(config)
     {
         this.threatScale = Math.Max(1f, threatScale);
@@ -43,9 +41,9 @@ public class ProceduralLevelGenerator(RunDifficultyConfig config)
             LevelSeed = levelSeed
         };
 
-
+        
         Random random = new Random(levelSeed);
-        float levelEndBuffer = MathF.Max(config.SafeZoneDistance, 200f);
+        float levelEndBuffer = config.SafeZoneDistance;
         float maxSpawnDistance = MathF.Max(config.MinSpawnSpacing, currentLevelDistance - levelEndBuffer);
 
         List<float> distances = [];
@@ -73,7 +71,7 @@ public class ProceduralLevelGenerator(RunDifficultyConfig config)
             });
         }
 
-        logger.Info($"Generated level definition: {definition}");
+        definition.SpawnEvents.Sort((a, b) => a.Distance.CompareTo(b.Distance));
         return definition;
     }
 

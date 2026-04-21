@@ -1,6 +1,6 @@
 namespace Gamelab.Levels;
 
-public interface IRunLevelProvider
+public interface ILevelProvider
 {
     LevelDefinition GetLevel(int levelNumber);
 }

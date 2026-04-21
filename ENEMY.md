@@ -261,7 +261,7 @@ These should be followed in all implementation work.
 - `Src/Enemies/EnemySlotManager.cs`
 - `Src/Levels/SpawnEvent.cs`
 - `Src/Levels/ProceduralLevelGenerator.cs`
-- `Src/Levels/RunDifficultyConfig.cs`
+- `Src/Levels/LevelGenerationConfig.cs`
 - `Src/Config/GameplayConfig.cs`
 - `Src/Content/Data/gameplay.json`
 - `Src/Players/Player.cs`
@@ -1312,7 +1312,7 @@ What to do:
 
 ### Step 13 — replace procedural generation and authored content
 Refactor these files:
-- `Src/Levels/RunDifficultyConfig.cs`
+- `Src/Levels/LevelGenerationConfig.cs`
 - `Src/Levels/ProceduralLevelGenerator.cs`
 - `Src/Content/Data/levels/*`
 
