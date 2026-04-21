@@ -1,9 +1,10 @@
+using Gamelab.Enemies.Slots;
 using Gamelab.Map.Train.State;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.PhysicalEntities.Structures;
 using Microsoft.Xna.Framework;
 
-namespace Gamelab.Enemies;
+namespace Gamelab.Enemies.Core;
 
 public static class EnemyTargetingHelper
 {

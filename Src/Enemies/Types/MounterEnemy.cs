@@ -1,7 +1,10 @@
 using System;
+using Gamelab.Enemies.Core;
+using Gamelab.Enemies.Movement;
+using Gamelab.Enemies.Slots;
 using Microsoft.Xna.Framework;
 
-namespace Gamelab.Enemies;
+namespace Gamelab.Enemies.Types;
 
 public enum MounterState
 {

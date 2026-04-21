@@ -1,7 +1,7 @@
 using Gamelab.Map.Train.State;
 using Microsoft.Xna.Framework;
 
-namespace Gamelab.Enemies;
+namespace Gamelab.Enemies.Slots;
 
 public enum EnemySlotSide
 {

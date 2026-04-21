@@ -1,7 +1,11 @@
+using Gamelab.Enemies.Core;
+using Gamelab.Enemies.Hazards;
+using Gamelab.Enemies.Movement;
+using Gamelab.Enemies.Slots;
 using Gamelab.PhysicalEntities.Projectiles;
 using Microsoft.Xna.Framework;
 
-namespace Gamelab.Enemies;
+namespace Gamelab.Enemies.Types;
 
 public enum TarThrowerState
 {
@@ -102,7 +106,6 @@ public class TarThrowerEnemy(Vector2 spawnPosition, EnemyTrainSlot slot) : Abstr
         }
 
         return new TarProjectile(
-            gameplayContext,
             Position,
             direction * ProjectileSpeed,
             ProjectileLifetime,

@@ -1,4 +1,4 @@
-namespace Gamelab.Enemies;
+namespace Gamelab.Enemies.Core;
 
 public enum EnemyType
 {

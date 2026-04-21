@@ -5,7 +5,7 @@ using Gamelab.Assets;
 using Gamelab.Data;
 using Gamelab.Map.Train.State;
 using Gamelab.PhysicalEntities.Stations;
-using Gamelab.Services.IShopService;
+using Gamelab.Services.Shop;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

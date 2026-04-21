@@ -1,7 +1,9 @@
 using System;
+using Gamelab.Enemies.Slots;
+using Gamelab.Enemies.Types;
 using Microsoft.Xna.Framework;
 
-namespace Gamelab.Enemies;
+namespace Gamelab.Enemies.Core;
 
 public static class EnemyFactory
 {

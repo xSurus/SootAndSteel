@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Gamelab.Levels;
 
-namespace Gamelab.Enemies;
+namespace Gamelab.Enemies.Core;
 
 public static class EnemyCatalog
 {

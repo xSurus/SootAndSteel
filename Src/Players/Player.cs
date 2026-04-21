@@ -1,6 +1,7 @@
 using System;
 using Gamelab.Assets;
 using Gamelab.Enemies;
+using Gamelab.Enemies.Core;
 using Gamelab.Items;
 using Gamelab.PhysicalEntities;
 using Gamelab.PhysicalEntities.Bullets;
