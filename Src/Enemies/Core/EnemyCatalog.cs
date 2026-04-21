@@ -56,7 +56,7 @@ public static class EnemyCatalog
         };
     }
 
-    public static int GetCost(RunDifficultyConfig config, EnemyType type)
+    public static int GetCost(LevelGenerationConfig config, EnemyType type)
     {
         return type switch
         {

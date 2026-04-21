@@ -2,13 +2,13 @@ using Gamelab.Serialization;
 
 namespace Gamelab.Levels;
 
-public class ProgressiveRunLevelProvider : IRunLevelProvider
+public class ProceduralLevelProvider : ILevelProvider
 {
     private readonly ProceduralLevelGenerator generator;
 
-    public ProgressiveRunLevelProvider(int playerCount, RunSession session, RunDifficultyConfig config = null)
+    public ProceduralLevelProvider(int playerCount, RunSession session, LevelGenerationConfig config = null)
     {
-        config ??= new RunDifficultyConfig();
+        config ??= new LevelGenerationConfig();
         config.RandomSeed = session.RunSeed;
 
         float threatScale = GamelabGame.Instance.GameplayConfig.GetThreatScaleForPlayerCount(playerCount);

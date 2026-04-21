@@ -23,6 +23,13 @@ public class GameplayHud
     private string speedText = "";
     private string tempText = "";
 
+    private LevelDefinition currentLevelDef;
+    private float distanceInLevel;
+
+    private const int SpawnMarkerSize = 6;
+    private static readonly Color SpawnMarkerUpcoming = new(230, 60, 60);
+    private static readonly Color SpawnMarkerPassed = new(120, 40, 40, 180);
+
     private const int ArcSegments = 40;
     private const float ArcRadius = 58f;
     private const float ArcThickness = 8f;
@@ -40,12 +47,13 @@ public class GameplayHud
         gaugeFont = fs.GetFont(36);
     }
 
-    public void Update(LevelDefinition currentLevelDef, float levelStartDistance)
+    public void Update(LevelDefinition currentLevelDef)
     {
         var state = gameplayContext.State;
         var config = GamelabGame.Instance.GameplayConfig;
 
-        float distanceInLevel = Math.Max(0f, state.DistanceTraveled - levelStartDistance);
+        this.currentLevelDef = currentLevelDef;
+        distanceInLevel = Math.Max(0f, state.DistanceTraveled);
         float levelDistance = currentLevelDef?.LevelDistance ?? 1f;
         distanceRatio = Math.Clamp(distanceInLevel / Math.Max(levelDistance, 1f), 0f, 1f);
         distanceText = $"{distanceInLevel:F0} / {levelDistance:F0} m";
@@ -103,11 +111,36 @@ public class GameplayHud
         sb.Draw(blank, new Rectangle(barX, barY, barWidth, 1), Color.White * 0.3f);
         sb.Draw(blank, new Rectangle(barX, barY + barHeight - 1, barWidth, 1), Color.White * 0.3f);
 
+        DrawSpawnMarkers(sb, blank, barX, barY, barWidth, barHeight);
+
         Vector2 textSize = smallFont.MeasureString(distanceText);
         float textX = barX + (barWidth - textSize.X) / 2f;
         float textY = barY + barHeight + 4;
         sb.DrawString(smallFont, distanceText, new Vector2(textX + 1, textY + 1), Color.Black * 0.5f);
         sb.DrawString(smallFont, distanceText, new Vector2(textX, textY), Color.White * 0.9f);
+    }
+
+    private void DrawSpawnMarkers(SpriteBatch sb, Texture2D blank, int barX, int barY, int barWidth, int barHeight)
+    {
+        if (currentLevelDef == null || currentLevelDef.SpawnEvents.Count == 0) return;
+
+        float levelDistance = Math.Max(currentLevelDef.LevelDistance, 1f);
+        int markerY = barY + (barHeight - SpawnMarkerSize) / 2;
+        int half = SpawnMarkerSize / 2;
+
+        foreach (SpawnEvent spawn in currentLevelDef.SpawnEvents)
+        {
+            float ratio = Math.Clamp(spawn.Distance / levelDistance, 0f, 1f);
+            int centerX = barX + (int)(ratio * barWidth);
+            Color color = spawn.Distance <= distanceInLevel ? SpawnMarkerPassed : SpawnMarkerUpcoming;
+
+            sb.Draw(blank,
+                new Rectangle(centerX - half - 1, markerY - 1, SpawnMarkerSize + 2, SpawnMarkerSize + 2),
+                Color.Black * 0.6f);
+            sb.Draw(blank,
+                new Rectangle(centerX - half, markerY, SpawnMarkerSize, SpawnMarkerSize),
+                color);
+        }
     }
 
     private void DrawArcGauge(SpriteBatch sb, Texture2D blank, Vector2 center,
