@@ -10,4 +10,8 @@ public interface ISoundService
     public void PlayOnce(string id);
     public EventInstance GetSoundInstance(string id);
     public void RegisterParameter(EventInstance eventInstance, string parameterName, Func<float> valueGetter);
+    public SoundSettings Settings { get; }
+    public void SetMasterVolume(float volume);
+    public void SetMusicVolume(float volume);
+    public void SetSfxVolume(float volume);
 }

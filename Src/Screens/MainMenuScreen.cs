@@ -16,6 +16,7 @@ public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
 
     protected Texture2D bgTexture;
     private MainMenuPanel mainMenuPanel;
+    private OptionsPanel optionsPanel;
     private ISoundService soundService;
 
     public override void LoadContent()
@@ -26,12 +27,20 @@ public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
         soundService = Services.GetService<ISoundService>();
         soundService.LoadSound(Sounds.MenuSelect);
         Action continueAction = SaveManager.HasSave() ? ContinueGame : null;
-        mainMenuPanel = new MainMenuPanel(Game, continueAction, StartNewGame, Game.Exit);
+        optionsPanel = new OptionsPanel(Game);
+        mainMenuPanel = new MainMenuPanel(Game, continueAction, StartNewGame, OpenOptions, Game.Exit);
     }
 
     public override void Update(GameTime gameTime)
     {
         base.Update(gameTime);
+
+        if (optionsPanel.IsOpen)
+        {
+            optionsPanel.Update(Game.playerManager.Configs);
+            return;
+        }
+
         mainMenuPanel.Update(gameTime);
 
         foreach (var player in game.playerManager.Configs)
@@ -57,9 +66,21 @@ public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
             Game.fontSystem.GetFont(96),
             Game.fontSystem.GetFont(52));
 
+        optionsPanel.Draw(
+            spriteBatch,
+            virtualScreenSize,
+            Game.fontSystem.GetFont(72),
+            Game.fontSystem.GetFont(40));
+
         spriteBatch.End();
 
         base.Draw(gameTime);
+    }
+
+    private void OpenOptions()
+    {
+        soundService.PlayOnce(Sounds.MenuSelect);
+        optionsPanel.Open();
     }
 
     private void StartNewGame()

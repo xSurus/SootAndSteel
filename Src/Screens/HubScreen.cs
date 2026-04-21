@@ -136,13 +136,18 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
 
         spriteBatch.End();
         hud.Draw();
+        spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
         if (departWhiteFilter != null && departWhiteFilter.Opacity > 0.001f)
         {
-            spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
             spriteBatch.Draw(AssetManager.BlankTexture, new Rectangle(0, 0, virtualScreenSize.X, virtualScreenSize.Y),
                 Color.White * departWhiteFilter.Opacity);
-            spriteBatch.End();
         }
+        pauseMenu.OptionsPanel.Draw(
+            spriteBatch,
+            virtualScreenSize,
+            Game.fontSystem.GetFont(72),
+            Game.fontSystem.GetFont(40));
+        spriteBatch.End();
 
         base.Draw(gameTime);
     }
