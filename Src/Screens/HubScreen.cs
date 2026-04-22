@@ -6,6 +6,7 @@ using Gamelab.Map;
 using Gamelab.Map.Train;
 using Gamelab.Map.Train.State;
 using Gamelab.Particles;
+using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.PhysicalEntities.Stations;
 using Gamelab.Players;
 using Gamelab.Screens.Camera;
@@ -28,6 +29,8 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
 
     private HubMap hubMap;
     private TrainMap prepTrainMap;
+    private readonly HashSet<Player> readyPlayers = [];
+
     private OrthographicCamera camera;
     private CameraDirector cameraDirector;
 
@@ -37,7 +40,6 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
     private WhiteFilterTransition departWhiteFilter;
     private PauseMenuController pauseMenu;
 
-    private Rectangle departMarker;
     private int worldWidth, worldHeight;
     private float accumulator;
     private float departHoldTimer;
@@ -50,6 +52,7 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
         InitializeDimensions();
         InitializeContextAndSave();
         InitializeMaps();
+        InitializeSpeedLever();
         InitializePlayers();
 
         camera = new OrthographicCamera(viewportAdapter);
@@ -129,8 +132,6 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
             effects: SpriteEffects.None,
             layerDepth: vendorDepth
         );
-        spriteBatch.Draw(AssetManager.BlankTexture, departMarker, Color.Lime * 0.18f);
-
         Services.GetService<IVfxService>().Render(spriteBatch);
         foreach (var player in players) player.Draw(spriteBatch);
 
@@ -168,7 +169,6 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
     {
         worldWidth = virtualScreenSize.X;
         worldHeight = virtualScreenSize.Y * 2;
-        departMarker = new Rectangle(worldWidth / 2 - 130, worldHeight - 300, 260, 100);
     }
 
     private void InitializeMaps()
@@ -198,6 +198,22 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
         }
     }
 
+    private void InitializeSpeedLever()
+    {
+        foreach (IPhysicalEntity entity in prepTrainMap.MapObjects)
+        {
+            if (entity is SpeedLever lever)
+            {
+                lever.OnInteractOverride = player =>
+                {
+                    if (!readyPlayers.Remove(player))
+                        readyPlayers.Add(player);
+                };
+                break;
+            }
+        }
+    }
+
     private void UpdatePhysics(float dt)
     {
         accumulator += Math.Min(dt, Game.GameplayConfig.MaxAccumulatedDeltaSeconds);
@@ -215,12 +231,13 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
 
     private void UpdateDepartureLogic(float dt)
     {
-        bool allInDepart = players.Count > 0 && players.All(p => departMarker.Contains(p.Position));
+        readyPlayers.RemoveWhere(p => !players.Contains(p));
+        bool allReady = players.Count > 0 && readyPlayers.Count == players.Count;
         int pendingShopCount = prepTrainMap.MapObjects.Count(e =>
             e is BuyableStationWrapper && prepTrainMap.GetBounds().Contains(e.Position));
-        hud.Update(allInDepart, pendingShopCount, departHoldTimer, Game.GameplayConfig.DepartHoldSeconds);
+        hud.Update(allReady, pendingShopCount, departHoldTimer, Game.GameplayConfig.DepartHoldSeconds);
 
-        bool canDepart = allInDepart && pendingShopCount == 0;
+        bool canDepart = allReady && pendingShopCount == 0;
         departHoldTimer = canDepart ? departHoldTimer + dt : 0f;
 
         if (departHoldTimer >= Game.GameplayConfig.DepartHoldSeconds)
@@ -248,6 +265,7 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
         Services.GetService<IVfxService>().ClearAll();
         hubMap?.Dispose();
         hubMap = null;
+        prepTrainMap = null;
         base.UnloadContent();
     }
 }

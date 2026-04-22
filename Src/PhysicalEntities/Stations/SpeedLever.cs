@@ -1,3 +1,4 @@
+using System;
 using Gamelab.Enemies;
 using Gamelab.Map.Train.State;
 using Gamelab.PhysicalEntities;
@@ -13,8 +14,19 @@ public class SpeedLever(Vector2 position)
     : AbstractStation("SpeedLever", Color.LightGreen, position)
 {
 
+    /// <summary>
+    /// When set, interact calls this instead of cycling speed. Used by HubScreen for depart readying.
+    /// </summary>
+    public Action<Player> OnInteractOverride { get; set; }
+
     public override void OnInteract(Player interactingPlayer)
     {
+        if (OnInteractOverride != null)
+        {
+            OnInteractOverride(interactingPlayer);
+            return;
+        }
+
         if (gameplayContext.State.VictoryLapActive)
         {
             return;
