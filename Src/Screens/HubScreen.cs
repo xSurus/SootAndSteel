@@ -29,7 +29,6 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
 
     private HubMap hubMap;
     private TrainMap prepTrainMap;
-    private SpeedLever departLever;
     private readonly HashSet<Player> readyPlayers = [];
 
     private OrthographicCamera camera;
@@ -205,18 +204,13 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
         {
             if (entity is SpeedLever lever)
             {
-                departLever = lever;
+                lever.OnInteractOverride = player =>
+                {
+                    if (!readyPlayers.Remove(player))
+                        readyPlayers.Add(player);
+                };
                 break;
             }
-        }
-
-        if (departLever != null)
-        {
-            departLever.OnInteractOverride = player =>
-            {
-                if (!readyPlayers.Remove(player))
-                    readyPlayers.Add(player);
-            };
         }
     }
 
@@ -267,9 +261,6 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
 
     public override void UnloadContent()
     {
-        if (departLever != null)
-            departLever.OnInteractOverride = null;
-
         Game.Services.RemoveService(typeof(GameplayContext));
         Services.GetService<IVfxService>().ClearAll();
         hubMap?.Dispose();
