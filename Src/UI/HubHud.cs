@@ -55,7 +55,7 @@ public class HubHud
         Desktop = new Desktop { Root = rootPanel };
     }
 
-    public void Update(bool allInDepart, int pendingShopCount, float departHoldTimer, float departHoldSeconds)
+    public void Update(bool allInDepart, int pendingShopCount, float departHoldTimer, float departHoldSeconds, int readyCount = 0, int totalCount = 0)
     {
         int currentCredits = GamelabGame.Instance.CurrentRun.Credits;
         creditsLabel.Text = $"Credits: {currentCredits}";
@@ -75,7 +75,7 @@ public class HubHud
             }
             else
             {
-                departBlockedLabel.Text = $"Stay in zone to depart ({departHoldSeconds - departHoldTimer:0.0}s)…";
+                departBlockedLabel.Text = $"All ready! Departing in {departHoldSeconds - departHoldTimer:0.0}s…";
             }
 
             departBlockedLabel.TextColor = new Color(180, 230, 200);
@@ -88,7 +88,7 @@ public class HubHud
         }
         else
         {
-            departBlockedLabel.Text = "Depart: move all players into the green-tinted zone at the bottom.";
+            departBlockedLabel.Text = $"Depart: all players interact with the speed lever ({readyCount}/{totalCount} ready)";
             departBlockedLabel.TextColor = new Color(160, 200, 170);
         }
     }

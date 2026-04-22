@@ -235,7 +235,7 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
         bool allReady = players.Count > 0 && readyPlayers.Count == players.Count;
         int pendingShopCount = prepTrainMap.MapObjects.Count(e =>
             e is BuyableStationWrapper && prepTrainMap.GetBounds().Contains(e.Position));
-        hud.Update(allReady, pendingShopCount, departHoldTimer, Game.GameplayConfig.DepartHoldSeconds);
+        hud.Update(allReady, pendingShopCount, departHoldTimer, Game.GameplayConfig.DepartHoldSeconds, readyPlayers.Count, players.Count);
 
         bool canDepart = allReady && pendingShopCount == 0;
         departHoldTimer = canDepart ? departHoldTimer + dt : 0f;
