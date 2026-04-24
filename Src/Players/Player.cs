@@ -12,7 +12,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using nkast.Aether.Physics2D.Dynamics;
-using Matrix = Microsoft.Xna.Framework.Matrix;
 
 namespace Gamelab.Players;
 
@@ -46,6 +45,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
 
     private float stunTimer;
     private float stunAnimTimer;
+    private float patchRemoveTimer;
     private bool revivedThisFrame;
 
 
@@ -100,29 +100,30 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
         bool onSnow = patches?.IsOnSnow(Position, gameplayContext.Map) ?? false;
         bool onIce = patches?.IsOnIce(Position, gameplayContext.Map) ?? false;
 
-        // Ice reduces physics damping so momentum is preserved between steps.
         PhysicsBody.LinearDamping = onIce
             ? GamelabGame.Instance.GameplayConfig.IceLinearDamping
             : LinearDampening;
 
-        float effectiveLerpFactor = onIce
-            ? GamelabGame.Instance.GameplayConfig.IceLerpFactor
-            : LerpFactor;
         float speedScale = onSnow ? GamelabGame.Instance.GameplayConfig.SnowSpeedFactor : 1f;
 
         if (GrabbedObject == null)
         {
             if (movement != Vector2.Zero) PhysicsBody.Rotation = (float)Math.Atan2(movement.Y, movement.X);
-            Vector2 targetVelocity = movement * MaxVelocity * speedScale;
 
-            if (onIce && GamelabGame.Instance.GameplayConfig.IceSpinoutEnabled && movement != Vector2.Zero)
+            if (onIce)
             {
-                float angle = ((float)Random.Shared.NextDouble() - 0.5f)
-                    * MathHelper.ToRadians(GamelabGame.Instance.GameplayConfig.IceSpinoutMaxDegrees);
-                targetVelocity = Vector2.Transform(targetVelocity, Matrix.CreateRotationZ(angle));
+                // Force-based: input accelerates gradually and momentum is preserved by low damping.
+                PhysicsBody.ApplyForce(movement * GamelabGame.Instance.GameplayConfig.IceForce);
+                float maxSpeed = MaxVelocity;
+                float speedSq = PhysicsBody.LinearVelocity.LengthSquared();
+                if (speedSq > maxSpeed * maxSpeed)
+                    PhysicsBody.LinearVelocity = Vector2.Normalize(PhysicsBody.LinearVelocity) * maxSpeed;
             }
-
-            PhysicsBody.LinearVelocity = Vector2.Lerp(PhysicsBody.LinearVelocity, targetVelocity, effectiveLerpFactor);
+            else
+            {
+                Vector2 targetVelocity = movement * MaxVelocity * speedScale;
+                PhysicsBody.LinearVelocity = Vector2.Lerp(PhysicsBody.LinearVelocity, targetVelocity, LerpFactor);
+            }
         }
         else if (movement != Vector2.Zero)
         {
@@ -143,7 +144,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
         if (TryGrab()) return;
         if (TryPickup(dt)) return;
         if (TryInteract(dt)) return;
-        TryRemoveIce();
+        TryRemovePatch(dt);
     }
 
     public void Stun(float durationSeconds)
@@ -284,10 +285,25 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
         return false;
     }
 
-    private void TryRemoveIce()
+    private void TryRemovePatch(float dt)
     {
-        if (!PlayerConfiguration.Input.IsInteractJustPressed()) return;
-        gameplayContext?.PatchManager?.TryRemovePatchAt(Position, gameplayContext.Map);
+        var patches = gameplayContext?.PatchManager;
+        bool onPatch = patches != null &&
+                       (patches.IsOnSnow(Position, gameplayContext.Map) ||
+                        patches.IsOnIce(Position, gameplayContext.Map));
+
+        if (!onPatch || !PlayerConfiguration.Input.IsInteractHeld())
+        {
+            patchRemoveTimer = 0f;
+            return;
+        }
+
+        patchRemoveTimer += dt;
+        if (patchRemoveTimer >= GamelabGame.Instance.GameplayConfig.PatchRemoveDurationSeconds)
+        {
+            patches.TryRemovePatchAt(Position, gameplayContext.Map);
+            patchRemoveTimer = 0f;
+        }
     }
 
     private void UpdateHighlightedEntity()
@@ -330,17 +346,37 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
         bool isFacingRight = LookDirection.X > 0;
         SpriteEffects flipEffect = isFacingRight ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
         float renderDepth = RenderUtility.CalculateDepth(feetPosition.Y);
-        spriteBatch.Draw(
-            texture: texture,
-            position: feetPosition,
-            sourceRectangle: null,
-            color: drawColor,
-            rotation: 0f,
-            origin: origin,
-            scale: 0.3f,
-            effects: flipEffect,
-            layerDepth: renderDepth
-        );
+
+        if (IsStunned)
+        {
+            // Draw character lying on their side
+            Vector2 centerOrigin = new Vector2(texture.Width / 2f, texture.Height / 2f);
+            spriteBatch.Draw(
+                texture: texture,
+                position: Position,
+                sourceRectangle: null,
+                color: drawColor,
+                rotation: MathHelper.PiOver2,
+                origin: centerOrigin,
+                scale: 0.3f,
+                effects: flipEffect,
+                layerDepth: renderDepth
+            );
+        }
+        else
+        {
+            spriteBatch.Draw(
+                texture: texture,
+                position: feetPosition,
+                sourceRectangle: null,
+                color: drawColor,
+                rotation: 0f,
+                origin: origin,
+                scale: 0.3f,
+                effects: flipEffect,
+                layerDepth: renderDepth
+            );
+        }
 
         DrawInteractionTarget(spriteBatch);
         DrawHeldItem(spriteBatch, renderDepth + RenderUtility.Eps);

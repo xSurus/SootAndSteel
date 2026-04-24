@@ -95,6 +95,7 @@
   "maintenanceScalePerExtraPlayer": 0.35,
   "departHoldSeconds": 0.75,
   "cameraLerpFactor": 4.0,
+  "patchRemoveDurationSeconds": 1.5,
   "snowStartThreshold": 0.85,
   "snowMaxCoverage": 0.4,
   "snowSpawnIntervalSeconds": 2.0,
@@ -104,9 +105,7 @@
   "iceMaxCoverage": 0.3,
   "iceSpawnIntervalSeconds": 3.0,
   "iceMeltIntervalSeconds": 6.0,
-  "iceLerpFactor": 0.25,
   "iceLinearDamping": 1.5,
-  "iceTripChancePerSecond": 0.3,
-  "iceSpinoutEnabled": false,
-  "iceSpinoutMaxDegrees": 35.0
+  "iceForce": 4.0,
+  "iceTripChancePerSecond": 0.05
 }

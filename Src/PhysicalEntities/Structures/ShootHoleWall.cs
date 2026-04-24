@@ -20,6 +20,7 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
     private float HealthRestoredPerSecond => GamelabGame.Instance.GameplayConfig.WallHealthRestoredPerSecond;
     public float CurrentHealth { get; private set; }
     public bool IsBroken => CurrentHealth <= 0f;
+    private bool isBreached;
     private readonly Vector2 dimensionsPixels;
     private bool isTop;
     
@@ -42,10 +43,10 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
     public void TakeDamage(float damageAmount)
     {
         if (IsBroken) return;
-        float before = CurrentHealth;
         CurrentHealth = Math.Max(0f, CurrentHealth - damageAmount);
-        if (before > 0f && CurrentHealth <= 0f)
+        if (IsBroken && !isBreached)
         {
+            isBreached = true;
             gameplayContext.Events.FireWallBreached();
         }
         
@@ -73,11 +74,13 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
     {
         if (CurrentHealth >= MaxHealth) return;
 
-        bool wasBroken = IsBroken;
         CurrentHealth = Math.Min(MaxHealth, CurrentHealth + HealthRestoredPerSecond * dt);
 
-        if (wasBroken && !IsBroken)
+        if (CurrentHealth >= MaxHealth && isBreached)
+        {
+            isBreached = false;
             gameplayContext.Events.FireWallRepaired();
+        }
     }
 
     public override void Draw(SpriteBatch spriteBatch)

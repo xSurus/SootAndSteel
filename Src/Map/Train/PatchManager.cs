@@ -151,6 +151,14 @@ public class PatchManager
             0f, Vector2.Zero, SpriteEffects.None, DrawDepth);
     }
 
+    public void FillIce()
+    {
+        float maxCoverage = GamelabGame.Instance.GameplayConfig.IceMaxCoverage;
+        int target = (int)(allTiles.Count * maxCoverage);
+        while (iceTiles.Count < target)
+            TrySpawnInto(iceTiles);
+    }
+
     public void Clear()
     {
         snowTiles.Clear();
