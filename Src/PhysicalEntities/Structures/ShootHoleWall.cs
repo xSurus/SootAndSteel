@@ -73,14 +73,11 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
     {
         if (CurrentHealth >= MaxHealth) return;
 
-        float previousHealth = CurrentHealth;
-        CurrentHealth += HealthRestoredPerSecond * dt;
+        bool wasBroken = IsBroken;
+        CurrentHealth = Math.Min(MaxHealth, CurrentHealth + HealthRestoredPerSecond * dt);
 
-        if (CurrentHealth >= MaxHealth)
-        {
-            CurrentHealth = MaxHealth;
-            if (previousHealth < MaxHealth) gameplayContext.Events.FireWallRepaired();
-        }
+        if (wasBroken && !IsBroken)
+            gameplayContext.Events.FireWallRepaired();
     }
 
     public override void Draw(SpriteBatch spriteBatch)

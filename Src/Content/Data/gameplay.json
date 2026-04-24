@@ -94,5 +94,19 @@
   "enemySpawnPacingScaleStrength": 0.25,
   "maintenanceScalePerExtraPlayer": 0.35,
   "departHoldSeconds": 0.75,
-  "cameraLerpFactor": 4.0
+  "cameraLerpFactor": 4.0,
+  "snowStartThreshold": 0.85,
+  "snowMaxCoverage": 0.4,
+  "snowSpawnIntervalSeconds": 2.0,
+  "snowMeltIntervalSeconds": 4.0,
+  "snowSpeedFactor": 0.5,
+  "iceStartThreshold": 0.5,
+  "iceMaxCoverage": 0.3,
+  "iceSpawnIntervalSeconds": 3.0,
+  "iceMeltIntervalSeconds": 6.0,
+  "iceLerpFactor": 0.25,
+  "iceLinearDamping": 1.5,
+  "iceTripChancePerSecond": 0.3,
+  "iceSpinoutEnabled": false,
+  "iceSpinoutMaxDegrees": 35.0
 }

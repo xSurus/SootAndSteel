@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using nkast.Aether.Physics2D.Dynamics;
+using Matrix = Microsoft.Xna.Framework.Matrix;
 
 namespace Gamelab.Players;
 
@@ -44,6 +45,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
     private float LinearDampening => GamelabGame.Instance.GameplayConfig.PlayerLinearDamping;
 
     private float stunTimer;
+    private float stunAnimTimer;
     private bool revivedThisFrame;
 
 
@@ -94,29 +96,54 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
 
         Vector2 movement = PlayerConfiguration.Input.GetMovement();
 
-        float maxTemperature = GamelabGame.Instance.GameplayConfig.TrainMaxTemperature;
-        float temperatureRatio = gameplayContext == null || maxTemperature <= 0f
-            ? 0f
-            : gameplayContext.State.Temperature / maxTemperature;
+        var patches = gameplayContext?.PatchManager;
+        bool onSnow = patches?.IsOnSnow(Position, gameplayContext.Map) ?? false;
+        bool onIce = patches?.IsOnIce(Position, gameplayContext.Map) ?? false;
 
-        float speedScale = Math.Clamp(temperatureRatio, 0f, 1f);
-        float effectiveMaxVelocity = MaxVelocity * speedScale;
+        // Ice reduces physics damping so momentum is preserved between steps.
+        PhysicsBody.LinearDamping = onIce
+            ? GamelabGame.Instance.GameplayConfig.IceLinearDamping
+            : LinearDampening;
+
+        float effectiveLerpFactor = onIce
+            ? GamelabGame.Instance.GameplayConfig.IceLerpFactor
+            : LerpFactor;
+        float speedScale = onSnow ? GamelabGame.Instance.GameplayConfig.SnowSpeedFactor : 1f;
 
         if (GrabbedObject == null)
         {
             if (movement != Vector2.Zero) PhysicsBody.Rotation = (float)Math.Atan2(movement.Y, movement.X);
-            Vector2 targetVelocity = movement * effectiveMaxVelocity;
-            PhysicsBody.LinearVelocity = Vector2.Lerp(PhysicsBody.LinearVelocity, targetVelocity, LerpFactor);
+            Vector2 targetVelocity = movement * MaxVelocity * speedScale;
+
+            if (onIce && GamelabGame.Instance.GameplayConfig.IceSpinoutEnabled && movement != Vector2.Zero)
+            {
+                float angle = ((float)Random.Shared.NextDouble() - 0.5f)
+                    * MathHelper.ToRadians(GamelabGame.Instance.GameplayConfig.IceSpinoutMaxDegrees);
+                targetVelocity = Vector2.Transform(targetVelocity, Matrix.CreateRotationZ(angle));
+            }
+
+            PhysicsBody.LinearVelocity = Vector2.Lerp(PhysicsBody.LinearVelocity, targetVelocity, effectiveLerpFactor);
         }
         else if (movement != Vector2.Zero)
         {
-            PhysicsBody.ApplyForce(movement * 100f * speedScale);
+            PhysicsBody.ApplyForce(movement * 100f);
+        }
+
+        if (onIce && PhysicsBody.LinearVelocity.LengthSquared() > 0.5f)
+        {
+            float tripChance = GamelabGame.Instance.GameplayConfig.IceTripChancePerSecond * dt;
+            if (Random.Shared.NextDouble() < tripChance)
+            {
+                Stun(0);
+                return;
+            }
         }
 
         UpdateHighlightedEntity();
         if (TryGrab()) return;
         if (TryPickup(dt)) return;
         if (TryInteract(dt)) return;
+        TryRemoveIce();
     }
 
     public void Stun(float durationSeconds)
@@ -128,6 +155,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
 
         Condition = PlayerCondition.Stunned;
         stunTimer = Math.Max(stunTimer, durationSeconds);
+        stunAnimTimer = 0f;
         ReviveProgress = 0f;
         revivedThisFrame = false;
         PhysicsBody.LinearVelocity = Vector2.Zero;
@@ -178,6 +206,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
     private void UpdateStunned(float dt)
     {
         PhysicsBody.LinearVelocity = Vector2.Zero;
+        stunAnimTimer += dt;
 
         if (!revivedThisFrame)
         {
@@ -255,6 +284,12 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
         return false;
     }
 
+    private void TryRemoveIce()
+    {
+        if (!PlayerConfiguration.Input.IsInteractJustPressed()) return;
+        gameplayContext?.PatchManager?.TryRemovePatchAt(Position, gameplayContext.Map);
+    }
+
     private void UpdateHighlightedEntity()
     {
         float reachInMeters = InteractDistancePixels.ToMeters();
@@ -311,6 +346,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
         DrawHeldItem(spriteBatch, renderDepth + RenderUtility.Eps);
 
         float playerVisualHeight = texture.Height * 0.3f;
+        DrawConcussionStars(spriteBatch, playerVisualHeight);
         DrawStunProgress(spriteBatch, playerVisualHeight);
     }
 
@@ -329,6 +365,40 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
     {
         Vector2 targetPointPixels = Position + (LookDirection * InteractDistancePixels);
         spriteBatch.DrawCircle(targetPointPixels, 5f, 12, Color.Red, 2f, layerDepth: RenderUtility.OverlayTopLayer);
+    }
+
+    private void DrawConcussionStars(SpriteBatch spriteBatch, float playerVisualHeight)
+    {
+        if (!IsStunned) return;
+
+        const int starCount = 5;
+        const float orbitRadius = 16f;
+        const float starScale = 7f;
+
+        // Orbit center sits just above the player's head
+        Vector2 center = Position + new Vector2(0, -(playerVisualHeight + orbitRadius + 4f));
+        float baseAngle = stunAnimTimer * 3f;
+
+        for (int i = 0; i < starCount; i++)
+        {
+            float angle = baseAngle + MathHelper.TwoPi / starCount * i;
+            Vector2 starPos = center + new Vector2(
+                (float)Math.Cos(angle) * orbitRadius,
+                (float)Math.Sin(angle) * orbitRadius * 0.4f  // flatten into an ellipse
+            );
+            Color color = i % 2 == 0 ? Color.Yellow : Color.Gold;
+            spriteBatch.Draw(
+                AssetManager.BlankTexture,
+                starPos,
+                null,
+                color,
+                angle,                          // each star rotates with its orbit angle
+                new Vector2(0.5f, 0.5f),
+                starScale,
+                SpriteEffects.None,
+                RenderUtility.OverlayTopLayer
+            );
+        }
     }
 
     private void DrawStunProgress(SpriteBatch spriteBatch, float playerVisualHeight)

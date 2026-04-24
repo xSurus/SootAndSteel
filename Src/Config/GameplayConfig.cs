@@ -109,6 +109,24 @@ public class GameplayConfig
     public float TrainTemperatureDecreasePerSecondEngineOff { get; set; } = 3f;
     public float TrainTemperatureIncreasePerSecond { get; set; } = 3f;
 
+    // Snow patch configuration (slow player, appear at moderate cold)
+    public float SnowStartThreshold { get; set; } = 0.85f;
+    public float SnowMaxCoverage { get; set; } = 0.4f;
+    public float SnowSpawnIntervalSeconds { get; set; } = 2f;
+    public float SnowMeltIntervalSeconds { get; set; } = 4f;
+    public float SnowSpeedFactor { get; set; } = 0.5f;
+
+    // Ice patch configuration (player slips, appear at extreme cold)
+    public float IceStartThreshold { get; set; } = 0.5f;
+    public float IceMaxCoverage { get; set; } = 0.3f;
+    public float IceSpawnIntervalSeconds { get; set; } = 3f;
+    public float IceMeltIntervalSeconds { get; set; } = 6f;
+    public float IceLerpFactor { get; set; } = 0.25f;
+    public float IceLinearDamping { get; set; } = 1.5f;
+    public float IceTripChancePerSecond { get; set; } = 0.3f;
+    public bool IceSpinoutEnabled { get; set; } = false;
+    public float IceSpinoutMaxDegrees { get; set; } = 35f;
+
     // Per-player run scaling. Threat scales harder than maintenance to keep co-op challenging without
     // turning fuel/temperature management into pure busywork at high player counts.
     public float ThreatScalePerExtraPlayer { get; set; } = 0.75f;

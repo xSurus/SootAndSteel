@@ -154,6 +154,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         trainMap = new TrainMap();
         trainMap.LoadLayout(Game.CurrentRun.TrainLayout);
         gameplayContext.Map = trainMap;
+        gameplayContext.PatchManager = new PatchManager(trainMap);
 
         worldScroller = new WorldScroller(GraphicsDevice);
         enemyManager = new EnemyManager(currentLevelDef);
@@ -224,6 +225,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
 
             enemyManager.Update(fixedDt);
             gameplayContext.State.Update(fixedDt);
+            gameplayContext.PatchManager.Update(fixedDt, gameplayContext.State);
 
             if (isFailureTriggered) return;
 
@@ -302,6 +304,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         );
         worldScroller.Draw(spriteBatch);
         trainMap.Draw(spriteBatch);
+        gameplayContext.PatchManager.Draw(spriteBatch, trainMap);
         enemyManager.Draw(spriteBatch);
 
         foreach (Player player in players) player.Draw(spriteBatch);
