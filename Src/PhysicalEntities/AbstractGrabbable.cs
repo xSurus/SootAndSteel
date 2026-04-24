@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Gamelab.Map.Train.State;
+using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,8 +12,6 @@ public abstract class AbstractGrabbable : AbstractPhysicalEntity, IGrabbable
 {
     protected Dictionary<Player, WeldJoint> GrabJoints { get; } = new();
     public bool IsBeingHeld => GrabJoints.Count > 0;
-    protected readonly GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
-
 
     protected abstract bool AllowPlayerRotation { get; }
 

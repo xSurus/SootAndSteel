@@ -2,16 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Gamelab.Enemies;
+using Gamelab.Enemies.Core;
 
 namespace Gamelab.Levels;
 
-public class ProceduralLevelGenerator(RunDifficultyConfig config)
+public class ProceduralLevelGenerator(LevelGenerationConfig config)
 {
-    private readonly RunDifficultyConfig config = config ?? new RunDifficultyConfig();
+    private readonly LevelGenerationConfig config = config ?? new LevelGenerationConfig();
     private readonly float threatScale = 1f;
     private readonly float spawnSpacingScale = 1f;
 
-    public ProceduralLevelGenerator(RunDifficultyConfig config, float threatScale, float spawnSpacingScale) :
+    public ProceduralLevelGenerator(LevelGenerationConfig config, float threatScale, float spawnSpacingScale) :
         this(config)
     {
         this.threatScale = Math.Max(1f, threatScale);
@@ -24,31 +25,37 @@ public class ProceduralLevelGenerator(RunDifficultyConfig config)
     /// </summary>
     public LevelDefinition Generate(int levelNumber)
     {
-        int safeLevel = Math.Max(1, levelNumber);
-        float levelDistance = config.BaseDistance + (safeLevel - 1) * config.DistanceGrowthPerLevel;
+        int currentLevel = Math.Max(1, levelNumber);
+        float currentLevelDistance = config.BaseDistance + (currentLevel - 1) * config.DistanceGrowthPerLevel;
         float safeZoneDistance = config.SafeZoneDistance;
-        float floatBudget = config.BaseEnemyBudget * MathF.Pow(config.BudgetMultiplierPerLevel, safeLevel - 1) +
-                            (safeLevel - 1) * config.BudgetGrowthPerLevel;
+        float floatBudget = config.BaseEnemyBudget * MathF.Pow(config.BudgetMultiplierPerLevel, currentLevel - 1) +
+                            (currentLevel - 1) * config.BudgetGrowthPerLevel;
+
         floatBudget *= threatScale;
-        int minCost = GetMinProceduralCost(safeLevel);
+        int minCost = GetMinProceduralCost(currentLevel);
         int budget = Math.Max(minCost, (int)MathF.Round(floatBudget));
+        int levelSeed = unchecked(config.RandomSeed + currentLevel * 7919);
 
         var definition = new LevelDefinition
         {
-            LevelDistance = levelDistance
+            LevelDistance = currentLevelDistance,
+            LevelSeed = levelSeed
         };
 
-        var random = new Random(unchecked(config.RandomSeed + safeLevel * 7919));
-        float levelEndBuffer = MathF.Max(config.MinSpawnSpacing, 200f);
-        float maxSpawnDistance = MathF.Max(config.MinSpawnSpacing, levelDistance - levelEndBuffer);
+        
+        Random random = new Random(levelSeed);
+        float levelEndBuffer = config.SafeZoneDistance;
+        float maxSpawnDistance = MathF.Max(config.MinSpawnSpacing, currentLevelDistance - levelEndBuffer);
+
         List<float> distances = [];
+
         while (budget >= minCost)
         {
             float spawnDistance = random.NextSingle() * (maxSpawnDistance - safeZoneDistance) + safeZoneDistance;
-            if (distances.Any(d => MathF.Abs(d - spawnDistance) < config.MinSpawnSpacing)) continue;
+            if (distances.Any(d => MathF.Abs(d - spawnDistance) < config.MinSpawnSpacing * spawnSpacingScale)) continue;
             distances.Add(spawnDistance);
 
-            EnemyType? selectedType = SelectEnemyType(random, safeLevel, budget);
+            EnemyType? selectedType = SelectEnemyType(random, currentLevel, budget);
             if (selectedType == null)
             {
                 break;
@@ -65,6 +72,7 @@ public class ProceduralLevelGenerator(RunDifficultyConfig config)
             });
         }
 
+        definition.SpawnEvents.Sort((a, b) => a.Distance.CompareTo(b.Distance));
         return definition;
     }
 
@@ -119,10 +127,5 @@ public class ProceduralLevelGenerator(RunDifficultyConfig config)
         }
 
         return minCost == int.MaxValue ? 0 : minCost;
-    }
-
-    private static float Lerp(float a, float b, float t)
-    {
-        return a + (b - a) * t;
     }
 }

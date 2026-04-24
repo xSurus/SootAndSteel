@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using Gamelab.Assets;
 using Gamelab.Config;
 using Gamelab.Map.Train.State;
-using Gamelab.PhysicalEntities;
+using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.PhysicalEntities.Stations;
 using Gamelab.PhysicalEntities.Stations.Cannon;
 using Gamelab.PhysicalEntities.Stations.Resources;
 using Gamelab.PhysicalEntities.Structures;
+using Gamelab.Serialization;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Gamelab.Map.Train;
 
-/// <summary>Specifies where a <see cref="DoorWall"/> replaces a boundary wall in <see cref="TrainMap"/>.</summary>
 public readonly record struct DoorSpec(bool OnBottom, int Column);
 
 public class TrainMap
@@ -24,7 +24,7 @@ public class TrainMap
     public int TileSize => GamelabGame.Instance.GameplayConfig.TrainTileSize;
     public Vector2 Position { get; private set; }
     private readonly GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
-    private System.Random randomizer = new System.Random();
+    private readonly Random random = Random.Shared;
 
     public List<IPhysicalEntity> MapObjects { get; } = new();
 
@@ -37,7 +37,6 @@ public class TrainMap
     {
     }
 
-    /// <param name="doors">Each entry replaces the boundary wall at the specified column/side with a <see cref="DoorWall"/>.</param>
     public TrainMap(Vector2 topLeftPixels, params DoorSpec[] doors)
     {
         Position = topLeftPixels;
@@ -48,10 +47,9 @@ public class TrainMap
         {
             for (int y = 0; y < Height; y++)
             {
-                tileTypes[x*Height + y] = randomizer.Next(0, 2);
+                tileTypes[x * Height + y] = random.Next(0, 2);
             }
         }
-
     }
 
     private static Vector2 ComputeDefaultTopLeftPixels()
@@ -88,6 +86,47 @@ public class TrainMap
         return new Point((int)(localPos.X / TileSize), (int)(localPos.Y / TileSize));
     }
 
+    public List<StationSaveData> CaptureLayout()
+    {
+        List<StationSaveData> list = new();
+        foreach (IPhysicalEntity entity in MapObjects)
+        {
+            if (entity is not AbstractStation station)
+            {
+                continue;
+            }
+
+            string kindId = station.StationId;
+            Point t = GetTileIndexFromPixels(station.Position);
+            if (t.X >= 0 && t.X < Width && t.Y >= 0 && t.Y < Height)
+            {
+                list.Add(new StationSaveData(kindId, t.X, t.Y));
+            }
+        }
+
+        return list;
+    }
+
+    public void LoadLayout(List<StationSaveData> layout)
+    {
+        if (layout == null || layout.Count == 0)
+        {
+            AddDefaultStationLoadout();
+            AddDefaultStructures();
+            return;
+        }
+
+        foreach (StationSaveData e in layout)
+        {
+            Vector2 center = GetTileCenterPixels(e.TileX, e.TileY);
+            AbstractStation station = StationFactory.CreateStation(e.KindId, center);
+            MapObjects.Add(station);
+            SnapToNearestValidCell(station);
+        }
+
+        AddDefaultStructures();
+    }
+
     private void InitializeBoundaryWalls(DoorSpec[] doors)
     {
         float halfTile = TileSize / 2f;
@@ -98,14 +137,14 @@ public class TrainMap
             // top walls
             Vector2 topPos = GetTileCenterPixels(x, 0) - new Vector2(0, halfTile + halfTile / 2f);
             if (Array.Exists(doors, d => !d.OnBottom && d.Column == x))
-                MapObjects.Add(new DoorWall(wallSize, topPos, true));
+                MapObjects.Add(new DoorWall(wallSize, topPos, isTop: true));
             else
                 MapObjects.Add(new ShootHoleWall(wallSize, topPos, true));
 
             // bottom walls
             Vector2 bottomPos = GetTileCenterPixels(x, Height - 1) + new Vector2(0, halfTile + halfTile / 2f);
             if (Array.Exists(doors, d => d.OnBottom && d.Column == x))
-                MapObjects.Add(new DoorWall(wallSize, bottomPos, false));
+                MapObjects.Add(new DoorWall(wallSize, bottomPos, isTop: false));
             else
                 MapObjects.Add(new ShootHoleWall(wallSize, bottomPos, false));
         }
@@ -121,10 +160,6 @@ public class TrainMap
         }
     }
 
-    /// <summary>
-    /// Adds the fixed structural elements (coal wagon, train nose) that are always present
-    /// regardless of player-configured station layout. Call this in both GameplayScreen and HubScreen prep.
-    /// </summary>
     public void AddDefaultStructures()
     {
         Vector2 coalWagonPos = new Vector2(
@@ -171,34 +206,52 @@ public class TrainMap
         foreach (var mapObject in MapObjects)
         {
             mapObject.Draw(spriteBatch);
-            
         }
     }
 
     public void DrawSideWalls(SpriteBatch spriteBatch)
     {
         int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
-        Vector2 offset = new Vector2(- scale * 0.9f * AssetManager.GetWallTexture("WallTileUpperSide").Width, 0);
-        
-        spriteBatch.Draw(AssetManager.GetWallTexture("WallTileUpperLeftCorner"), 
-                            GetTileTopLeftPixels(0,0) + offset + new Vector2(0,-tileSize * 2f), null, Color.White,
-                                0f,Vector2.Zero, scale, SpriteEffects.None, 0f);
+        Vector2 offset = new Vector2(-scale * 0.9f * AssetManager.GetWallTexture("WallTileUpperSide").Width, 0);
+
+        Texture2D upperLeftCornerTex = AssetManager.GetWallTexture("WallTileUpperLeftCorner");
+        Vector2 upperLeftCornerOrigin = new Vector2(upperLeftCornerTex.Width / 2f, upperLeftCornerTex.Height);
+
+        Vector2 ulTL = GetTileTopLeftPixels(0, 0) + offset + new Vector2(0, -tileSize * 2f);
+        Vector2 ulFeet = ulTL + new Vector2(upperLeftCornerTex.Width / 2f * scale, upperLeftCornerTex.Height * scale);
+        float ulDepth = RenderUtility.CalculateDepth(ulFeet.Y);
+
+        spriteBatch.Draw(upperLeftCornerTex, ulFeet, null, Color.White,
+            0f, upperLeftCornerOrigin, scale, SpriteEffects.None, ulDepth);
 
         for (int y = 0; y < Height; y++)
-        {   
-            Vector2 Position = GetTileCenterPixels(0,y);
-            Vector2 drawPos = Position + new Vector2(-tileSize * 0.5f,-tileSize * 1.5f) + offset;
-            spriteBatch.Draw(AssetManager.GetWallTexture("WallTileUpperSide"), drawPos, null, Color.White,
-                                0f,Vector2.Zero, scale, SpriteEffects.None, 0f);
+        {
+            if (y == 2) continue;
+
+            Texture2D upperSideTex = AssetManager.GetWallTexture("WallTileUpperSide");
+            Vector2 upperSideOrigin = new Vector2(upperSideTex.Width / 2f, upperSideTex.Height);
+
+            Vector2 sideTL = GetTileTopLeftPixels(0, y) + new Vector2(0, -tileSize) + offset;
+            Vector2 sideFeet = sideTL + new Vector2(upperSideTex.Width / 2f * scale, upperSideTex.Height * scale);
+            float sideDepth = RenderUtility.CalculateDepth(sideFeet.Y) + RenderUtility.Eps;
+
+            spriteBatch.Draw(upperSideTex, sideFeet, null, Color.White,
+                0f, upperSideOrigin, scale, SpriteEffects.None, sideDepth);
         }
 
-        spriteBatch.Draw(AssetManager.GetWallTexture("WallTileTop"), 
-                            GetTileTopLeftPixels(-1,2) + new Vector2(0,-tileSize * 2f), null, Color.White,
-                                0f,Vector2.Zero, scale, SpriteEffects.None, 0f);
-        spriteBatch.Draw(AssetManager.GetWallTexture("WallTileBottom"), 
-                            GetTileTopLeftPixels(-1,2) + new Vector2(0,-tileSize * 1f), null, Color.White,
-                                0f,Vector2.Zero, scale, SpriteEffects.None, 0f);
+        Texture2D wallTileTopTex = AssetManager.GetWallTexture("WallTileTop");
+        Vector2 wallTileTopOrigin = new Vector2(wallTileTopTex.Width / 2f, wallTileTopTex.Height);
 
+        for (int bridgeX = -1; bridgeX >= -2; bridgeX--)
+        {
+            Vector2 topBridgeTL = GetTileTopLeftPixels(bridgeX, 2) + new Vector2(0, -tileSize * 2f);
+            Vector2 topBridgeFeet =
+                topBridgeTL + new Vector2(wallTileTopTex.Width / 2f * scale, wallTileTopTex.Height * scale);
+            float topBridgeDepth = RenderUtility.CalculateDepth(topBridgeFeet.Y);
+
+            spriteBatch.Draw(wallTileTopTex, topBridgeFeet, null, Color.White,
+                0f, wallTileTopOrigin, scale, SpriteEffects.None, topBridgeDepth);
+        }
     }
 
     private void DrawTrainTiles(SpriteBatch spriteBatch)
@@ -207,15 +260,25 @@ public class TrainMap
         {
             for (int y = 0; y < Height; y++)
             {
-                Vector2 drawPos = GetTileTopLeftPixels(x, y);
-                spriteBatch.Draw(AssetManager.TileTexture[tileTypes[x * Height + y]], drawPos, null, Color.White,
-                    0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+                Texture2D tileTex = AssetManager.TileTexture[tileTypes[x * Height + y]];
+                Vector2 origin = new Vector2(tileTex.Width / 2f, tileTex.Height);
+                Vector2 feetPosition = GetTileCenterPixels(x, y) + new Vector2(0, TileSize / 2f);
+
+                spriteBatch.Draw(tileTex, feetPosition, null, Color.White,
+                    0f, origin, scale, SpriteEffects.None, RenderUtility.FloorLayer);
             }
         }
 
-        Vector2 bridgePos = GetTileTopLeftPixels(-1, 2);
-        spriteBatch.Draw(AssetManager.TileTexture[0], bridgePos, null, Color.White,
-            0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+        Texture2D bridgeTex = AssetManager.TileTexture[0];
+        Vector2 bridgeOrigin = new Vector2(bridgeTex.Width / 2f, bridgeTex.Height);
+
+        for (int bridgeX = -1; bridgeX >= -2; bridgeX--)
+        {
+            Vector2 bottomCenter = GetTileCenterPixels(bridgeX, 2) + new Vector2(0, TileSize / 2f);
+
+            spriteBatch.Draw(bridgeTex, bottomCenter, null, Color.White,
+                0f, bridgeOrigin, scale, SpriteEffects.None, RenderUtility.FloorLayer);
+        }
     }
 
     public void Update(float dt)

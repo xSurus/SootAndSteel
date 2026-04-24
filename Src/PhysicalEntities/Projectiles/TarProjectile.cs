@@ -1,5 +1,7 @@
 using Gamelab.Assets;
 using Gamelab.Enemies;
+using Gamelab.Enemies.Hazards;
+using Gamelab.Enemies.Slots;
 using Gamelab.Map.Train.State;
 using Gamelab.PhysicalEntities.Hazards;
 using Gamelab.Utils;
@@ -11,7 +13,6 @@ namespace Gamelab.PhysicalEntities.Projectiles;
 
 public class TarProjectile : AbstractPhysicalEntity, IEnemyHazard
 {
-    private readonly GameplayContext gameplayContext;
     private readonly Vector2 velocity;
     private readonly float radius;
     private readonly EnemySlotSide side;
@@ -23,7 +24,6 @@ public class TarProjectile : AbstractPhysicalEntity, IEnemyHazard
     public bool CountsAsActiveThreat => false;
 
     public TarProjectile(
-        GameplayContext gameplayContext,
         Vector2 position,
         Vector2 velocity,
         float lifetimeSeconds,
@@ -31,14 +31,15 @@ public class TarProjectile : AbstractPhysicalEntity, IEnemyHazard
         EnemySlotSide side,
         float cleanDurationSeconds)
     {
-        this.gameplayContext = gameplayContext;
         this.velocity = velocity;
         remainingLifetime = lifetimeSeconds;
         this.radius = radius;
         this.side = side;
         this.cleanDurationSeconds = cleanDurationSeconds;
 
-        PhysicsBody = gameplayContext.PhysicsWorld.CreateCircle((radius / 2f).ToMeters(), 1f, position.ToMeters(), BodyType.Static);
+        PhysicsBody =
+            gameplayContext.PhysicsWorld.CreateCircle((radius / 2f).ToMeters(), 1f, position.ToMeters(),
+                BodyType.Static);
         foreach (var fixture in PhysicsBody.FixtureList)
         {
             fixture.IsSensor = true;
@@ -59,7 +60,7 @@ public class TarProjectile : AbstractPhysicalEntity, IEnemyHazard
             return;
         }
 
-        pendingTarPatch = new TarPatch(gameplayContext, side, cleanDurationSeconds);
+        pendingTarPatch = new TarPatch(side, cleanDurationSeconds);
         ShouldRemove = true;
     }
 

@@ -1,10 +1,9 @@
 ﻿using System;
 using System.CommandLine;
 using System.Threading;
-using FmodForFoxes;
 using Gamelab.Screens;
 using Gamelab.Services.Sound;
-using Gamelab.Utils.Logging;
+using Gamelab.Utils;
 using static Gamelab.GamelabGame;
 
 namespace Gamelab;

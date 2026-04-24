@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using Gamelab.Enemies.Core;
+using Gamelab.Enemies.Hazards;
+using Gamelab.Enemies.Slots;
 using Gamelab.Levels;
 using Gamelab.Map.Train.State;
 using Gamelab.PhysicalEntities.Projectiles;
@@ -8,70 +11,30 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Gamelab.Enemies;
 
-public class EnemyManager
+public class EnemyManager(LevelDefinition levelDef)
 {
     private readonly List<AbstractEnemy> enemies = [];
-    private readonly Random random = Random.Shared;
-    private readonly EnemySlotManager slotManager;
+    private readonly Random random = new(levelDef.LevelSeed);
+    private readonly EnemySlotManager slotManager = new();
     private readonly EnemyHazardManager hazardManager = new();
-    private LevelDefinition levelDefinition;
     private readonly GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
 
-    private float timeSinceLastSpawn;
-    private float currentSpawnInterval;
     private int nextSpawnIndex;
-    private float levelStartDistance;
-    private float RifleSpawnChance => GamelabGame.Instance.GameplayConfig.RifleSpawnChance;
-    private float EnemySpawnIntervalBase => GamelabGame.Instance.GameplayConfig.EnemySpawnIntervalBase;
-    private float EnemySpawnIntervalVariance => GamelabGame.Instance.GameplayConfig.EnemySpawnIntervalVariance;
     private float EnemySpawnOffsetX => GamelabGame.Instance.GameplayConfig.EnemySpawnOffsetX;
     private float EnemySize => GamelabGame.Instance.GameplayConfig.EnemySize;
     private float RiflePreferredDistance => GamelabGame.Instance.GameplayConfig.RiflePreferredDistance;
-    private readonly ProjectileManager projectileManager;
-
-    public IReadOnlyList<AbstractEnemy> Enemies => enemies;
     public bool HasActiveThreats => enemies.Count > 0 || hazardManager.HasActiveThreats;
-
-    public EnemyManager(LevelDefinition levelDef)
-    {
-        currentSpawnInterval = GamelabGame.Instance.GameplayConfig.EnemySpawnIntervalBase;
-        levelDefinition = levelDef;
-        slotManager = new EnemySlotManager();
-        levelStartDistance = gameplayContext.State.DistanceTraveled;
-    }
-
-    public void SetLevel(LevelDefinition levelDef)
-    {
-        levelDefinition = levelDef;
-        nextSpawnIndex = 0;
-        timeSinceLastSpawn = 0f;
-        currentSpawnInterval = EnemySpawnIntervalBase;
-        levelStartDistance = gameplayContext.State.DistanceTraveled;
-    }
 
     public void Update(float deltaTime)
     {
-        float distanceInCurrentLevel = gameplayContext.State.DistanceTraveled - levelStartDistance;
-
-        if (levelDefinition != null)
+        
+        if (levelDef != null)
         {
-            while (nextSpawnIndex < levelDefinition.SpawnEvents.Count &&
-                   distanceInCurrentLevel >= levelDefinition.SpawnEvents[nextSpawnIndex].Distance)
+            while (nextSpawnIndex < levelDef.SpawnEvents.Count &&
+                   gameplayContext.State.DistanceTraveled >= levelDef.SpawnEvents[nextSpawnIndex].Distance)
             {
-                SpawnFromEvent(levelDefinition.SpawnEvents[nextSpawnIndex]);
+                SpawnFromEvent(levelDef.SpawnEvents[nextSpawnIndex]);
                 nextSpawnIndex++;
-            }
-        }
-        else if (gameplayContext.State.actualSpeed > 0)
-        {
-            timeSinceLastSpawn += deltaTime;
-            if (timeSinceLastSpawn >= currentSpawnInterval)
-            {
-                SpawnFallbackEnemy();
-                timeSinceLastSpawn = 0f;
-                float nextInterval = EnemySpawnIntervalBase +
-                                     (random.NextSingle() - 0.5f) * EnemySpawnIntervalVariance;
-                currentSpawnInterval = nextInterval;
             }
         }
 
@@ -86,7 +49,7 @@ public class EnemyManager
             AbstractEnemy enemy = enemies[i];
             enemy.Update(deltaTime);
             enemy.TryShoot();
-            
+
             IEnemyHazard hazard = enemy.TryCreateHazard();
             if (hazard != null)
             {
@@ -101,21 +64,7 @@ public class EnemyManager
             }
         }
     }
-
-    private void SpawnFallbackEnemy()
-    {
-        float roll = random.NextSingle();
-        EnemyType enemyType = roll switch
-        {
-            < 0.1f => EnemyType.TarThrower,
-            < 0.25f => EnemyType.Molotov,
-            _ => random.NextSingle() < RifleSpawnChance ? EnemyType.Rifle : EnemyType.Mounter
-        };
-        EnemyDefinition definition = new EnemyDefinition(enemyType);
-        EnemySlotSide side = random.NextSingle() < 0.5f ? EnemySlotSide.Top : EnemySlotSide.Bottom;
-        SpawnEnemy(definition, side);
-    }
-
+    
     private void SpawnFromEvent(SpawnEvent spawnEvent)
     {
         EnemyDefinition definition = EnemyDefinition.Parse(spawnEvent.Type);
@@ -139,7 +88,7 @@ public class EnemyManager
         Vector2 spawnPosition = GetSpawnPosition(definition.Type, slot);
         try
         {
-            AbstractEnemy enemy = EnemyFactory.Create(gameplayContext, definition, spawnPosition, random, slot);
+            AbstractEnemy enemy = EnemyFactory.Create(definition, spawnPosition, slot);
             enemies.Add(enemy);
         }
         catch (NotSupportedException)
@@ -174,7 +123,7 @@ public class EnemyManager
     private Vector2 GetSideAttackSpawnPosition(EnemyTrainSlot slot)
     {
         float spawnX = gameplayContext.ScreenWidth + EnemySpawnOffsetX;
-        Vector2 anchor = slot.GetAnchor(gameplayContext, EnemySize + RiflePreferredDistance);
+        Vector2 anchor = slot.GetAnchor(EnemySize + RiflePreferredDistance);
         return new Vector2(spawnX, anchor.Y);
     }
 

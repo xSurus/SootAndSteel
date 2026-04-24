@@ -1,9 +1,9 @@
 using System;
 using Gamelab.Assets;
 using Gamelab.Enemies;
-using Gamelab.Entities;
-using Gamelab.Map.Train.State;
+using Gamelab.Enemies.Core;
 using Gamelab.PhysicalEntities.Bullets;
+using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
@@ -19,7 +19,6 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
     private float HealthRestoredPerSecond => GamelabGame.Instance.GameplayConfig.WallHealthRestoredPerSecond;
     public float CurrentHealth { get; private set; }
     public bool IsBroken => CurrentHealth <= 0f;
-    private readonly GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
     private readonly Vector2 dimensionsPixels;
     private bool isTop;
 
@@ -41,11 +40,6 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
         CurrentHealth = Math.Max(0f, CurrentHealth - damageAmount);
         if (before > 0f && CurrentHealth <= 0f)
         {
-            gameplayContext.DeferPhysicsAction(() =>
-            {
-                if (PhysicsBody?.World != null)
-                    PhysicsBody.Enabled = false;
-            });
             gameplayContext.Events.FireWallBreached();
         }
     }
@@ -57,6 +51,7 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
             TakeDamage(bullet.Stats.Damage);
             return true;
         }
+
         return false;
     }
 
@@ -82,38 +77,28 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        Vector2 origin = new Vector2(dimensionsPixels.X / 2f, dimensionsPixels.Y / 2f);
-        Rectangle sourceRect = new Rectangle(0, 0, (int)dimensionsPixels.X, (int)dimensionsPixels.Y);
-
-        Color wallColor = IsBroken ? Color.DarkRed : Color.DarkSlateGray;
-        Vector2 snappedPosition = new Vector2(MathF.Round(Position.X), MathF.Round(Position.Y));
-
         int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
-        float originalSize = AssetManager.GetWallTexture("WallTileTop").Width;
-        float scale = tileSize / originalSize;
+        Texture2D wallTex =
+            isTop ? AssetManager.GetWallTexture("WallTileTop") : AssetManager.GetWallTexture("WallTileBottom");
 
-        if (isTop){
-            Vector2 drawingPos = Position + new Vector2(-tileSize * 0.5f, -tileSize * 1.75f);
-            spriteBatch.Draw(AssetManager.GetWallTexture("WallTileTop"), drawingPos, null, Color.White,
-                                0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
-        } else {
-            Vector2 drawingPos = Position + new Vector2(-tileSize * 0.5f, -tileSize * 1f);
-            spriteBatch.Draw(AssetManager.GetWallTexture("WallTileBottom"), drawingPos, null, Color.White,
-                                0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+        float scale = tileSize / (float)AssetManager.GetWallTexture("WallTileTop").Width;
+        Vector2 origin = new Vector2(wallTex.Width / 2f, wallTex.Height);
+
+        Vector2 feetPosition;
+        if (isTop)
+        {
+            feetPosition = Position + new Vector2(0, dimensionsPixels.Y / 2f);
         }
-        
+        else
+        {
+            float visualHeight = wallTex.Height * scale;
+            feetPosition = Position + new Vector2(0, -dimensionsPixels.Y / 2f);
+        }
 
-        // spriteBatch.Draw(
-        //     texture: AssetManager.BlankTexture,
-        //     position: snappedPosition,
-        //     sourceRectangle: sourceRect,
-        //     color: wallColor,
-        //     rotation: PhysicsBody.Rotation,
-        //     origin: origin,
-        //     scale: 1f,
-        //     effects: SpriteEffects.None,
-        //     layerDepth: 0f
-        // );
+        float depth = RenderUtility.CalculateDepth(feetPosition.Y);
+
+        spriteBatch.Draw(wallTex, feetPosition, null, Color.White, 0f, origin, scale, SpriteEffects.None,
+            depth + RenderUtility.Eps);
 
         if (CurrentHealth < MaxHealth)
         {
@@ -121,24 +106,17 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
             int barHeight = 6;
             float healthPercentage = CurrentHealth / MaxHealth;
 
-            Rectangle bgBar = new Rectangle(
-                (int)(snappedPosition.X - barWidth / 2f),
-                (int)(snappedPosition.Y - barHeight / 2f),
-                barWidth,
-                barHeight
-            );
+            Vector2 barPos = Position + new Vector2(-barWidth / 2f, -dimensionsPixels.Y / 2f - 15f);
 
-            Rectangle fillBar = new Rectangle(
-                bgBar.X,
-                bgBar.Y,
-                (int)MathF.Round(barWidth * healthPercentage),
-                barHeight
-            );
-
+            Rectangle bgBar = new Rectangle((int)barPos.X, (int)barPos.Y, barWidth, barHeight);
+            Rectangle fillBar =
+                new Rectangle(bgBar.X, bgBar.Y, (int)MathF.Round(barWidth * healthPercentage), barHeight);
             Color healthBarColor = IsBroken ? Color.Red : Color.LimeGreen;
 
-            spriteBatch.Draw(AssetManager.BlankTexture, bgBar, Color.Black);
-            spriteBatch.Draw(AssetManager.BlankTexture, fillBar, healthBarColor);
+            spriteBatch.Draw(AssetManager.BlankTexture, bgBar, null, Color.Black, 0f, Vector2.Zero, SpriteEffects.None,
+                depth + 2 * RenderUtility.Eps);
+            spriteBatch.Draw(AssetManager.BlankTexture, fillBar, null, healthBarColor, 0f, Vector2.Zero,
+                SpriteEffects.None, depth + 3 * RenderUtility.Eps);
         }
     }
 }

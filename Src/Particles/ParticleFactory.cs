@@ -7,17 +7,17 @@ namespace Gamelab.Particles;
 
 public static class ParticleFactory
 {
-    public static ParticleEmitter CreateSnowstorm(Point screenSize = default)
+    public static ParticleEmitter CreateSnowstorm(Point area = default)
     {
-        if (screenSize == default)
-            screenSize = new Point(1920, 1080);
+        if (area == default)
+            area = new Point(1920, 1080);
 
         var emitter = new ParticleEmitter(1000, AssetManager.SparkTexture)
         {
-            Position = new Vector2(screenSize.X / 2f, screenSize.Y / 2f),
+            Position = new Vector2(area.X / 2f, area.Y / 2f),
             AutoTrigger = true,
             AutoTriggerFrequency = 0.05f,
-            Profile = new BoxProfile(screenSize.X * 1.5f, screenSize.Y, Vector2.UnitY),
+            Profile = new BoxProfile(area.X * 1.5f, area.Y, Vector2.UnitY),
 
             Parameters = new ParticleReleaseParameters
             {

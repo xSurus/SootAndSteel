@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Gamelab.Assets;
 using Gamelab.Enemies;
-using Gamelab.Map.Train.State;
+using Gamelab.Enemies.Hazards;
 using Gamelab.Players;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
@@ -12,7 +12,6 @@ namespace Gamelab.PhysicalEntities.Hazards;
 
 public class FireZone : AbstractPhysicalEntity, IEnemyHazard
 {
-    private readonly GameplayContext gameplayContext;
     private readonly float radius;
     private readonly float durationSeconds;
     private readonly Dictionary<Player, float> exposureTimes = [];
@@ -21,14 +20,15 @@ public class FireZone : AbstractPhysicalEntity, IEnemyHazard
     public bool ShouldRemove { get; private set; }
     public bool CountsAsActiveThreat => false;
 
-    public FireZone(GameplayContext gameplayContext, Vector2 position, float radius, float durationSeconds)
+    public FireZone(Vector2 position, float radius, float durationSeconds)
     {
-        this.gameplayContext = gameplayContext;
         this.radius = radius;
         this.durationSeconds = durationSeconds;
         remainingTime = durationSeconds;
 
-        PhysicsBody = gameplayContext.PhysicsWorld.CreateCircle((radius / 2f).ToMeters(), 1f, position.ToMeters(), BodyType.Static);
+        PhysicsBody =
+            gameplayContext.PhysicsWorld.CreateCircle((radius / 2f).ToMeters(), 1f, position.ToMeters(),
+                BodyType.Static);
         foreach (var fixture in PhysicsBody.FixtureList)
         {
             fixture.IsSensor = true;
@@ -107,7 +107,22 @@ public class FireZone : AbstractPhysicalEntity, IEnemyHazard
     {
         float alpha = MathHelper.Clamp(remainingTime / durationSeconds, 0.25f, 1f);
         int diameter = (int)(radius * 2f);
-        Rectangle rect = new((int)(Position.X - radius), (int)(Position.Y - radius), diameter, diameter);
-        spriteBatch.Draw(AssetManager.BlankTexture, rect, Color.OrangeRed * alpha);
+
+        Vector2 feetPosition = Position + new Vector2(0, radius);
+        float depth = RenderUtility.CalculateDepth(feetPosition.Y);
+
+        Vector2 origin = new Vector2(0.5f, 1f);
+
+        spriteBatch.Draw(
+            AssetManager.BlankTexture,
+            feetPosition,
+            null,
+            Color.OrangeRed * alpha,
+            0f,
+            origin,
+            new Vector2(diameter, diameter),
+            SpriteEffects.None,
+            depth
+        );
     }
 }

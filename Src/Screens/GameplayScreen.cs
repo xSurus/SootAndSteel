@@ -5,17 +5,19 @@ using Gamelab.Assets;
 using Gamelab.Enemies;
 using Gamelab.Levels;
 using Gamelab.Map;
-using Gamelab.Map.Hub;
 using Gamelab.Map.Train;
 using Gamelab.Map.Train.State;
 using Gamelab.Particles;
-using Gamelab.PhysicalEntities.Projectiles;
 using Gamelab.Players;
+using Gamelab.Screens.Camera;
+using Gamelab.Serialization;
 using Gamelab.Services.Bullet;
 using Gamelab.Services.Sound;
 using Gamelab.Services.Vfx;
 using Gamelab.UI;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended;
 using Myra.Graphics2D.UI;
 
 namespace Gamelab.Screens;
@@ -25,189 +27,241 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     private enum GameplayPhase
     {
         Running,
-        EndOfLevelOutro,
+        EndOfLevelOutro
     }
 
-    private List<Player> players;
+    private GameplayContext gameplayContext;
+    private LevelCompletionWatcher levelWatcher;
+    private LevelDefinition currentLevelDef;
+
     private TrainMap trainMap;
     private WorldScroller worldScroller;
-    private GameplayContext gameplayContext;
     private EnemyManager enemyManager;
-    private RunManager runManager;
-    private LevelDefinition currentLevelDef;
-    private Desktop desktop;
-    private ProjectileManager projectileManager;
+    private List<Player> players;
+
+    private OrthographicCamera camera;
+    private CameraDirector cameraDirector;
+
     private GameplayHud hud;
     private PauseMenuController pauseMenu;
-
+    private Desktop desktop;
     private ISoundService soundService;
     private EventInstance trainSound;
     private EventInstance ambientMusic;
 
-    private float screenShakeTimer;
-    private float screenShakeIntensity;
-    private Vector2 screenShakeOffset;
-    private readonly Random random = Random.Shared;
-    private bool isFailureTriggered;
-    private float levelStartDistance;
-    private float allPlayersStunnedTimer;
     private GameplayPhase phase = GameplayPhase.Running;
-    private readonly WhiteFilterTransition endLevelWhiteFilter = new WhiteFilterTransition();
+    private readonly WhiteFilterTransition endLevelWhiteFilter = new();
+    private bool isFailureTriggered;
+    private float allPlayersStunnedTimer;
+    private float accumulator;
 
     public override void LoadContent()
     {
         base.LoadContent();
-        int playerCount = Math.Max(1, Game.playerManager.Configs.Count);
-        gameplayContext = new GameplayContext(virtualScreenSize);
-        Services.AddService(gameplayContext);
-        gameplayContext.State.ConfigurePlayerScaling(playerCount);
-        runManager = new RunManager(Game.CurrentLevel, new ProgressiveRunLevelProvider(playerCount));
-        runManager.OnIntermissionStarted += OnIntermissionStarted;
-        currentLevelDef = runManager.CurrentLevelDefinition;
-        levelStartDistance = 0f;
-        trainMap = new TrainMap();
-        gameplayContext.Map = trainMap;
-        Services.GetService<IVfxService>().AddContinuous(ParticleFactory.CreateSnowstorm());
 
-        // Sounds
-        soundService = Services.GetService<ISoundService>();
-        soundService.LoadSound(Sounds.MenuSelect);
-        trainSound = soundService.GetSoundInstance(Sounds.Train);
-        ambientMusic = soundService.GetSoundInstance(Sounds.AmbientSong);
-        soundService.RegisterParameter(trainSound, "Train Velocity", () => gameplayContext.State.actualSpeed);
-        trainSound?.Start();
-        ambientMusic?.Start();
-
-        trainMap.AddDefaultStructures();
-        PrepTrainLayout.ApplyFromPendingOrDefault(Game, trainMap);
-
-        worldScroller = new WorldScroller(GraphicsDevice);
-        projectileManager = new ProjectileManager();
-        enemyManager = new EnemyManager(currentLevelDef);
-
-        gameplayContext.Events.OnWallBreached += OnWallBreached;
-        gameplayContext.Events.OnWallRepaired += OnWallRepaired;
-        gameplayContext.State.OnTrainFrozen += OnTrainFrozen;
-
-        players = [];
-        foreach (var playerConfig in Game.playerManager.Configs)
-        {
-            players.Add(new Player(trainMap.GetTileCenterPixels(playerConfig.PlayerIndex, 1), playerConfig));
-        }
-
-        hud = new GameplayHud();
-        pauseMenu = new PauseMenuController();
-        pauseMenu.OnExitRequested += () => Game.SwitchToScreen(new JoinScreen(Game));
-
-        desktop = new Desktop();
-        var mainPanel = new Panel
-        {
-            HorizontalAlignment = HorizontalAlignment.Stretch,
-            VerticalAlignment = VerticalAlignment.Stretch
-        };
-        mainPanel.Widgets.Add(pauseMenu.Overlay);
-        desktop.Root = mainPanel;
+        InitializeContextAndRun();
+        InitializeMapAndEntities();
+        InitializeCameraAndVfx();
+        InitializeAudio();
+        InitializeUi();
     }
-
-    private void OnWallBreached()
-    {
-        gameplayContext.State.numberBreachedWalls++;
-        screenShakeTimer = Game.GameplayConfig.ScreenShakeDuration;
-        screenShakeIntensity = Game.GameplayConfig.ScreenShakeIntensity;
-    }
-
-    private void OnWallRepaired()
-    {
-        gameplayContext.State.numberBreachedWalls--;
-    }
-
-    private void OnTrainFrozen()
-    {
-        if (gameplayContext.State.VictoryLapActive)
-        {
-            return;
-        }
-
-        TriggerFailure();
-    }
-
-    private void TriggerFailure()
-    {
-        if (isFailureTriggered) return;
-        isFailureTriggered = true;
-        Game.SwitchToScreen(new FailScreen(Game));
-    }
-
-    private float accumulator;
 
     public override void Update(GameTime gameTime)
     {
         base.Update(gameTime);
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-        if (pauseMenu.IsToggleRequested(Game.playerManager.Configs))
+        if (UpdatePauseMenu()) return;
+
+        if (phase == GameplayPhase.EndOfLevelOutro)
         {
-            pauseMenu.Toggle();
+            HandleLevelTransition(dt);
+            return;
         }
+
+        UpdatePhysics(dt);
+        if (isFailureTriggered) return;
+
+        UpdateSystems(dt);
+    }
+
+    public override void Draw(GameTime gameTime)
+    {
+        GraphicsDevice.Clear(Color.Black);
+
+        DrawWorld();
+        DrawUi();
+
+        base.Draw(gameTime);
+    }
+
+    public override void UnloadContent()
+    {
+        if (gameplayContext?.Events != null)
+        {
+            gameplayContext.Events.OnWallBreached -= OnWallBreached;
+            gameplayContext.Events.OnWallRepaired -= OnWallRepaired;
+        }
+
+        if (gameplayContext?.State != null)
+            gameplayContext.State.OnTrainFrozen -= OnTrainFrozen;
+
+        if (levelWatcher != null)
+            levelWatcher.OnLevelCompleted -= OnLevelCompleted;
+
+        Game.Services.RemoveService(typeof(GameplayContext));
+        Services.GetService<IVfxService>().ClearAll();
+
+        trainMap?.Dispose();
+        worldScroller?.Dispose();
+        trainSound?.Stop();
+        trainSound?.Dispose();
+        ambientMusic?.Stop();
+        ambientMusic?.Dispose();
+
+        base.UnloadContent();
+    }
+
+    private void InitializeContextAndRun()
+    {
+        int playerCount = Math.Max(1, Game.playerManager.Configs.Count);
+        gameplayContext = new GameplayContext(virtualScreenSize, Game.CurrentRun);
+        Services.AddService(gameplayContext);
+        gameplayContext.WorldHeight = virtualScreenSize.Y;
+        gameplayContext.State.ConfigurePlayerScaling(playerCount);
+        gameplayContext.Events.OnWallBreached += OnWallBreached;
+        gameplayContext.Events.OnWallRepaired += OnWallRepaired;
+        gameplayContext.State.OnTrainFrozen += OnTrainFrozen;
+
+        var proceduralLevels = new ProceduralLevelProvider(playerCount, Game.CurrentRun);
+        currentLevelDef = proceduralLevels.GetLevel(Game.CurrentRun.CurrentLevel);
+        levelWatcher = new LevelCompletionWatcher(currentLevelDef);
+        levelWatcher.OnLevelCompleted += OnLevelCompleted;
+    }
+
+    private void InitializeMapAndEntities()
+    {
+        trainMap = new TrainMap();
+        trainMap.LoadLayout(Game.CurrentRun.TrainLayout);
+        gameplayContext.Map = trainMap;
+
+        worldScroller = new WorldScroller(GraphicsDevice);
+        enemyManager = new EnemyManager(currentLevelDef);
+
+        players = [];
+        foreach (var playerConfig in Game.playerManager.Configs)
+        {
+            players.Add(new Player(trainMap.GetTileCenterPixels(playerConfig.PlayerIndex, 1), playerConfig));
+        }
+    }
+
+    private void InitializeCameraAndVfx()
+    {
+        camera = new OrthographicCamera(viewportAdapter);
+        cameraDirector = new CameraDirector(virtualScreenSize);
+        cameraDirector.SnapToCenter(camera, trainMap.GetBounds(), virtualScreenSize.Y);
+        Services.GetService<IVfxService>().AddContinuous(ParticleFactory.CreateSnowstorm());
+    }
+
+    private void InitializeAudio()
+    {
+        soundService = Services.GetService<ISoundService>();
+        soundService.LoadSound(Sounds.MenuSelect);
+
+        trainSound = soundService.GetSoundInstance(Sounds.Train);
+        ambientMusic = soundService.GetSoundInstance(Sounds.AmbientSong);
+
+        soundService.RegisterParameter(trainSound, "Train Velocity", () => gameplayContext.State.actualSpeed);
+        trainSound?.Start();
+        ambientMusic?.Start();
+    }
+
+    private void InitializeUi()
+    {
+        hud = new GameplayHud();
+        pauseMenu = new PauseMenuController();
+        pauseMenu.OnExitRequested += () => Game.SwitchToScreen(new JoinScreen(Game));
+
+        desktop = new Desktop();
+        var mainPanel = new Panel
+            { HorizontalAlignment = HorizontalAlignment.Stretch, VerticalAlignment = VerticalAlignment.Stretch };
+        mainPanel.Widgets.Add(pauseMenu.Overlay);
+        desktop.Root = mainPanel;
+    }
+
+    private bool UpdatePauseMenu()
+    {
+        if (pauseMenu.IsToggleRequested(Game.playerManager.Configs))
+            pauseMenu.Toggle();
 
         if (pauseMenu.IsPaused)
         {
             pauseMenu.Update(Game.playerManager.Configs);
-            return;
+            return true;
         }
 
-        bool isEndOfLevelOutro = phase == GameplayPhase.EndOfLevelOutro;
-        if (isEndOfLevelOutro)
-        {
-            endLevelWhiteFilter.Update(dt);
-        }
+        return false;
+    }
 
-        worldScroller.Update(dt);
-
+    private void UpdatePhysics(float dt)
+    {
         accumulator += Math.Min(dt, Game.GameplayConfig.MaxAccumulatedDeltaSeconds);
         float fixedDt = Game.GameplayConfig.FixedTimeStep;
-        while (accumulator >= Game.GameplayConfig.FixedTimeStep)
-        {
-            foreach (Player player in players)
-            {
-                player.Update(fixedDt);
-            }
 
-            if (!isEndOfLevelOutro)
-            {
-                enemyManager.Update(fixedDt);
-                projectileManager.Update(fixedDt);
-                gameplayContext.State.Update(fixedDt);
-                if (isFailureTriggered) return;
-            }
+        while (accumulator >= fixedDt)
+        {
+            foreach (Player player in players) player.Update(fixedDt);
+
+            enemyManager.Update(fixedDt);
+            gameplayContext.State.Update(fixedDt);
+
+            if (isFailureTriggered) return;
 
             trainMap.Update(fixedDt);
             gameplayContext.PhysicsWorld.Step(fixedDt);
-            gameplayContext.FlushDeferredPhysicsActions();
             UpdateAllPlayersStunnedFailure(fixedDt);
+
             if (isFailureTriggered) return;
             accumulator -= fixedDt;
         }
+    }
 
-        hud.Update(currentLevelDef, levelStartDistance);
+    private void UpdateSystems(float dt)
+    {
+        worldScroller.Update(dt);
+        hud.Update(currentLevelDef);
+        levelWatcher.Update(enemyManager);
+        cameraDirector.Update(camera, dt, players, trainMap.GetBounds(), virtualScreenSize.Y);
+    }
 
-        if (!isEndOfLevelOutro)
+    private void HandleLevelTransition(float dt)
+    {
+        worldScroller.Update(dt);
+        float fixedDt = Game.GameplayConfig.FixedTimeStep;
+        accumulator += Math.Min(dt, Game.GameplayConfig.MaxAccumulatedDeltaSeconds);
+        while (accumulator >= fixedDt)
         {
-            runManager.Update(gameplayContext, enemyManager);
+            foreach (Player player in players) player.Update(fixedDt);
+            trainMap.Update(fixedDt);
+            gameplayContext.PhysicsWorld.Step(fixedDt);
+            accumulator -= fixedDt;
         }
 
-        UpdateScreenShake(dt);
+        cameraDirector.Update(camera, dt, players, trainMap.GetBounds(), virtualScreenSize.Y);
+        endLevelWhiteFilter.Update(dt);
 
-        if (isEndOfLevelOutro && endLevelWhiteFilter.IsDone)
+        if (endLevelWhiteFilter.IsDone)
         {
-            Game.TrainLayoutSeedForHub = PrepTrainLayout.Capture(trainMap);
+            Game.CurrentRun.TrainLayout = trainMap.CaptureLayout();
             Game.SwitchToScreen(new PostLevelStatsScreen(Game));
         }
     }
 
     private void UpdateAllPlayersStunnedFailure(float dt)
     {
-        bool allPlayersStunned = players.Count > 0;
+        if (players.Count == 0) return;
+
+        bool allPlayersStunned = true;
         foreach (Player player in players)
         {
             if (!player.IsStunned)
@@ -217,116 +271,85 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
             }
         }
 
-        if (!allPlayersStunned)
+        if (allPlayersStunned)
+        {
+            allPlayersStunnedTimer += dt;
+            if (allPlayersStunnedTimer >= Game.GameplayConfig.AllPlayersStunnedFailDelaySeconds)
+                TriggerFailure();
+        }
+        else
         {
             allPlayersStunnedTimer = 0f;
-            return;
-        }
-
-        allPlayersStunnedTimer += dt;
-        if (allPlayersStunnedTimer >= Game.GameplayConfig.AllPlayersStunnedFailDelaySeconds)
-        {
-            TriggerFailure();
         }
     }
 
-    private void UpdateScreenShake(float dt)
+    private void DrawWorld()
     {
-        if (screenShakeTimer > 0)
-        {
-            screenShakeTimer -= dt;
-
-            float shakeX = (float)(random.NextDouble() * 2 - 1) * screenShakeIntensity;
-            float shakeY = (float)(random.NextDouble() * 2 - 1) * screenShakeIntensity;
-            screenShakeOffset = new Vector2(shakeX, shakeY);
-
-            screenShakeIntensity *= 1f - Game.GameplayConfig.ScreenShakeDecay * dt;
-
-            if (screenShakeTimer <= 0)
-            {
-                screenShakeOffset = Vector2.Zero;
-                screenShakeIntensity = 0;
-            }
-        }
-    }
-
-    private void OnIntermissionStarted(int _)
-    {
-        trainSound?.Stop();
-        gameplayContext.State.VictoryLapActive = true;
-        ScreenPayloads.LastPostLevelResults = new ScreenPayloads.PostLevelResults
-        {
-            CompletedLevelNumber = Game.CurrentLevel,
-            CoalRemaining = gameplayContext.State.CoalAmount
-        };
-        endLevelWhiteFilter.FadeIn(4f);
-        phase = GameplayPhase.EndOfLevelOutro;
-    }
-
-    public override void Draw(GameTime gameTime)
-    {
-        Matrix shakeMatrix = Matrix.CreateTranslation(screenShakeOffset.X, screenShakeOffset.Y, 0);
-        Matrix finalTransform = shakeMatrix * viewportAdapter.GetScaleMatrix();
-
-        spriteBatch.Begin(transformMatrix: finalTransform);
+        spriteBatch.Begin(
+            sortMode: SpriteSortMode.FrontToBack,
+            blendState: BlendState.AlphaBlend,
+            transformMatrix: camera.GetViewMatrix()
+        );
         worldScroller.Draw(spriteBatch);
         trainMap.Draw(spriteBatch);
         enemyManager.Draw(spriteBatch);
 
-        foreach (Player player in players)
-        {
-            player.Draw(spriteBatch);
-        }
+        foreach (Player player in players) player.Draw(spriteBatch);
 
         Services.GetService<IVfxService>().Render(spriteBatch);
         Services.GetService<IBulletService>().Render(spriteBatch);
         spriteBatch.End();
+    }
 
+    private void DrawUi()
+    {
         spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
         hud.Draw(spriteBatch, virtualScreenSize);
         desktop.Render();
+
         float w = endLevelWhiteFilter.Opacity;
         if (w > 0.001f)
         {
-            spriteBatch.Draw(
-                AssetManager.BlankTexture,
-                new Rectangle(0, 0, virtualScreenSize.X, virtualScreenSize.Y),
+            spriteBatch.Draw(AssetManager.BlankTexture, new Rectangle(0, 0, virtualScreenSize.X, virtualScreenSize.Y),
                 Color.White * w);
         }
 
-        spriteBatch.End();
+        pauseMenu.OptionsPanel.Draw(
+            spriteBatch,
+            virtualScreenSize,
+            Game.fontSystem.GetFont(72),
+            Game.fontSystem.GetFont(40));
 
-        base.Draw(gameTime);
+        spriteBatch.End();
     }
 
-    public override void UnloadContent()
+    private void OnWallBreached()
     {
-        if (gameplayContext.Events != null)
-        {
-            gameplayContext.Events.OnWallBreached -= OnWallBreached;
-            gameplayContext.Events.OnWallRepaired -= OnWallRepaired;
-        }
+        gameplayContext.State.numberBreachedWalls++;
+        cameraDirector.TriggerShake(Game.GameplayConfig.ScreenShakeIntensity, Game.GameplayConfig.ScreenShakeDuration);
+    }
 
-        if (runManager != null)
-        {
-            runManager.OnIntermissionStarted -= OnIntermissionStarted;
-        }
+    private void OnWallRepaired() => gameplayContext.State.numberBreachedWalls--;
 
-        if (gameplayContext?.State != null)
-        {
-            gameplayContext.State.OnTrainFrozen -= OnTrainFrozen;
-        }
+    private void OnTrainFrozen()
+    {
+        if (!gameplayContext.State.VictoryLapActive) TriggerFailure();
+    }
 
-        Game.Services.RemoveService(typeof(GameplayContext));
-        Services.GetService<IVfxService>().ClearAll();
-        trainMap?.Dispose();
-        worldScroller?.Dispose();
+    private void TriggerFailure()
+    {
+        if (isFailureTriggered) return;
+        isFailureTriggered = true;
+        SaveManager.DeleteSave();
+        Game.SwitchToScreen(new FailScreen(Game));
+    }
 
+    private void OnLevelCompleted()
+    {
         trainSound?.Stop();
-        ambientMusic?.Stop();
-        trainSound?.Dispose();
-        ambientMusic?.Dispose();
-
-        base.UnloadContent();
+        gameplayContext.State.VictoryLapActive = true;
+        Game.CurrentRun.CoalRemaining = gameplayContext.State.CoalAmount;
+        endLevelWhiteFilter.FadeIn(4f);
+        phase = GameplayPhase.EndOfLevelOutro;
     }
 }

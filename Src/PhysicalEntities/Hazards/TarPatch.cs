@@ -1,7 +1,9 @@
+using System;
 using Gamelab.Assets;
 using Gamelab.Enemies;
-using Gamelab.Map.Train.State;
-using Gamelab.PhysicalEntities;
+using Gamelab.Enemies.Hazards;
+using Gamelab.Enemies.Slots;
+using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
@@ -12,7 +14,6 @@ namespace Gamelab.PhysicalEntities.Hazards;
 
 public class TarPatch : AbstractPhysicalEntity, IEnemyHazard, IInteractable
 {
-    private readonly GameplayContext gameplayContext;
     private readonly EnemySlotSide side;
     private readonly float cleanDurationSeconds;
     private float cleanProgress;
@@ -20,14 +21,14 @@ public class TarPatch : AbstractPhysicalEntity, IEnemyHazard, IInteractable
     public bool ShouldRemove { get; private set; }
     public bool CountsAsActiveThreat => false;
 
-    public TarPatch(GameplayContext gameplayContext, EnemySlotSide side, float cleanDurationSeconds)
+    public TarPatch(EnemySlotSide side, float cleanDurationSeconds)
     {
-        this.gameplayContext = gameplayContext;
         this.side = side;
         this.cleanDurationSeconds = cleanDurationSeconds;
 
         Vector2 position = GetPatchCenter();
-        PhysicsBody = gameplayContext.PhysicsWorld.CreateRectangle(0.5f, 0.5f, 1f, position.ToMeters(), 0f, BodyType.Static);
+        PhysicsBody =
+            gameplayContext.PhysicsWorld.CreateRectangle(0.5f, 0.5f, 1f, position.ToMeters(), 0f, BodyType.Static);
         foreach (var fixture in PhysicsBody.FixtureList)
         {
             fixture.IsSensor = true;
@@ -50,7 +51,7 @@ public class TarPatch : AbstractPhysicalEntity, IEnemyHazard, IInteractable
             return;
         }
 
-        cleanProgress += dt / System.Math.Max(0.01f, cleanDurationSeconds);
+        cleanProgress += dt / Math.Max(0.01f, cleanDurationSeconds);
         if (cleanProgress >= 1f)
         {
             ShouldRemove = true;
@@ -79,18 +80,26 @@ public class TarPatch : AbstractPhysicalEntity, IEnemyHazard, IInteractable
         Rectangle overlay = side == EnemySlotSide.Top
             ? new Rectangle(bounds.Left, bounds.Top - 80, bounds.Width, bounds.Height / 2)
             : new Rectangle(bounds.Left, bounds.Center.Y, bounds.Width, bounds.Height / 2 + 80);
-        spriteBatch.Draw(AssetManager.BlankTexture, overlay, new Color(20, 20, 20, 220));
+
+        spriteBatch.Draw(AssetManager.BlankTexture, overlay, null, new Color(20, 20, 20, 220), 0f, Vector2.Zero,
+            SpriteEffects.None, 0.01f);
 
         Vector2 center = GetPatchCenter();
-        Rectangle blob = new((int)(center.X - 30f), (int)(center.Y - 20f), 60, 40);
-        spriteBatch.Draw(AssetManager.BlankTexture, blob, Color.Black);
+        Vector2 centerBottom = center + new Vector2(0, 20f);
+        float depth = RenderUtility.CalculateDepth(centerBottom.Y);
 
+        Vector2 origin = new Vector2(0.5f, 1f);
+        spriteBatch.Draw(AssetManager.BlankTexture, centerBottom, null, Color.Black, 0f, origin, new Vector2(60f, 40f),
+            SpriteEffects.None, depth);
         if (cleanProgress > 0f)
         {
             Rectangle bg = new((int)(center.X - 20f), (int)(center.Y + 24f), 40, 6);
-            Rectangle fill = new(bg.X, bg.Y, (int)(40 * System.Math.Clamp(cleanProgress, 0f, 1f)), 6);
-            spriteBatch.Draw(AssetManager.BlankTexture, bg, Color.DarkGray);
-            spriteBatch.Draw(AssetManager.BlankTexture, fill, Color.LightBlue);
+            Rectangle fill = new(bg.X, bg.Y, (int)(40 * Math.Clamp(cleanProgress, 0f, 1f)), 6);
+
+            spriteBatch.Draw(AssetManager.BlankTexture, bg, null, Color.DarkGray, 0f, Vector2.Zero, SpriteEffects.None,
+                depth + RenderUtility.Eps);
+            spriteBatch.Draw(AssetManager.BlankTexture, fill, null, Color.LightBlue, 0f, Vector2.Zero,
+                SpriteEffects.None, depth + 2 * RenderUtility.Eps);
         }
     }
 

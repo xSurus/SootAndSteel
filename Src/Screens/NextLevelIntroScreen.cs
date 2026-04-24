@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using Gamelab.Assets;
 using Gamelab.Particles;
 using Gamelab.Services.Vfx;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using Myra.Graphics2D;
 using Myra.Graphics2D.Brushes;
 using Myra.Graphics2D.UI;
@@ -24,14 +20,12 @@ public class NextLevelIntroScreen(GamelabGame game) : AbstractGameScreen(game)
     private Desktop desktop;
     private readonly WhiteFilterTransition whiteToGameplay = new WhiteFilterTransition();
     private Phase phase;
-    private float holdTimer;
-    private float holdDuration;
 
     public override void LoadContent()
     {
         base.LoadContent();
 
-        int stageNumber = Game.CurrentLevel + 1;
+        int stageNumber = Game.CurrentRun.CurrentLevel + 1;
 
         var overlay = new Panel
         {
@@ -40,7 +34,7 @@ public class NextLevelIntroScreen(GamelabGame game) : AbstractGameScreen(game)
             Background = new SolidBrush(new Color(0, 0, 0, 110))
         };
 
-        bool isFirstStage = stageNumber == 1;
+        string[] tips = GetTipsForLevel(stageNumber);
 
         var content = new VerticalStackPanel
         {
@@ -57,32 +51,20 @@ public class NextLevelIntroScreen(GamelabGame game) : AbstractGameScreen(game)
             HorizontalAlignment = HorizontalAlignment.Center
         });
 
-        if (isFirstStage)
+        foreach (string tip in tips)
         {
-            string[] tips =
-            [
-                "Keep the train moving — feed coal into the oven to keep the engine running.",
-                "Use the speed lever to shift gears: Stopped → Default → Double → Quadruple.",
-                "Enemies will attack from both sides, repair broken walls to keep the heat in.",
-                "Combine projectile, casing, and propellant at a workbench to craft bullets.",
-                "Upgrade bullets by combining components with unlocked upgrades."
-            ];
-
-            foreach (string tip in tips)
+            content.Widgets.Add(new Label
             {
-                content.Widgets.Add(new Label
-                {
-                    Text = tip,
-                    Font = Game.fontSystem.GetFont(28),
-                    TextColor = new Color(200, 210, 230),
-                    HorizontalAlignment = HorizontalAlignment.Center
-                });
-            }
+                Text = tip,
+                Font = Game.fontSystem.GetFont(28),
+                TextColor = new Color(200, 210, 230),
+                HorizontalAlignment = HorizontalAlignment.Center
+            });
         }
 
         content.Widgets.Add(new Label
         {
-            Text = "Press Start / Enter to skip",
+            Text = "Press Start / Enter to continue",
             Font = Game.fontSystem.GetFont(34),
             TextColor = Color.LightBlue,
             HorizontalAlignment = HorizontalAlignment.Center,
@@ -95,42 +77,34 @@ public class NextLevelIntroScreen(GamelabGame game) : AbstractGameScreen(game)
         var vfx = Services.GetService<IVfxService>();
         vfx.AddContinuous(ParticleFactory.CreateSnowstorm());
         phase = Phase.Hold;
-        holdTimer = 0f;
-        holdDuration = isFirstStage ? 12f : 5f;
     }
 
-    protected override void Update(GameTime gameTime, KeyboardState keyboard, Dictionary<int, GamePadState> gamePads)
+    public override void Update(GameTime gameTime)
     {
-        base.Update(gameTime, keyboard, gamePads);
+        base.Update(gameTime);
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
         whiteToGameplay.Update(dt);
 
         switch (phase)
         {
             case Phase.Hold:
-                holdTimer += dt;
-                if (holdTimer >= holdDuration || IsSkipRequested(keyboard))
+                if (Game.playerManager.Configs.Any(c => c.Input.IsPickupJustPressed() || c.Input.IsStartJustPressed()))
                 {
                     whiteToGameplay.FadeIn(0.8f);
                     phase = Phase.FadeOutToGameplay;
                 }
+
                 break;
             case Phase.FadeOutToGameplay:
                 if (whiteToGameplay.IsDone)
                 {
-                    Game.CurrentLevel++;
+                    Game.CurrentRun.CurrentLevel++;
+                    Game.CurrentRun.ResetCoalAmount();
                     Game.SwitchToScreen(new GameplayScreen(Game));
                 }
+
                 break;
         }
-    }
-
-    private bool IsSkipRequested(KeyboardState keyboard)
-    {
-        bool pressedByInput = Game.playerManager.Configs.Any(c => c.Input.IsStartJustPressed());
-        bool pressedByKeyboard = keyboard.IsKeyDown(Keys.Enter) && previousKeyboardState.IsKeyUp(Keys.Enter);
-        return pressedByInput || pressedByKeyboard;
     }
 
     public override void Draw(GameTime gameTime)
@@ -157,10 +131,22 @@ public class NextLevelIntroScreen(GamelabGame game) : AbstractGameScreen(game)
         base.Draw(gameTime);
     }
 
+    private static string[] GetTipsForLevel(int levelNumber) => levelNumber switch
+    {
+        1 =>
+        [
+            "Keep the train moving — feed coal into the oven to keep the engine running.",
+            "Use the speed lever to shift gears: Stopped → Default → Double → Quadruple.",
+            "Enemies will attack from both sides, repair broken walls to keep the heat in.",
+            "Combine projectile, casing, and propellant at a workbench to craft bullets.",
+            "Upgrade bullets by combining components with unlocked upgrades.",
+        ],
+        _ => []
+    };
+
     public override void UnloadContent()
     {
         Services.GetService<IVfxService>().ClearAll();
         base.UnloadContent();
     }
 }
-

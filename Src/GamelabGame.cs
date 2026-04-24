@@ -1,30 +1,28 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
+using FmodForFoxes;
+using FmodForFoxes.Studio;
 using FontStashSharp;
 using Gamelab.Assets;
 using Gamelab.Config;
 using Gamelab.Items;
-using Gamelab.Map.Hub;
+using Gamelab.Items.Bullets;
 using Gamelab.Map.Train.State;
+using Gamelab.PhysicalEntities.Configurable;
 using Gamelab.Players;
 using Gamelab.Screens;
+using Gamelab.Serialization;
+using Gamelab.Services.Bullet;
+using Gamelab.Services.Random;
+using Gamelab.Services.Shop;
 using Gamelab.Services.Sound;
 using Gamelab.Services.Vfx;
 using Gamelab.Systems;
 using Gamelab.Utils;
-using Gamelab.Utils.Logging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Media;
 using MonoGame.Extended.Screens;
 using Myra;
-using FmodForFoxes;
-using FmodForFoxes.Studio;
-using Gamelab.Items.Bullets;
-using Gamelab.PhysicalEntities.Bullets.Components;
-using Gamelab.Services.Bullet;
-using Gamelab.Services.Random;
 
 namespace Gamelab;
 
@@ -58,27 +56,20 @@ public class GamelabGame : Game
 
     public readonly JsonLoader jsonLoader;
     public GameplayConfig GameplayConfig { get; private set; } = new();
-    public int CurrentLevel { get; set; } = 1;
-    
-    public int Credits { get; private set; }
-
-    /// <summary>When set, next <see cref="Screens.GameplayScreen"/> builds the train from hub prep instead of the default loadout.</summary>
-    public List<PrepStationEntry>? PendingPrepTrainLayout { get; set; }
-
-    /// <summary>When set (after a level win), next <see cref="Screens.HubScreen"/> seeds prep with this layout from the last gameplay train.</summary>
-    public List<PrepStationEntry>? TrainLayoutSeedForHub { get; set; }
+    public StationRegistry StationRegistry { get; private set; } = new();
+    public ComponentRegistry ComponentRegistry { get; private set; } = new();
+    public RunSession CurrentRun { get; set; }
 
     public RunMode runMode { get; private set; }
     public bool IsDebug => runMode == RunMode.Debug;
     public bool IsRelease => runMode == RunMode.Release;
     public bool IsDebugOverlayEnabled { get; private set; }
 
-    public float MusicVolume { get; private set; } = 0.3f;
     private AbstractGameScreen nextScreen;
     private string screenshotPath;
 
     public bool IsRunning => screenManager.ActiveScreen != null;
-    
+
     public readonly INativeFmodLibrary nativeFmodLibrary;
     public EventInstance menuStabInstance;
 
@@ -150,12 +141,13 @@ public class GamelabGame : Game
         var fontPath = Path.Combine(contentDir, "promptfont.ttf");
         var fontBytes = File.ReadAllBytes(fontPath);
         fontSystem.AddFont(fontBytes);
-        LoadGameplayConfig();
+        LoadConfigs();
+        Services.AddService(typeof(IShopService), new ShopManager());
         PhysicsUtility.Initialize(GameplayConfig.PixelsPerMeter);
         ItemRegistry.Initialize();
-        ComponentRegistry.Initialize();
         systemManager.InitializeAll(this);
         AssetManager.LoadContent(graphics.GraphicsDevice);
+        CurrentRun = new RunSession();
         screenManager.ShowScreen(new JoinScreen(this));
         logger.Info("Game initialized");
     }
@@ -232,13 +224,7 @@ public class GamelabGame : Game
         texture.Dispose();
     }
 
-    public void SetMusicVolume(float volume)
-    {
-        MusicVolume = Math.Clamp(volume, 0f, 1f);
-        MediaPlayer.Volume = MusicVolume;
-    }
-
-    public void LoadGameplayConfig()
+    public void LoadConfigs()
     {
         try
         {
@@ -252,30 +238,31 @@ public class GamelabGame : Game
             logger.Warning("Failed to load Data/gameplay.json, using defaults.");
             logger.Exception("Gameplay config load error", ex);
         }
+
+        try
+        {
+            StationRegistry.Load(jsonLoader);
+            logger.Info("Loaded station configs from Data/StationConfig.json");
+        }
+        catch (Exception ex)
+        {
+            logger.Exception("Failed to load Data/StationConfig.json", ex);
+        }
+
+        try
+        {
+            ComponentRegistry.Load(jsonLoader);
+            logger.Info("Loaded config from Data/ComponentConfig.json");
+        }
+        catch (Exception ex)
+        {
+            logger.Exception("Failed to load Data/ComponentConfig.json", ex);
+        }
     }
 
     public void ToggleDebugOverlay()
     {
         IsDebugOverlayEnabled = !IsDebugOverlayEnabled;
-    }
-    
-    public void AddCredits(int amount)
-    {
-        if (amount <= 0) return;
-        Credits += amount;
-    }
-
-    public bool TrySpendCredits(int amount)
-    {
-        if (amount <= 0 || Credits < amount) return false;
-        Credits -= amount;
-        return true;
-    }
-
-    /// <summary>Clears credits when starting a fresh run from the main menu.</summary>
-    public void ResetCredits()
-    {
-        Credits = 0;
     }
 
     protected override void Dispose(bool disposing)

@@ -50,15 +50,10 @@ public class FailScreen(GamelabGame game) : AbstractGameScreen(game)
         desktop.Root = root;
     }
 
-    protected override void Update(GameTime gameTime, KeyboardState keyboard, Dictionary<int, GamePadState> gamePads)
+    public override void Update(GameTime gameTime)
     {
-        base.Update(gameTime, keyboard, gamePads);
-
-        bool pressedByInput = Game.playerManager.Configs.Any(c => c.Input.IsPickupJustPressed() || c.Input.IsStartJustPressed());
-        bool pressedByKeyboard = (keyboard.IsKeyDown(Keys.Enter) && previousKeyboardState.IsKeyUp(Keys.Enter)) ||
-                                  (keyboard.IsKeyDown(Keys.Space) && previousKeyboardState.IsKeyUp(Keys.Space));
-
-        if (pressedByInput || pressedByKeyboard)
+        base.Update(gameTime);
+        if (Game.playerManager.Configs.Any(c => c.Input.IsPickupJustPressed() || c.Input.IsStartJustPressed()))
         {
             Game.SwitchToScreen(new MainMenuScreen(Game));
         }

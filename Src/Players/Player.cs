@@ -1,12 +1,11 @@
 using System;
 using Gamelab.Assets;
 using Gamelab.Enemies;
-using Gamelab.Entities;
+using Gamelab.Enemies.Core;
 using Gamelab.Items;
-using Gamelab.Map.Train.State;
 using Gamelab.PhysicalEntities;
 using Gamelab.PhysicalEntities.Bullets;
-using Gamelab.PhysicalEntities.Projectiles;
+using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -25,6 +24,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
     public float ReviveProgress { get; private set; }
 
     public Vector2 LookDirection => new((float)Math.Cos(PhysicsBody.Rotation), (float)Math.Sin(PhysicsBody.Rotation));
+    private IHighlightable highlightedEntity;
 
     private float LerpFactor => GamelabGame.Instance.GameplayConfig.PlayerVelocityLerpFactor;
     private float MaxVelocity => GamelabGame.Instance.GameplayConfig.PlayerMaxVelocity;
@@ -41,13 +41,12 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
     private float Radius => GamelabGame.Instance.GameplayConfig.PlayerRadiusPixels;
     private float Density => GamelabGame.Instance.GameplayConfig.PlayerDensity;
     private float LinearDampening => GamelabGame.Instance.GameplayConfig.PlayerLinearDamping;
-    private readonly GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
 
     private float stunTimer;
     private bool revivedThisFrame;
 
 
-    private string[] idleFrames = {"IdleA","IdleB","IdleC","IdleD"};
+    private string[] idleFrames = { "IdleA", "IdleB", "IdleC", "IdleD" };
 
     private int currentFrame = 0;
     private float animationTimer = 0f;
@@ -64,7 +63,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
     }
 
     public void Update(float dt)
-    {   
+    {
         animationTimer += dt;
         if (animationTimer >= timePerFrame)
         {
@@ -73,8 +72,8 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
             {
                 currentFrame = 0;
             }
-            
-            animationTimer -= timePerFrame; 
+
+            animationTimer -= timePerFrame;
         }
 
         if (IsStunned)
@@ -104,6 +103,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
             PhysicsBody.ApplyForce(movement * 100f * speedScale);
         }
 
+        UpdateHighlightedEntity();
         if (TryGrab()) return;
         if (TryPickup(dt)) return;
         if (TryInteract(dt)) return;
@@ -129,10 +129,6 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
         }
 
         HeldItem = null;
-    }
-
-    public void OnInteract(Player interactingPlayer)
-    {
     }
 
     public void OnInteractHeld(Player interactingPlayer, float dt)
@@ -164,6 +160,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
         {
             return false;
         }
+
         TakeDamage(bullet.Stats.Damage);
         return true;
     }
@@ -185,17 +182,13 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
     {
         if (PlayerConfiguration.Input.IsGrabJustPressed() && GrabbedObject == null)
         {
-            IPhysicalEntity target = GetTargetedEntity();
-            if (target == null) return false;
+            if (highlightedEntity is not IGrabbable grabbable) return false;
             float reachInMeters = InteractDistancePixels.ToMeters();
             Vector2 grabPointWorldMeters = PhysicsBody.Position + (LookDirection * reachInMeters);
-            if (target is IGrabbable grabbable)
+            if (grabbable.OnGrab(this, grabPointWorldMeters))
             {
-                if (grabbable.OnGrab(this, grabPointWorldMeters))
-                {
-                    GrabbedObject = grabbable;
-                    return true;
-                }
+                GrabbedObject = grabbable;
+                return true;
             }
         }
         else if (!PlayerConfiguration.Input.IsGrabHeld() && GrabbedObject != null)
@@ -210,8 +203,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
 
     private bool TryInteract(float dt)
     {
-        IPhysicalEntity target = GetTargetedEntity();
-        if (target == null || target is not IInteractable interactable) return false;
+        if (highlightedEntity is not IInteractable interactable) return false;
 
         bool interactJust = PlayerConfiguration.Input.IsInteractJustPressed();
         bool interactHeld = PlayerConfiguration.Input.IsInteractHeld();
@@ -233,8 +225,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
 
     private bool TryPickup(float dt)
     {
-        IPhysicalEntity target = GetTargetedEntity();
-        if (target == null || target is not IPickable pickable) return false;
+        if (highlightedEntity == null || highlightedEntity is not IPickable pickable) return false;
         if (PlayerConfiguration.Input.IsPickupJustPressed())
         {
             pickable.OnPickup(this);
@@ -248,66 +239,83 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
         return false;
     }
 
-    private IPhysicalEntity GetTargetedEntity()
+    private void UpdateHighlightedEntity()
     {
         float reachInMeters = InteractDistancePixels.ToMeters();
         Vector2 startPoint = PhysicsBody.Position;
         Vector2 targetPoint = startPoint + (LookDirection * reachInMeters);
 
-        IPhysicalEntity closestEntity = null;
+        IHighlightable closestEntity = null;
         PhysicsBody.World.RayCast((fixture, point, normal, fraction) =>
         {
             if (fixture.Body == PhysicsBody) return -1;
-            if (fixture.Body.Tag is IPhysicalEntity physicalEntity)
+            if (fixture.Body.Tag is IHighlightable highlightableEntity)
             {
-                closestEntity = physicalEntity;
+                closestEntity = highlightableEntity;
                 return fraction;
             }
 
             return -1;
         }, startPoint, targetPoint);
 
-        return closestEntity;
+        if (highlightedEntity != closestEntity)
+        {
+            highlightedEntity?.OnHighlightRemoved(this);
+            closestEntity?.OnHighlight(this);
+        }
+
+        highlightedEntity = closestEntity;
     }
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        // Texture2D texture = AssetManager.PlayerTexture;
-        int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
-        Texture2D texture = AssetManager.GetPlayerTexture($"{idleFrames[(currentFrame+PlayerConfiguration.PlayerIndex) % idleFrames.Length]}{PlayerConfiguration.PlayerIndex}");
-        // float scale = tileSize / texture.Width;
-        Vector2 origin = new Vector2(texture.Width / 2f, texture.Height / 2f);
+        Texture2D texture = AssetManager.GetPlayerTexture(
+            $"{idleFrames[(currentFrame + PlayerConfiguration.PlayerIndex) % idleFrames.Length]}{PlayerConfiguration.PlayerIndex}");
+
+        Vector2 origin = new Vector2(texture.Width / 2f, texture.Height);
+        Vector2 feetPosition = Position + new Vector2(0, Radius);
+
         Color drawColor = IsStunned ? Color.Goldenrod : Color.White;
+        bool isFacingRight = LookDirection.X > 0;
+        SpriteEffects flipEffect = isFacingRight ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+        float renderDepth = RenderUtility.CalculateDepth(feetPosition.Y);
+        spriteBatch.Draw(
+            texture: texture,
+            position: feetPosition,
+            sourceRectangle: null,
+            color: drawColor,
+            rotation: 0f,
+            origin: origin,
+            scale: 0.3f,
+            effects: flipEffect,
+            layerDepth: renderDepth
+        );
 
-        bool IsFacingRight = LookDirection.X > 0;
-        SpriteEffects flipEffect = IsFacingRight ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-
-        spriteBatch.Draw(texture, Position + new Vector2(0, -tileSize * 0.75f), null, drawColor, 0f, origin, 0.3f, flipEffect,
-            0f);
         DrawInteractionTarget(spriteBatch);
-        DrawHeldItem(spriteBatch);
-        DrawStunProgress(spriteBatch);
+        DrawHeldItem(spriteBatch, renderDepth + RenderUtility.Eps);
+
+        float playerVisualHeight = texture.Height * 0.3f;
+        DrawStunProgress(spriteBatch, playerVisualHeight);
     }
 
-    private void DrawHeldItem(SpriteBatch spriteBatch)
+    private void DrawHeldItem(SpriteBatch spriteBatch, float renderDepth)
     {
         if (HeldItem != null)
         {
             Vector2 itemOffset = LookDirection * (Radius * HeldItemOffsetRadiusMultiplier);
             Vector2 itemPosition = Position + itemOffset;
             int itemSize = (int)(Radius * HeldItemSizeRadiusMultiplier);
-
-            HeldItem.Draw(spriteBatch, itemPosition, itemSize);
+            HeldItem.Draw(spriteBatch, itemPosition, itemSize, renderDepth);
         }
     }
 
     private void DrawInteractionTarget(SpriteBatch spriteBatch)
     {
         Vector2 targetPointPixels = Position + (LookDirection * InteractDistancePixels);
-        spriteBatch.DrawCircle(targetPointPixels, 5f, 12, Color.Red, 2f);
+        spriteBatch.DrawCircle(targetPointPixels, 5f, 12, Color.Red, 2f, layerDepth: RenderUtility.OverlayTopLayer);
     }
 
-    private void DrawStunProgress(SpriteBatch spriteBatch)
+    private void DrawStunProgress(SpriteBatch spriteBatch, float playerVisualHeight)
     {
         if (!IsStunned)
         {
@@ -316,10 +324,14 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
 
         int barWidth = 42;
         int barHeight = 6;
-        Vector2 anchor = Position + new Vector2(-barWidth / 2f, -(Radius + 18f));
+        Vector2 feetPosition = Position + new Vector2(0, Radius);
+        Vector2 anchor = feetPosition + new Vector2(-barWidth / 2f, -playerVisualHeight - 15f);
+
         var bg = new Rectangle((int)anchor.X, (int)anchor.Y, barWidth, barHeight);
         var fill = new Rectangle(bg.X, bg.Y, (int)(barWidth * Math.Clamp(ReviveProgress, 0f, 1f)), barHeight);
-        spriteBatch.Draw(AssetManager.BlankTexture, bg, Color.Black);
-        spriteBatch.Draw(AssetManager.BlankTexture, fill, Color.LimeGreen);
+        spriteBatch.Draw(AssetManager.BlankTexture, bg, null, Color.Black, 0f, Vector2.Zero, SpriteEffects.None,
+            RenderUtility.OverlayBackLayer);
+        spriteBatch.Draw(AssetManager.BlankTexture, fill, null, Color.LimeGreen, 0f, Vector2.Zero, SpriteEffects.None,
+            RenderUtility.OverlayTopLayer);
     }
 }

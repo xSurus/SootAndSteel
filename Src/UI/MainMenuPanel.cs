@@ -2,91 +2,73 @@ using System;
 using System.Collections.Generic;
 using FontStashSharp;
 using Gamelab.Players;
+using Gamelab.UI.ViewModels;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Gamelab.UI;
-
-public class MainMenuPanel(GamelabGame game, Action onStartSelected, Action onQuitSelected)
+public class MainMenuPanel
 {
-    private const int VolumeMenuIndex = 1;
+    private readonly GamelabGame game;
+    private readonly MainMenuViewModel viewModel;
 
-    private readonly MenuList menuList = new([
-        new MenuList.MenuEntry("Start Game", onStartSelected),
-        new MenuList.MenuEntry("Music Volume", () => { }),
-        new MenuList.MenuEntry("Quit Game", onQuitSelected),
-    ]);
+    public MainMenuViewModel ViewModel => viewModel;
 
-    private float MenuVolumeStep => GamelabGame.Instance.GameplayConfig.MenuVolumeStep;
+    public MainMenuPanel(GamelabGame game, Action onContinueSelected, Action onStartNewSelected,
+        Action onOptionsSelected, Action onQuitSelected)
+    {
+        this.game = game;
+
+        var entries = new List<MainMenuViewModel.Entry>();
+        if (onContinueSelected != null)
+        {
+            entries.Add(new MainMenuViewModel.Entry("Continue Game", onContinueSelected));
+        }
+        entries.Add(new MainMenuViewModel.Entry("New Game", onStartNewSelected));
+        entries.Add(new MainMenuViewModel.Entry("Options", onOptionsSelected));
+        entries.Add(new MainMenuViewModel.Entry("Quit Game", onQuitSelected));
+
+        viewModel = new MainMenuViewModel(entries);
+    }
 
     public void Update(GameTime gameTime)
     {
-        menuList.Update(game.playerManager.Configs);
-        HandleVolumeInput();
+        foreach (PlayerConfiguration player in game.playerManager.Configs)
+        {
+            int pIndex = player.PlayerIndex;
+            viewModel.EnsurePlayer(pIndex);
+
+            var input = player.Input;
+            if (input.IsUpJustPressed()) viewModel.MoveSelectionUp(pIndex);
+            else if (input.IsDownJustPressed()) viewModel.MoveSelectionDown(pIndex);
+
+            if (input.IsPickupJustPressed()) viewModel.Confirm(pIndex);
+        }
     }
 
     public void Draw(SpriteBatch spriteBatch, Point virtualScreenSize, SpriteFontBase titleFont,
         SpriteFontBase buttonFont)
     {
-        // Keep menu controls lower so they don't cover key parts of the background image.
+        // Menu sits lower on the screen so it doesn't cover the title artwork.
         var panelRect = new Rectangle(
             0,
             virtualScreenSize.Y - 660,
             virtualScreenSize.X,
             250);
 
-        int firstItemY = panelRect.Y + 20;
-        int itemSpacing = 70;
+        IReadOnlyList<MainMenuViewModel.Entry> entries = viewModel.Entries;
+        int firstItemY = panelRect.Y + (entries.Count > 3 ? -20 : 20);
+        int itemSpacing = 85;
 
-        DrawMenuItem(
-            spriteBatch,
-            buttonFont,
-            panelRect,
-            firstItemY + 0 * itemSpacing,
-            "Start Game",
-            0);
-
-        int volumePercent = (int)(game.MusicVolume * 100f);
-        DrawMenuItem(
-            spriteBatch,
-            buttonFont,
-            panelRect,
-            firstItemY + 1 * itemSpacing,
-            $"Music Volume   < {volumePercent}% >",
-            1);
-
-        DrawMenuItem(
-            spriteBatch,
-            buttonFont,
-            panelRect,
-            firstItemY + 2 * itemSpacing,
-            "Quit Game",
-            2);
-    }
-
-    private void HandleVolumeInput()
-    {
-        foreach (PlayerConfiguration player in game.playerManager.Configs)
+        for (int i = 0; i < entries.Count; i++)
         {
-            int pIndex = player.PlayerIndex;
-
-            if (!menuList.PlayerSelections.TryGetValue(pIndex, out int selectedIndex))
-            {
-                continue;
-            }
-
-            // only listen to Left/Right if specific player is doing the input
-            if (selectedIndex == VolumeMenuIndex)
-            {
-                if (player.Input.IsLeftJustPressed())
-                {
-                    game.SetMusicVolume(game.MusicVolume - MenuVolumeStep);
-                }
-                else if (player.Input.IsRightJustPressed())
-                {
-                    game.SetMusicVolume(game.MusicVolume + MenuVolumeStep);
-                }
-            }
+            DrawMenuItem(
+                spriteBatch,
+                buttonFont,
+                panelRect,
+                firstItemY + i * itemSpacing,
+                entries[i].Label,
+                i);
         }
     }
 
@@ -96,12 +78,12 @@ public class MainMenuPanel(GamelabGame game, Action onStartSelected, Action onQu
         Vector2 labelSize = buttonFont.MeasureString(label);
         Vector2 labelPosition = new(panelRect.Center.X - labelSize.X / 2f, yPosition);
 
-        bool isSelectedByAnyone = menuList.PlayerSelections.ContainsValue(itemIndex);
+        bool isSelectedByAnyone = viewModel.IsEntrySelectedByAnyone(itemIndex);
         Color color = isSelectedByAnyone ? Color.Gold * 0.95f : Color.White * 0.92f;
 
         spriteBatch.DrawString(buttonFont, label, labelPosition, color);
 
-        foreach (KeyValuePair<int, int> selection in menuList.PlayerSelections)
+        foreach (KeyValuePair<int, int> selection in viewModel.PlayerSelections)
         {
             int playerIndex = selection.Key;
             int selectedItemIndex = selection.Value;

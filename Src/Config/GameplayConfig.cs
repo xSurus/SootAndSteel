@@ -41,15 +41,7 @@ public class GameplayConfig
     public float InputDirectionPressThreshold { get; set; } = 0.5f;
     public float InputMovementDeadzoneSquared { get; set; } = 0.25f;
     public float MenuVolumeStep { get; set; } = 0.05f;
-    public int WorldScrollerPatternWidthPixels { get; set; } = 480;
-    public int WorldScrollerStripeSpacingPixels { get; set; } = 80;
-    public int WorldScrollerStripeThicknessPixels { get; set; } = 4;
-    public byte WorldScrollerBaseColorR { get; set; } = 40;
-    public byte WorldScrollerBaseColorG { get; set; } = 40;
-    public byte WorldScrollerBaseColorB { get; set; } = 45;
-    public byte WorldScrollerStripeColorR { get; set; } = 50;
-    public byte WorldScrollerStripeColorG { get; set; } = 50;
-    public byte WorldScrollerStripeColorB { get; set; } = 55;
+    public int ScrollerWorldTextureWidth { get; set; } = 480;
     public float CoalOvenMaxFuel { get; set; } = 30f;
     public float CoalOvenBurnRate { get; set; } = 1f;
     public float CoalOvenRefuelAmount { get; set; } = 10f;
@@ -65,7 +57,7 @@ public class GameplayConfig
     public float RepairableSpeedLeverRepairPerSecond { get; set; } = 45f;
     public float RepairableAnvilMaxHealth { get; set; } = 90f;
     public float RepairableAnvilRepairPerSecond { get; set; } = 35f;
-    
+
     // Enemy configuration (general)
     public float EnemyHealth { get; set; } = 100f;
     public float EnemySpeed { get; set; } = 0f;
@@ -159,6 +151,9 @@ public class GameplayConfig
     public float CannonProjectilePierce { get; set; } = 1f;
     public float CannonProjectileSpread { get; set; } = 0.2f;
     public float CannonCooldown { get; set; } = 0.5f;
+
+    // Camera configuration
+    public float CameraLerpFactor { get; set; } = 4.0f;
 
     // Enemy movement behavior configuration
     public float WobbleAmplitude { get; set; } = 8f;

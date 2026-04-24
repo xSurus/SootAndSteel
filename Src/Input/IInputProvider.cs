@@ -12,6 +12,7 @@ public interface IInputProvider
     bool IsPickupJustPressed();
     bool IsPickupHeld();
     bool IsStartJustPressed();
+    bool IsPauseJustPressed();
     bool IsUpJustPressed();
     bool IsDownJustPressed();
     bool IsLeftJustPressed();

@@ -34,15 +34,7 @@
   "inputDirectionPressThreshold": 0.5,
   "inputMovementDeadzoneSquared": 0.25,
   "menuVolumeStep": 0.05,
-  "worldScrollerPatternWidthPixels": 480,
-  "worldScrollerStripeSpacingPixels": 80,
-  "worldScrollerStripeThicknessPixels": 4,
-  "worldScrollerBaseColorR": 40,
-  "worldScrollerBaseColorG": 40,
-  "worldScrollerBaseColorB": 45,
-  "worldScrollerStripeColorR": 50,
-  "worldScrollerStripeColorG": 50,
-  "worldScrollerStripeColorB": 55,
+  "scrollerWorldTextureWidth": 480,
   "coalOvenMaxFuel": 30.0,
   "coalOvenBurnRate": 1.0,
   "coalOvenRefuelAmount": 10.0,
@@ -112,5 +104,6 @@
   "threatScaleExponent": 0.85,
   "enemySpawnPacingScaleStrength": 0.25,
   "maintenanceScalePerExtraPlayer": 0.35,
-  "departHoldSeconds": 0.75
+  "departHoldSeconds": 0.75,
+  "cameraLerpFactor": 4.0
 }

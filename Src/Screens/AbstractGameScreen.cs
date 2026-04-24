@@ -68,7 +68,7 @@ public abstract class AbstractGameScreen(GamelabGame game) : GameScreen(game)
     {
         if (Game.IsDebug && keyboard.IsKeyDown(Keys.F5))
         {
-            Game.LoadGameplayConfig();
+            Game.LoadConfigs();
         }
     }
 

@@ -1,5 +1,6 @@
+using Gamelab.Assets;
 using Gamelab.Enemies;
-using Gamelab.Map.Train.State;
+using Gamelab.Enemies.Hazards;
 using Gamelab.PhysicalEntities.Hazards;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
@@ -10,7 +11,6 @@ namespace Gamelab.PhysicalEntities.Projectiles;
 
 public class MolotovProjectile : AbstractPhysicalEntity, IEnemyHazard
 {
-    private readonly GameplayContext gameplayContext;
     private readonly Vector2 velocity;
     private readonly float radius;
     private readonly float fireRadius;
@@ -22,7 +22,6 @@ public class MolotovProjectile : AbstractPhysicalEntity, IEnemyHazard
     public bool CountsAsActiveThreat => false;
 
     public MolotovProjectile(
-        GameplayContext gameplayContext,
         Vector2 position,
         Vector2 velocity,
         float lifetimeSeconds,
@@ -30,14 +29,15 @@ public class MolotovProjectile : AbstractPhysicalEntity, IEnemyHazard
         float fireRadius,
         float fireDurationSeconds)
     {
-        this.gameplayContext = gameplayContext;
         this.velocity = velocity;
         remainingLifetime = lifetimeSeconds;
         this.radius = radius;
         this.fireRadius = fireRadius;
         this.fireDurationSeconds = fireDurationSeconds;
 
-        PhysicsBody = gameplayContext.PhysicsWorld.CreateCircle((radius / 2f).ToMeters(), 1f, position.ToMeters(), BodyType.Static);
+        PhysicsBody =
+            gameplayContext.PhysicsWorld.CreateCircle((radius / 2f).ToMeters(), 1f, position.ToMeters(),
+                BodyType.Static);
         foreach (var fixture in PhysicsBody.FixtureList)
         {
             fixture.IsSensor = true;
@@ -58,7 +58,7 @@ public class MolotovProjectile : AbstractPhysicalEntity, IEnemyHazard
             return;
         }
 
-        pendingFireZone = new FireZone(gameplayContext, Position, fireRadius, fireDurationSeconds);
+        pendingFireZone = new FireZone(Position, fireRadius, fireDurationSeconds);
         ShouldRemove = true;
     }
 
@@ -89,6 +89,6 @@ public class MolotovProjectile : AbstractPhysicalEntity, IEnemyHazard
     {
         int size = (int)radius;
         Rectangle rect = new((int)(Position.X - size / 2f), (int)(Position.Y - size / 2f), size, size);
-        spriteBatch.Draw(Assets.AssetManager.BlankTexture, rect, Color.DarkOrange);
+        spriteBatch.Draw(AssetManager.BlankTexture, rect, Color.DarkOrange);
     }
 }

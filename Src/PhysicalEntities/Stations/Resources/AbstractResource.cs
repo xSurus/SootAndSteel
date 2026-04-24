@@ -6,11 +6,11 @@ using Microsoft.Xna.Framework;
 namespace Gamelab.PhysicalEntities.Stations.Resources;
 
 public abstract class AbstractResource(
-    string stationType,
+    string stationId,
     Color stationColor,
     string resourceId,
     Vector2 position)
-    : AbstractStation(stationType, stationColor, position)
+    : AbstractStation(stationId, stationColor, position)
 {
     protected string ResourceId { get; } = resourceId;
 

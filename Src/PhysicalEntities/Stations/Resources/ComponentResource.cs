@@ -1,30 +1,42 @@
-using Gamelab.Assets;
 using System.Linq;
+using Gamelab.Assets;
 using Gamelab.Items.Bullets;
 using Gamelab.Players;
+using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Gamelab.PhysicalEntities.Stations.Resources;
 
 public class ComponentResource(Vector2 position, string componentId)
-    : AbstractResource(
-        ComponentRegistry.GetSprite(componentId),
-        ComponentRegistry.GetColor(componentId),
+    : AbstractResource(StationIds.GetComponentStationId(componentId),
+        GamelabGame.Instance.ComponentRegistry.Get(componentId).Color,
         "Bullet",
         position)
 {
+    public string ComponentId { get; } = componentId;
+    protected ComponentConfig DispensedComponentConfig => GamelabGame.Instance.ComponentRegistry.Get(ComponentId);
 
-    public string componentId = componentId;
-    
+    public override string GetTooltipTitle()
+    {
+        return DispensedComponentConfig?.Name ?? "Unknown Component";
+    }
+
+    public override string GetTooltipDescription()
+    {
+        return DispensedComponentConfig?.Description ?? "No description";
+    }
+
+    public override bool IsTooltipVisible => IsHighlighted && DispensedComponentConfig != null;
+
     public override void OnPickup(Player interactingPlayer)
     {
         if (interactingPlayer.HeldItem == null)
         {
-            interactingPlayer.HeldItem = new BulletItem(componentId);
+            interactingPlayer.HeldItem = new BulletItem(ComponentId);
         }
         else if (interactingPlayer.HeldItem.Id == ResourceId
-                 && ((BulletItem)interactingPlayer.HeldItem).ComponentIds.SequenceEqual([componentId]))
+                 && ((BulletItem)interactingPlayer.HeldItem).ComponentIds.SequenceEqual([ComponentId]))
         {
             interactingPlayer.HeldItem = null;
         }
@@ -32,14 +44,23 @@ public class ComponentResource(Vector2 position, string componentId)
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        Texture2D tex = AssetManager.GetStationTexture(ComponentRegistry.GetSprite(componentId));
+        Texture2D tex = AssetManager.GetStationTexture(GamelabGame.Instance.ComponentRegistry.Get(ComponentId).Sprite);
         int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
-        float originalSize = tex.Width;
-        float scale = tileSize / originalSize;
+        float scale = tileSize / (float)tex.Width;
+        Vector2 origin = new Vector2(tex.Width / 2f, tex.Height);
+        Vector2 bottomCenter = Position + new Vector2(0, tileSize / 2f);
+        float depth = RenderUtility.CalculateDepth(bottomCenter.Y);
 
-        Vector2 drawingPos = Position + new Vector2(-tileSize * 0.5f, -tileSize * 1.5f);
-        spriteBatch.Draw(tex, drawingPos, null, Color.White,
-                                0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+        spriteBatch.Draw(
+            texture: tex,
+            position: bottomCenter,
+            sourceRectangle: null,
+            color: Color.White,
+            rotation: 0f,
+            origin: origin,
+            scale: scale,
+            effects: SpriteEffects.None,
+            layerDepth: depth
+        );
     }
 }
-

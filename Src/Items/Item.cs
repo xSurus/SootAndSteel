@@ -9,7 +9,7 @@ public class Item(string id)
     public string Id { get; } = id;
     public ItemDefinition Definition => ItemRegistry.Get(Id);
 
-    public virtual void Draw(SpriteBatch spriteBatch, Vector2 position, int size)
+    public virtual void Draw(SpriteBatch spriteBatch, Vector2 position, int size, float depth)
     {
         Vector2 origin = new Vector2(size / 2f, size / 2f);
         Rectangle sourceRect = new Rectangle(0, 0, size, size);
@@ -23,7 +23,7 @@ public class Item(string id)
             origin: origin,
             scale: 1f,
             effects: SpriteEffects.None,
-            layerDepth: 0f
+            layerDepth: depth
         );
     }
 }

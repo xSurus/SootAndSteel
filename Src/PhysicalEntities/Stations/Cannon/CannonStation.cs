@@ -1,12 +1,9 @@
 using System;
 using Gamelab.Assets;
 using Gamelab.Config;
-using Gamelab.Enemies;
 using Gamelab.Items;
 using Gamelab.Items.Bullets;
 using Gamelab.Particles;
-using Gamelab.PhysicalEntities.Projectiles;
-using Gamelab.PhysicalEntities.Bullets;
 using Gamelab.PhysicalEntities.Bullets.Components;
 using Gamelab.Players;
 using Gamelab.Services.Bullet;
@@ -17,23 +14,18 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Gamelab.PhysicalEntities.Stations.Cannon;
 
-public class CannonStation : AbstractStation, IRepairable, IBulletEmitter
+public class CannonStation : AbstractStation, IBulletEmitter
 {
     private readonly GameplayConfig config;
     private float cooldownTimer;
-    private readonly RepairState repairState;
 
     public CannonAimingBar AimingBar { get; private set; }
-    public bool IsBroken => repairState.IsBroken;
-    public float CurrentHealth => repairState.CurrentHealth;
-    public float MaxHealth => repairState.MaxHealth;
 
     public CannonStation(Vector2 position)
         : base("Cannon", Color.DarkRed, position)
     {
         config = GamelabGame.Instance.GameplayConfig;
         cooldownTimer = 0f;
-        repairState = new RepairState(config.RepairableCannonMaxHealth);
         AimingBar = new CannonAimingBar(PhysicsBody, position.ToMeters());
     }
 
@@ -47,7 +39,7 @@ public class CannonStation : AbstractStation, IRepairable, IBulletEmitter
 
     public override void OnInteract(Player interactingPlayer)
     {
-        if (IsBroken || cooldownTimer > 0f || HeldItem == null)
+        if (cooldownTimer > 0f || HeldItem == null)
         {
             return;
         }
@@ -61,19 +53,9 @@ public class CannonStation : AbstractStation, IRepairable, IBulletEmitter
         HeldItem = null;
     }
 
-    public override void OnInteractHeld(Player interactingPlayer, float dt)
-    {
-        if (!IsBroken)
-        {
-            return;
-        }
-
-        Repair(config.RepairableCannonRepairPerSecond * dt);
-    }
-
     public override void OnPickup(Player interactingPlayer)
     {
-        if (IsBroken || HeldItem != null || interactingPlayer.HeldItem == null)
+        if (HeldItem != null || interactingPlayer.HeldItem == null)
         {
             return;
         }
@@ -87,33 +69,12 @@ public class CannonStation : AbstractStation, IRepairable, IBulletEmitter
         interactingPlayer.HeldItem = null;
     }
 
-    public void Repair(float amount)
-    {
-        repairState.Repair(amount);
-    }
-
-    public void TakeDamage(float damageAmount)
-    {
-        repairState.ApplyDamage(damageAmount);
-    }
-
-    public bool OnHit(BulletEntity bullet)
-    {
-        if (bullet.Owner is not AbstractEnemy || IsBroken)
-        {
-            return false;
-        }
-
-        TakeDamage(bullet.Stats.Damage);
-        return true;
-    }
-
     private void FireCannon(Vector2 direction, BulletItem ammo)
     {
         Vector2 cannonPosition = DrawPosition + new Vector2(config.TrainTileSize / 2f);
         float barrelLength = config.TrainTileSize * 0.5f;
         Vector2 position = cannonPosition + direction * barrelLength;
-        
+
         direction.Normalize();
         GamelabGame.Instance.Services.GetService<IBulletService>().EmitBullet(ammo, position, direction, this);
         GamelabGame.Instance.Services.GetService<IVfxService>()
@@ -123,11 +84,9 @@ public class CannonStation : AbstractStation, IRepairable, IBulletEmitter
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        if (AimingBar?.PhysicsBody == null)
-        {
-            base.Draw(spriteBatch);
-            return;
-        }
+        base.Draw(spriteBatch);
+
+        if (AimingBar?.PhysicsBody == null) return;
 
         Vector2 direction = new Vector2(
             (float)Math.Cos(AimingBar.PhysicsBody.Rotation),
@@ -135,33 +94,9 @@ public class CannonStation : AbstractStation, IRepairable, IBulletEmitter
         );
         float lineLength = config.TrainTileSize * 4f;
         Vector2 lineEnd = Position + direction * lineLength;
+        DrawAimLine(spriteBatch, Position, lineEnd, Color.White);
 
-        Color previousColor = DisplayColor;
-        if (IsBroken)
-        {
-            DisplayColor = Color.DarkSlateGray;
-        }
-
-        base.Draw(spriteBatch);
-        DisplayColor = previousColor;
-        DrawAimLine(spriteBatch, Position, lineEnd, IsBroken ? Color.Gray : Color.White);
         AimingBar?.Draw(spriteBatch);
-        DrawHealthBar(spriteBatch);
-    }
-
-    private void DrawHealthBar(SpriteBatch spriteBatch)
-    {
-        if (CurrentHealth >= MaxHealth)
-        {
-            return;
-        }
-
-        int width = config.TrainTileSize - 8;
-        int height = 6;
-        Rectangle bg = new((int)(Position.X - width / 2f), (int)(Position.Y + config.TrainTileSize / 2f - 8), width, height);
-        Rectangle fill = new(bg.X, bg.Y, (int)(width * (CurrentHealth / MaxHealth)), height);
-        spriteBatch.Draw(AssetManager.BlankTexture, bg, Color.Black);
-        spriteBatch.Draw(AssetManager.BlankTexture, fill, IsBroken ? Color.OrangeRed : Color.LimeGreen);
     }
 
     private static void DrawAimLine(SpriteBatch spriteBatch, Vector2 start, Vector2 end, Color color)
@@ -177,7 +112,7 @@ public class CannonStation : AbstractStation, IRepairable, IBulletEmitter
             angle,
             new Vector2(0f, 1f),
             SpriteEffects.None,
-            0f
+            RenderUtility.TopEntityLayer
         );
     }
 
