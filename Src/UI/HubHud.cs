@@ -60,37 +60,42 @@ public class HubHud
         int currentCredits = GamelabGame.Instance.CurrentRun.Credits;
         creditsLabel.Text = $"Credits: {currentCredits}";
 
+        (string text, Color color) = GetDepartureInformation(
+            allInDepart, pendingShopCount, departHoldTimer, departHoldSeconds, readyCount, totalCount);
+
         departBlockedLabel.Visible = true;
+        departBlockedLabel.Text = text;
+        departBlockedLabel.TextColor = color;
+    }
+
+    private static (string Text, Color Color) GetDepartureInformation(
+        bool allInDepart, int pendingShopCount, float departHoldTimer, float departHoldSeconds, int readyCount, int totalCount)
+    {
         if (allInDepart && pendingShopCount > 0)
         {
-            departBlockedLabel.Text =
-                "Purchase placed shop upgrades (Interact) or drag them back to the vendor before departing.";
-            departBlockedLabel.TextColor = new Color(255, 120, 120);
+            return (
+                "Purchase placed shop upgrades (Interact) or drag them back to the vendor before departing.",
+                new Color(255, 120, 120));
         }
-        else if (allInDepart)
-        {
-            if (departHoldSeconds <= 0f || departHoldTimer >= departHoldSeconds)
-            {
-                departBlockedLabel.Text = "Departing…";
-            }
-            else
-            {
-                departBlockedLabel.Text = $"All ready! Departing in {departHoldSeconds - departHoldTimer:0.0}s…";
-            }
 
-            departBlockedLabel.TextColor = new Color(180, 230, 200);
-        }
-        else if (pendingShopCount > 0)
+        if (allInDepart)
         {
-            departBlockedLabel.Text =
-                "Interact next to a colored tile on the train to buy it, or grab it and return it to the shop row to cancel.";
-            departBlockedLabel.TextColor = new Color(200, 200, 120);
+            string text = departHoldSeconds <= 0f || departHoldTimer >= departHoldSeconds
+                ? "Departing…"
+                : $"All ready! Departing in {departHoldSeconds - departHoldTimer:0.0}s…";
+            return (text, new Color(180, 230, 200));
         }
-        else
+
+        if (pendingShopCount > 0)
         {
-            departBlockedLabel.Text = $"Depart: all players interact with the speed lever ({readyCount}/{totalCount} ready)";
-            departBlockedLabel.TextColor = new Color(160, 200, 170);
+            return (
+                "Interact next to a colored tile on the train to buy it, or grab it and return it to the shop row to cancel.",
+                new Color(200, 200, 120));
         }
+
+        return (
+            $"Depart: all players interact with the speed lever ({readyCount}/{totalCount} ready)",
+            new Color(160, 200, 170));
     }
 
     public void Draw()
