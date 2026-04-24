@@ -1,0 +1,6 @@
+{
+  "LevelDistance": 15000,
+  "SpawnEvents": [
+    { "Distance": 100, "Type": "Rifle", "Side": "Top"}
+  ]
+}

@@ -28,6 +28,8 @@ public static class AssetManager
     = new System.Collections.Generic.Dictionary<string, Texture2D>();
     public static System.Collections.Generic.Dictionary<string, Texture2D> NPCTextures { get; private set; }
     = new System.Collections.Generic.Dictionary<string, Texture2D>();
+    public static System.Collections.Generic.Dictionary<string, Texture2D> EnemyTextures { get; private set; }
+    = new System.Collections.Generic.Dictionary<string, Texture2D>();
 
     public static void LoadContent(GraphicsDevice graphicsDevice)
     {
@@ -47,6 +49,7 @@ public static class AssetManager
         LoadStationTextures(graphicsDevice);
         LoadHubTexture(graphicsDevice);
         LoadNPCTextures(graphicsDevice);
+        LoadEnemyTextures(graphicsDevice);
         // TODO add texture loading from json
     }
 
@@ -147,6 +150,30 @@ public static class AssetManager
             StationTextures[key] = Texture2D.FromStream(graphicsDevice, stream);
             logger.Info($"Loading station texture for '{key}'");
         }
+    }
+
+    private static void LoadEnemyTextures(GraphicsDevice graphicsDevice)
+    {
+        string dir = System.IO.Path.Combine(
+            System.AppDomain.CurrentDomain.BaseDirectory, "Assets", "Enemies");
+
+        if (!System.IO.Directory.Exists(dir))
+        {
+            System.Console.WriteLine($"[AssetManager] Enemies folder not found: {dir}");
+            return;
+        }
+
+        foreach (string path in System.IO.Directory.GetFiles(dir, "*.png"))
+        {
+            string key = System.IO.Path.GetFileNameWithoutExtension(path);
+            using System.IO.Stream stream = System.IO.File.OpenRead(path);
+            EnemyTextures[key] = Texture2D.FromStream(graphicsDevice, stream);
+        }
+    }
+
+    public static Texture2D GetEnemyTexture(string type)
+    {
+        return EnemyTextures.TryGetValue(type, out var tex) ? tex : BlankTexture;
     }
 
     private static void LoadStructureTextures(GraphicsDevice graphicsDevice)
@@ -346,5 +373,9 @@ public static class AssetManager
         foreach (var tex in NPCTextures.Values)
             tex?.Dispose();
         NPCTextures.Clear();
+
+        foreach (var tex in EnemyTextures.Values)
+            tex?.Dispose();
+        EnemyTextures.Clear();
     }
 }

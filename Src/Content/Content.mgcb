@@ -36,5 +36,8 @@
 /copy:promptfont.ttf
 
 
+#begin Data/levels/level1.json
+/copy:Data/levels/level1.json
+
 #begin Data/levels/basic_easy_level.json
 /copy:Data/levels/basic_easy_level.json
