@@ -137,14 +137,14 @@ public class TrainMap
             // top walls
             Vector2 topPos = GetTileCenterPixels(x, 0) - new Vector2(0, halfTile + halfTile / 2f);
             if (Array.Exists(doors, d => !d.OnBottom && d.Column == x))
-                MapObjects.Add(new DoorWall(wallSize, topPos, isTop: true));
+                MapObjects.Add(new DoorWall(wallSize, topPos));
             else
                 MapObjects.Add(new ShootHoleWall(wallSize, topPos, true));
 
             // bottom walls
             Vector2 bottomPos = GetTileCenterPixels(x, Height - 1) + new Vector2(0, halfTile + halfTile / 2f);
             if (Array.Exists(doors, d => d.OnBottom && d.Column == x))
-                MapObjects.Add(new DoorWall(wallSize, bottomPos, isTop: false));
+                MapObjects.Add(new DoorWall(wallSize, bottomPos));
             else
                 MapObjects.Add(new ShootHoleWall(wallSize, bottomPos, false));
         }

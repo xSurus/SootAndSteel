@@ -15,13 +15,11 @@ namespace Gamelab.PhysicalEntities.Structures;
 public class DoorWall : AbstractPhysicalEntity, IInteractable
 {
     private readonly Vector2 dimensionsPixels;
-    private readonly bool isTop;
     private bool isOpen = false;
 
-    public DoorWall(Vector2 dimensionsPixels, Vector2 positionPixels, bool isTop)
+    public DoorWall(Vector2 dimensionsPixels, Vector2 positionPixels)
     {
         this.dimensionsPixels = dimensionsPixels;
-        this.isTop = isTop;
         PhysicsBody = gameplayContext.PhysicsWorld.CreateRectangle(
             dimensionsPixels.X.ToMeters(),
             dimensionsPixels.Y.ToMeters(),
@@ -41,14 +39,10 @@ public class DoorWall : AbstractPhysicalEntity, IInteractable
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        string textureKey = (isTop, isOpen) switch
-        {
-            (true, true) => "WallTileTopDoorOpen",
-            (true, false) => "WallTileTopDoorClosed",
-            (false, true) => "WallTileBottomDoorOpen",
-            (false, false) => "WallTileBottomDoorClosed",
-        };
-        Texture2D tex = AssetManager.GetWallTexture(textureKey);
+        Texture2D tex;
+        tex = isOpen
+            ? AssetManager.GetWallTexture("WallTileTopDoorOpen")
+            : AssetManager.GetWallTexture("WallTileTopDoorClosed");
 
         int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
         float scale = tileSize / (float)AssetManager.GetWallTexture("WallTileTop").Width;

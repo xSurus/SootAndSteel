@@ -104,7 +104,4 @@
     <Compile Remove="PhysicalEntities\Structures\BuyableStationWrapper.cs"/>
     <Compile Remove="PhysicalEntities\Configurable\StationConfig.cs"/>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Content\Data\levels\"/>
-  </ItemGroup>
 </Project>
