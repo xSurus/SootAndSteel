@@ -61,7 +61,7 @@ public class ComponentRegistry
         }
         else
         {
-            logger.Error("Failed to load component configs from 'Config/ComponentConfig.json'.");
+            logger.Error("Failed to load component configs from 'Data/ComponentConfig.json'.");
         }
     }
 

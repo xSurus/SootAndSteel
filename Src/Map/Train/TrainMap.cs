@@ -143,7 +143,10 @@ public class TrainMap
 
             // bottom walls
             Vector2 bottomPos = GetTileCenterPixels(x, Height - 1) + new Vector2(0, halfTile + halfTile / 2f);
-            MapObjects.Add(new ShootHoleWall(wallSize, bottomPos, false));
+            if (Array.Exists(doors, d => d.OnBottom && d.Column == x))
+                MapObjects.Add(new DoorWall(wallSize, bottomPos));
+            else
+                MapObjects.Add(new ShootHoleWall(wallSize, bottomPos, false));
         }
 
         // blockers above and below the bridge

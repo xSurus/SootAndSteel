@@ -49,9 +49,10 @@ public class MainMenuPanel
     public void Draw(SpriteBatch spriteBatch, Point virtualScreenSize, SpriteFontBase titleFont,
         SpriteFontBase buttonFont)
     {
+        // Menu sits lower on the screen so it doesn't cover the title artwork.
         var panelRect = new Rectangle(
             0,
-            virtualScreenSize.Y - 330,
+            virtualScreenSize.Y - 660,
             virtualScreenSize.X,
             250);
 

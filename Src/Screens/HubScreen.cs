@@ -115,6 +115,38 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
         );
 
         hubMap.Draw(spriteBatch);
+
+        // Rail tracks strip drawn between the hub background and the train floor tiles.
+        // Starts exactly where the HubTexture ends so the rails continue seamlessly
+        // from the hub art. Depth sits strictly between BackgroundLayer (HubTexture)
+        // and FloorLayer (TrainMap tiles) to avoid z-fighting with either.
+        const float railDepth = (RenderUtility.BackgroundLayer + RenderUtility.FloorLayer) / 2f;
+        Texture2D railTex = AssetManager.TrainTrackTexture[0];
+        const float railScale = 1.6f;
+        int railTileWidth = (int)(railTex.Width * railScale);
+        int railTileHeight = (int)(railTex.Height * railScale);
+        float hubBgScale = worldWidth * 1.0f / AssetManager.HubTexture.Width;
+        int railStartY = (int)(AssetManager.HubTexture.Height * hubBgScale);
+        int railCols = (worldWidth / railTileWidth) + 3;
+        int railRows = Math.Max(0, (worldHeight - railStartY) / railTileHeight) + 2;
+        for (int row = 0; row < railRows; row++)
+        {
+            for (int col = 0; col < railCols; col++)
+            {
+                Vector2 railDrawPos = new Vector2(col * railTileWidth, railStartY + row * railTileHeight);
+                spriteBatch.Draw(
+                    texture: railTex,
+                    position: railDrawPos,
+                    sourceRectangle: null,
+                    color: Color.White,
+                    rotation: 0f,
+                    origin: Vector2.Zero,
+                    scale: railScale,
+                    effects: SpriteEffects.None,
+                    layerDepth: railDepth);
+            }
+        }
+
         prepTrainMap.Draw(spriteBatch);
         Vector2 vendorPosition = new Vector2(1160, 580);
         Texture2D vendorTex = AssetManager.GetNPCTexture("Vendor");
@@ -131,6 +163,23 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
             scale: vendorScale,
             effects: SpriteEffects.None,
             layerDepth: vendorDepth
+        );
+
+        Vector2 town1Position = new Vector2(800, 200);
+        Texture2D town1Tex = AssetManager.GetNPCTexture("Town1");
+        Vector2 town1Origin = new Vector2(town1Tex.Width / 2f, town1Tex.Height);
+        float town1Scale = 0.3f;
+        float town1Depth = RenderUtility.CalculateDepth(town1Position.Y);
+        spriteBatch.Draw(
+            texture: town1Tex,
+            position: town1Position,
+            sourceRectangle: null,
+            color: Color.White,
+            rotation: 0f,
+            origin: town1Origin,
+            scale: town1Scale,
+            effects: SpriteEffects.None,
+            layerDepth: town1Depth
         );
         Services.GetService<IVfxService>().Render(spriteBatch);
         foreach (var player in players) player.Draw(spriteBatch);
@@ -180,8 +229,7 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
 
         prepTrainMap = new TrainMap(
             new Vector2((worldWidth - trainW) / 2f, prepViewCameraY + 360f),
-            new DoorSpec(OnBottom: false, Column: gapMid),
-            new DoorSpec(OnBottom: true, Column: gapMid));
+            new DoorSpec(OnBottom: false, Column: gapMid));
 
         prepTrainMap.LoadLayout(Game.CurrentRun.TrainLayout);
         gameplayContext.Map = prepTrainMap;

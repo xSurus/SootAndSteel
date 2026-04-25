@@ -1,10 +1,13 @@
 using System;
 using Gamelab.Serialization;
 using Gamelab.Services.Sound;
+using Gamelab.Assets;
 using Gamelab.UI;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Gamelab.Services.Vfx;
+using Gamelab.Particles;
 
 namespace Gamelab.Screens;
 
@@ -26,6 +29,9 @@ public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
         TryLoadBackgroundTexture();
         soundService = Services.GetService<ISoundService>();
         soundService.LoadSound(Sounds.MenuSelect);
+        soundService.GetSoundInstance(Sounds.AmbientSong)?.Start();
+        Services.GetService<IVfxService>().AddContinuous(ParticleFactory.CreateSnowstorm());
+
         Action continueAction = SaveManager.HasSave() ? ContinueGame : null;
         optionsPanel = new OptionsPanel(Game);
         mainMenuPanel = new MainMenuPanel(Game, continueAction, StartNewGame, OpenOptions, Game.Exit);
@@ -56,9 +62,13 @@ public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
     {
         // Scale to fit the virtual screen size to the actual window size
         spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
+        float scale = virtualScreenSize.X * 1.0f / AssetManager.HubTexture.Width;
 
         // Rendering is done in the virtual screen space
-        spriteBatch.Draw(bgTexture, new Rectangle(0, 0, virtualScreenSize.X, virtualScreenSize.Y), Color.White);
+        spriteBatch.Draw(AssetManager.TitleTexture, new Vector2(0), null, Color.White,
+                                0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+
+        Services.GetService<IVfxService>().Render(spriteBatch);
 
         mainMenuPanel.Draw(
             spriteBatch,

@@ -19,6 +19,7 @@ public static class AssetManager
     public static Texture2D SmokeTexture { get; private set; }
     public static Texture2D SparkTexture { get; private set; }
     public static Texture2D HubTexture { get; private set; }
+    public static Texture2D TitleTexture { get; private set; }
 
     public static Dictionary<string, Texture2D> StationTextures { get; private set; }
         = new Dictionary<string, Texture2D>();
@@ -51,6 +52,7 @@ public static class AssetManager
         LoadStructureTextures(graphicsDevice);
         LoadStationTextures(graphicsDevice);
         LoadHubTexture(graphicsDevice);
+        LoadTitleTexture(graphicsDevice);
         LoadNPCTextures(graphicsDevice);
         // TODO add texture loading from json
     }
@@ -221,6 +223,11 @@ public static class AssetManager
         HubTexture = LoadTexture(graphicsDevice, "Hub.png");
     }
 
+    private static void LoadTitleTexture(GraphicsDevice graphicsDevice)
+    {
+        TitleTexture = LoadTexture(graphicsDevice, "Title.png");
+    }
+
     private static void LoadTileTexture(GraphicsDevice graphicsDevice)
     {
         TileTexture = new Texture2D[2];
@@ -322,6 +329,9 @@ public static class AssetManager
 
         HubTexture?.Dispose();
         HubTexture = null;
+
+        TitleTexture?.Dispose();
+        TitleTexture = null;
 
         foreach (var tex in StationTextures.Values)
             tex?.Dispose();
