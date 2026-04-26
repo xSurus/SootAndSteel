@@ -1,20 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <objects serializationModel="Studio.02.02.00">
-	<object class="AudioFile" id="{2d675bf2-e1ce-43dc-bb54-107cadf78c2b}">
+	<object class="AudioFile" id="{68f0ce03-715d-482e-81c2-1161daa4a92d}">
 		<property name="assetPath">
-			<value>sfx/steam_engine.mp3</value>
-		</property>
-		<property name="isStreaming">
-			<value>true</value>
+			<value>sfx/steam hiss.mp3</value>
 		</property>
 		<property name="frequencyInKHz">
-			<value>24</value>
+			<value>44.0999985</value>
 		</property>
 		<property name="channelCount">
 			<value>2</value>
 		</property>
 		<property name="length">
-			<value>29.687999999999999</value>
+			<value>1.0971428571428572</value>
 		</property>
 		<relationship name="masterAssetFolder">
 			<destination>{c7be4079-4b34-4803-977f-2108dc223288}</destination>

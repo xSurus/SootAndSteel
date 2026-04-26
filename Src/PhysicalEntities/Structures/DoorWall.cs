@@ -1,6 +1,7 @@
 using Gamelab.Assets;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
+using Gamelab.Services.Sound;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -16,6 +17,8 @@ public class DoorWall : AbstractPhysicalEntity, IInteractable
 {
     private readonly Vector2 dimensionsPixels;
     private bool isOpen = false;
+    
+    protected readonly ISoundService soundService;
 
     public DoorWall(Vector2 dimensionsPixels, Vector2 positionPixels)
     {
@@ -28,10 +31,15 @@ public class DoorWall : AbstractPhysicalEntity, IInteractable
             0f,
             BodyType.Static);
         PhysicsBody.Tag = this;
+        
+        soundService = GamelabGame.Instance.Services.GetService<ISoundService>();
+        soundService.LoadSound(Sounds.OpenDoor);
+        soundService.LoadSound(Sounds.CloseDoor);
     }
 
     public void OnInteract(Player interactingPlayer)
     {
+        soundService.PlayOnce(isOpen ? Sounds.CloseDoor : Sounds.OpenDoor);
         isOpen = !isOpen;
         foreach (var fixture in PhysicsBody.FixtureList)
             fixture.IsSensor = isOpen;

@@ -4,6 +4,7 @@ using Gamelab.Map.Train.State;
 using Gamelab.Particles;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
+using Gamelab.Services.Sound;
 using Gamelab.Services.Vfx;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
@@ -21,7 +22,9 @@ public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
     private ParticleEmitter smokeEmitter;
     private float heightPixels;
     private float widthPixels;
-
+    
+    private ISoundService soundService;
+    
     public TrainNose(Vector2 position)
     {
         maxFuel = GamelabGame.Instance.GameplayConfig.CoalOvenMaxFuel;
@@ -37,6 +40,9 @@ public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
             position.ToMeters());
         smokeEmitter = ParticleFactory.CreateOvenSmoke(position);
         GamelabGame.Instance.Services.GetService<IVfxService>()?.AddContinuous(smokeEmitter);
+        
+        soundService = GamelabGame.Instance.Services.GetService<ISoundService>();
+        soundService.LoadSound(Sounds.ShovelDown);
     }
 
     public void Update(float dt)
@@ -94,6 +100,7 @@ public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
             currentFuel += RefuelAmount;
             currentFuel = Math.Min(currentFuel, maxFuel);
             interactingPlayer.HeldItem = null;
+            soundService.PlayOnce(Sounds.ShovelDown);
         }
     }
 

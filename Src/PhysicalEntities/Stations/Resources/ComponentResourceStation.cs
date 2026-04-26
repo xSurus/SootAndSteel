@@ -4,6 +4,7 @@ using Gamelab.Items;
 using Gamelab.Items.Bullets;
 using Gamelab.PhysicalEntities.Bullets.Components;
 using Gamelab.Players;
+using Gamelab.Services.Sound;
 using Gamelab.UI;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
@@ -49,11 +50,13 @@ public class ComponentResourceStation(Vector2 position, string componentId)
         if (interactingPlayer.HeldItem == null)
         {
             interactingPlayer.HeldItem = new BulletItem(ComponentId);
+            soundService.PlayOnce(Sounds.PickupItem);
         }
         else if (interactingPlayer.HeldItem.Id == ResourceId
                  && ((BulletItem)interactingPlayer.HeldItem).ComponentIds.SequenceEqual([ComponentId]))
         {
             interactingPlayer.HeldItem = null;
+            soundService.PlayOnce(Sounds.DropItem);
         }
     }
 

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <objects serializationModel="Studio.02.02.00">
 	<object class="Workspace" id="{c24a1c5c-9f73-428f-8145-9299581d1327}">
+		<property name="builtBanksOutputDirectory">
+			<value>../../Src/Content/soundbanks</value>
+		</property>
 		<relationship name="masterEventFolder">
 			<destination>{8e06b539-bf4c-4ccb-9afa-9c1f41b618d0}</destination>
 		</relationship>

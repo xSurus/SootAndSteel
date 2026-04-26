@@ -11,4 +11,8 @@ public interface IInteractable : IPhysicalEntity
     void OnInteractHeld(Player interactingPlayer, float dt)
     {
     }
+
+    void OnInteractReleased(Player interactingPlayer)
+    {
+    }
 }

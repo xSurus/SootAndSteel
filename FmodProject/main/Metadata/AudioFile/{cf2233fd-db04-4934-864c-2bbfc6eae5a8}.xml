@@ -1,20 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <objects serializationModel="Studio.02.02.00">
-	<object class="AudioFile" id="{33ecf521-dddb-49c3-980f-8a700aa86326}">
+	<object class="AudioFile" id="{cf2233fd-db04-4934-864c-2bbfc6eae5a8}">
 		<property name="assetPath">
-			<value>sfx/rail_whine.mp3</value>
-		</property>
-		<property name="isStreaming">
-			<value>true</value>
+			<value>sfx/foot steps/foot step 4.mp3</value>
 		</property>
 		<property name="frequencyInKHz">
-			<value>24</value>
+			<value>44.0999985</value>
 		</property>
 		<property name="channelCount">
-			<value>2</value>
+			<value>1</value>
 		</property>
 		<property name="length">
-			<value>92.135999999999996</value>
+			<value>0.5485714285714286</value>
 		</property>
 		<relationship name="masterAssetFolder">
 			<destination>{c7be4079-4b34-4803-977f-2108dc223288}</destination>

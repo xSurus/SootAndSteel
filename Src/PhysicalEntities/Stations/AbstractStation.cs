@@ -3,6 +3,7 @@ using Gamelab.Items;
 using Gamelab.PhysicalEntities.Configurable;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
+using Gamelab.Services.Sound;
 using Gamelab.UI;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
@@ -16,6 +17,8 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
     protected StationConfig StationConfig => GamelabGame.Instance.StationRegistry.Get(StationId);
 
     public string StationId { get; protected set; }
+    
+    protected readonly ISoundService soundService;
 
     // TODO swap to a texture instead of display color at some point
     public Color DisplayColor { get; protected set; }
@@ -50,6 +53,10 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
         float collisionSizePixels = GamelabGame.Instance.GameplayConfig.TrainTileSize * 0.90f;
         float simSize = collisionSizePixels.ToMeters();
         PhysicsBody = gameplayContext.PhysicsWorld.CreateRectangle(simSize, simSize, 1f, position.ToMeters());
+        
+        soundService = GamelabGame.Instance.Services.GetService<ISoundService>();
+        soundService.LoadSound(Sounds.PickupItem);
+        soundService.LoadSound(Sounds.DropItem);
     }
 
     public virtual void Update(float dt)
@@ -61,6 +68,10 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
     }
 
     public virtual void OnInteractHeld(Player interactingPlayer, float dt)
+    {
+    }
+
+    public virtual void OnInteractReleased(Player interactingPlayer)
     {
     }
 

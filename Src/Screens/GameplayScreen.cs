@@ -112,6 +112,16 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         Game.Services.RemoveService(typeof(GameplayContext));
         Services.GetService<IVfxService>().ClearAll();
 
+        if (players != null)
+        {
+            foreach (var player in players)
+            {
+                player.Dispose();
+            }
+
+            players.Clear();
+        }
+
         trainMap?.Dispose();
         worldScroller?.Dispose();
         trainSound?.Stop();
@@ -180,7 +190,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     {
         hud = new GameplayHud();
         pauseMenu = new PauseMenuController();
-        pauseMenu.OnExitRequested += () => Game.SwitchToScreen(new global::Gamelab.JoinScreen(Game));
+        pauseMenu.OnExitRequested += () => Game.SwitchToScreen(new Gamelab.JoinScreen(Game));
 
         desktop = new Desktop();
         var mainPanel = new Panel

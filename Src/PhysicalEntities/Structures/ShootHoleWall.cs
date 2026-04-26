@@ -5,6 +5,7 @@ using Gamelab.Enemies.Core;
 using Gamelab.PhysicalEntities.Bullets;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
+using Gamelab.Services.Sound;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -21,6 +22,8 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
     public bool IsBroken => CurrentHealth <= 0f;
     private readonly Vector2 dimensionsPixels;
     private bool isTop;
+    
+    private ISoundService soundService;
 
     public ShootHoleWall(Vector2 dimensionsPixels, Vector2 positionPixels, bool isTop)
     {
@@ -31,6 +34,9 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
             positionPixels.ToMeters(), 0f, BodyType.Static);
         PhysicsBody.Tag = this;
         this.isTop = isTop;
+
+        soundService = GamelabGame.Instance.Services.GetService<ISoundService>();
+        soundService.LoadSound(Sounds.WallHit);
     }
 
     public void TakeDamage(float damageAmount)
@@ -42,6 +48,8 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
         {
             gameplayContext.Events.FireWallBreached();
         }
+        
+        soundService.PlayOnce(Sounds.WallHit);
     }
 
     public bool OnHit(BulletEntity bullet)

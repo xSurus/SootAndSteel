@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="ParameterPreset" id="{b27c6a76-ef5a-4137-849d-06bb496fccb1}">
+		<property name="name">
+			<value>Is Crafting</value>
+		</property>
+		<relationship name="folder">
+			<destination>{515cd17a-45e3-4cfe-96f7-f8a819a5e949}</destination>
+		</relationship>
+		<relationship name="parameter">
+			<destination>{cf52d340-3dca-4d8d-a6c7-282fb25ae1b6}</destination>
+		</relationship>
+	</object>
+	<object class="GameParameter" id="{cf52d340-3dca-4d8d-a6c7-282fb25ae1b6}">
+		<property name="parameterType">
+			<value>1</value>
+		</property>
+		<property name="maximum">
+			<value>2</value>
+		</property>
+		<property name="initialValue">
+			<value>0</value>
+		</property>
+	</object>
+</objects>

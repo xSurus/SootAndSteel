@@ -7,6 +7,7 @@ using Gamelab.Particles;
 using Gamelab.PhysicalEntities.Bullets.Components;
 using Gamelab.Players;
 using Gamelab.Services.Bullet;
+using Gamelab.Services.Sound;
 using Gamelab.Services.Vfx;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
@@ -18,6 +19,8 @@ public class CannonStation : AbstractStation, IBulletEmitter
 {
     private readonly GameplayConfig config;
     private float cooldownTimer;
+    
+    private ISoundService soundService;
 
     public CannonAimingBar AimingBar { get; private set; }
 
@@ -27,6 +30,9 @@ public class CannonStation : AbstractStation, IBulletEmitter
         config = GamelabGame.Instance.GameplayConfig;
         cooldownTimer = 0f;
         AimingBar = new CannonAimingBar(PhysicsBody, position.ToMeters());
+        soundService = GamelabGame.Instance.Services.GetService<ISoundService>();
+        soundService.LoadSound(Sounds.CannonLoad);
+        soundService.LoadSound(Sounds.CannonFire);
     }
 
     public override void Update(float dt)
@@ -67,6 +73,7 @@ public class CannonStation : AbstractStation, IBulletEmitter
 
         HeldItem = interactingPlayer.HeldItem;
         interactingPlayer.HeldItem = null;
+        soundService.PlayOnce(Sounds.CannonLoad);
     }
 
     private void FireCannon(Vector2 direction, BulletItem ammo)
@@ -80,6 +87,8 @@ public class CannonStation : AbstractStation, IBulletEmitter
         GamelabGame.Instance.Services.GetService<IVfxService>()
             .EmitBurst(ParticleFactory.CreateCannonMuzzleFlash(position, direction));
         cooldownTimer = config.CannonCooldown;
+        
+        soundService.PlayOnce(Sounds.CannonFire);
     }
 
     public override void Draw(SpriteBatch spriteBatch)

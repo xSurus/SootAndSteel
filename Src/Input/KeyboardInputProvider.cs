@@ -38,10 +38,16 @@ public class KeyboardInputProvider(Keys up, Keys down, Keys left, Keys right, Ke
 
     public override bool IsInteractHeld() => currentKeyboardState.IsKeyDown(interact);
 
+    public override bool IsInteractJustReleased() => 
+        currentKeyboardState.IsKeyUp(interact) && previousKeyboardState.IsKeyDown(interact);
+
     public override bool IsGrabJustPressed() =>
         currentKeyboardState.IsKeyDown(grab) && previousKeyboardState.IsKeyUp(grab);
 
     public override bool IsGrabHeld() => currentKeyboardState.IsKeyDown(grab);
+    
+    public override bool IsGrabJustReleased() => 
+        currentKeyboardState.IsKeyUp(grab) && currentKeyboardState.IsKeyDown(grab);
 
     public override bool IsPickupJustPressed() =>
         currentKeyboardState.IsKeyDown(pickup) && previousKeyboardState.IsKeyUp(pickup);
