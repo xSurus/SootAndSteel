@@ -1,11 +1,12 @@
 using System;
+using FmodForFoxes.Studio;
 using Gamelab.Assets;
-using Gamelab.Enemies;
 using Gamelab.Enemies.Core;
 using Gamelab.Items;
 using Gamelab.PhysicalEntities;
 using Gamelab.PhysicalEntities.Bullets;
 using Gamelab.PhysicalEntities.Interfaces;
+using Gamelab.Services.Sound;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -52,6 +53,8 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
     private float animationTimer = 0f;
     private float timePerFrame = 0.2f;
 
+    private EventInstance walkSound;
+
     public Player(Vector2 startPosition, PlayerConfiguration playerConfig)
     {
         PlayerConfiguration = playerConfig;
@@ -60,6 +63,13 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
         PhysicsBody.LinearDamping = LinearDampening;
         PhysicsBody.FixedRotation = true;
         PhysicsBody.Tag = this;
+
+        var soundService = GamelabGame.Instance.Services.GetService<ISoundService>();
+        soundService.LoadSound(Sounds.Walk);
+        walkSound = soundService.GetSoundInstance(Sounds.Walk);
+        soundService.RegisterParameter(walkSound, "Walk Speed",
+            () => PhysicsBody.LinearVelocity.Length() / MaxVelocity);
+        walkSound?.Start();
     }
 
     public void Update(float dt)
@@ -207,6 +217,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
 
         bool interactJust = PlayerConfiguration.Input.IsInteractJustPressed();
         bool interactHeld = PlayerConfiguration.Input.IsInteractHeld();
+        bool interactReleased = PlayerConfiguration.Input.IsInteractJustReleased();
 
         if (interactJust)
         {
@@ -218,6 +229,11 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
         {
             interactable.OnInteractHeld(this, dt);
             return true;
+        }
+
+        if (interactReleased)
+        {
+            interactable.OnInteractReleased(this);
         }
 
         return false;
@@ -333,5 +349,15 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
             RenderUtility.OverlayBackLayer);
         spriteBatch.Draw(AssetManager.BlankTexture, fill, null, Color.LimeGreen, 0f, Vector2.Zero, SpriteEffects.None,
             RenderUtility.OverlayTopLayer);
+    }
+
+    public void Dispose()
+    {
+        if (walkSound != null)
+        {
+            walkSound.Stop();
+            walkSound.Dispose();
+            walkSound = null;
+        }
     }
 }

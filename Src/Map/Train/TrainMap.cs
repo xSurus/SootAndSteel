@@ -174,7 +174,7 @@ public class TrainMap
         MapObjects.Add(new ComponentResourceStation(GetTileCenterPixels(2, 0), ComponentIds.BasicCasing));
         MapObjects.Add(new ComponentResourceStation(GetTileCenterPixels(2, 4), ComponentIds.BasicProjectile));
         MapObjects.Add(new ComponentResourceStation(GetTileCenterPixels(3, 0), ComponentIds.BasicPropellant));
-        MapObjects.Add(new ResourceStation(GetTileCenterPixels(7, 0), "Coal"));
+        MapObjects.Add(new CoalResourceStation(GetTileCenterPixels(7, 0)));
         MapObjects.Add(new Workbench(GetTileCenterPixels(1, 0)));
         MapObjects.Add(new Workbench(GetTileCenterPixels(1, 4)));
         MapObjects.Add(new Counter(GetTileCenterPixels(0, 0)));

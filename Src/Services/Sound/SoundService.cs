@@ -17,6 +17,8 @@ public class SoundService : ISoundService,
     private readonly List<Bank> banks = [];
     private readonly List<ParameterBinding> parameterUpdates = [];
     private readonly Dictionary<string, EventDescription> eventDescriptions = new();
+    private readonly Dictionary<string, EventInstance> playOnceInstances = [];
+
     private static readonly Dictionary<string, SoundCategory> eventCategories = new()
     {
         [Sounds.MenuSelect] = SoundCategory.Sfx,
@@ -49,6 +51,7 @@ public class SoundService : ISoundService,
             var eventDescription = StudioSystem.GetEvent(id);
             eventDescriptions.Add(id, eventDescription);
             eventDescription.LoadSampleData();
+            playOnceInstances.Add(id, eventDescription.CreateInstance());
         }
     }
 
@@ -59,15 +62,18 @@ public class SoundService : ISoundService,
         eventDescriptions[id].ReleaseAllInstances();
         eventDescriptions[id].UnloadSampleData();
         eventDescriptions.Remove(id);
+        playOnceInstances[id].Dispose();
+        playOnceInstances.Remove(id);
     }
 
     public void PlayOnce(string id)
     {
         LoadSound(id);
-        var sound = eventDescriptions[id].CreateInstance();
+        var sound = playOnceInstances[id];
+        sound.Stop();
         sound.Volume = ComputeCategoryVolume(GetCategoryFor(id));
         sound.Start();
-        sound.Dispose();
+        logger.Info("Playing sound: " + id);
     }
 
     public EventInstance GetSoundInstance(string id)
@@ -120,6 +126,17 @@ public class SoundService : ISoundService,
 
     public void Update(GameTime gameTime)
     {
+        parameterUpdates.RemoveAll(binding =>
+        {
+            try
+            {
+                return !binding.EventInstance.Native.isValid();
+            }
+            catch
+            {
+                return true;
+            }
+        });
         foreach (var binding in parameterUpdates)
         {
             binding.EventInstance.SetParameterValue(binding.ParameterName, binding.ValueGetter());

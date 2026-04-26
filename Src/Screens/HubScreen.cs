@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using FmodForFoxes.Studio;
 using Gamelab.Assets;
 using Gamelab.Map;
 using Gamelab.Map.Train;
@@ -45,6 +46,8 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
     private float departHoldTimer;
     private bool isTransitioningToNextLevel;
 
+    private EventInstance ambientMusic;
+
     public override void LoadContent()
     {
         base.LoadContent();
@@ -66,12 +69,13 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
         hud = new HubHud(Game);
         worldUiManager = new WorldUiManager(Game);
         pauseMenu = new PauseMenuController();
-        pauseMenu.OnExitRequested += () => Game.SwitchToScreen(new global::Gamelab.JoinScreen(Game));
+        pauseMenu.OnExitRequested += () => Game.SwitchToScreen(new Gamelab.JoinScreen(Game));
         if (hud.Desktop.Root is Panel rootPanel) rootPanel.Widgets.Add(pauseMenu.Overlay);
 
         var soundService = Services.GetService<ISoundService>();
         soundService.LoadSound(Sounds.AmbientSong);
-        soundService.GetSoundInstance(Sounds.AmbientSong)?.Start();
+        ambientMusic = soundService.GetSoundInstance(Sounds.AmbientSong);
+        ambientMusic?.Start();
     }
 
     public override void Update(GameTime gameTime)
@@ -256,6 +260,18 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
         hubMap?.Dispose();
         hubMap = null;
         prepTrainMap = null;
+        ambientMusic?.Stop();
+        ambientMusic?.Dispose();
+        if (players != null)
+        {
+            foreach (Player player in players)
+            {
+                player.Dispose();
+            }
+
+            players.Clear();
+        }
+
         base.UnloadContent();
     }
 }

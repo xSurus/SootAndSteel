@@ -1,4 +1,5 @@
 using Gamelab.Players;
+using Gamelab.Services.Sound;
 using Microsoft.Xna.Framework;
 
 namespace Gamelab.PhysicalEntities.Stations;
@@ -10,6 +11,7 @@ public class Counter(Vector2 position)
     {
         if (interactingPlayer.HeldItem == null || HeldItem == null)
         {
+            soundService.PlayOnce(HeldItem == null ? Sounds.DropItem : Sounds.PickupItem);
             (interactingPlayer.HeldItem, HeldItem) = (HeldItem, interactingPlayer.HeldItem);
         }
     }

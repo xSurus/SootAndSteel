@@ -41,11 +41,17 @@ public class GamePadInputProvider(int controllerIndex) : AbstractInputProvider()
                                                     previousGamePadState.Buttons.X == ButtonState.Released;
 
     public override bool IsInteractHeld() => currentGamePadState.Buttons.X == ButtonState.Pressed;
-
+    
+    public override bool IsInteractJustReleased() => currentGamePadState.Buttons.X == ButtonState.Released &&
+                                                     previousGamePadState.Buttons.X == ButtonState.Pressed;
+    
     public override bool IsGrabJustPressed() => currentGamePadState.Buttons.Y == ButtonState.Pressed &&
                                                 previousGamePadState.Buttons.Y == ButtonState.Released;
 
     public override bool IsGrabHeld() => currentGamePadState.Buttons.Y == ButtonState.Pressed;
+    
+    public override bool IsGrabJustReleased() => currentGamePadState.Buttons.Y == ButtonState.Released &&
+                                                 previousGamePadState.Buttons.Y == ButtonState.Pressed;
 
     public override bool IsPickupJustPressed() => currentGamePadState.Buttons.A == ButtonState.Pressed &&
                                                   previousGamePadState.Buttons.A == ButtonState.Released;

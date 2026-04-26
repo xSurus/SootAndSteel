@@ -4,18 +4,33 @@ using Gamelab.Assets;
 using Gamelab.Items;
 using Gamelab.Items.Bullets;
 using Gamelab.Players;
+using Gamelab.Services.Sound;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using EventInstance = FmodForFoxes.Studio.EventInstance;
 
 namespace Gamelab.PhysicalEntities.Stations;
 
-public class Workbench(Vector2 position) : AbstractStation(StationIds.Workbench, position)
+public class Workbench : AbstractStation
 {
     private static readonly Logger Logger = new(StationIds.Workbench);
     protected List<BulletItem> PlacedItems { get; } = new();
 
     private float craftProgress = 0f;
+    private bool isCrafting = false;
+
+    private readonly ISoundService soundService;
+    private EventInstance craftSound;
+
+    public Workbench(Vector2 position) : base(StationIds.Workbench, position)
+    {
+        soundService = GamelabGame.Instance.Services.GetService<ISoundService>();
+        soundService.LoadSound(Sounds.Craft);
+        craftSound = soundService.GetSoundInstance(Sounds.Craft);
+        soundService.RegisterParameter(craftSound, "Is Crafting", () => isCrafting ? 1.0f : 0.0f);
+        craftSound?.Start();
+    }
 
     public override void OnPickup(Player interactingPlayer)
     {
@@ -26,6 +41,7 @@ public class Workbench(Vector2 position) : AbstractStation(StationIds.Workbench,
         {
             interactingPlayer.HeldItem = PlacedItems.Last();
             PlacedItems.RemoveAt(PlacedItems.Count - 1);
+            soundService.PlayOnce(Sounds.PickupItem);
             return;
         }
 
@@ -34,6 +50,7 @@ public class Workbench(Vector2 position) : AbstractStation(StationIds.Workbench,
         {
             PlacedItems.Add((BulletItem)interactingPlayer.HeldItem);
             interactingPlayer.HeldItem = null;
+            soundService.PlayOnce(Sounds.DropItem);
         }
     }
 
@@ -42,6 +59,7 @@ public class Workbench(Vector2 position) : AbstractStation(StationIds.Workbench,
         if (craftProgress > 0f || ValidateCraft())
         {
             craftProgress += dt;
+            isCrafting = true;
         }
 
         if (craftProgress >= 2f) // TODO add dynamic craft time
@@ -50,7 +68,13 @@ public class Workbench(Vector2 position) : AbstractStation(StationIds.Workbench,
             PlacedItems.Clear();
             PlacedItems.Add(craftedItem);
             craftProgress = 0f;
+            isCrafting = false;
         }
+    }
+
+    public override void OnInteractReleased(Player interactingPlayer)
+    {
+        isCrafting = false;
     }
 
     public override void Draw(SpriteBatch spriteBatch)
