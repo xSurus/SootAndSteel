@@ -26,8 +26,7 @@ public class PatchManager
     private float iceSpawnTimer;
     private float iceMeltTimer;
 
-    private static readonly Color SnowColor = new Color(178, 198, 218, 100);
-    private static readonly Color IceColor = new Color(100, 180, 255, 100);
+    private static readonly Color PatchTint = Color.White * 0.7f;
     private const float DrawDepth = RenderUtility.FloorLayer + 2 * RenderUtility.Eps;
 
     public IReadOnlySet<Point> SnowTiles => snowTiles;
@@ -155,16 +154,16 @@ public class PatchManager
     public void Draw(SpriteBatch spriteBatch, TrainMap map)
     {
         foreach (Point tile in snowTiles)
-            DrawTile(spriteBatch, map, tile, SnowColor);
+            DrawTile(spriteBatch, map, tile, AssetManager.SnowPatchTexture);
         foreach (Point tile in iceTiles)
-            DrawTile(spriteBatch, map, tile, IceColor);
+            DrawTile(spriteBatch, map, tile, AssetManager.IcePatchTexture);
     }
 
-    private static void DrawTile(SpriteBatch spriteBatch, TrainMap map, Point tile, Color color)
+    private static void DrawTile(SpriteBatch spriteBatch, TrainMap map, Point tile, Texture2D texture)
     {
         Vector2 topLeft = map.GetTileTopLeftPixels(tile.X, tile.Y);
         Rectangle rect = new((int)topLeft.X, (int)topLeft.Y, map.TileSize, map.TileSize);
-        spriteBatch.Draw(AssetManager.BlankTexture, rect, null, color,
+        spriteBatch.Draw(texture, rect, null, PatchTint,
             0f, Vector2.Zero, SpriteEffects.None, DrawDepth);
     }
 

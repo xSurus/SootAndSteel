@@ -20,6 +20,8 @@ public static class AssetManager
     public static Texture2D SparkTexture { get; private set; }
     public static Texture2D HubTexture { get; private set; }
     public static Texture2D TitleTexture { get; private set; }
+    public static Texture2D SnowPatchTexture { get; private set; }
+    public static Texture2D IcePatchTexture { get; private set; }
 
     public static Dictionary<string, Texture2D> StationTextures { get; private set; }
         = new Dictionary<string, Texture2D>();
@@ -52,6 +54,7 @@ public static class AssetManager
         LoadStructureTextures(graphicsDevice);
         LoadStationTextures(graphicsDevice);
         LoadHubTexture(graphicsDevice);
+        LoadPatchTextures(graphicsDevice);
         LoadTitleTexture(graphicsDevice);
         LoadNPCTextures(graphicsDevice);
         // TODO add texture loading from json
@@ -223,6 +226,12 @@ public static class AssetManager
         HubTexture = LoadTexture(graphicsDevice, "Hub.png");
     }
 
+    private static void LoadPatchTextures(GraphicsDevice graphicsDevice)
+    {
+        SnowPatchTexture = LoadTexture(graphicsDevice, "Snow_Tile.png");
+        IcePatchTexture = LoadTexture(graphicsDevice, "Ice_Tile.png");
+    }
+
     private static void LoadTitleTexture(GraphicsDevice graphicsDevice)
     {
         TitleTexture = LoadTexture(graphicsDevice, "Title.png");
@@ -332,6 +341,12 @@ public static class AssetManager
 
         TitleTexture?.Dispose();
         TitleTexture = null;
+
+        SnowPatchTexture?.Dispose();
+        SnowPatchTexture = null;
+
+        IcePatchTexture?.Dispose();
+        IcePatchTexture = null;
 
         foreach (var tex in StationTextures.Values)
             tex?.Dispose();
