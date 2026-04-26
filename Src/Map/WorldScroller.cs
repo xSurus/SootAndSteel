@@ -25,7 +25,7 @@ public class WorldScroller
 
     public WorldScroller(GraphicsDevice graphicsDevice)
     {
-        centerY = (gameplayContext.ScreenHeight / 2) - (AssetManager.TrainTrackTexture[0].Height / 2);
+        centerY = (gameplayContext.ScreenHeight / 2.0f) - (AssetManager.TrainTrackTexture[0].Height / 2.0f);
         int numTilesNeeded = (gameplayContext.ScreenWidth / TileWidth) + 3;
         for (int i = 0; i < numTilesNeeded; i++)
         {

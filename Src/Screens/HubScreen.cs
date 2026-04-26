@@ -14,7 +14,6 @@ using Gamelab.Serialization;
 using Gamelab.Services.Sound;
 using Gamelab.Services.Vfx;
 using Gamelab.UI;
-using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
@@ -115,72 +114,7 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
         );
 
         hubMap.Draw(spriteBatch);
-
-        // Rail tracks strip drawn between the hub background and the train floor tiles.
-        // Starts exactly where the HubTexture ends so the rails continue seamlessly
-        // from the hub art. Depth sits strictly between BackgroundLayer (HubTexture)
-        // and FloorLayer (TrainMap tiles) to avoid z-fighting with either.
-        const float railDepth = (RenderUtility.BackgroundLayer + RenderUtility.FloorLayer) / 2f;
-        Texture2D railTex = AssetManager.TrainTrackTexture[0];
-        const float railScale = 1.6f;
-        int railTileWidth = (int)(railTex.Width * railScale);
-        int railTileHeight = (int)(railTex.Height * railScale);
-        float hubBgScale = worldWidth * 1.0f / AssetManager.HubTexture.Width;
-        int railStartY = (int)(AssetManager.HubTexture.Height * hubBgScale);
-        int railCols = (worldWidth / railTileWidth) + 3;
-        int railRows = Math.Max(0, (worldHeight - railStartY) / railTileHeight) + 2;
-        for (int row = 0; row < railRows; row++)
-        {
-            for (int col = 0; col < railCols; col++)
-            {
-                Vector2 railDrawPos = new Vector2(col * railTileWidth, railStartY + row * railTileHeight);
-                spriteBatch.Draw(
-                    texture: railTex,
-                    position: railDrawPos,
-                    sourceRectangle: null,
-                    color: Color.White,
-                    rotation: 0f,
-                    origin: Vector2.Zero,
-                    scale: railScale,
-                    effects: SpriteEffects.None,
-                    layerDepth: railDepth);
-            }
-        }
-
         prepTrainMap.Draw(spriteBatch);
-        Vector2 vendorPosition = new Vector2(1160, 580);
-        Texture2D vendorTex = AssetManager.GetNPCTexture("Vendor");
-        Vector2 bottomCenterOrigin = new Vector2(vendorTex.Width / 2f, vendorTex.Height);
-        float vendorScale = 0.3f;
-        float vendorDepth = RenderUtility.CalculateDepth(vendorPosition.Y);
-        spriteBatch.Draw(
-            texture: vendorTex,
-            position: vendorPosition,
-            sourceRectangle: null,
-            color: Color.White,
-            rotation: 0f,
-            origin: bottomCenterOrigin,
-            scale: vendorScale,
-            effects: SpriteEffects.None,
-            layerDepth: vendorDepth
-        );
-
-        Vector2 town1Position = new Vector2(800, 200);
-        Texture2D town1Tex = AssetManager.GetNPCTexture("Town1");
-        Vector2 town1Origin = new Vector2(town1Tex.Width / 2f, town1Tex.Height);
-        float town1Scale = 0.3f;
-        float town1Depth = RenderUtility.CalculateDepth(town1Position.Y);
-        spriteBatch.Draw(
-            texture: town1Tex,
-            position: town1Position,
-            sourceRectangle: null,
-            color: Color.White,
-            rotation: 0f,
-            origin: town1Origin,
-            scale: town1Scale,
-            effects: SpriteEffects.None,
-            layerDepth: town1Depth
-        );
         Services.GetService<IVfxService>().Render(spriteBatch);
         foreach (var player in players) player.Draw(spriteBatch);
 
@@ -192,6 +126,7 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
             spriteBatch.Draw(AssetManager.BlankTexture, new Rectangle(0, 0, virtualScreenSize.X, virtualScreenSize.Y),
                 Color.White * departWhiteFilter.Opacity);
         }
+
         pauseMenu.OptionsPanel.Draw(
             spriteBatch,
             virtualScreenSize,
@@ -283,7 +218,8 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
         bool allReady = players.Count > 0 && readyPlayers.Count == players.Count;
         int pendingShopCount = prepTrainMap.MapObjects.Count(e =>
             e is BuyableStationWrapper && prepTrainMap.GetBounds().Contains(e.Position));
-        hud.Update(allReady, pendingShopCount, departHoldTimer, Game.GameplayConfig.DepartHoldSeconds, readyPlayers.Count, players.Count);
+        hud.Update(allReady, pendingShopCount, departHoldTimer, Game.GameplayConfig.DepartHoldSeconds,
+            readyPlayers.Count, players.Count);
 
         bool canDepart = allReady && pendingShopCount == 0;
         departHoldTimer = canDepart ? departHoldTimer + dt : 0f;
