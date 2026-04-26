@@ -129,6 +129,7 @@ public class GameplayConfig
     public float CannonProjectilePierce { get; set; } = 1f;
     public float CannonProjectileSpread { get; set; } = 0.2f;
     public float CannonCooldown { get; set; } = 0.5f;
+    public float CannonRotationSpeed { get; set; } = 6f;
 
     // Camera configuration
     public float CameraLerpFactor { get; set; } = 4.0f;
