@@ -17,6 +17,7 @@ public class PatchManager
 {
     private readonly HashSet<Point> snowTiles = new();
     private readonly HashSet<Point> iceTiles = new();
+    private readonly TrainMap map;
     private readonly List<Point> allTiles;
     private readonly Random random = Random.Shared;
 
@@ -34,10 +35,15 @@ public class PatchManager
 
     public PatchManager(TrainMap map)
     {
+        this.map = map;
         allTiles = new List<Point>(map.Width * map.Height);
         for (int x = 0; x < map.Width; x++)
+        {
             for (int y = 0; y < map.Height; y++)
+            {
                 allTiles.Add(new Point(x, y));
+            }
+        }
     }
 
     private int TargetCount(float tempRatio, float threshold, float maxCoverage)
@@ -104,12 +110,23 @@ public class PatchManager
         for (int attempt = 0; attempt < 20; attempt++)
         {
             Point candidate = allTiles[random.Next(allTiles.Count)];
-            if (!snowTiles.Contains(candidate) && !iceTiles.Contains(candidate))
-            {
-                targetSet.Add(candidate);
-                return;
-            }
+            if (snowTiles.Contains(candidate) || iceTiles.Contains(candidate) || IsOccupied(candidate))
+                continue;
+
+            targetSet.Add(candidate);
+            return;
         }
+    }
+
+    private bool IsOccupied(Point tile)
+    {
+        foreach (var mapObject in map.MapObjects)
+        {
+            Point occupiedTile = map.GetTileIndexFromPixels(mapObject.Position);
+            if (occupiedTile == tile) return true;
+        }
+
+        return false;
     }
 
     private void TryMeltOneFrom(HashSet<Point> tiles)

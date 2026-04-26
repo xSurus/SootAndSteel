@@ -127,7 +127,18 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
         }
         else if (movement != Vector2.Zero)
         {
-            PhysicsBody.ApplyForce(movement * 100f);
+            if (onIce)
+            {
+                PhysicsBody.ApplyForce(movement * GamelabGame.Instance.GameplayConfig.IceForce);
+                float maxSpeed = MaxVelocity;
+                float speedSq = PhysicsBody.LinearVelocity.LengthSquared();
+                if (speedSq > maxSpeed * maxSpeed)
+                    PhysicsBody.LinearVelocity = Vector2.Normalize(PhysicsBody.LinearVelocity) * maxSpeed;
+            }
+            else
+            {
+                PhysicsBody.ApplyForce(movement * 100f * speedScale);
+            }
         }
 
         if (onIce && PhysicsBody.LinearVelocity.LengthSquared() > 0.5f)
@@ -143,8 +154,8 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
         UpdateHighlightedEntity();
         if (TryGrab()) return;
         if (TryPickup(dt)) return;
+        if (TryRemovePatch(dt)) return;
         if (TryInteract(dt)) return;
-        TryRemovePatch(dt);
     }
 
     public void Stun(float durationSeconds)
@@ -285,25 +296,42 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
         return false;
     }
 
-    private void TryRemovePatch(float dt)
+    private bool TryRemovePatch(float dt)
     {
         var patches = gameplayContext?.PatchManager;
         bool onPatch = patches != null &&
                        (patches.IsOnSnow(Position, gameplayContext.Map) ||
                         patches.IsOnIce(Position, gameplayContext.Map));
 
-        if (!onPatch || !PlayerConfiguration.Input.IsInteractHeld())
+        if (!onPatch)
         {
             patchRemoveTimer = 0f;
-            return;
+            return false;
+        }
+
+        if (highlightedEntity is IInteractable interactable)
+        {
+            Point playerTile = gameplayContext.Map.GetTileIndexFromPixels(Position);
+            Point interactableTile = gameplayContext.Map.GetTileIndexFromPixels(interactable.Position);
+            if (interactableTile == playerTile)
+            {
+                patchRemoveTimer = 0f;
+                return false;
+            }
+        }
+
+        if (!PlayerConfiguration.Input.IsInteractHeld())
+        {
+            patchRemoveTimer = 0f;
+            return false;
         }
 
         patchRemoveTimer += dt;
-        if (patchRemoveTimer >= GamelabGame.Instance.GameplayConfig.PatchRemoveDurationSeconds)
-        {
-            patches.TryRemovePatchAt(Position, gameplayContext.Map);
-            patchRemoveTimer = 0f;
-        }
+        if (patchRemoveTimer < GamelabGame.Instance.GameplayConfig.PatchRemoveDurationSeconds)
+            return false;
+
+        patchRemoveTimer = 0f;
+        return patches.TryRemovePatchAt(Position, gameplayContext.Map);
     }
 
     private void UpdateHighlightedEntity()
