@@ -19,7 +19,6 @@ public class GameplayHud
     private float temperatureRatio;
     private float speedRatio;
     private string distanceText = "";
-    private string coalText = "";
     private string speedText = "";
     private string tempText = "";
 
@@ -62,11 +61,9 @@ public class GameplayHud
         temperatureRatio = Math.Clamp(state.Temperature / Math.Max(maxTemp, 1f), 0f, 1f);
         tempText = $"{state.Temperature:F0}\u00b0";
 
-        float maxSpeed = config.TrainSpeedQuadruple;
+        float maxSpeed = config.TrainSpeedFast;
         speedRatio = Math.Clamp(state.actualSpeed / Math.Max(maxSpeed, 1f), 0f, 1f);
         speedText = $"{state.actualSpeed:F0}";
-
-        coalText = $"Coal: {state.CoalAmount}";
     }
 
     public void Draw(SpriteBatch sb, Point screen)
@@ -84,13 +81,6 @@ public class GameplayHud
         float rightGaugeCenterX = leftGaugeCenterX + GaugeDiameter + GaugeSpacing;
         DrawArcGauge(sb, blank, new Vector2(rightGaugeCenterX, gaugeCenterY),
             speedRatio, speedText, GetSpeedColor, "km/h");
-
-        float midX = (leftGaugeCenterX + rightGaugeCenterX) / 2f;
-        float coalY = gaugeCenterY + ArcRadius + 20f;
-        Vector2 coalSize = labelFont.MeasureString(coalText);
-        float coalX = midX - coalSize.X / 2f;
-        sb.DrawString(labelFont, coalText, new Vector2(coalX + 1, coalY + 1), Color.Black * 0.5f);
-        sb.DrawString(labelFont, coalText, new Vector2(coalX, coalY), new Color(255, 200, 80));
     }
 
     private void DrawDistanceBar(SpriteBatch sb, Texture2D blank, int screenWidth)

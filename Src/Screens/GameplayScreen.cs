@@ -348,7 +348,6 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     {
         trainSound?.Stop();
         gameplayContext.State.VictoryLapActive = true;
-        Game.CurrentRun.CoalRemaining = gameplayContext.State.CoalAmount;
         endLevelWhiteFilter.FadeIn(4f);
         phase = GameplayPhase.EndOfLevelOutro;
     }

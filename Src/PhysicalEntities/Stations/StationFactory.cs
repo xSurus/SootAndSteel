@@ -16,7 +16,11 @@ public static class StationFactory
             case StationIds.Counter: return new Counter(centerPixels);
             case StationIds.SpeedLever: return new SpeedLever(centerPixels);
             case { } id when StationIds.IsComponentStationId(id):
-                return new ComponentResource(centerPixels, StationIds.GetStationComponentId(id));
+                return new ComponentResourceStation(centerPixels, StationIds.GetStationComponentId(id));
+            case { } id when StationIds.IsResourceStationId(id):
+            {
+                return new ResourceStation(centerPixels, StationIds.GetStationResourceId(id));
+            }
         }
 
         throw new ArgumentOutOfRangeException(nameof(kindId), kindId, $"Unknown station kind id '{kindId}'.");

@@ -1,22 +1,13 @@
 using System;
-using Gamelab.Enemies;
 using Gamelab.Map.Train.State;
-using Gamelab.PhysicalEntities;
-using Gamelab.PhysicalEntities.Bullets;
-using Gamelab.PhysicalEntities.Projectiles;
 using Gamelab.Players;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace Gamelab.PhysicalEntities.Stations;
 
 public class SpeedLever(Vector2 position)
-    : AbstractStation("SpeedLever", Color.LightGreen, position)
+    : AbstractStation(StationIds.SpeedLever, position)
 {
-
-    /// <summary>
-    /// When set, interact calls this instead of cycling speed. Used by HubScreen for depart readying.
-    /// </summary>
     public Action<Player> OnInteractOverride { get; set; }
 
     public override void OnInteract(Player interactingPlayer)
@@ -34,7 +25,7 @@ public class SpeedLever(Vector2 position)
 
         if (!gameplayContext.State.IsCoalOvenBurning)
         {
-            gameplayContext.State.CurrentSpeed = TrainSpeedSetting.Stopped;
+            gameplayContext.State.CurrentSpeed = TrainSpeedSetting.Slow;
             return;
         }
 

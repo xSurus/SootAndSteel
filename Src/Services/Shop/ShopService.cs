@@ -31,7 +31,7 @@ public class ShopManager : IShopService
             .Where(kvp => kvp.Value.AppearsInShop)
             .Select(kvp => new CatalogItem
             {
-                ItemId = StationIds.GetComponentStationId(kvp.Key),
+                ItemId = StationIds.GetResourceStationId(StationIds.GetComponentResourceId(kvp.Key)),
                 Name = kvp.Value.Name,
                 Description = kvp.Value.Description,
                 Price = kvp.Value.ShopPrice

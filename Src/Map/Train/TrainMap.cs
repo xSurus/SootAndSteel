@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Gamelab.Assets;
 using Gamelab.Config;
+using Gamelab.Items.Bullets;
 using Gamelab.Map.Train.State;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.PhysicalEntities.Stations;
@@ -149,13 +150,10 @@ public class TrainMap
                 MapObjects.Add(new ShootHoleWall(wallSize, bottomPos, false));
         }
 
-        // blockers above and below the bridge
-        Point[] bridgeBlocker = [new Point(-1, 0), new Point(-1, 1), new Point(-1, 3), new Point(-1, 4)];
         float tileSimSize = TileSize.ToMeters();
-
-        foreach (var tile in bridgeBlocker)
+        for (int y = 0; y < Height; y++)
         {
-            Vector2 wallCenterMeters = GetTileCenterMeters(tile.X, tile.Y);
+            Vector2 wallCenterMeters = GetTileCenterMeters(-1, y);
             gameplayContext.PhysicsWorld.CreateRectangle(tileSimSize, tileSimSize, 1f, wallCenterMeters);
         }
     }
@@ -163,7 +161,7 @@ public class TrainMap
     public void AddDefaultStructures()
     {
         Vector2 coalWagonPos = new Vector2(
-            Position.X - 4 * TileSize,
+            Position.X - 3 * TileSize,
             Position.Y + (Height * TileSize) / 2f);
         MapObjects.Add(new CoalWagon(coalWagonPos));
         MapObjects.Add(new TrainNose(GetTileCenterPixels(8, 2)));
@@ -173,9 +171,10 @@ public class TrainMap
     {
         MapObjects.Add(new SpeedLever(GetTileCenterPixels(7, 3)));
         MapObjects.Add(new CannonStation(GetTileCenterPixels(5, 2)));
-        MapObjects.Add(new ComponentResource(GetTileCenterPixels(2, 0), "BasicCasing"));
-        MapObjects.Add(new ComponentResource(GetTileCenterPixels(2, 4), "BasicProjectile"));
-        MapObjects.Add(new ComponentResource(GetTileCenterPixels(3, 0), "BasicPropellant"));
+        MapObjects.Add(new ComponentResourceStation(GetTileCenterPixels(2, 0), ComponentIds.BasicCasing));
+        MapObjects.Add(new ComponentResourceStation(GetTileCenterPixels(2, 4), ComponentIds.BasicProjectile));
+        MapObjects.Add(new ComponentResourceStation(GetTileCenterPixels(3, 0), ComponentIds.BasicPropellant));
+        MapObjects.Add(new ResourceStation(GetTileCenterPixels(7, 0), "Coal"));
         MapObjects.Add(new Workbench(GetTileCenterPixels(1, 0)));
         MapObjects.Add(new Workbench(GetTileCenterPixels(1, 4)));
         MapObjects.Add(new Counter(GetTileCenterPixels(0, 0)));
@@ -226,8 +225,6 @@ public class TrainMap
 
         for (int y = 0; y < Height; y++)
         {
-            if (y == 2) continue;
-
             Texture2D upperSideTex = AssetManager.GetWallTexture("WallTileUpperSide");
             Vector2 upperSideOrigin = new Vector2(upperSideTex.Width / 2f, upperSideTex.Height);
 
@@ -237,20 +234,6 @@ public class TrainMap
 
             spriteBatch.Draw(upperSideTex, sideFeet, null, Color.White,
                 0f, upperSideOrigin, scale, SpriteEffects.None, sideDepth);
-        }
-
-        Texture2D wallTileTopTex = AssetManager.GetWallTexture("WallTileTop");
-        Vector2 wallTileTopOrigin = new Vector2(wallTileTopTex.Width / 2f, wallTileTopTex.Height);
-
-        for (int bridgeX = -1; bridgeX >= -2; bridgeX--)
-        {
-            Vector2 topBridgeTL = GetTileTopLeftPixels(bridgeX, 2) + new Vector2(0, -tileSize * 2f);
-            Vector2 topBridgeFeet =
-                topBridgeTL + new Vector2(wallTileTopTex.Width / 2f * scale, wallTileTopTex.Height * scale);
-            float topBridgeDepth = RenderUtility.CalculateDepth(topBridgeFeet.Y);
-
-            spriteBatch.Draw(wallTileTopTex, topBridgeFeet, null, Color.White,
-                0f, wallTileTopOrigin, scale, SpriteEffects.None, topBridgeDepth);
         }
     }
 
@@ -267,17 +250,6 @@ public class TrainMap
                 spriteBatch.Draw(tileTex, feetPosition, null, Color.White,
                     0f, origin, scale, SpriteEffects.None, RenderUtility.FloorLayer);
             }
-        }
-
-        Texture2D bridgeTex = AssetManager.TileTexture[0];
-        Vector2 bridgeOrigin = new Vector2(bridgeTex.Width / 2f, bridgeTex.Height);
-
-        for (int bridgeX = -1; bridgeX >= -2; bridgeX--)
-        {
-            Vector2 bottomCenter = GetTileCenterPixels(bridgeX, 2) + new Vector2(0, TileSize / 2f);
-
-            spriteBatch.Draw(bridgeTex, bottomCenter, null, Color.White,
-                0f, bridgeOrigin, scale, SpriteEffects.None, RenderUtility.FloorLayer);
         }
     }
 

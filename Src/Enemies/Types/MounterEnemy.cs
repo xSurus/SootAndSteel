@@ -93,12 +93,7 @@ public class MounterEnemy(Vector2 spawnPosition, EnemyTrainSlot slot) : Abstract
 
         if (stateTimer >= StealDuration && !hasStolen)
         {
-            if (gameplayContext.State.CoalAmount > 0)
-            {
-                int stolen = Math.Min(CoalToSteal, gameplayContext.State.CoalAmount);
-                gameplayContext.State.ConsumeCoal(stolen);
-            }
-
+            gameplayContext.State.DecreaseTemperature(10f);
             hasStolen = true;
             currentState = MounterState.Escaping;
         }

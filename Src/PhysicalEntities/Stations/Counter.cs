@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 namespace Gamelab.PhysicalEntities.Stations;
 
 public class Counter(Vector2 position)
-    : AbstractStation("Counter", Color.SaddleBrown, position)
+    : AbstractStation(StationIds.Counter, position)
 {
     public override void OnPickup(Player interactingPlayer)
     {
