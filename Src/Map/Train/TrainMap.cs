@@ -190,11 +190,6 @@ public class TrainMap
         {
             Vector2 targetCenterMeters = GetTileCenterMeters(gridPos.X, gridPos.Y);
             station.PhysicsBody.Position = targetCenterMeters;
-
-            if (station is CannonStation cannon)
-            {
-                cannon.AimingBar.PhysicsBody.Position = targetCenterMeters;
-            }
         }
     }
 

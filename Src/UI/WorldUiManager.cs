@@ -363,10 +363,10 @@ public class WorldUiManager(GamelabGame game)
             case CannonStation:
                 left.Visual.Visible = true;
                 right.Visual.Visible = true;
-                ApplyFaceButtonIcon(left, XboxButtonAtlas.Face.X);
-                left.ButtonText = "Fire";
-                ApplyFaceButtonIcon(right, XboxButtonAtlas.Face.A);
-                right.ButtonText = "Load";
+                ApplyFaceButtonIcon(left, XboxButtonAtlas.Face.Y);
+                left.ButtonText = "Sit";
+                ApplyFaceButtonIcon(right, XboxButtonAtlas.Face.X);
+                right.ButtonText = "Fire";
                 break;
 
             case Workbench:

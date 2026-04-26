@@ -6,6 +6,7 @@ using Gamelab.Items;
 using Gamelab.PhysicalEntities;
 using Gamelab.PhysicalEntities.Bullets;
 using Gamelab.PhysicalEntities.Interfaces;
+using Gamelab.PhysicalEntities.Stations.Cannon;
 using Gamelab.Services.Sound;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
@@ -20,6 +21,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
     public PlayerConfiguration PlayerConfiguration { get; private set; }
     public Item HeldItem { get; set; }
     public IGrabbable GrabbedObject { get; private set; }
+    public CannonStation SeatedAt { get; private set; }
     public PlayerCondition Condition { get; private set; } = PlayerCondition.Active;
     public bool IsStunned => Condition == PlayerCondition.Stunned;
     public float ReviveProgress { get; private set; }
@@ -91,6 +93,12 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
         if (IsStunned)
         {
             UpdateStunned(dt);
+            return;
+        }
+
+        if (SeatedAt != null)
+        {
+            UpdateSeated();
             return;
         }
 
@@ -178,7 +186,51 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
             GrabbedObject = null;
         }
 
+        SeatedAt?.OnRelease(this);
+
         HeldItem = null;
+    }
+
+    public void SeatAt(CannonStation cannon)
+    {
+        SeatedAt = cannon;
+        PhysicsBody.LinearVelocity = Vector2.Zero;
+        PhysicsBody.Position = cannon.PhysicsBody.Position;
+        PhysicsBody.BodyType = BodyType.Static;
+    }
+
+    public void UnseatFrom(CannonStation cannon)
+    {
+        if (SeatedAt != cannon) return;
+        SeatedAt = null;
+        if (ReferenceEquals(GrabbedObject, cannon)) GrabbedObject = null;
+        PhysicsBody.BodyType = BodyType.Dynamic;
+        PhysicsBody.LinearVelocity = Vector2.Zero;
+    }
+
+    private void UpdateSeated()
+    {
+        PhysicsBody.Position = SeatedAt.PhysicsBody.Position;
+        PhysicsBody.LinearVelocity = Vector2.Zero;
+        PhysicsBody.Rotation = SeatedAt.PhysicsBody.Rotation;
+
+        var input = PlayerConfiguration.Input;
+
+        if (input.IsGrabJustPressed())
+        {
+            SeatedAt.OnRelease(this);
+            return;
+        }
+
+        if (input.IsInteractJustPressed())
+        {
+            SeatedAt.OnInteract(this);
+        }
+
+        if (input.IsPickupJustPressed())
+        {
+            SeatedAt.OnPickup(this);
+        }
     }
 
     public void OnInteractHeld(Player interactingPlayer, float dt)

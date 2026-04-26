@@ -22,14 +22,13 @@ public class CannonStation : AbstractStation, IBulletEmitter
     
     private ISoundService soundService;
 
-    public CannonAimingBar AimingBar { get; private set; }
+    public Player SeatedPlayer { get; private set; }
 
     public CannonStation(Vector2 position)
         : base(StationIds.Cannon, position)
     {
         config = GamelabGame.Instance.GameplayConfig;
         cooldownTimer = 0f;
-        AimingBar = new CannonAimingBar(PhysicsBody, position.ToMeters());
         soundService = GamelabGame.Instance.Services.GetService<ISoundService>();
         soundService.LoadSound(Sounds.CannonLoad);
         soundService.LoadSound(Sounds.CannonFire);
@@ -41,6 +40,23 @@ public class CannonStation : AbstractStation, IBulletEmitter
         {
             cooldownTimer -= dt;
         }
+
+        UpdateAim(dt);
+    }
+
+    public override bool OnGrab(Player interactingPlayer, Vector2 grabPointWorldMeters)
+    {
+        if (SeatedPlayer != null) return false;
+        SeatedPlayer = interactingPlayer;
+        interactingPlayer.SeatAt(this);
+        return true;
+    }
+
+    public override void OnRelease(Player interactingPlayer)
+    {
+        if (SeatedPlayer != interactingPlayer) return;
+        SeatedPlayer.UnseatFrom(this);
+        SeatedPlayer = null;
     }
 
     public override void OnInteract(Player interactingPlayer)
@@ -50,11 +66,7 @@ public class CannonStation : AbstractStation, IBulletEmitter
             return;
         }
 
-        Vector2 direction = new Vector2(
-            (float)Math.Cos(AimingBar.PhysicsBody.Rotation),
-            (float)Math.Sin(AimingBar.PhysicsBody.Rotation)
-        );
-
+        Vector2 direction = AimDirection;
         FireCannon(direction, (BulletItem)HeldItem);
         HeldItem = null;
     }
@@ -76,6 +88,29 @@ public class CannonStation : AbstractStation, IBulletEmitter
         soundService.PlayOnce(Sounds.CannonLoad);
     }
 
+    private Vector2 AimDirection => new(
+        (float)Math.Cos(PhysicsBody.Rotation),
+        (float)Math.Sin(PhysicsBody.Rotation)
+    );
+
+    private void UpdateAim(float dt)
+    {
+        if (SeatedPlayer == null) return;
+
+        Vector2 input = SeatedPlayer.PlayerConfiguration.Input.GetMovement();
+        if (input.LengthSquared() <= GamelabGame.Instance.GameplayConfig.InputMovementDeadzoneSquared)
+        {
+            return;
+        }
+
+        float targetAngle = (float)Math.Atan2(input.Y, input.X);
+        float currentAngle = PhysicsBody.Rotation;
+        float diff = MathHelper.WrapAngle(targetAngle - currentAngle);
+        float maxStep = config.CannonRotationSpeed * dt;
+        float step = Math.Clamp(diff, -maxStep, maxStep);
+        PhysicsBody.Rotation = currentAngle + step;
+    }
+
     private void FireCannon(Vector2 direction, BulletItem ammo)
     {
         Vector2 cannonPosition = DrawPosition + new Vector2(config.TrainTileSize / 2f);
@@ -95,17 +130,10 @@ public class CannonStation : AbstractStation, IBulletEmitter
     {
         base.Draw(spriteBatch);
 
-        if (AimingBar?.PhysicsBody == null) return;
-
-        Vector2 direction = new Vector2(
-            (float)Math.Cos(AimingBar.PhysicsBody.Rotation),
-            (float)Math.Sin(AimingBar.PhysicsBody.Rotation)
-        );
         float lineLength = config.TrainTileSize * 4f;
-        Vector2 lineEnd = Position + direction * lineLength;
-        DrawAimLine(spriteBatch, Position, lineEnd, Color.White);
-
-        AimingBar?.Draw(spriteBatch);
+        Vector2 lineEnd = Position + AimDirection * lineLength;
+        Color lineColor = SeatedPlayer != null ? Color.OrangeRed : Color.White;
+        DrawAimLine(spriteBatch, Position, lineEnd, lineColor);
     }
 
     private static void DrawAimLine(SpriteBatch spriteBatch, Vector2 start, Vector2 end, Color color)
