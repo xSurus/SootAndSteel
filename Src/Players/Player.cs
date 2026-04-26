@@ -44,6 +44,8 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
     private float LinearDampening => GamelabGame.Instance.GameplayConfig.PlayerLinearDamping;
 
     private float stunTimer;
+    private float stunAnimTimer;
+    private float patchRemoveTimer;
     private bool revivedThisFrame;
 
 
@@ -94,28 +96,65 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
 
         Vector2 movement = PlayerConfiguration.Input.GetMovement();
 
-        float maxTemperature = GamelabGame.Instance.GameplayConfig.TrainMaxTemperature;
-        float temperatureRatio = gameplayContext == null || maxTemperature <= 0f
-            ? 0f
-            : gameplayContext.State.Temperature / maxTemperature;
+        var patches = gameplayContext?.PatchManager;
+        bool onSnow = patches?.IsOnSnow(Position, gameplayContext.Map) ?? false;
+        bool onIce = patches?.IsOnIce(Position, gameplayContext.Map) ?? false;
 
-        float speedScale = Math.Clamp(temperatureRatio, 0f, 1f);
-        float effectiveMaxVelocity = MaxVelocity * speedScale;
+        PhysicsBody.LinearDamping = onIce
+            ? GamelabGame.Instance.GameplayConfig.IceLinearDamping
+            : LinearDampening;
+
+        float speedScale = onSnow ? GamelabGame.Instance.GameplayConfig.SnowSpeedFactor : 1f;
 
         if (GrabbedObject == null)
         {
             if (movement != Vector2.Zero) PhysicsBody.Rotation = (float)Math.Atan2(movement.Y, movement.X);
-            Vector2 targetVelocity = movement * effectiveMaxVelocity;
-            PhysicsBody.LinearVelocity = Vector2.Lerp(PhysicsBody.LinearVelocity, targetVelocity, LerpFactor);
+
+            if (onIce)
+            {
+                // Force-based: input accelerates gradually and momentum is preserved by low damping.
+                PhysicsBody.ApplyForce(movement * GamelabGame.Instance.GameplayConfig.IceForce);
+                float maxSpeed = MaxVelocity;
+                float speedSq = PhysicsBody.LinearVelocity.LengthSquared();
+                if (speedSq > maxSpeed * maxSpeed)
+                    PhysicsBody.LinearVelocity = Vector2.Normalize(PhysicsBody.LinearVelocity) * maxSpeed;
+            }
+            else
+            {
+                Vector2 targetVelocity = movement * MaxVelocity * speedScale;
+                PhysicsBody.LinearVelocity = Vector2.Lerp(PhysicsBody.LinearVelocity, targetVelocity, LerpFactor);
+            }
         }
         else if (movement != Vector2.Zero)
         {
-            PhysicsBody.ApplyForce(movement * 100f * speedScale);
+            if (onIce)
+            {
+                PhysicsBody.ApplyForce(movement * GamelabGame.Instance.GameplayConfig.IceForce);
+                float maxSpeed = MaxVelocity;
+                float speedSq = PhysicsBody.LinearVelocity.LengthSquared();
+                if (speedSq > maxSpeed * maxSpeed)
+                    PhysicsBody.LinearVelocity = Vector2.Normalize(PhysicsBody.LinearVelocity) * maxSpeed;
+            }
+            else
+            {
+                PhysicsBody.ApplyForce(movement * 100f * speedScale);
+            }
+        }
+
+        if (onIce && PhysicsBody.LinearVelocity.LengthSquared() > 0.5f)
+        {
+            float tripChance = GamelabGame.Instance.GameplayConfig.IceTripChancePerSecond * dt;
+            if (Random.Shared.NextDouble() < tripChance)
+            {
+                Stun(0);
+                return;
+            }
         }
 
         UpdateHighlightedEntity();
         if (TryGrab()) return;
         if (TryPickup(dt)) return;
+        if (TryRemovePatch(dt)) return;
         if (TryInteract(dt)) return;
     }
 
@@ -128,6 +167,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
 
         Condition = PlayerCondition.Stunned;
         stunTimer = Math.Max(stunTimer, durationSeconds);
+        stunAnimTimer = 0f;
         ReviveProgress = 0f;
         revivedThisFrame = false;
         PhysicsBody.LinearVelocity = Vector2.Zero;
@@ -178,6 +218,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
     private void UpdateStunned(float dt)
     {
         PhysicsBody.LinearVelocity = Vector2.Zero;
+        stunAnimTimer += dt;
 
         if (!revivedThisFrame)
         {
@@ -255,6 +296,44 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
         return false;
     }
 
+    private bool TryRemovePatch(float dt)
+    {
+        var patches = gameplayContext?.PatchManager;
+        bool onPatch = patches != null &&
+                       (patches.IsOnSnow(Position, gameplayContext.Map) ||
+                        patches.IsOnIce(Position, gameplayContext.Map));
+
+        if (!onPatch)
+        {
+            patchRemoveTimer = 0f;
+            return false;
+        }
+
+        if (highlightedEntity is IInteractable interactable)
+        {
+            Point playerTile = gameplayContext.Map.GetTileIndexFromPixels(Position);
+            Point interactableTile = gameplayContext.Map.GetTileIndexFromPixels(interactable.Position);
+            if (interactableTile == playerTile)
+            {
+                patchRemoveTimer = 0f;
+                return false;
+            }
+        }
+
+        if (!PlayerConfiguration.Input.IsInteractHeld())
+        {
+            patchRemoveTimer = 0f;
+            return false;
+        }
+
+        patchRemoveTimer += dt;
+        if (patchRemoveTimer < GamelabGame.Instance.GameplayConfig.PatchRemoveDurationSeconds)
+            return false;
+
+        patchRemoveTimer = 0f;
+        return patches.TryRemovePatchAt(Position, gameplayContext.Map);
+    }
+
     private void UpdateHighlightedEntity()
     {
         float reachInMeters = InteractDistancePixels.ToMeters();
@@ -295,22 +374,43 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
         bool isFacingRight = LookDirection.X > 0;
         SpriteEffects flipEffect = isFacingRight ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
         float renderDepth = RenderUtility.CalculateDepth(feetPosition.Y);
-        spriteBatch.Draw(
-            texture: texture,
-            position: feetPosition,
-            sourceRectangle: null,
-            color: drawColor,
-            rotation: 0f,
-            origin: origin,
-            scale: 0.3f,
-            effects: flipEffect,
-            layerDepth: renderDepth
-        );
+
+        if (IsStunned)
+        {
+            // Draw character lying on their side
+            Vector2 centerOrigin = new Vector2(texture.Width / 2f, texture.Height / 2f);
+            spriteBatch.Draw(
+                texture: texture,
+                position: Position,
+                sourceRectangle: null,
+                color: drawColor,
+                rotation: MathHelper.PiOver2,
+                origin: centerOrigin,
+                scale: 0.3f,
+                effects: flipEffect,
+                layerDepth: renderDepth
+            );
+        }
+        else
+        {
+            spriteBatch.Draw(
+                texture: texture,
+                position: feetPosition,
+                sourceRectangle: null,
+                color: drawColor,
+                rotation: 0f,
+                origin: origin,
+                scale: 0.3f,
+                effects: flipEffect,
+                layerDepth: renderDepth
+            );
+        }
 
         DrawInteractionTarget(spriteBatch);
         DrawHeldItem(spriteBatch, renderDepth + RenderUtility.Eps);
 
         float playerVisualHeight = texture.Height * 0.3f;
+        DrawConcussionStars(spriteBatch, playerVisualHeight);
         DrawStunProgress(spriteBatch, playerVisualHeight);
     }
 
@@ -329,6 +429,40 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
     {
         Vector2 targetPointPixels = Position + (LookDirection * InteractDistancePixels);
         spriteBatch.DrawCircle(targetPointPixels, 5f, 12, Color.Red, 2f, layerDepth: RenderUtility.OverlayTopLayer);
+    }
+
+    private void DrawConcussionStars(SpriteBatch spriteBatch, float playerVisualHeight)
+    {
+        if (!IsStunned) return;
+
+        const int starCount = 5;
+        const float orbitRadius = 16f;
+        const float starScale = 7f;
+
+        // Orbit center sits just above the player's head
+        Vector2 center = Position + new Vector2(0, -(playerVisualHeight + orbitRadius + 4f));
+        float baseAngle = stunAnimTimer * 3f;
+
+        for (int i = 0; i < starCount; i++)
+        {
+            float angle = baseAngle + MathHelper.TwoPi / starCount * i;
+            Vector2 starPos = center + new Vector2(
+                (float)Math.Cos(angle) * orbitRadius,
+                (float)Math.Sin(angle) * orbitRadius * 0.4f  // flatten into an ellipse
+            );
+            Color color = i % 2 == 0 ? Color.Yellow : Color.Gold;
+            spriteBatch.Draw(
+                AssetManager.BlankTexture,
+                starPos,
+                null,
+                color,
+                angle,                          // each star rotates with its orbit angle
+                new Vector2(0.5f, 0.5f),
+                starScale,
+                SpriteEffects.None,
+                RenderUtility.OverlayTopLayer
+            );
+        }
     }
 
     private void DrawStunProgress(SpriteBatch spriteBatch, float playerVisualHeight)
