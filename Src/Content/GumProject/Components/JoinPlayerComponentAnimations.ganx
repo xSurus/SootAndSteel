@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ElementAnimationsSave xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Animations>
+    <AnimationSave>
+      <Loops>true</Loops>
+      <Name>PlayerJoinedAnimation</Name>
+      <States>
+        <AnimatedStateSave>
+          <StateName>MovingPlayer/Frame0Joined</StateName>
+          <Time>0</Time>
+          <InterpolationType>Linear</InterpolationType>
+          <Easing>Out</Easing>
+        </AnimatedStateSave>
+        <AnimatedStateSave>
+          <StateName>MovingPlayer/Frame1Joined</StateName>
+          <Time>0.5</Time>
+          <InterpolationType>Linear</InterpolationType>
+          <Easing>Out</Easing>
+        </AnimatedStateSave>
+        <AnimatedStateSave>
+          <StateName>MovingPlayer/Frame3Joined</StateName>
+          <Time>1</Time>
+          <InterpolationType>Linear</InterpolationType>
+          <Easing>Out</Easing>
+        </AnimatedStateSave>
+        <AnimatedStateSave>
+          <StateName>MovingPlayer/Frame4Joined</StateName>
+          <Time>1.5</Time>
+          <InterpolationType>Elastic</InterpolationType>
+          <Easing>In</Easing>
+        </AnimatedStateSave>
+        <AnimatedStateSave>
+          <StateName>MovingPlayer/Frame0Joined</StateName>
+          <Time>2</Time>
+          <InterpolationType>Linear</InterpolationType>
+          <Easing>Out</Easing>
+        </AnimatedStateSave>
+      </States>
+      <Animations />
+      <Events />
+    </AnimationSave>
+    <AnimationSave>
+      <Loops>true</Loops>
+      <Name>PlayerEmptyAnimation</Name>
+      <States>
+        <AnimatedStateSave>
+          <StateName>MovingPlayer/Frame0Empty</StateName>
+          <Time>0</Time>
+          <InterpolationType>Linear</InterpolationType>
+          <Easing>Out</Easing>
+        </AnimatedStateSave>
+        <AnimatedStateSave>
+          <StateName>MovingPlayer/Frame1Empty</StateName>
+          <Time>0.5</Time>
+          <InterpolationType>Linear</InterpolationType>
+          <Easing>Out</Easing>
+        </AnimatedStateSave>
+        <AnimatedStateSave>
+          <StateName>MovingPlayer/Frame2Empty</StateName>
+          <Time>1</Time>
+          <InterpolationType>Linear</InterpolationType>
+          <Easing>Out</Easing>
+        </AnimatedStateSave>
+        <AnimatedStateSave>
+          <StateName>MovingPlayer/Frame3Empty</StateName>
+          <Time>1.5</Time>
+          <InterpolationType>Linear</InterpolationType>
+          <Easing>Out</Easing>
+        </AnimatedStateSave>
+        <AnimatedStateSave>
+          <StateName>MovingPlayer/Frame0Empty</StateName>
+          <Time>2</Time>
+          <InterpolationType>Linear</InterpolationType>
+          <Easing>Out</Easing>
+        </AnimatedStateSave>
+      </States>
+      <Animations />
+      <Events />
+    </AnimationSave>
+  </Animations>
+</ElementAnimationsSave>

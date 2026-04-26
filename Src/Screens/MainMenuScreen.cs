@@ -1,45 +1,79 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using Gamelab.Components;
+using Gamelab.Input;
+using Gamelab.Players;
+using Gamelab.Screens;
 using Gamelab.Serialization;
 using Gamelab.Services.Sound;
-using Gamelab.Assets;
+using Gamelab.Particles;
+using Gamelab.Services.Vfx;
 using Gamelab.UI;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Gamelab.Services.Vfx;
-using Gamelab.Particles;
+using Microsoft.Xna.Framework.Input;
+using MonoGameGum;
 
-namespace Gamelab.Screens;
+namespace Gamelab;
 
-public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
+/// <summary>
+/// Main menu MonoGame screen. The Gum Forms UI is <see cref="Screens.MainMenuScreen"/> (generated); this type
+/// stays in namespace <see cref="Gamelab"/> so it does not collide with Gum when you regenerate code, mirroring
+/// the pattern used by <see cref="JoinScreen"/>.
+/// </summary>
+public sealed class MainMenuScreen(GamelabGame game) : Screens.AbstractGameScreen(game)
 {
-    private Logger logger = new Logger("MainMenuScreen");
+    private readonly Logger logger = new("MainMenuScreen");
 
-    private const string MainMenuBackgroundAsset = "placeholder_main_menu_background";
+    private Screens.MainMenuScreen menuUi;
+    private MainMenuButton[] buttons;
+    private Action[] actions;
+    private int selectedIndex;
 
-    protected Texture2D bgTexture;
-    private MainMenuPanel mainMenuPanel;
     private OptionsPanel optionsPanel;
     private ISoundService soundService;
+
+    private static GumService Gum => GumService.Default;
+
+    public override void Initialize()
+    {
+        base.Initialize();
+        Gum.Root.Children.Clear();
+    }
 
     public override void LoadContent()
     {
         base.LoadContent();
 
-        TryLoadBackgroundTexture();
+        menuUi = new Screens.MainMenuScreen();
+        menuUi.AddToRoot();
+
         soundService = Services.GetService<ISoundService>();
         soundService.LoadSound(Sounds.MenuSelect);
+        soundService.LoadSound(Sounds.AmbientSong);
         soundService.GetSoundInstance(Sounds.AmbientSong)?.Start();
         Services.GetService<IVfxService>().AddContinuous(ParticleFactory.CreateSnowstorm());
 
-        Action continueAction = SaveManager.HasSave() ? ContinueGame : null;
         optionsPanel = new OptionsPanel(Game);
-        mainMenuPanel = new MainMenuPanel(Game, continueAction, StartNewGame, OpenOptions, Game.Exit);
+
+        BuildButtonList();
+        ApplySelectionStates();
     }
 
-    public override void Update(GameTime gameTime)
+    public override void UnloadContent()
     {
-        base.Update(gameTime);
+        Services.GetService<IVfxService>().ClearAll();
+        Gum.Root.Children.Clear();
+        menuUi = null;
+        buttons = null;
+        actions = null;
+        base.UnloadContent();
+    }
+
+    protected override void Update(GameTime gameTime, KeyboardState keyboard, Dictionary<int, GamePadState> gamePads)
+    {
+        base.Update(gameTime, keyboard, gamePads);
 
         if (optionsPanel.IsOpen)
         {
@@ -47,49 +81,101 @@ public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
             return;
         }
 
-        mainMenuPanel.Update(gameTime);
+        // Player one drives the menu. Fall back to whoever has the lowest PlayerIndex if P1 hasn't joined
+        // (e.g. keyboard-only run before anyone presses Start on a gamepad).
+        PlayerConfiguration driver = Game.playerManager.Configs
+            .OrderBy(c => c.PlayerIndex)
+            .FirstOrDefault();
+        if (driver == null) return;
 
-        foreach (var player in game.playerManager.Configs)
+        IInputProvider input = driver.Input;
+
+        if (input.IsUpJustPressed())
         {
-            if (player.Input.IsUpJustPressed() || player.Input.IsDownJustPressed())
-            {
-                soundService.PlayOnce(Sounds.MenuSelect);
-            }
+            selectedIndex = (selectedIndex - 1 + buttons.Length) % buttons.Length;
+            soundService.PlayOnce(Sounds.MenuSelect);
+            ApplySelectionStates();
+        }
+        else if (input.IsDownJustPressed())
+        {
+            selectedIndex = (selectedIndex + 1) % buttons.Length;
+            soundService.PlayOnce(Sounds.MenuSelect);
+            ApplySelectionStates();
+        }
+
+        if (input.IsPickupJustPressed() && selectedIndex >= 0 && selectedIndex < actions.Length)
+        {
+            soundService.PlayOnce(Sounds.MenuSelect);
+            actions[selectedIndex].Invoke();
         }
     }
 
     public override void Draw(GameTime gameTime)
     {
-        // Scale to fit the virtual screen size to the actual window size
+        // Snow under Gum UI; title/background is the Gum "Background" sprite (Title.png).
         spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
-        float scale = virtualScreenSize.X * 1.0f / AssetManager.HubTexture.Width;
-
-        // Rendering is done in the virtual screen space
-        spriteBatch.Draw(AssetManager.TitleTexture, new Vector2(0), null, Color.White,
-                                0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
-
         Services.GetService<IVfxService>().Render(spriteBatch);
-
-        mainMenuPanel.Draw(
-            spriteBatch,
-            virtualScreenSize,
-            Game.fontSystem.GetFont(96),
-            Game.fontSystem.GetFont(52));
-
-        optionsPanel.Draw(
-            spriteBatch,
-            virtualScreenSize,
-            Game.fontSystem.GetFont(72),
-            Game.fontSystem.GetFont(40));
-
         spriteBatch.End();
+
+        Gum.Draw();
+
+        if (optionsPanel != null && optionsPanel.IsOpen)
+        {
+            spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
+            optionsPanel.Draw(
+                spriteBatch,
+                virtualScreenSize,
+                Game.fontSystem.GetFont(72),
+                Game.fontSystem.GetFont(40));
+            spriteBatch.End();
+        }
 
         base.Draw(gameTime);
     }
 
+    private void BuildButtonList()
+    {
+        bool hasSave = SaveManager.HasSave();
+
+        // Hide the Continue slot when there is no save; the stack container collapses the empty row.
+        menuUi.ContinueButton.Visual.Visible = hasSave;
+
+        var buttonList = new List<MainMenuButton>(4);
+        var actionList = new List<Action>(4);
+
+        if (hasSave)
+        {
+            buttonList.Add(menuUi.ContinueButton);
+            actionList.Add(ContinueGame);
+        }
+
+        buttonList.Add(menuUi.NewGameButton);
+        actionList.Add(StartNewGame);
+
+        buttonList.Add(menuUi.OptionsButton);
+        actionList.Add(OpenOptions);
+
+        buttonList.Add(menuUi.QuitButton);
+        actionList.Add(Game.Exit);
+
+        buttons = buttonList.ToArray();
+        actions = actionList.ToArray();
+
+        selectedIndex = 0;
+    }
+
+    private void ApplySelectionStates()
+    {
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            buttons[i].SelectionState = i == selectedIndex
+                ? MainMenuButton.Selection.Selected
+                : MainMenuButton.Selection.Unselected;
+        }
+    }
+
     private void OpenOptions()
     {
-        soundService.PlayOnce(Sounds.MenuSelect);
         optionsPanel.Open();
     }
 
@@ -115,23 +201,9 @@ public class MainMenuScreen(GamelabGame game) : AbstractGameScreen(game)
         }
     }
 
-    private void TryLoadBackgroundTexture()
-    {
-        try
-        {
-            bgTexture = Game.Content.Load<Texture2D>(MainMenuBackgroundAsset);
-        }
-        catch
-        {
-            // Fallback keeps menu usable when the texture is missing from content.
-            bgTexture = new Texture2D(GraphicsDevice, 1, 1);
-            bgTexture.SetData([Color.White]);
-        }
-    }
-
     public override void Dispose()
     {
-        soundService.UnloadSound(Sounds.MenuSelect);
+        soundService?.UnloadSound(Sounds.MenuSelect);
         base.Dispose();
     }
 }

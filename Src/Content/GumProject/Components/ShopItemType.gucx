@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ComponentSave xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>ShopItemType</Name>
+  <BaseType>Container</BaseType>
+  <State>
+    <Name>Default</Name>
+    <Variable Type="float" Name="Background.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">100</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="Background.HeightUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="string" Name="Background.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">Wrapper</Value>
+    </Variable>
+    <Variable IsFile="true" Type="string" Name="Background.SourceFile" ExposedAsName="NineSliceInstanceSourceFile" SetsValue="true">
+      <Value xsi:type="xsd:string">spr_badge_9slice_64x24.png</Value>
+    </Variable>
+    <Variable Type="float" Name="Background.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">100</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="Background.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="float" Name="Background.X" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="float" Name="Background.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="string" Name="SpriteInstance.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">Background</Value>
+    </Variable>
+    <Variable IsFile="true" Type="string" Name="SpriteInstance.SourceFile" ExposedAsName="ShopItemTypeIcon" SetsValue="true">
+      <Value xsi:type="xsd:string">spr_icon_projectile_24.png</Value>
+    </Variable>
+    <Variable Type="float" Name="SpriteInstance.X" SetsValue="true">
+      <Value xsi:type="xsd:float">10</Value>
+    </Variable>
+    <Variable Type="VerticalAlignment" Name="SpriteInstance.YOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="SpriteInstance.YUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">7</Value>
+    </Variable>
+    <Variable Type="State" Name="State" Category="States and Visibility" SetsValue="false">
+      <Value xsi:type="xsd:string">Default</Value>
+    </Variable>
+    <Variable IsFont="true" Type="string" Name="TextInstance.Font" SetsValue="true">
+      <Value xsi:type="xsd:string">Berlin Sans FB</Value>
+    </Variable>
+    <Variable Type="int" Name="TextInstance.FontSize" SetsValue="true">
+      <Value xsi:type="xsd:int">16</Value>
+    </Variable>
+    <Variable Type="float" Name="TextInstance.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="int" Name="TextInstance.OutlineThickness" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="string" Name="TextInstance.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">Background</Value>
+    </Variable>
+    <Variable Type="string" Name="TextInstance.Text" ExposedAsName="ShopItemTypeName" SetsValue="true">
+      <Value xsi:type="xsd:string">Propellant</Value>
+    </Variable>
+    <Variable Type="bool" Name="TextInstance.UseFontSmoothing" SetsValue="true">
+      <Value xsi:type="xsd:boolean">true</Value>
+    </Variable>
+    <Variable Type="float" Name="TextInstance.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">84</Value>
+    </Variable>
+    <Variable Type="float" Name="TextInstance.X" SetsValue="true">
+      <Value xsi:type="xsd:float">40</Value>
+    </Variable>
+    <Variable Type="VerticalAlignment" Name="TextInstance.YOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="TextInstance.YUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">7</Value>
+    </Variable>
+    <Variable Type="float" Name="Wrapper.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">40</Value>
+    </Variable>
+    <Variable Type="float" Name="Wrapper.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">140</Value>
+    </Variable>
+    <Variable Type="float" Name="Wrapper.X" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="Wrapper.XOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="Wrapper.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="float" Name="Wrapper.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+  </State>
+  <Instance Name="Wrapper" BaseType="Container" />
+  <Instance Name="TextInstance" BaseType="Text" />
+  <Instance Name="Background" BaseType="NineSlice" />
+  <Instance Name="SpriteInstance" BaseType="Sprite" />
+  <Behaviors />
+</ComponentSave>

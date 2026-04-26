@@ -1,7 +1,10 @@
 using System.Linq;
 using Gamelab.Assets;
+using Gamelab.Items;
 using Gamelab.Items.Bullets;
+using Gamelab.PhysicalEntities.Bullets.Components;
 using Gamelab.Players;
+using Gamelab.UI;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -16,17 +19,30 @@ public class ComponentResourceStation(Vector2 position, string componentId)
     public string ComponentId { get; } = componentId;
     protected ComponentConfig DispensedComponentConfig => GamelabGame.Instance.ComponentRegistry.Get(ComponentId);
 
-    public override string GetTooltipTitle()
+    private AbstractComponent dispensedComponentCache;
+    private AbstractComponent DispensedComponent =>
+        dispensedComponentCache ??= ComponentFactory.CreateDefinition(ComponentId);
+
+    public override string GetTitle()
     {
         return DispensedComponentConfig?.Name ?? "Unknown Component";
     }
 
-    public override string GetTooltipDescription()
+    public override string GetDescription()
     {
         return DispensedComponentConfig?.Description ?? "No description";
     }
 
-    public override bool IsTooltipVisible => IsHighlighted && DispensedComponentConfig != null;
+    public override bool IsVisible => IsHighlighted && DispensedComponentConfig != null;
+
+    public EItemType DispensedItemType => DispensedComponent.IsBasic ? EItemType.Basic : EItemType.Upgrading;
+
+    public override string CategoryName => ShopItemIconAtlas.GetComponentTypeName(DispensedComponent.Type);
+
+    public override string FunctionalityName => ShopItemIconAtlas.GetItemTypeName(DispensedItemType);
+
+    public override Rectangle? IconSourceRect =>
+        ShopItemIconAtlas.TryGetRect(DispensedComponent.Type, DispensedItemType);
 
     public override void OnPickup(Player interactingPlayer)
     {

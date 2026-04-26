@@ -1,0 +1,22 @@
+{
+  "TreeViewState": {
+    "ExpandedNodes": [
+      "Screens",
+      "Components",
+      "Components/ButtonWithIcon",
+      "Components/ButtonWithIcon/ContainerInstance",
+      "Components/JoinPlayerComponent",
+      "Components/JoinPlayerComponent/Join",
+      "Components/JoinPlayerComponent/Player",
+      "Components/MainMenuButton",
+      "Components/ShopItemType",
+      "Components/ShopItemType/Wrapper",
+      "Components/ShopItemType/Wrapper/Background",
+      "Components/ToolTip",
+      "Components/ToolTip/Background",
+      "Components/ToolTip/Background/Wrapper",
+      "Components/ToolTip/Background/Wrapper/Interactions",
+      "Standard"
+    ]
+  }
+}

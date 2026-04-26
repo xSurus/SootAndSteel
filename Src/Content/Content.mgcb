@@ -41,3 +41,446 @@
 #begin Data/StationConfig.json
 /copy:Data/StationConfig.json
 
+#begin GumProject/ExampleSpriteFrame.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/ExampleSpriteFrame.png
+
+#begin GumProject/EventExport/gum_events.json
+/copy:GumProject/EventExport/gum_events.json
+
+#begin GumProject/FontCache/Font18Arial_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Arial_0.png
+
+#begin GumProject/IdleA0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/IdleA0.png
+
+#begin GumProject/IdleA1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/IdleA1.png
+
+#begin GumProject/IdleA2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/IdleA2.png
+
+#begin GumProject/IdleA3.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/IdleA3.png
+
+#begin GumProject/FontCache/Font18Ubuntu_Mono_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Ubuntu_Mono_0.png
+
+#begin GumProject/FontCache/Font40Ubuntu_Mono_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font40Ubuntu_Mono_0.png
+
+#begin GumProject/FontCache/Font18Papyrus_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Papyrus_0.png
+
+#begin GumProject/FontCache/Font18Bahnschrift_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Bahnschrift_0.png
+
+#begin GumProject/FontCache/Font18Stencil_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Stencil_0.png
+
+#begin GumProject/FontCache/Font18Yu_Gothic_Medium_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Yu_Gothic_Medium_0.png
+
+#begin GumProject/FontCache/Font30Ubuntu_Mono_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font30Ubuntu_Mono_0.png
+
+#begin GumProject/FontCache/Font30Papyrus_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font30Papyrus_0.png
+
+#begin GumProject/FontCache/Font50Ubuntu_Mono_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font50Ubuntu_Mono_0.png
+
+#begin GumProject/FontCache/Font60Ubuntu_Mono_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font60Ubuntu_Mono_0.png
+
+#begin GumProject/IdleB0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/IdleB0.png
+
+#begin GumProject/IdleC0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/IdleC0.png
+
+#begin GumProject/IdleD0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/IdleD0.png
+
+#begin GumProject/IdleB1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/IdleB1.png
+
+#begin GumProject/IdleC1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/IdleC1.png
+
+#begin GumProject/IdleD1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/IdleD1.png
+
+#begin GumProject/FontCache/Font15Papyrus_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font15Papyrus_0.png
+
+#begin GumProject/FontCache/Font20Papyrus_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font20Papyrus_0.png
+
+#begin GumProject/FontCache/Font0Papyrus_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font0Papyrus_0.png
+
+#begin GumProject/FontCache/Font16Papyrus_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font16Papyrus_0.png
+
+#begin GumProject/FontCache/Font1Papyrus_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font1Papyrus_0.png
+
+#begin GumProject/FontCache/Font25Papyrus_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font25Papyrus_0.png
+
+#begin GumProject/Title.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/Title.png
+
+#begin GumProject/BulletComponentSpriteSheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/BulletComponentSpriteSheet.png
+
+#begin GumProject/spr_badge_9slice_64x24.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/spr_badge_9slice_64x24.png
+
+#begin GumProject/spr_coin_32.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/spr_coin_32.png
+
+#begin GumProject/spr_icon_casing_24.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/spr_icon_casing_24.png
+
+#begin GumProject/spr_icon_projectile_24.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/spr_icon_projectile_24.png
+
+#begin GumProject/spr_icon_propellant_24.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/spr_icon_propellant_24.png
+
+#begin GumProject/xbox_buttons_spritesheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/xbox_buttons_spritesheet.png
+
+#begin GumProject/spr_xbtn_48.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/spr_xbtn_48.png
+
+#begin GumProject/tooltip_base_9slice_192x192.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/tooltip_base_9slice_192x192.png
+
+#begin GumProject/FontCache/Font15Ubuntu_Mono_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font15Ubuntu_Mono_0.png
+
+#begin GumProject/FontCache/Font16Berlin_Sans_FB_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font16Berlin_Sans_FB_0.png
+
+#begin GumProject/FontCache/Font18Arial_Black_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Arial_Black_0.png
+
+#begin GumProject/FontCache/Font18Arial_Narrow_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Arial_Narrow_0.png
+
+#begin GumProject/FontCache/Font18Bahnschrift_Condensed_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Bahnschrift_Condensed_0.png
+
+#begin GumProject/FontCache/Font18Bahnschrift_Light_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Bahnschrift_Light_0.png
+
+#begin GumProject/FontCache/Font18Bahnschrift_Light_Condensed_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Bahnschrift_Light_Condensed_0.png
+
+#begin GumProject/FontCache/Font18Bahnschrift_Light_SemiCondensed_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Bahnschrift_Light_SemiCondensed_0.png
+
+#begin GumProject/FontCache/Font18Bahnschrift_SemiBold_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Bahnschrift_SemiBold_0.png
+
+#begin GumProject/FontCache/Font18Bahnschrift_SemiBold_Condensed_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Bahnschrift_SemiBold_Condensed_0.png
+
+#begin GumProject/FontCache/Font18Bahnschrift_SemiBold_SemiConden_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Bahnschrift_SemiBold_SemiConden_0.png
+
+#begin GumProject/FontCache/Font18Bahnschrift_SemiCondensed_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Bahnschrift_SemiCondensed_0.png
+
+#begin GumProject/FontCache/Font18Bahnschrift_SemiLight_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Bahnschrift_SemiLight_0.png
+
+#begin GumProject/FontCache/Font18Bahnschrift_SemiLight_Condensed_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Bahnschrift_SemiLight_Condensed_0.png
+
+#begin GumProject/FontCache/Font18Bahnschrift_SemiLight_SemiConde_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Bahnschrift_SemiLight_SemiConde_0.png
+
+#begin GumProject/FontCache/Font18Baskerville_Old_Face_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Baskerville_Old_Face_0.png
+
+#begin GumProject/FontCache/Font18Bauhaus_93_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Bauhaus_93_0.png
+
+#begin GumProject/FontCache/Font18Bell_MT_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Bell_MT_0.png
+
+#begin GumProject/FontCache/Font18Berlin_Sans_FB_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Berlin_Sans_FB_0.png
+
+#begin GumProject/FontCache/Font18Berlin_Sans_FB_Demi_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Berlin_Sans_FB_Demi_0.png
+
+#begin GumProject/FontCache/Font18Bernard_MT_Condensed_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Bernard_MT_Condensed_0.png
+
+#begin GumProject/FontCache/Font18Blackadder_ITC_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Blackadder_ITC_0.png
+
+#begin GumProject/FontCache/Font18Bodoni_MT_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Bodoni_MT_0.png
+
+#begin GumProject/FontCache/Font18Bodoni_MT_Black_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Bodoni_MT_Black_0.png
+
+#begin GumProject/FontCache/Font18Bodoni_MT_Condensed_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Bodoni_MT_Condensed_0.png
+
+#begin GumProject/FontCache/Font18Bodoni_MT_Poster_Compressed_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Bodoni_MT_Poster_Compressed_0.png
+
+#begin GumProject/FontCache/Font18Bookman_Old_Style_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Bookman_Old_Style_0.png
+
+#begin GumProject/FontCache/Font18Bookshelf_Symbol_7_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Bookshelf_Symbol_7_0.png
+
+#begin GumProject/FontCache/Font18Book_Antiqua_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Book_Antiqua_0.png
+
+#begin GumProject/FontCache/Font18Bradley_Hand_ITC_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Bradley_Hand_ITC_0.png
+
+#begin GumProject/FontCache/Font18Britannic_Bold_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Britannic_Bold_0.png
+
+#begin GumProject/FontCache/Font20Arial_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font20Arial_0.png
+
+#begin GumProject/FontCache/Font20Arial_Narrow_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font20Arial_Narrow_0.png
+
+#begin GumProject/FontCache/Font20Bodoni_MT_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font20Bodoni_MT_0.png
+
+#begin GumProject/FontCache/Font20Hand_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font20Hand_0.png
+
+#begin GumProject/FontCache/Font20Ubuntu_Mono_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font20Ubuntu_Mono_0.png
+
+#begin GumProject/FontCache/Font22Bernard_MT_Condensed_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font22Bernard_MT_Condensed_0.png
+
+#begin GumProject/spr_xbtn_32.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/spr_xbtn_32.png
+
+#begin GumProject/FontCache/Font16Berlin_Sans_FB_Demi_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font16Berlin_Sans_FB_Demi_0.png
+
+#begin GumProject/FontCache/Font16Berlin_Sans_FB_noSmooth_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font16Berlin_Sans_FB_noSmooth_0.png
+
+#begin GumProject/FontCache/Font16Bernard_MT_Condensed_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font16Bernard_MT_Condensed_0.png
+
+#begin GumProject/FontCache/Font16Blackadder_ITC_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font16Blackadder_ITC_0.png
+
+#begin GumProject/FontCache/Font17Berlin_Sans_FB_noSmooth_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font17Berlin_Sans_FB_noSmooth_0.png
+
+#begin GumProject/FontCache/Font25Bodoni_MT_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font25Bodoni_MT_0.png
+
+#begin GumProject/FontCache/Font22Bernard_MT_Condensed_noSmooth_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font22Bernard_MT_Condensed_noSmooth_0.png
+
+#begin GumProject/FontCache/Font17Berlin_Sans_FB_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font17Berlin_Sans_FB_0.png
+
+#begin GumProject/FontCache/Font18Bahnschrift_Light_o1_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Bahnschrift_Light_o1_0.png
+
+#begin GumProject/FontCache/Font18Bahnschrift_Light_o5_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Bahnschrift_Light_o5_0.png
+
+#begin GumProject/FontCache/Font18Bahnschrift_Light_o2_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Bahnschrift_Light_o2_0.png
+
+#begin GumProject/FontCache/Font18Bahnschrift_Light_noSmooth_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Bahnschrift_Light_noSmooth_0.png
+

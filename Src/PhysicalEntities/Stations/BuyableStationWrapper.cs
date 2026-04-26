@@ -10,23 +10,36 @@ namespace Gamelab.PhysicalEntities.Stations;
 public class BuyableStationWrapper : AbstractPhysicalEntity, IInteractable, IGrabbable, ITooltipable
 {
     public string StationKindId { get; }
-    private int Cost { get; }
-    private AbstractStation WrappedStation { get; set; }
-    public bool IsTooltipVisible => IsHighlighted;
-    private string TooltipTitle { get; }
-    private string TooltipDescription { get; }
-    public string GetTooltipTitle() => TooltipTitle;
-    public string GetTooltipDescription() => TooltipDescription;
+    public int Cost { get; }
 
-    public Color GetTooltipTextColor() => GamelabGame.Instance.CurrentRun.Credits >= Cost ? Color.White : Color.Red;
+    private AbstractStation WrappedStation { get; set; }
+    public bool IsVisible => IsHighlighted;
+    private string Title { get; }
+    private string Description { get; }
+    public string GetTitle() => Title;
+    public string GetDescription() => Description;
+
+    /// <summary>
+    /// Category and icon mirror whatever the wrapped station would show post-purchase, so a
+    /// dispenser in the shop has the same identity as one already on the train.
+    /// </summary>
+    public string CategoryName => WrappedStation?.CategoryName;
+
+    public string FunctionalityName => WrappedStation?.FunctionalityName;
+
+    public Rectangle? IconSourceRect => WrappedStation?.IconSourceRect;
+
+    // Wrapper exposes the cost as a non-nullable int (callers always need it); the
+    // ITooltipable contract is the optional view of the same value.
+    int? ITooltipable.Cost => Cost;
 
     public BuyableStationWrapper(string stationKindId, Vector2 position)
     {
         StationKindId = stationKindId;
         CatalogItem item = GamelabGame.Instance.Services.GetService<IShopService>().GetCatalogItem(stationKindId);
         Cost = item?.Price ?? 0;
-        TooltipTitle = item != null ? $"Buy {item.Name}" : $"Buy {StationKindId}";
-        TooltipDescription = $"{Cost} Credits\n{(item?.Description ?? "")}";
+        Title = item != null ? $"{item.Name}" : $"{StationKindId}";
+        Description = item?.Description ?? string.Empty;
         WrappedStation = StationFactory.CreateStation(StationKindId, position);
         PhysicsBody = WrappedStation.PhysicsBody;
         PhysicsBody.Tag = this;

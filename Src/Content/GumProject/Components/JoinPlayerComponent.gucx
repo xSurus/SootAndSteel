@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ComponentSave xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>JoinPlayerComponent</Name>
+  <BaseType>Container</BaseType>
+  <State>
+    <Name>Default</Name>
+    <Variable Type="float" Name="Height" SetsValue="true">
+      <Value xsi:type="xsd:float">100</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="HeightUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">5</Value>
+    </Variable>
+    <Variable IsFont="true" Type="string" Name="Join.Font" SetsValue="true">
+      <Value xsi:type="xsd:string">Bodoni MT</Value>
+    </Variable>
+    <Variable Type="float" Name="Join.FontScale" SetsValue="true">
+      <Value xsi:type="xsd:float">1</Value>
+    </Variable>
+    <Variable Type="int" Name="Join.FontSize" SetsValue="true">
+      <Value xsi:type="xsd:int">25</Value>
+    </Variable>
+    <Variable Type="float" Name="Join.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">20</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="Join.HeightUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="Join.HorizontalAlignment" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="string" Name="Join.Text" SetsValue="true">
+      <Value xsi:type="xsd:string">(A) Join</Value>
+    </Variable>
+    <Variable Type="VerticalAlignment" Name="Join.VerticalAlignment" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="float" Name="Join.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">100</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="Join.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="float" Name="Join.X" SetsValue="true">
+      <Value xsi:type="xsd:float">-10</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="Join.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">2</Value>
+    </Variable>
+    <Variable Type="float" Name="Join.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">80</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="Join.YUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">3</Value>
+    </Variable>
+    <Variable Type="int" Name="JoinText" SetsValue="true" IsCustomVariable="true">
+      <Value xsi:type="xsd:int">10</Value>
+    </Variable>
+    <Variable Type="MovingPlayer" Name="MovingPlayerState" SetsValue="true" />
+    <Variable Type="float" Name="Player.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">80</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="Player.HeightUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="float" Name="Player.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">80</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="Player.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="float" Name="Player.X" SetsValue="true">
+      <Value xsi:type="xsd:float">5</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="Player.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">2</Value>
+    </Variable>
+    <Variable Type="bool" Name="PlayerFigure.Animate" SetsValue="true">
+      <Value xsi:type="xsd:boolean">false</Value>
+    </Variable>
+    <Variable Type="string" Name="PlayerFigure.CurrentChainName" SetsValue="true">
+      <Value xsi:type="xsd:string"></Value>
+    </Variable>
+    <Variable Type="float" Name="PlayerFigure.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">100</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="PlayerFigure.HeightUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="string" Name="PlayerFigure.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">Player</Value>
+    </Variable>
+    <Variable IsFile="true" Type="string" Name="PlayerFigure.SourceFile" ExposedAsName="SpriteInstanceSourceFile" SetsValue="true">
+      <Value xsi:type="xsd:string">IdleA0.png</Value>
+    </Variable>
+    <Variable Type="TextureAddress" Name="PlayerFigure.TextureAddress" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="int" Name="PlayerFigure.TextureHeight" SetsValue="true">
+      <Value xsi:type="xsd:int">400</Value>
+    </Variable>
+    <Variable Type="int" Name="PlayerFigure.TextureLeft" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="int" Name="PlayerFigure.TextureTop" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="int" Name="PlayerFigure.TextureWidth" SetsValue="true">
+      <Value xsi:type="xsd:int">410</Value>
+    </Variable>
+    <Variable Type="float" Name="PlayerFigure.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">100</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="PlayerFigure.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="float" Name="PlayerFigure.X" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="PlayerFigure.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="State" Name="State" Category="States and Visibility" SetsValue="false">
+      <Value xsi:type="xsd:string">Default</Value>
+    </Variable>
+    <Variable Type="float" Name="Width" SetsValue="true">
+      <Value xsi:type="xsd:float">25</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="XOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+  </State>
+  <Category>
+    <Name>MovingPlayer</Name>
+    <State>
+      <Name>Frame0Joined</Name>
+      <Variable Type="string" Name="Join.Text" SetsValue="true">
+        <Value xsi:type="xsd:string">Joined</Value>
+      </Variable>
+      <Variable IsFile="true" Type="string" Name="PlayerFigure.SourceFile" ExposedAsName="SpriteInstanceSourceFile" SetsValue="true">
+        <Value xsi:type="xsd:string">IdleA0.png</Value>
+      </Variable>
+    </State>
+    <State>
+      <Name>Frame1Joined</Name>
+      <Variable Type="string" Name="Join.Text" SetsValue="true">
+        <Value xsi:type="xsd:string">Joined</Value>
+      </Variable>
+      <Variable IsFile="true" Type="string" Name="PlayerFigure.SourceFile" ExposedAsName="SpriteInstanceSourceFile" SetsValue="true">
+        <Value xsi:type="xsd:string">IdleB0.png</Value>
+      </Variable>
+    </State>
+    <State>
+      <Name>Frame3Joined</Name>
+      <Variable Type="string" Name="Join.Text" SetsValue="true">
+        <Value xsi:type="xsd:string">Joined</Value>
+      </Variable>
+      <Variable IsFile="true" Type="string" Name="PlayerFigure.SourceFile" ExposedAsName="SpriteInstanceSourceFile" SetsValue="true">
+        <Value xsi:type="xsd:string">IdleC0.png</Value>
+      </Variable>
+    </State>
+    <State>
+      <Name>Frame4Joined</Name>
+      <Variable Type="string" Name="Join.Text" SetsValue="true">
+        <Value xsi:type="xsd:string">Joined</Value>
+      </Variable>
+      <Variable IsFile="true" Type="string" Name="PlayerFigure.SourceFile" ExposedAsName="SpriteInstanceSourceFile" SetsValue="true">
+        <Value xsi:type="xsd:string">IdleD0.png</Value>
+      </Variable>
+    </State>
+    <State>
+      <Name>Frame0Empty</Name>
+      <Variable Type="string" Name="Join.Text" SetsValue="true">
+        <Value xsi:type="xsd:string">(A) Join</Value>
+      </Variable>
+      <Variable IsFile="true" Type="string" Name="PlayerFigure.SourceFile" ExposedAsName="SpriteInstanceSourceFile" SetsValue="true">
+        <Value xsi:type="xsd:string">..\..\Assets\Characters\IdleA1.png</Value>
+      </Variable>
+    </State>
+    <State>
+      <Name>Frame1Empty</Name>
+      <Variable Type="string" Name="Join.Text" SetsValue="true">
+        <Value xsi:type="xsd:string">(A) Join</Value>
+      </Variable>
+      <Variable IsFile="true" Type="string" Name="PlayerFigure.SourceFile" ExposedAsName="SpriteInstanceSourceFile" SetsValue="true">
+        <Value xsi:type="xsd:string">..\..\Assets\Characters\IdleB1.png</Value>
+      </Variable>
+    </State>
+    <State>
+      <Name>Frame2Empty</Name>
+      <Variable Type="string" Name="Join.Text" SetsValue="true">
+        <Value xsi:type="xsd:string">(A) Join</Value>
+      </Variable>
+      <Variable IsFile="true" Type="string" Name="PlayerFigure.SourceFile" ExposedAsName="SpriteInstanceSourceFile" SetsValue="true">
+        <Value xsi:type="xsd:string">..\..\Assets\Characters\IdleC1.png</Value>
+      </Variable>
+    </State>
+    <State>
+      <Name>Frame3Empty</Name>
+      <Variable Type="string" Name="Join.Text" SetsValue="true">
+        <Value xsi:type="xsd:string">(A) Join</Value>
+      </Variable>
+      <Variable IsFile="true" Type="string" Name="PlayerFigure.SourceFile" ExposedAsName="SpriteInstanceSourceFile" SetsValue="true">
+        <Value xsi:type="xsd:string">..\..\Assets\Characters\IdleD1.png</Value>
+      </Variable>
+    </State>
+  </Category>
+  <Instance Name="PlayerFigure" BaseType="Sprite" />
+  <Instance Name="Join" BaseType="Text" />
+  <Instance Name="Player" BaseType="Container" />
+  <Behaviors />
+</ComponentSave>

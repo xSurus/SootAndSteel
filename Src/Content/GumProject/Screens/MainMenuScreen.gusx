@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScreenSave xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>MainMenuScreen</Name>
+  <State>
+    <Name>Default</Name>
+    <Variable Type="DimensionUnitType" Name="Background.HeightUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="string" Name="Background.Parent" SetsValue="true" />
+    <Variable IsFile="true" Type="string" Name="Background.SourceFile" SetsValue="true">
+      <Value xsi:type="xsd:string">Title.png</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="Background.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="string" Name="ContinueButton.ButtonText" SetsValue="true">
+      <Value xsi:type="xsd:string">Continue</Value>
+    </Variable>
+    <Variable Type="string" Name="ContinueButton.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">MenuItemContainer</Value>
+    </Variable>
+    <Variable Type="Selection" Name="ContinueButton.SelectionState" SetsValue="true">
+      <Value xsi:type="xsd:string">Selected</Value>
+    </Variable>
+    <Variable Type="ChildrenLayout" Name="MenuItemContainer.ChildrenLayout" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="float" Name="MenuItemContainer.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="MenuItemContainer.HeightUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="float" Name="MenuItemContainer.StackSpacing" SetsValue="true">
+      <Value xsi:type="xsd:float">20</Value>
+    </Variable>
+    <Variable Type="float" Name="MenuItemContainer.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="MenuItemContainer.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="float" Name="MenuItemContainer.X" SetsValue="true">
+      <Value xsi:type="xsd:float">50</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="MenuItemContainer.XOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="MenuItemContainer.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">2</Value>
+    </Variable>
+    <Variable Type="float" Name="MenuItemContainer.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">50</Value>
+    </Variable>
+    <Variable Type="VerticalAlignment" Name="MenuItemContainer.YOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="MenuItemContainer.YUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">3</Value>
+    </Variable>
+    <Variable Type="string" Name="NewGameButton.ButtonText" SetsValue="true">
+      <Value xsi:type="xsd:string">New Game</Value>
+    </Variable>
+    <Variable Type="string" Name="NewGameButton.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">MenuItemContainer</Value>
+    </Variable>
+    <Variable Type="string" Name="OptionsButton.ButtonText" SetsValue="true">
+      <Value xsi:type="xsd:string">Options</Value>
+    </Variable>
+    <Variable Type="string" Name="OptionsButton.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">MenuItemContainer</Value>
+    </Variable>
+    <Variable Type="string" Name="QuitButton.ButtonText" SetsValue="true">
+      <Value xsi:type="xsd:string">Quit</Value>
+    </Variable>
+    <Variable Type="string" Name="QuitButton.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">MenuItemContainer</Value>
+    </Variable>
+  </State>
+  <Instance Name="ContinueButton" BaseType="MainMenuButton" />
+  <Instance Name="NewGameButton" BaseType="MainMenuButton" />
+  <Instance Name="OptionsButton" BaseType="MainMenuButton" />
+  <Instance Name="QuitButton" BaseType="MainMenuButton" />
+  <Instance Name="Background" BaseType="Sprite" />
+  <Instance Name="MenuItemContainer" BaseType="Container" />
+  <Behaviors />
+</ScreenSave>
