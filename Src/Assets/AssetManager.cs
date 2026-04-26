@@ -38,6 +38,9 @@ public static class AssetManager
     public static Dictionary<string, Texture2D> NPCTextures { get; private set; }
         = new Dictionary<string, Texture2D>();
 
+    public static Dictionary<string, Texture2D> ItemTextures { get; private set; }
+        = new Dictionary<string, Texture2D>();
+
     public static void LoadContent(GraphicsDevice graphicsDevice)
     {
         // temporary textures used for player and stations before real assets are used
@@ -57,6 +60,7 @@ public static class AssetManager
         LoadPatchTextures(graphicsDevice);
         LoadTitleTexture(graphicsDevice);
         LoadNPCTextures(graphicsDevice);
+        LoadItemTextures(graphicsDevice);
         // TODO add texture loading from json
     }
 
@@ -75,7 +79,7 @@ public static class AssetManager
         {
             string key = Path.GetFileNameWithoutExtension(path);
             using Stream stream = File.OpenRead(path);
-            CharacterTextures[key] = Texture2D.FromStream(graphicsDevice, stream);
+            CharacterTextures[key] = LoadTextureStream(graphicsDevice, stream);
             logger.Info($"Loading character texture for '{key}'");
         }
 
@@ -121,6 +125,20 @@ public static class AssetManager
         return CharacterTextures.TryGetValue(type, out var tex) ? tex : BlankTexture;
     }
 
+    public static Texture2D LoadTextureStream(GraphicsDevice graphicsDevice, Stream stream)
+    {
+        Texture2D texture = Texture2D.FromStream(graphicsDevice, stream);
+        Color[] data = new Color[texture.Width * texture.Height];
+        texture.GetData(data);
+        for (int i = 0; i < data.Length; i++)
+        {
+            data[i] = Color.FromNonPremultiplied(data[i].ToVector4());
+        }
+
+        texture.SetData(data);
+        return texture;
+    }
+
     private static Texture2D LoadTexture(GraphicsDevice gd, string name)
     {
         string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", name);
@@ -134,7 +152,7 @@ public static class AssetManager
 
         using (Stream stream = File.OpenRead(path))
         {
-            return Texture2D.FromStream(gd, stream);
+            return LoadTextureStream(gd, stream);
         }
     }
 
@@ -153,7 +171,7 @@ public static class AssetManager
         {
             string key = Path.GetFileNameWithoutExtension(path);
             using Stream stream = File.OpenRead(path);
-            StationTextures[key] = Texture2D.FromStream(graphicsDevice, stream);
+            StationTextures[key] = LoadTextureStream(graphicsDevice, stream);
             logger.Info($"Loading station texture for '{key}'");
         }
     }
@@ -173,7 +191,7 @@ public static class AssetManager
         {
             string key = Path.GetFileNameWithoutExtension(path);
             using Stream stream = File.OpenRead(path);
-            StructureTextures[key] = Texture2D.FromStream(graphicsDevice, stream);
+            StructureTextures[key] = LoadTextureStream(graphicsDevice, stream);
             logger.Info($"Loading structure texture for '{key}'");
         }
     }
@@ -198,7 +216,7 @@ public static class AssetManager
         {
             string key = Path.GetFileNameWithoutExtension(path);
             using Stream stream = File.OpenRead(path);
-            NPCTextures[key] = Texture2D.FromStream(graphicsDevice, stream);
+            NPCTextures[key] = LoadTextureStream(graphicsDevice, stream);
             logger.Info($"Loading NPC texture for '{key}'");
         }
     }
@@ -206,6 +224,31 @@ public static class AssetManager
     public static Texture2D GetNPCTexture(string type)
     {
         return NPCTextures.TryGetValue(type, out var tex) ? tex : BlankTexture;
+    }
+
+    private static void LoadItemTextures(GraphicsDevice graphicsDevice)
+    {
+        string dir = Path.Combine(
+            AppDomain.CurrentDomain.BaseDirectory, "Assets", "Items");
+
+        if (!Directory.Exists(dir))
+        {
+            Console.WriteLine($"[AssetManager] Items folder not found: {dir}");
+            return;
+        }
+
+        foreach (string path in Directory.GetFiles(dir, "*.png"))
+        {
+            string key = Path.GetFileNameWithoutExtension(path);
+            using Stream stream = File.OpenRead(path);
+            ItemTextures[key] = LoadTextureStream(graphicsDevice, stream);
+            logger.Info($"Loading item texture for '{key}'");
+        }
+    }
+
+    public static Texture2D GetItemTexture(string type)
+    {
+        return ItemTextures.TryGetValue(type, out var tex) ? tex : null;
     }
 
 
@@ -259,7 +302,7 @@ public static class AssetManager
         {
             string key = Path.GetFileNameWithoutExtension(path);
             using Stream stream = File.OpenRead(path);
-            WallTextures[key] = Texture2D.FromStream(graphicsDevice, stream);
+            WallTextures[key] = LoadTextureStream(graphicsDevice, stream);
             logger.Info($"Loading wall texture for '{key}'");
         }
     }

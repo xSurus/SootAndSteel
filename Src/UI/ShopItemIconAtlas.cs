@@ -12,14 +12,15 @@ public static class ShopItemIconAtlas
 
     // Column X offsets for the 24-px-row icons. Cells are 96 px wide and the 24-px icon
     // sits centred horizontally → top-left of the crop is at col_origin + 36.
-    private const int BasicColumnX = 36;       // col 0 — plain icon
-    private const int UpgradingColumnX = 132;  // col 1 — grey ↑ badge
+    private const int BasicColumnX = 36; // col 0 — plain icon
+    private const int UpgradingColumnX = 132; // col 1 — grey ↑ badge
     // private const int FullyUpgradedColumnX = 228; // col 2 — yellow ↑ badge (reserved)
 
     // Vertical offset of the 24-px icon within each component section.
     private const int CasingY = 227;
     private const int ProjectileY = 517;
     private const int PropellantY = 803;
+
     public static Rectangle? TryGetRect(EComponentType? componentType, EItemType? itemType)
     {
         if (componentType is not { } ct) return null;
@@ -43,8 +44,10 @@ public static class ShopItemIconAtlas
         EItemType.Utility => "Utility",
         EItemType.Crafting => "Crafting",
         EItemType.Storage => "Storage",
+        EItemType.Resource => "Resource",
         _ => null,
     };
+
     public const string StationCategoryName = "Station";
 
     public static string GetComponentTypeName(EComponentType componentType) => componentType switch
