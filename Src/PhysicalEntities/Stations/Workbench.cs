@@ -10,9 +10,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Gamelab.PhysicalEntities.Stations;
 
-public class Workbench(Vector2 position) : AbstractStation("Workbench", Color.DarkSlateGray, position)
+public class Workbench(Vector2 position) : AbstractStation(StationIds.Workbench, position)
 {
-    private static readonly Logger Logger = new("Workbench");
+    private static readonly Logger Logger = new(StationIds.Workbench);
     protected List<BulletItem> PlacedItems { get; } = new();
 
     private float craftProgress = 0f;

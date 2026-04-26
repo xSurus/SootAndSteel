@@ -12,17 +12,13 @@ public class GameplayConfig
     public int TrainTileSize { get; set; } = 80;
     public int TrainWidth { get; set; } = 8;
     public int TrainHeight { get; set; } = 6;
-    public float TrainSpeedStopped { get; set; } = 0f;
-    public float TrainSpeedDefault { get; set; } = 150f;
-    public float TrainSpeedDouble { get; set; } = 300f;
-    public float TrainSpeedQuadruple { get; set; } = 600f;
-    public float TrainBurnMultiplierStopped { get; set; } = 1f;
-    public float TrainBurnMultiplierDefault { get; set; } = 1f;
-    public float TrainBurnMultiplierDouble { get; set; } = 1f;
-    public float TrainBurnMultiplierQuadruple { get; set; } = 4f;
+    public float TrainSpeedSlow { get; set; } = 150f;
+    public float TrainSpeedDefault { get; set; } = 300f;
+    public float TrainSpeedFast { get; set; } = 600f;
     public float TrainAccelerationRate { get; set; } = 50f;
-    public int TrainInitialCoalAmount { get; set; } = 50;
-    public float SpawnOffsetPixels { get; set; } = 100f;
+    public float TrainBurnMultiplierSlow { get; set; } = 1f;
+    public float TrainBurnMultiplierDefault { get; set; } = 1f;
+    public float TrainBurnMultiplierFast { get; set; } = 1f;
     public float PlayerRadiusPixels { get; set; } = 10f;
     public float PlayerDensity { get; set; } = 3f;
     public float PlayerLinearDamping { get; set; } = 20f;
@@ -31,7 +27,6 @@ public class GameplayConfig
     public float PlayerInteractDistancePixels { get; set; } = 60f;
     public float PlayerHeldItemOffsetRadiusMultiplier { get; set; } = 1.5f;
     public float PlayerHeldItemSizeRadiusMultiplier { get; set; } = 0.8f;
-    public float PlayerForceMultiplier { get; set; } = 50f;
     public float PlayerStunDurationSeconds { get; set; } = 4f;
     public float PlayerReviveDurationSeconds { get; set; } = 1.5f;
     public float AllPlayersStunnedFailDelaySeconds { get; set; } = 1.5f;
@@ -51,22 +46,11 @@ public class GameplayConfig
     public float GrabbableLinearDamping { get; set; } = 100f;
     public float GrabbableRotationalResistance { get; set; } = 40f;
     public float DepartHoldSeconds { get; set; } = 0.75f;
-    public float RepairableCannonMaxHealth { get; set; } = 100f;
-    public float RepairableCannonRepairPerSecond { get; set; } = 30f;
-    public float RepairableSpeedLeverMaxHealth { get; set; } = 75f;
-    public float RepairableSpeedLeverRepairPerSecond { get; set; } = 45f;
-    public float RepairableAnvilMaxHealth { get; set; } = 90f;
-    public float RepairableAnvilRepairPerSecond { get; set; } = 35f;
 
     // Enemy configuration (general)
     public float EnemyHealth { get; set; } = 100f;
-    public float EnemySpeed { get; set; } = 0f;
     public float EnemySize { get; set; } = 72f;
-    public float EnemySpawnIntervalBase { get; set; } = 12f;
-    public float EnemySpawnIntervalVariance { get; set; } = 5f;
     public float EnemySpawnOffsetX { get; set; } = 100f;
-    public float EnemySpawnMarginY { get; set; } = 100f;
-    public float RifleSpawnChance { get; set; } = 0.9f;
 
     // Rifle enemy configuration
     public float RifleMaxSpeed { get; set; } = 250f;
@@ -119,12 +103,6 @@ public class GameplayConfig
     public float MounterStealDuration { get; set; } = 1.5f;
     public int MounterCoalAmount { get; set; } = 5;
 
-    // Projectile configuration
-    public float ProjectileSpeed { get; set; } = 300f;
-    public float ProjectileDamage { get; set; } = 10f;
-    public float ProjectileLifetime { get; set; } = 5f;
-    public float ProjectileSize { get; set; } = 8f;
-
     // Train temperature configuration
     public float TrainMaxTemperature { get; set; } = 100f;
     public float TrainTemperatureDecreasePerSecondPerBreachedWall { get; set; } = 3f;
@@ -154,14 +132,6 @@ public class GameplayConfig
 
     // Camera configuration
     public float CameraLerpFactor { get; set; } = 4.0f;
-
-    // Enemy movement behavior configuration
-    public float WobbleAmplitude { get; set; } = 8f;
-    public float WobbleFrequency { get; set; } = 3f;
-    public float ChaseFallbackMultiplier { get; set; } = 5f;
-    public float PatrolSpeedRatio { get; set; } = 0.5f;
-    public float TrainCollisionDeathThreshold { get; set; } = 0.5f;
-    public float TrainAvoidanceStrength { get; set; } = 50f;
 
     public float GetThreatScaleForPlayerCount(int playerCount)
     {

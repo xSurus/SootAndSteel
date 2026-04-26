@@ -8,11 +8,10 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Gamelab.PhysicalEntities.Stations.Resources;
 
-public class ComponentResource(Vector2 position, string componentId)
-    : AbstractResource(StationIds.GetComponentStationId(componentId),
-        GamelabGame.Instance.ComponentRegistry.Get(componentId).Color,
-        "Bullet",
-        position)
+public class ComponentResourceStation(Vector2 position, string componentId)
+    : ResourceStation(
+        position,
+        StationIds.GetComponentResourceId(componentId))
 {
     public string ComponentId { get; } = componentId;
     protected ComponentConfig DispensedComponentConfig => GamelabGame.Instance.ComponentRegistry.Get(ComponentId);

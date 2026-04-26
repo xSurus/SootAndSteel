@@ -99,7 +99,6 @@ public class NextLevelIntroScreen(GamelabGame game) : AbstractGameScreen(game)
                 if (whiteToGameplay.IsDone)
                 {
                     Game.CurrentRun.CurrentLevel++;
-                    Game.CurrentRun.ResetCoalAmount();
                     Game.SwitchToScreen(new GameplayScreen(Game));
                 }
 

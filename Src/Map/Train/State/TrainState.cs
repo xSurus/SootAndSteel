@@ -27,14 +27,9 @@ public class TrainState
         }
     }
 
-    public int CoalAmount { get; set; }
     public float Temperature { get; set; } = GamelabGame.Instance.GameplayConfig.TrainMaxTemperature;
     public bool IsCoalOvenBurning { get; set; } = true;
     public bool FuelBurningEnabled { get; set; } = true;
-
-    /// <summary>
-    /// When true (level complete outro), the train keeps moving but stations must not consume coal/fuel.
-    /// </summary>
     public bool VictoryLapActive { get; set; }
 
     public float DistanceTraveled { get; private set; }
@@ -43,7 +38,6 @@ public class TrainState
     public TrainState(RunSession session)
     {
         actualSpeed = currentSpeed.TargetSpeed;
-        CoalAmount = session.CoalRemaining;
         Temperature = GamelabGame.Instance.GameplayConfig.TrainMaxTemperature;
     }
 
@@ -99,16 +93,6 @@ public class TrainState
     public void RemoveAnchor()
     {
         ActiveAnchorCount = Math.Max(0, ActiveAnchorCount - 1);
-    }
-
-    public void ConsumeCoal(int amount)
-    {
-        CoalAmount = Math.Max(0, CoalAmount - amount);
-    }
-
-    public void AddCoal(int amount)
-    {
-        CoalAmount += amount;
     }
 
     public void DecreaseTemperature(float amount)

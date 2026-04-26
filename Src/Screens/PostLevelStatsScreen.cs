@@ -48,7 +48,7 @@ public class PostLevelStatsScreen(GamelabGame game) : AbstractGameScreen(game)
 
         var coal = new Label
         {
-            Text = $"Coal remaining: {Game.CurrentRun.CoalRemaining}",
+            Text = $"Level completed!",
             Font = Game.fontSystem.GetFont(56),
             TextColor = Color.White,
             HorizontalAlignment = HorizontalAlignment.Center
@@ -85,10 +85,8 @@ public class PostLevelStatsScreen(GamelabGame game) : AbstractGameScreen(game)
         {
             if (Game.playerManager.Configs.Any(c => c.Input.IsPickupJustPressed() || c.Input.IsStartJustPressed()))
             {
-                // TODO: Calculate reward based on level difficulty and coal remaining.
-                int reward = 25 + Game.CurrentRun.CoalRemaining * 3;
+                int reward = 25;
                 Game.CurrentRun.AddCredits(reward);
-                Game.CurrentRun.CoalRemaining = 0;
                 whiteToHub.FadeIn(0.8f);
                 phase = Phase.FadeOutToHub;
             }

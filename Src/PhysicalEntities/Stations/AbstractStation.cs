@@ -35,10 +35,9 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
 
     public virtual Color GetTooltipTextColor() => Color.White;
 
-    protected AbstractStation(string stationId, Color displayColor, Vector2 position)
+    protected AbstractStation(string stationId, Vector2 position)
     {
         StationId = stationId;
-        DisplayColor = displayColor;
         float collisionSizePixels = GamelabGame.Instance.GameplayConfig.TrainTileSize * 0.90f;
         float simSize = collisionSizePixels.ToMeters();
         PhysicsBody = gameplayContext.PhysicsWorld.CreateRectangle(simSize, simSize, 1f, position.ToMeters());
@@ -86,7 +85,7 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
                 texture: AssetManager.BlankTexture,
                 position: bottomCenter,
                 sourceRectangle: sourceRect,
-                color: DisplayColor,
+                color: Color.White,
                 rotation: PhysicsBody.Rotation,
                 origin: origin,
                 scale: 1f,

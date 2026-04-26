@@ -4,12 +4,10 @@ using Microsoft.Xna.Framework;
 
 namespace Gamelab.PhysicalEntities.Stations.Resources;
 
-public abstract class AbstractResource(
-    string stationId,
-    Color stationColor,
-    string resourceId,
-    Vector2 position)
-    : AbstractStation(stationId, stationColor, position)
+public class ResourceStation(
+    Vector2 position,
+    string resourceId)
+    : AbstractStation(StationIds.GetResourceStationId(resourceId), position)
 {
     protected string ResourceId { get; } = resourceId;
 

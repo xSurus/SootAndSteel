@@ -6,15 +6,9 @@ namespace Gamelab.Serialization;
 public class RunSession
 {
     public int CurrentLevel { get; set; } = 0;
-    public int CoalRemaining { get; set; } = GamelabGame.Instance.GameplayConfig.TrainInitialCoalAmount;
     public int Credits { get; set; } = 0;
     public List<StationSaveData> TrainLayout { get; set; } = new();
     public int RunSeed { get; set; } = Random.Shared.Next();
-
-    public void ResetCoalAmount()
-    {
-        CoalRemaining = GamelabGame.Instance.GameplayConfig.TrainInitialCoalAmount;
-    }
 
     public void AddCredits(int amount)
     {

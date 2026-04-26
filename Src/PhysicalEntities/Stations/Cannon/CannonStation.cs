@@ -22,7 +22,7 @@ public class CannonStation : AbstractStation, IBulletEmitter
     public CannonAimingBar AimingBar { get; private set; }
 
     public CannonStation(Vector2 position)
-        : base("Cannon", Color.DarkRed, position)
+        : base(StationIds.Cannon, position)
     {
         config = GamelabGame.Instance.GameplayConfig;
         cooldownTimer = 0f;
