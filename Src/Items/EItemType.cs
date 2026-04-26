@@ -21,4 +21,7 @@ public enum EItemType
 
     /// <summary>A station that primarily holds / passes items between players (e.g. Workbench, Counter).</summary>
     Storage,
+
+    /// <summary>A Resource that holds a resource.</summary>
+    Resource,
 }

@@ -298,6 +298,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         spriteBatch.Begin(
             sortMode: SpriteSortMode.FrontToBack,
             blendState: BlendState.AlphaBlend,
+            samplerState: SamplerState.PointClamp,
             transformMatrix: camera.GetViewMatrix()
         );
         worldScroller.Draw(spriteBatch);

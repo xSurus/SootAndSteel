@@ -52,7 +52,7 @@ public class ComponentResourceStation(Vector2 position, string componentId)
             interactingPlayer.HeldItem = new BulletItem(ComponentId);
             soundService.PlayOnce(Sounds.PickupItem);
         }
-        else if (interactingPlayer.HeldItem.Id == ResourceId
+        else if (interactingPlayer.HeldItem.Id == "Bullet"
                  && ((BulletItem)interactingPlayer.HeldItem).ComponentIds.SequenceEqual([ComponentId]))
         {
             interactingPlayer.HeldItem = null;

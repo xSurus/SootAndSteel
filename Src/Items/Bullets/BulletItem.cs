@@ -4,6 +4,7 @@ using System.Linq;
 using Gamelab.Assets;
 using Gamelab.PhysicalEntities.Bullets;
 using Gamelab.PhysicalEntities.Bullets.Components;
+using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -96,20 +97,80 @@ public class BulletItem : Item
 
     public override void Draw(SpriteBatch spriteBatch, Vector2 position, int size, float depth)
     {
+        Texture2D baseTex = AssetManager.BlankTexture;
+        Color drawColor = color;
+        float scale = 1f;
+        Rectangle? sourceRect = new Rectangle(0, 0, size, size);
         Vector2 origin = new Vector2(size / 2f, size);
-        Rectangle sourceRect = new Rectangle(0, 0, size, size);
+
+        string baseTexName = (Type == EComponentType.Bullet) ? "Bullet" : $"Basic{Type.ToString()}";
+
+        Texture2D loadedTex = AssetManager.GetItemTexture(baseTexName);
+        if (loadedTex != null)
+        {
+            baseTex = loadedTex;
+            drawColor = Color.White;
+            scale = size / (float)baseTex.Width;
+            sourceRect = null;
+            origin = new Vector2(baseTex.Width / 2f, baseTex.Height);
+        }
 
         spriteBatch.Draw(
-            texture: AssetManager.BlankTexture,
+            texture: baseTex,
             position: position,
             sourceRectangle: sourceRect,
-            color: color,
+            color: drawColor,
             rotation: 0f,
             origin: origin,
-            scale: 1f,
+            scale: scale,
             effects: SpriteEffects.None,
             layerDepth: depth
         );
+
+        string badgeTexName = null;
+        if (Type != EComponentType.Bullet && !HasBasic)
+        {
+            badgeTexName = "Upgrade";
+        }
+        else if (effects.Any(e => !e.IsBasic))
+        {
+            badgeTexName = "Upgraded";
+        }
+
+        if (!string.IsNullOrEmpty(badgeTexName))
+        {
+            Texture2D badgeTex = AssetManager.GetItemTexture(badgeTexName);
+            if (badgeTex != null)
+            {
+                float spriteWidth = (sourceRect == null) ? baseTex.Width * scale : size;
+                float spriteHeight = (sourceRect == null) ? baseTex.Height * scale : size;
+
+                float xOffset = 0;
+                float yOffset = 0;
+
+                Vector2 topRightPos = new Vector2(
+                    position.X + (spriteWidth / 2f) - xOffset,
+                    position.Y - spriteHeight + yOffset
+                );
+
+                float badgeScale = (size * 0.8f) / badgeTex.Width;
+                Vector2 badgeOrigin = new Vector2(badgeTex.Width / 2f, badgeTex.Height / 2f);
+
+                float badgeDepth = Math.Max(0f, depth + RenderUtility.Eps);
+
+                spriteBatch.Draw(
+                    texture: badgeTex,
+                    position: topRightPos,
+                    sourceRectangle: null,
+                    color: Color.White,
+                    rotation: 0f,
+                    origin: badgeOrigin,
+                    scale: badgeScale,
+                    effects: SpriteEffects.None,
+                    layerDepth: badgeDepth
+                );
+            }
+        }
     }
 
     private void ComputeColor()

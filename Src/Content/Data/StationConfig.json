@@ -25,5 +25,10 @@
     "name": "Counter",
     "description": "Pickup (A) swaps your item with the counter item.",
     "itemType": "Storage"
+  },
+  "ResourceCoal": {
+    "name": "Coal Box",
+    "description": "Pickup (A) grabs coal to fuel the train's engine.",
+    "itemType": "Resource"
   }
 }
