@@ -180,7 +180,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     {
         hud = new GameplayHud();
         pauseMenu = new PauseMenuController();
-        pauseMenu.OnExitRequested += () => Game.SwitchToScreen(new JoinScreen(Game));
+        pauseMenu.OnExitRequested += () => Game.SwitchToScreen(new global::Gamelab.JoinScreen(Game));
 
         desktop = new Desktop();
         var mainPanel = new Panel

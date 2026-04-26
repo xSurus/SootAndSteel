@@ -2,7 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Gamelab.Data;
+using Gamelab.Items;
 using Gamelab.Utils;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 namespace Gamelab.PhysicalEntities.Configurable;
 
 public class StationConfig
@@ -11,6 +14,9 @@ public class StationConfig
     public string Description { get; set; }
     public bool AppearsInShop { get; set; }
     public int ShopPrice { get; set; }
+
+    [JsonConverter(typeof(StringEnumConverter))]
+    public EItemType? ItemType { get; set; }
 }
 
 public class StationRegistry
@@ -27,7 +33,7 @@ public class StationRegistry
             Logger.Info($"Loaded {configs.Count} station configs");
             foreach (var (stationId, config) in configs)
             {
-                Logger.Info($"Loading config for '{stationId}': Name='{config.Name}', Description='{config.Description}', InShop='{config.AppearsInShop}', Price='{config.ShopPrice}'");
+                Logger.Info($"Loading config for '{stationId}': Name='{config.Name}', Description='{config.Description}', ItemType='{config.ItemType?.ToString() ?? "<none>"}', InShop='{config.AppearsInShop}', Price='{config.ShopPrice}'");
             }
         }
         else

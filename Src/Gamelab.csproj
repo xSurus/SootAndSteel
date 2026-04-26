@@ -32,6 +32,11 @@
     <MonoGameContentReference Include="Content\Content.mgcb" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Content\GumProject\**\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="..\GameInstructions.md">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -55,6 +60,7 @@
     <PackageReference Include="Aether.Physics2D.MG" Version="2.2.0" />
     <PackageReference Include="Contentless" Version="4.2.0" />
     <PackageReference Include="FontStashSharp.MonoGame" Version="1.5.4" />
+    <PackageReference Include="Gum.MonoGame" Version="2026.4.5.1" />
     <PackageReference Include="MonoGame.Extended" Version="5.3.1" />
     <PackageReference Include="MonoGame.Extended.Content.Pipeline" Version="5.3.1" />
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.*" />
@@ -101,7 +107,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="PhysicalEntities\Structures\BuyableStationWrapper.cs"/>
-    <Compile Remove="PhysicalEntities\Configurable\StationConfig.cs"/>
+    <Compile Remove="PhysicalEntities\Structures\BuyableStationWrapper.cs" />
+    <Compile Remove="PhysicalEntities\Configurable\StationConfig.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Content\Data\levels\" />
   </ItemGroup>
 </Project>

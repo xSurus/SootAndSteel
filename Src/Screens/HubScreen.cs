@@ -17,6 +17,7 @@ using Gamelab.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
+using MonoGameGum;
 using Myra.Graphics2D.UI;
 
 namespace Gamelab.Screens;
@@ -48,6 +49,8 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
     {
         base.LoadContent();
 
+        GumService.Default.Root.Children.Clear();
+
         InitializeDimensions();
         InitializeContextAndSave();
         InitializeMaps();
@@ -61,9 +64,9 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
         Services.GetService<IVfxService>().AddContinuous(hubSnowEmitter);
 
         hud = new HubHud(Game);
-        worldUiManager = new WorldUiManager(hud.Desktop, Game);
+        worldUiManager = new WorldUiManager(Game);
         pauseMenu = new PauseMenuController();
-        pauseMenu.OnExitRequested += () => Game.SwitchToScreen(new JoinScreen(Game));
+        pauseMenu.OnExitRequested += () => Game.SwitchToScreen(new global::Gamelab.JoinScreen(Game));
         if (hud.Desktop.Root is Panel rootPanel) rootPanel.Widgets.Add(pauseMenu.Overlay);
 
         var soundService = Services.GetService<ISoundService>();
@@ -120,6 +123,7 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
 
         spriteBatch.End();
         hud.Draw();
+        GumService.Default.Draw();
         spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
         if (departWhiteFilter != null && departWhiteFilter.Opacity > 0.001f)
         {
@@ -245,6 +249,8 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
 
     public override void UnloadContent()
     {
+        worldUiManager?.ClearAll();
+        GumService.Default.Root.Children.Clear();
         Game.Services.RemoveService(typeof(GameplayContext));
         Services.GetService<IVfxService>().ClearAll();
         hubMap?.Dispose();

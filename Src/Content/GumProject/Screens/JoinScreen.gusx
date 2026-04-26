@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScreenSave xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>JoinScreen</Name>
+  <State>
+    <Name>Default</Name>
+    <Variable Type="string" Name="First Player.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">PlayerFigureContainer</Value>
+    </Variable>
+    <Variable Type="string" Name="Fourth Player.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">PlayerFigureContainer</Value>
+    </Variable>
+    <Variable IsFont="true" Type="string" Name="JoinScreenTitle.Font" SetsValue="true">
+      <Value xsi:type="xsd:string">Ubuntu Mono</Value>
+    </Variable>
+    <Variable Type="int" Name="JoinScreenTitle.FontSize" SetsValue="true">
+      <Value xsi:type="xsd:int">60</Value>
+    </Variable>
+    <Variable Type="float" Name="JoinScreenTitle.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">10</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="JoinScreenTitle.HeightUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="JoinScreenTitle.HorizontalAlignment" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="string" Name="JoinScreenTitle.Text" ExposedAsName="JoinScreenTitleText" SetsValue="true">
+      <Value xsi:type="xsd:string">Enter the train</Value>
+    </Variable>
+    <Variable Type="float" Name="JoinScreenTitle.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">90</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="JoinScreenTitle.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="float" Name="JoinScreenTitle.X" SetsValue="true">
+      <Value xsi:type="xsd:float">54</Value>
+    </Variable>
+    <Variable Type="float" Name="JoinScreenTitle.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">10</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="JoinScreenTitle.YUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">3</Value>
+    </Variable>
+    <Variable Type="ChildrenLayout" Name="PlayerFigureContainer.ChildrenLayout" SetsValue="true">
+      <Value xsi:type="xsd:int">2</Value>
+    </Variable>
+    <Variable Type="float" Name="PlayerFigureContainer.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">100</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="PlayerFigureContainer.HeightUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="float" Name="PlayerFigureContainer.StackSpacing" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="float" Name="PlayerFigureContainer.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">90</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="PlayerFigureContainer.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="float" Name="PlayerFigureContainer.X" SetsValue="true">
+      <Value xsi:type="xsd:float">5</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="PlayerFigureContainer.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">2</Value>
+    </Variable>
+    <Variable Type="float" Name="PlayerFigureContainer.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">35</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="PlayerFigureContainer.YUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">3</Value>
+    </Variable>
+    <Variable Type="string" Name="Second Player.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">PlayerFigureContainer</Value>
+    </Variable>
+    <Variable Type="string" Name="Third Player.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">PlayerFigureContainer</Value>
+    </Variable>
+  </State>
+  <Instance Name="First Player" BaseType="JoinPlayerComponent" />
+  <Instance Name="Second Player" BaseType="JoinPlayerComponent" />
+  <Instance Name="Third Player" BaseType="JoinPlayerComponent" />
+  <Instance Name="Fourth Player" BaseType="JoinPlayerComponent" />
+  <Instance Name="PlayerFigureContainer" BaseType="Container" />
+  <Instance Name="JoinScreenTitle" BaseType="Text" />
+  <Behaviors />
+</ScreenSave>

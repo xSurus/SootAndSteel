@@ -1,114 +1,62 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using FontStashSharp;
+using Gamelab.Components;
 using Gamelab.Input;
+using Gum.Forms;
+using Gum.Wireframe;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using Myra.Graphics2D;
-using Myra.Graphics2D.Brushes;
-using Myra.Graphics2D.UI;
+using MonoGameGum;
 
-namespace Gamelab.Screens;
+namespace Gamelab;
 
-public class JoinScreen(GamelabGame game) : AbstractGameScreen(game)
+/// <summary>
+/// Multiplayer join MonoGame screen. Gum Forms UI is <see cref="Screens.JoinScreen"/> (generated); this type
+/// stays in namespace <see cref="Gamelab"/> so it does not collide with Gum when you regenerate code.
+/// </summary>
+public sealed class JoinScreen(GamelabGame game) : Screens.AbstractGameScreen(game)
 {
-    private Desktop desktop;
-    private Label instructionLabel;
-    private readonly List<Panel> playerPanels = [];
-    private readonly List<Label> playerStatusLabels = [];
+    /// <summary>Names must match <c>JoinPlayerComponentAnimations.ganx</c> (set in Gum).</summary>
+    private const string AnimPlayerJoined = "PlayerJoinedAnimation";
+
+    private const string AnimPlayerEmpty = "PlayerEmptyAnimation";
 
     private readonly Dictionary<int, GamePadState> previousGamePadStates = new();
+
+    /// <summary>Last frame's join occupancy per slot — only then we swap animations.</summary>
+    private readonly bool[] previousSlotJoined = new bool[4];
+
+    private Screens.JoinScreen joinUi;
+
+    private static GumService Gum => GumService.Default;
 
     public override void Initialize()
     {
         base.Initialize();
+        Gum.Root.Children.Clear();
         Game.playerManager.Reset();
+        for (int i = 0; i < previousSlotJoined.Length; i++)
+            previousSlotJoined[i] = false;
     }
 
     public override void LoadContent()
     {
         base.LoadContent();
+        joinUi = new Screens.JoinScreen();
+        joinUi.AddToRoot();
 
-        desktop = new Desktop();
+        foreach (JoinPlayerComponent p in new[]
+                 {
+                     joinUi.First_Player, joinUi.Second_Player, joinUi.Third_Player, joinUi.Fourth_Player
+                 })
+            p.Visual.PlayAnimation(AnimPlayerEmpty);
+    }
 
-        int screenWidth = virtualScreenSize.X;
-        int screenHeight = virtualScreenSize.Y;
-
-        float scaleX = screenWidth / 1920f;
-        float scaleY = screenHeight / 1080f;
-        float minScale = Math.Min(scaleX, scaleY);
-
-        VerticalStackPanel mainStack = new VerticalStackPanel
-        {
-            Spacing = (int)(50 * scaleY),
-            Padding = new Thickness(0, (int)(100 * scaleY), 0, 0),
-            HorizontalAlignment = HorizontalAlignment.Stretch,
-            VerticalAlignment = VerticalAlignment.Stretch
-        };
-
-        Label titleLabel = new Label
-        {
-            Text = "Join Game",
-            HorizontalAlignment = HorizontalAlignment.Center,
-            Font = Game.fontSystem.GetFont((int)(96 * minScale))
-        };
-        mainStack.Widgets.Add(titleLabel);
-
-        instructionLabel = new Label
-        {
-            Text = "Press (A) to join.",
-            HorizontalAlignment = HorizontalAlignment.Center,
-            Font = Game.fontSystem.GetFont((int)(48 * minScale))
-        };
-        mainStack.Widgets.Add(instructionLabel);
-
-        Grid panelsContainer = new Grid
-        {
-            ColumnSpacing = (int)(20 * scaleX),
-            HorizontalAlignment = HorizontalAlignment.Stretch,
-            VerticalAlignment = VerticalAlignment.Center,
-            Padding = new Thickness((int)(50 * scaleX), 0, (int)(50 * scaleX), 0)
-        };
-
-        DynamicSpriteFont playerLabelFont = Game.fontSystem.GetFont((int)(36 * minScale));
-        DynamicSpriteFont statusLabelFont = Game.fontSystem.GetFont((int)(28 * minScale));
-
-        for (int i = 0; i < 4; i++)
-        {
-            panelsContainer.ColumnsProportions.Add(new Proportion(ProportionType.Part, 1.0f));
-            var panel = new Panel
-                { Height = (int)(400 * scaleY), Background = new SolidBrush(new Color(Color.White, 0.5f)) };
-            Grid.SetColumn(panel, i);
-            var content = new VerticalStackPanel
-            {
-                Spacing = (int)(100 * scaleY), Padding = new Thickness(0, (int)(20 * scaleY), 0, 0),
-                HorizontalAlignment = HorizontalAlignment.Stretch
-            };
-            content.Widgets.Add(new Label
-            {
-                Text = $"Player {i + 1}",
-                HorizontalAlignment = HorizontalAlignment.Center,
-                TextColor = Color.Black,
-                Font = playerLabelFont
-            });
-            var statusLabel = new Label
-            {
-                Text = "Press (A) to Join",
-                HorizontalAlignment = HorizontalAlignment.Center,
-                TextColor = Color.Black,
-                VerticalAlignment = VerticalAlignment.Center,
-                Font = statusLabelFont
-            };
-            content.Widgets.Add(statusLabel);
-            panel.Widgets.Add(content);
-            panelsContainer.Widgets.Add(panel);
-            playerPanels.Add(panel);
-            playerStatusLabels.Add(statusLabel);
-        }
-
-        mainStack.Widgets.Add(panelsContainer);
-        desktop.Root = mainStack;
+    public override void UnloadContent()
+    {
+        Gum.Root.Children.Clear();
+        joinUi = null;
+        base.UnloadContent();
     }
 
     protected override void Update(GameTime gameTime, KeyboardState keyboard, Dictionary<int, GamePadState> gamePads)
@@ -139,15 +87,30 @@ public class JoinScreen(GamelabGame game) : AbstractGameScreen(game)
         }
 
         bool anyJoined = Game.playerManager.Configs.Any();
-        instructionLabel.Text = anyJoined
-            ? "Press (A)/[Space] to join. Press (Start)/[Enter] to begin."
-            : "Press (A) or [Space] to join.";
+        joinUi.JoinScreenTitleText = anyJoined
+            ? "Press start to advance"
+            : "Enter the train";
 
+        var players = new[]
+        {
+            joinUi.First_Player, joinUi.Second_Player, joinUi.Third_Player, joinUi.Fourth_Player
+        };
         for (int i = 0; i < 4; i++)
         {
             bool isJoined = Game.playerManager.Configs.Count > i;
-            playerPanels[i].Background = new SolidBrush(isJoined ? Color.LightGreen : new Color(Color.White, 0.5f));
-            playerStatusLabels[i].Text = isJoined ? "Joined!" : "Ready...";
+            if (isJoined == previousSlotJoined[i])
+                continue;
+
+            previousSlotJoined[i] = isJoined;
+            JoinPlayerComponent p = players[i];
+
+            if (isJoined)
+                p.Visual.PlayAnimation(AnimPlayerJoined);
+            else
+            {
+                p.Visual.StopAnimation();
+                p.Visual.PlayAnimation(AnimPlayerEmpty);
+            }
         }
 
         if (anyJoined)
@@ -155,7 +118,7 @@ public class JoinScreen(GamelabGame game) : AbstractGameScreen(game)
             bool startPressed = Game.playerManager.Configs.Any(c => c.Input.IsStartJustPressed());
             if (startPressed)
             {
-                Game.SwitchToScreen(new MainMenuScreen(Game));
+                Game.SwitchToScreen(new global::Gamelab.MainMenuScreen(Game));
                 return;
             }
         }
@@ -167,10 +130,7 @@ public class JoinScreen(GamelabGame game) : AbstractGameScreen(game)
 
     public override void Draw(GameTime gameTime)
     {
-        GraphicsDevice.Clear(Color.Black);
-        spriteBatch.Begin();
-        desktop.Render();
-        spriteBatch.End();
+        Gum.Draw();
         base.Draw(gameTime);
     }
 }

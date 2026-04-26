@@ -3,6 +3,7 @@ using Gamelab.Items;
 using Gamelab.PhysicalEntities.Configurable;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
+using Gamelab.UI;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -21,19 +22,27 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
     public Item HeldItem { get; set; }
     public Vector2 DrawPosition => Position - new Vector2(GamelabGame.Instance.GameplayConfig.TrainTileSize / 2f);
     protected override bool AllowPlayerRotation { get; } = false;
-    public virtual bool IsTooltipVisible => IsHighlighted && StationConfig != null;
+    public virtual bool IsVisible => IsHighlighted && StationConfig != null;
 
-    public virtual string GetTooltipTitle()
+    public virtual string GetTitle()
     {
         return StationConfig?.Name ?? StationId;
     }
 
-    public virtual string GetTooltipDescription()
+    public virtual string GetDescription()
     {
         return StationConfig?.Description ?? "";
     }
 
-    public virtual Color GetTooltipTextColor() => Color.White;
+    public virtual string CategoryName =>
+        StationConfig?.ItemType is null ? null : ShopItemIconAtlas.StationCategoryName;
+
+    public virtual string FunctionalityName =>
+        StationConfig?.ItemType is { } itemType ? ShopItemIconAtlas.GetItemTypeName(itemType) : null;
+
+    public virtual Rectangle? IconSourceRect => null;
+
+    public virtual int? Cost => null;
 
     protected AbstractStation(string stationId, Vector2 position)
     {

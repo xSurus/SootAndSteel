@@ -21,7 +21,10 @@ using Gamelab.Systems;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Gum.Forms;
+using Gum.Forms.Controls;
 using MonoGame.Extended.Screens;
+using MonoGameGum;
 using Myra;
 
 namespace Gamelab;
@@ -64,6 +67,13 @@ public class GamelabGame : Game
     public bool IsDebug => runMode == RunMode.Debug;
     public bool IsRelease => runMode == RunMode.Release;
     public bool IsDebugOverlayEnabled { get; private set; }
+
+    /// <summary>
+    /// Uniform scale applied to Gum so 1920×1080 fits the window (updated every frame in viewport fit).
+    /// Layout and bitmap fonts scale with this via <c>Camera.Zoom</c>; use this only if you adjust
+    /// <see cref="MonoGameGum.GueDeriving.TextRuntime.FontSize"/> manually and need the same factor.
+    /// </summary>
+    public float GumViewportScale { get; private set; } = 1f;
 
     private AbstractGameScreen nextScreen;
     private string screenshotPath;
@@ -138,6 +148,10 @@ public class GamelabGame : Game
 
         graphics.ApplyChanges();
 
+        InitializeGum();
+
+        Window.ClientSizeChanged += OnWindowClientSizeChanged;
+
         var fontPath = Path.Combine(contentDir, "promptfont.ttf");
         var fontBytes = File.ReadAllBytes(fontPath);
         fontSystem.AddFont(fontBytes);
@@ -148,7 +162,7 @@ public class GamelabGame : Game
         systemManager.InitializeAll(this);
         AssetManager.LoadContent(graphics.GraphicsDevice);
         CurrentRun = new RunSession();
-        screenManager.ShowScreen(new JoinScreen(this));
+        screenManager.ShowScreen(new global::Gamelab.JoinScreen(this));
         logger.Info("Game initialized");
     }
 
@@ -161,6 +175,8 @@ public class GamelabGame : Game
         }
 
         systemManager.UpdateAll(gameTime);
+        ApplyGumViewportFit();
+        GumService.Default.Update(gameTime);
         base.Update(gameTime);
     }
 
@@ -258,6 +274,45 @@ public class GamelabGame : Game
         {
             logger.Exception("Failed to load Data/ComponentConfig.json", ex);
         }
+    }
+
+    /// <summary>Gum UI is authored at this resolution (same as <see cref="Screens.AbstractGameScreen"/> virtual size).</summary>
+    private const float GumDesignWidth = 1920f;
+
+    private const float GumDesignHeight = 1080f;
+
+    private void InitializeGum()
+    {
+        var gumProjectPath = Path.Combine(contentDir, "GumProject", "SootAndSteelGum.gumx");
+        GumService.Default.Initialize(this, gumProjectPath);
+#pragma warning disable CS0618 // Gum marks LoadAnimations experimental; required for .ganx playback
+        GumService.Default.LoadAnimations();
+#pragma warning restore CS0618
+        FrameworkElement.KeyboardsForUiControl.Add(GumService.Default.Keyboard);
+        FrameworkElement.GamePadsForUiControl.AddRange(GumService.Default.Gamepads);
+        ApplyGumViewportFit();
+    }
+
+    private void ApplyGumViewportFit()
+    {
+        var gum = GumService.Default;
+        if (!gum.IsInitialized) return;
+ 
+        var vp = GraphicsDevice.Viewport;
+        if (vp.Width <= 0 || vp.Height <= 0) return;
+
+        gum.CanvasWidth = GumDesignWidth;
+        gum.CanvasHeight = GumDesignHeight;
+
+        float scale = Math.Min(vp.Width / GumDesignWidth, vp.Height / GumDesignHeight);
+        GumViewportScale = scale;
+        gum.Renderer.Camera.Zoom = scale;
+    }
+
+    private void OnWindowClientSizeChanged(object sender, EventArgs e)
+    {
+        ApplyGumViewportFit();
+        GumService.Default.Root.UpdateLayout();
     }
 
     public void ToggleDebugOverlay()

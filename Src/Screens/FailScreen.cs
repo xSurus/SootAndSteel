@@ -55,7 +55,7 @@ public class FailScreen(GamelabGame game) : AbstractGameScreen(game)
         base.Update(gameTime);
         if (Game.playerManager.Configs.Any(c => c.Input.IsPickupJustPressed() || c.Input.IsStartJustPressed()))
         {
-            Game.SwitchToScreen(new MainMenuScreen(Game));
+            Game.SwitchToScreen(new global::Gamelab.MainMenuScreen(Game));
         }
     }
 
