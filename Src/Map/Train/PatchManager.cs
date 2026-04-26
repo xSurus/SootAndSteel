@@ -25,8 +25,8 @@ public class PatchManager
     private float iceSpawnTimer;
     private float iceMeltTimer;
 
-    private static readonly Color SnowColor = new Color(220, 230, 245, 100);
-    private static readonly Color IceColor = new Color(100, 180, 255, 90);
+    private static readonly Color SnowColor = new Color(178, 198, 218, 180);
+    private static readonly Color IceColor = new Color(100, 180, 255, 180);
     private const float DrawDepth = RenderUtility.FloorLayer + 2 * RenderUtility.Eps;
 
     public IReadOnlySet<Point> SnowTiles => snowTiles;
