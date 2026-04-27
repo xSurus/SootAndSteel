@@ -132,7 +132,7 @@ public class HubMap : IDisposable
 
     private void DrawNpcs(SpriteBatch spriteBatch)
     {
-        Vector2 vendorPosition = new Vector2(1160, 580);
+        Vector2 vendorPosition = new Vector2(1260, 580);
         Texture2D vendorTex = AssetManager.GetNPCTexture("Vendor");
         Vector2 bottomCenterOrigin = new Vector2(vendorTex.Width / 2f, vendorTex.Height);
         float vendorScale = 0.3f;
@@ -149,7 +149,7 @@ public class HubMap : IDisposable
             layerDepth: vendorDepth
         );
 
-        Vector2 town1Position = new Vector2(800, 200);
+        Vector2 town1Position = new Vector2(500, 580);
         Texture2D town1Tex = AssetManager.GetNPCTexture("Town1");
         Vector2 town1Origin = new Vector2(town1Tex.Width / 2f, town1Tex.Height);
         float town1Scale = 0.3f;
