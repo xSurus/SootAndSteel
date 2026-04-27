@@ -162,7 +162,7 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
 
     private void InitializeDimensions()
     {
-        worldWidth = virtualScreenSize.Y * 2;
+        worldWidth = virtualScreenSize.X;
         worldHeight = virtualScreenSize.Y * 2;
     }
 
@@ -180,7 +180,7 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
         prepTrainMap.LoadLayout(Game.CurrentRun.TrainLayout);
         gameplayContext.Map = prepTrainMap;
         int hubSeed = unchecked(Game.CurrentRun.RunSeed + Game.CurrentRun.CurrentLevel * 4242);
-        hubMap.RestockHubDragOffers(new Random(hubSeed), 5);
+        hubMap.RestockHubDragOffers(new Random(hubSeed), 4);
     }
 
     private void InitializePlayers()
