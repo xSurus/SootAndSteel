@@ -135,19 +135,13 @@ public sealed class MainMenuScreen(GamelabGame game) : Screens.AbstractGameScree
 
     private void BuildButtonList()
     {
-        bool hasSave = SaveManager.HasSave();
-
-        // Hide the Continue slot when there is no save; the stack container collapses the empty row.
-        menuUi.ContinueButton.Visual.Visible = hasSave;
+        menuUi.ContinueButton.Visual.Visible = true;
 
         var buttonList = new List<MainMenuButton>(4);
         var actionList = new List<Action>(4);
 
-        if (hasSave)
-        {
-            buttonList.Add(menuUi.ContinueButton);
-            actionList.Add(ContinueGame);
-        }
+        buttonList.Add(menuUi.ContinueButton);
+        actionList.Add(ContinueGame);
 
         buttonList.Add(menuUi.NewGameButton);
         actionList.Add(StartNewGame);
@@ -188,17 +182,12 @@ public sealed class MainMenuScreen(GamelabGame game) : Screens.AbstractGameScree
 
     private void ContinueGame()
     {
-        RunSession loadedSession = SaveManager.LoadRun();
-        if (loadedSession != null)
+        Game.CurrentRun = new RunSession
         {
-            Game.CurrentRun = loadedSession;
-            Game.SwitchToScreen(new HubScreen(Game));
-        }
-        else
-        {
-            logger.Warning("Save file corrupted or missing. Defaulting to New Game.");
-            StartNewGame();
-        }
+            CurrentLevel = 2,
+            Credits = 80
+        };
+        Game.SwitchToScreen(new HubScreen(Game));
     }
 
     public override void Dispose()
