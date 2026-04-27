@@ -156,7 +156,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         gameplayContext.Map = trainMap;
         gameplayContext.PatchManager = new PatchManager(trainMap);
 
-        worldScroller = new WorldScroller(GraphicsDevice);
+        worldScroller = new WorldScroller();
         enemyManager = new EnemyManager(currentLevelDef);
 
         players = [];
@@ -170,7 +170,8 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     {
         camera = new OrthographicCamera(viewportAdapter);
         cameraDirector = new CameraDirector(virtualScreenSize);
-        cameraDirector.SnapToCenter(camera, trainMap.GetBounds(), virtualScreenSize.Y);
+        cameraDirector.SnapToCenter(camera, trainMap.GetBounds(), virtualScreenSize.X, virtualScreenSize.Y,
+            allowOffWorldOverflow: false);
         Services.GetService<IVfxService>().AddContinuous(ParticleFactory.CreateSnowstorm());
     }
 
@@ -243,7 +244,8 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         worldScroller.Update(dt);
         hud.Update(currentLevelDef);
         levelWatcher.Update(enemyManager);
-        cameraDirector.Update(camera, dt, players, trainMap.GetBounds(), virtualScreenSize.Y);
+        cameraDirector.Update(camera, dt, players, trainMap.GetBounds(), virtualScreenSize.X, virtualScreenSize.Y,
+            allowOffWorldOverflow: false);
     }
 
     private void HandleLevelTransition(float dt)
@@ -259,7 +261,8 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
             accumulator -= fixedDt;
         }
 
-        cameraDirector.Update(camera, dt, players, trainMap.GetBounds(), virtualScreenSize.Y);
+        cameraDirector.Update(camera, dt, players, trainMap.GetBounds(), virtualScreenSize.X, virtualScreenSize.Y,
+            allowOffWorldOverflow: false);
         endLevelWhiteFilter.Update(dt);
 
         if (endLevelWhiteFilter.IsDone)

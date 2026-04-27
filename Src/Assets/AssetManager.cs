@@ -25,6 +25,12 @@ public static class AssetManager
     public static Dictionary<string, Texture2D> StationTextures { get; private set; }
         = new Dictionary<string, Texture2D>();
 
+    public static Dictionary<string, Texture2D> HubDecorationTextures { get; private set; }
+        = new Dictionary<string, Texture2D>();
+
+    public static Dictionary<string, Texture2D> DecorationTextures { get; private set; }
+        = new Dictionary<string, Texture2D>();
+
     public static Dictionary<string, Texture2D> WallTextures { get; private set; }
         = new Dictionary<string, Texture2D>();
 
@@ -59,6 +65,8 @@ public static class AssetManager
         LoadStructureTextures(graphicsDevice);
         LoadStationTextures(graphicsDevice);
         LoadHubTexture(graphicsDevice);
+        LoadHubDecorationTextures(graphicsDevice);
+        LoadDecorationTextures(graphicsDevice);
         LoadPatchTextures(graphicsDevice);
         LoadTitleTexture(graphicsDevice);
         LoadNPCTextures(graphicsDevice);
@@ -280,6 +288,56 @@ public static class AssetManager
         HubTexture = LoadTexture(graphicsDevice, "Hub.png");
     }
 
+    private static void LoadHubDecorationTextures(GraphicsDevice graphicsDevice)
+    {
+        string dir = Path.Combine(
+            AppDomain.CurrentDomain.BaseDirectory, "Assets", "Hub");
+
+        if (!Directory.Exists(dir))
+        {
+            Console.WriteLine($"[AssetManager] Hub decorations folder not found: {dir}");
+            return;
+        }
+
+        foreach (string path in Directory.GetFiles(dir, "*.png"))
+        {
+            string key = Path.GetFileNameWithoutExtension(path);
+            using Stream stream = File.OpenRead(path);
+            HubDecorationTextures[key] = Texture2D.FromStream(graphicsDevice, stream);
+            logger.Info($"Loading hub decoration texture for '{key}'");
+        }
+    }
+
+    public static Texture2D GetHubDecorationTexture(string type)
+    {
+        return HubDecorationTextures.TryGetValue(type, out var tex) ? tex : BlankTexture;
+    }
+
+    private static void LoadDecorationTextures(GraphicsDevice graphicsDevice)
+    {
+        string dir = Path.Combine(
+            AppDomain.CurrentDomain.BaseDirectory, "Assets", "Decorations");
+
+        if (!Directory.Exists(dir))
+        {
+            Console.WriteLine($"[AssetManager] Decorations folder not found: {dir}");
+            return;
+        }
+
+        foreach (string path in Directory.GetFiles(dir, "*.png"))
+        {
+            string key = Path.GetFileNameWithoutExtension(path);
+            using Stream stream = File.OpenRead(path);
+            DecorationTextures[key] = Texture2D.FromStream(graphicsDevice, stream);
+            logger.Info($"Loading decoration texture for '{key}'");
+        }
+    }
+
+    public static Texture2D GetDecorationTexture(string type)
+    {
+        return DecorationTextures.TryGetValue(type, out var tex) ? tex : BlankTexture;
+    }
+
     private static void LoadPatchTextures(GraphicsDevice graphicsDevice)
     {
         SnowPatchTexture = LoadTexture(graphicsDevice, "Snow_Tile.png");
@@ -402,6 +460,14 @@ public static class AssetManager
         foreach (var tex in StationTextures.Values)
             tex?.Dispose();
         StationTextures.Clear();
+
+        foreach (var tex in HubDecorationTextures.Values)
+            tex?.Dispose();
+        HubDecorationTextures.Clear();
+
+        foreach (var tex in DecorationTextures.Values)
+            tex?.Dispose();
+        DecorationTextures.Clear();
 
         foreach (var tex in WallTextures.Values)
             tex?.Dispose();

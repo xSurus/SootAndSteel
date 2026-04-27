@@ -26,6 +26,7 @@ public abstract class AbstractPhysicalEntity : IPhysicalEntity, IHighlightable
         }
     }
 
+    public virtual bool CanHighlight => true;
     public bool IsHighlighted => highlighterCount > 0;
     private int highlighterCount;
 
@@ -39,11 +40,13 @@ public abstract class AbstractPhysicalEntity : IPhysicalEntity, IHighlightable
 
     public virtual void OnHighlight(Player player)
     {
+        if (!CanHighlight) return;
         highlighterCount++;
     }
 
     public virtual void OnHighlightRemoved(Player player)
     {
+        if (!CanHighlight) return;
         highlighterCount--;
         if (highlighterCount < 0) highlighterCount = 0;
     }

@@ -62,7 +62,8 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
 
         camera = new OrthographicCamera(viewportAdapter);
         cameraDirector = new CameraDirector(virtualScreenSize);
-        cameraDirector.SnapToCenter(camera, prepTrainMap.GetBounds(), worldHeight);
+        cameraDirector.SnapToCenter(camera, prepTrainMap.GetBounds(), worldWidth, worldHeight,
+            allowOffWorldOverflow: true);
         hubSnowEmitter = ParticleFactory.CreateSnowstorm();
         Services.GetService<IVfxService>().AddContinuous(hubSnowEmitter);
 
@@ -103,7 +104,8 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
 
         UpdatePhysics(dt);
 
-        cameraDirector.Update(camera, dt, players, prepTrainMap.GetBounds(), worldHeight);
+        cameraDirector.Update(camera, dt, players, prepTrainMap.GetBounds(), worldWidth, worldHeight,
+            allowOffWorldOverflow: true);
         hubSnowEmitter.Position = camera.Position + camera.Origin;
         worldUiManager.Update(prepTrainMap.MapObjects, camera.GetViewMatrix());
 
@@ -160,7 +162,7 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
 
     private void InitializeDimensions()
     {
-        worldWidth = virtualScreenSize.X;
+        worldWidth = virtualScreenSize.Y * 2;
         worldHeight = virtualScreenSize.Y * 2;
     }
 
