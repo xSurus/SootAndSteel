@@ -106,6 +106,7 @@ public class GameplayConfig
 
     // Camera configuration
     public float CameraLerpFactor { get; set; } = 4.0f;
+    public float CameraMinZoom { get; set; } = 0.4f;
 
     public float GetThreatScaleForPlayerCount(int playerCount)
     {

@@ -398,6 +398,9 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
             if (fixture.Body == PhysicsBody) return -1;
             if (fixture.Body.Tag is IHighlightable highlightableEntity)
             {
+                if (highlightableEntity is AbstractPhysicalEntity physicalEntity && !physicalEntity.CanHighlight)
+                    return -1;
+
                 closestEntity = highlightableEntity;
                 return fraction;
             }

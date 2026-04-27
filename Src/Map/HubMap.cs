@@ -5,6 +5,7 @@ using Gamelab.Assets;
 using Gamelab.Data;
 using Gamelab.Map.Train.State;
 using Gamelab.PhysicalEntities.Stations;
+using Gamelab.PhysicalEntities.Structures;
 using Gamelab.Services.Shop;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
@@ -19,8 +20,18 @@ public class HubMap : IDisposable
     private readonly int worldWidth;
     private readonly int worldHeight;
     private readonly List<Body> worldBoundaryBodies = [];
+    private readonly List<Stake> fenceStakes = [];
+    private readonly List<HubTree> hubTrees = [];
     private Rectangle shoppingArea;
-    private Texture2D baseBackgroundTexture;
+    private Rectangle villageRect;
+
+    private const float FenceStakeSpacing = 95f;
+    private const float SignGapWidth = 280f;
+    private const float SignVisualWidth = 360f;
+    private const float HubTreeBaseScale = 0.55f;
+    private const string PineDecorationKey = "Snow_Covered_Pine";
+
+    private readonly record struct HubTree(Vector2 Feet, float Scale);
 
     public HubMap(int worldWidth, int worldHeight)
     {
@@ -32,10 +43,19 @@ public class HubMap : IDisposable
             hubPad, hubPad,
             worldWidth - hubPad * 2,
             worldHeight / 2 - hubPad - 160);
+
+        
+        float hubBgScale = worldWidth * 1.0f / AssetManager.HubTexture.Width;
+        int villageBottom = (int)MathF.Min(AssetManager.HubTexture.Height * hubBgScale, worldHeight / 2f);
+        villageRect = new Rectangle(
+            hubPad,
+            hubPad,
+            worldWidth - hubPad * 2,
+            Math.Max(shoppingArea.Height, villageBottom - hubPad));
+
         CreateWorldBoundaryWalls();
-        baseBackgroundTexture = new Texture2D(GamelabGame.Instance.GraphicsDevice, 1, 1);
-        Color baseColor = new Color(208, 232, 242);
-        baseBackgroundTexture.SetData(new[] { baseColor });
+        BuildVillageFence();
+        BuildHubTreeLayout();
     }
 
     public void RestockHubDragOffers(Random hubRandom, int offerCount)
@@ -83,29 +103,127 @@ public class HubMap : IDisposable
         worldBoundaryBodies.Add(b);
     }
 
-    public void Draw(SpriteBatch spriteBatch)
+    private void BuildVillageFence()
     {
-        DrawBackground(spriteBatch);
-        DrawRails(spriteBatch);
-        DrawNpcs(spriteBatch);
+        // Bottom edge with a sign-shaped gap centered horizontally
+        AddFenceLineHorizontal(villageRect.Left, villageRect.Right, villageRect.Bottom, leaveCenterGap: true);
+
+        // Left and right edges
+        AddFenceLineVertical(villageRect.Left, villageRect.Top, villageRect.Bottom);
+        AddFenceLineVertical(villageRect.Right, villageRect.Top, villageRect.Bottom);
     }
 
-    private void DrawBackground(SpriteBatch spriteBatch)
+    private void AddFenceLineHorizontal(float xStart, float xEnd, float y, bool leaveCenterGap)
     {
-        spriteBatch.Draw(
-            texture: baseBackgroundTexture,
-            destinationRectangle: new Rectangle(0, 0, worldWidth, worldHeight),
-            sourceRectangle: null,
-            color: Color.White,
-            rotation: 0f,
-            origin: Vector2.Zero,
-            effects: SpriteEffects.None,
-            layerDepth: RenderUtility.BackgroundLayer - RenderUtility.Eps
-        );
+        float gapHalf = leaveCenterGap ? SignGapWidth / 2f : 0f;
+        float centerX = worldWidth / 2f;
+
+        for (float x = xStart; x <= xEnd; x += FenceStakeSpacing)
+        {
+            if (leaveCenterGap && MathF.Abs(x - centerX) < gapHalf) continue;
+            AddStake(new Vector2(x, y));
+        }
+    }
+
+    private void AddFenceLineVertical(float x, float yStart, float yEnd)
+    {
+        for (float y = yStart; y <= yEnd - FenceStakeSpacing; y += FenceStakeSpacing)
+        {
+            AddStake(new Vector2(x, y));
+        }
+    }
+
+    private void AddStake(Vector2 feetPos)
+    {
+        Stake stake = new Stake(feetPos);
+        fenceStakes.Add(stake);
+    }
+
+    private void BuildHubTreeLayout()
+    {
+        
+        float leftMarginX = villageRect.Left * 0.5f;         
+        float rightMarginX = (villageRect.Right + worldWidth) / 2f;
+        float topY = villageRect.Top + villageRect.Height * 0.15f;
+        float midY = villageRect.Top + villageRect.Height * 0.5f;
+        float lowerY = villageRect.Top + villageRect.Height * 0.85f;
+
+        Vector2[] handPlaced =
+        {
+            new Vector2(leftMarginX,  topY),
+            new Vector2(leftMarginX - 40f, midY),
+            new Vector2(leftMarginX + 30f, lowerY),
+            new Vector2(rightMarginX, topY),
+            new Vector2(rightMarginX + 40f, midY),
+            new Vector2(rightMarginX - 20f, lowerY),
+        };
+
+        float[] scales = { 1.0f, 0.9f, 1.1f, 1.0f, 1.05f, 0.95f };
+
+        for (int i = 0; i < handPlaced.Length; i++)
+        {
+            hubTrees.Add(new HubTree(handPlaced[i], HubTreeBaseScale * scales[i]));
+        }
+    }
+
+    public void Draw(SpriteBatch spriteBatch)
+    {
+        DrawSnowBackdrop(spriteBatch);
 
         float scale = worldWidth * 1.0f / AssetManager.HubTexture.Width;
         spriteBatch.Draw(AssetManager.HubTexture, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, scale,
             SpriteEffects.None, RenderUtility.BackgroundLayer);
+
+        DrawHubTrees(spriteBatch);
+        DrawFence(spriteBatch);
+        DrawVillageSign(spriteBatch);
+        DrawRails(spriteBatch);
+        DrawNpcs(spriteBatch);
+    }
+
+    /// <summary>
+    /// TODO: replace with a snow texture
+    /// </summary>
+    private void DrawSnowBackdrop(SpriteBatch spriteBatch)
+    {
+        float minZoom = GamelabGame.Instance.GameplayConfig.CameraMinZoom;
+        int pad = (int)MathF.Ceiling(MathF.Max(worldWidth, worldHeight) / minZoom);
+        Rectangle area = new Rectangle(-pad, -pad, worldWidth + pad * 2, worldHeight + pad * 2);
+        spriteBatch.Draw(AssetManager.BlankTexture, area, null, RenderUtility.SnowBackgroundColor,
+            0f, Vector2.Zero, SpriteEffects.None, 0f);
+    }
+
+    private void DrawFence(SpriteBatch spriteBatch)
+    {
+        foreach (Stake stake in fenceStakes)
+        {
+            stake.Draw(spriteBatch);
+        }
+    }
+
+    private void DrawVillageSign(SpriteBatch spriteBatch)
+    {
+        Texture2D sign = AssetManager.GetHubDecorationTexture("Village_Enter");
+        Vector2 feet = new Vector2(worldWidth / 2f, villageRect.Bottom);
+        float scale = SignVisualWidth / sign.Width;
+        Vector2 origin = new Vector2(sign.Width / 2f, sign.Height);
+        float depth = RenderUtility.CalculateDepth(feet.Y);
+
+        spriteBatch.Draw(sign, feet, null, Color.White, 0f, origin, scale,
+            SpriteEffects.None, depth);
+    }
+
+    private void DrawHubTrees(SpriteBatch spriteBatch)
+    {
+        Texture2D treeTex = AssetManager.GetDecorationTexture(PineDecorationKey);
+        Vector2 origin = new Vector2(treeTex.Width / 2f, treeTex.Height);
+
+        foreach (HubTree t in hubTrees)
+        {
+            float depth = RenderUtility.CalculateDepth(t.Feet.Y);
+            spriteBatch.Draw(treeTex, t.Feet, null, Color.White, 0f, origin, t.Scale,
+                SpriteEffects.None, depth);
+        }
     }
 
     private void DrawRails(SpriteBatch spriteBatch)
@@ -113,8 +231,11 @@ public class HubMap : IDisposable
         Texture2D railTex = AssetManager.TrainTrackTexture[0];
         int railTileWidth = railTex.Width;
         float centerY = ((worldHeight / 4f) * 3) - AssetManager.TrainTrackTexture[0].Height + 40;
-        int railCols = (worldWidth / railTileWidth) + 3;
-        for (int col = 0; col < railCols; col++)
+        float minZoom = GamelabGame.Instance.GameplayConfig.CameraMinZoom;
+        int pad = (int)MathF.Ceiling(MathF.Max(worldWidth, worldHeight) / minZoom);
+        int startCol = (int)MathF.Floor(-pad / (float)railTileWidth);
+        int railCols = (worldWidth + pad * 2) / railTileWidth + 3;
+        for (int col = startCol; col < startCol + railCols; col++)
         {
             Vector2 railDrawPos = new Vector2(col * railTileWidth, centerY);
             spriteBatch.Draw(
@@ -175,5 +296,12 @@ public class HubMap : IDisposable
         }
 
         worldBoundaryBodies.Clear();
+
+        foreach (Stake stake in fenceStakes)
+        {
+            stake.RemovePhysicsBody();
+        }
+
+        fenceStakes.Clear();
     }
 }

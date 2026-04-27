@@ -10,6 +10,7 @@ namespace Gamelab.Screens.Camera;
 public class CameraDirector(Point virtualScreenSize)
 {
     private float LerpSpeed => GamelabGame.Instance.GameplayConfig.CameraLerpFactor;
+    private float MinZoom => GamelabGame.Instance.GameplayConfig.CameraMinZoom;
     private float Padding => GamelabGame.Instance.GameplayConfig.TrainTileSize;
 
     private float screenShakeTimer;
@@ -24,14 +25,14 @@ public class CameraDirector(Point virtualScreenSize)
     }
 
     public void Update(OrthographicCamera camera, float dt, List<Player> players, Rectangle baseWindow,
-        float worldHeight)
+        int worldWidth, int worldHeight, bool allowOffWorldOverflow = false)
     {
         if (players.Count == 0) return;
 
         Rectangle paddedZone = baseWindow;
         paddedZone.Inflate(Padding, Padding);
 
-        bool allInside = players.Count != 0 && players.All(p => paddedZone.Contains(p.Position));
+        bool allInside = players.All(p => paddedZone.Contains(p.Position));
 
         float minY, maxY;
 
@@ -53,21 +54,73 @@ public class CameraDirector(Point virtualScreenSize)
             }
         }
 
-        float targetX = baseWindow.X + baseWindow.Width / 2f;
-        float targetY = minY + (maxY - minY) / 2f;
-        Vector2 targetPosition = new Vector2(targetX, targetY);
+        // Zoom out only when the player vertical span exceeds the default viewport height.
+        float spanY = MathF.Max(maxY - minY, virtualScreenSize.Y);
+        float fitZoom = virtualScreenSize.Y / spanY;
+        float targetZoom = MathHelper.Clamp(fitZoom, ComputeMinAllowedZoom(worldWidth, worldHeight, allowOffWorldOverflow), 1f);
 
+        // Camera horizontal center is locked to the world's horizontal center; players never pull X.
+        float targetCenterX = worldWidth / 2f;
+        float targetCenterY = (minY + maxY) / 2f;
+        Vector2 targetCenter = new Vector2(targetCenterX, targetCenterY);
+
+        // Lerp current zoom + center toward target.
         float lerpFactor = 1f - MathF.Exp(-LerpSpeed * dt);
-        Vector2 trueCurrentCenter = camera.Position + camera.Origin - ShakeOffset;
-        Vector2 trueNewCenter = Vector2.Lerp(trueCurrentCenter, targetPosition, lerpFactor);
-
-        float proposedTopY = trueNewCenter.Y - camera.Origin.Y;
-        float maxTopY = Math.Max(0, worldHeight - virtualScreenSize.Y);
-        float clampedTopY = MathHelper.Clamp(proposedTopY, 0, maxTopY);
+        float newZoom = MathHelper.Lerp(camera.Zoom, targetZoom, lerpFactor);
+        Vector2 currentCenter = ComputeWorldCenter(camera) - ShakeOffset;
+        Vector2 newCenter = Vector2.Lerp(currentCenter, targetCenter, lerpFactor);
 
         UpdateScreenShake(dt);
-        camera.Position = new Vector2(trueNewCenter.X - camera.Origin.X, clampedTopY) + ShakeOffset;
-        camera.Zoom = 1f;
+        ApplyCamera(camera, newZoom, newCenter, worldWidth, worldHeight);
+    }
+
+    public void SnapToCenter(OrthographicCamera camera, Rectangle baseWindow, int worldWidth, int worldHeight,
+        bool allowOffWorldOverflow = false)
+    {
+        Vector2 center = new Vector2(
+            worldWidth / 2f,
+            baseWindow.Y + baseWindow.Height / 2f);
+
+        ShakeOffset = Vector2.Zero;
+        screenShakeIntensity = 0;
+        screenShakeTimer = 0;
+
+        float initialZoom = MathHelper.Clamp(1f, ComputeMinAllowedZoom(worldWidth, worldHeight, allowOffWorldOverflow), 1f);
+        ApplyCamera(camera, initialZoom, center, worldWidth, worldHeight);
+    }
+
+    private Vector2 ComputeWorldCenter(OrthographicCamera camera)
+    {
+        return camera.Position + camera.Origin;
+    }
+
+    private float ComputeMinAllowedZoom(int worldWidth, int worldHeight, bool allowOffWorldOverflow)
+    {
+        if (allowOffWorldOverflow) return MinZoom;
+
+        float fitWorldWidthZoom = virtualScreenSize.X / (float)worldWidth;
+        float fitWorldHeightZoom = virtualScreenSize.Y / (float)worldHeight;
+        return Math.Max(MinZoom, MathF.Max(fitWorldWidthZoom, fitWorldHeightZoom));
+    }
+
+    private void ApplyCamera(OrthographicCamera camera, float zoom, Vector2 worldCenter, int worldWidth,
+        int worldHeight)
+    {
+        Vector2 visibleSize = new Vector2(virtualScreenSize.X, virtualScreenSize.Y) / zoom;
+        Vector2 topLeft = worldCenter - visibleSize / 2f;
+
+        // If visible area fits inside the world, clamp inside [0, world - visible]. If it doesn't
+        // fit (zoomed out far enough that visible > world), center the world inside the viewport.
+        topLeft.X = visibleSize.X >= worldWidth
+            ? (worldWidth - visibleSize.X) / 2f
+            : MathHelper.Clamp(topLeft.X, 0f, worldWidth - visibleSize.X);
+        topLeft.Y = visibleSize.Y >= worldHeight
+            ? (worldHeight - visibleSize.Y) / 2f
+            : MathHelper.Clamp(topLeft.Y, 0f, worldHeight - visibleSize.Y);
+
+        Vector2 finalCenter = topLeft + visibleSize / 2f;
+        camera.Zoom = zoom;
+        camera.Position = finalCenter - camera.Origin + ShakeOffset;
     }
 
     private void UpdateScreenShake(float dt)
@@ -86,19 +139,5 @@ public class CameraDirector(Point virtualScreenSize)
         );
 
         screenShakeIntensity *= 1f - GamelabGame.Instance.GameplayConfig.ScreenShakeDecay * dt;
-    }
-
-    public void SnapToCenter(OrthographicCamera camera, Rectangle baseWindow, float worldHeight)
-    {
-        float targetX = baseWindow.X + baseWindow.Width / 2f;
-        float targetY = baseWindow.Y + baseWindow.Height / 2f;
-        float proposedTopY = targetY - camera.Origin.Y;
-        float maxTopY = Math.Max(0, worldHeight - virtualScreenSize.Y);
-        float clampedTopY = MathHelper.Clamp(proposedTopY, 0, maxTopY);
-        camera.Position = new Vector2(targetX - camera.Origin.X, clampedTopY);
-        camera.Zoom = 1f;
-        ShakeOffset = Vector2.Zero;
-        screenShakeIntensity = 0;
-        screenShakeTimer = 0;
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using Gamelab.Map.Train.State;
+using Microsoft.Xna.Framework;
 
 namespace Gamelab.Utils;
 
@@ -13,6 +14,7 @@ public static class RenderUtility
     public const float OverlayBackLayer = 0.98f;
     public const float OverlayTopLayer = 0.99f;
     public const float Eps = 0.00001f;
+    public static readonly Color SnowBackgroundColor = new(208, 232, 242);
 
     public static float CalculateDepth(float yPosition)
     {
