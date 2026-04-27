@@ -294,7 +294,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         {
             allPlayersStunnedTimer += dt;
             if (allPlayersStunnedTimer >= Game.GameplayConfig.AllPlayersStunnedFailDelaySeconds)
-                TriggerFailure();
+                TriggerFailure(FailureReason.AllPlayersKnockedOut);
         }
         else
         {
@@ -354,15 +354,29 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
 
     private void OnTrainFrozen()
     {
-        if (!gameplayContext.State.VictoryLapActive) TriggerFailure();
+        if (gameplayContext.State.VictoryLapActive) return;
+        TriggerFailure(ResolveTrainFreezeFailureReason(gameplayContext.State));
     }
 
-    private void TriggerFailure()
+    /// <summary>
+    /// Matches <see cref="Map.Train.State.TrainState.Update"/>: freeze can come from breach cooling, engine-off cooling, or both.
+    /// </summary>
+    private static FailureReason ResolveTrainFreezeFailureReason(TrainState state)
+    {
+        bool breaches = state.numberBreachedWalls > 0;
+        bool furnaceOut = !state.IsCoalOvenBurning;
+        if (breaches && furnaceOut) return FailureReason.TrainFrozenBreachesAndFurnaceOut;
+        if (breaches) return FailureReason.TrainFrozenHullBreached;
+        if (furnaceOut) return FailureReason.TrainFrozenFurnaceOut;
+        return FailureReason.TrainFrozenOther;
+    }
+
+    private void TriggerFailure(FailureReason reason)
     {
         if (isFailureTriggered) return;
         isFailureTriggered = true;
         SaveManager.DeleteSave();
-        Game.SwitchToScreen(new FailScreen(Game));
+        Game.SwitchToScreen(new FailScreen(Game, reason));
     }
 
     private void OnLevelCompleted()
