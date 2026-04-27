@@ -184,7 +184,7 @@ public sealed class MainMenuScreen(GamelabGame game) : Screens.AbstractGameScree
     {
         Game.CurrentRun = new RunSession
         {
-            CurrentLevel = 2,
+            CurrentLevel = 1,
             Credits = 80
         };
         Game.SwitchToScreen(new HubScreen(Game));
