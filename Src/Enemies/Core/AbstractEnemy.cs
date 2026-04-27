@@ -1,5 +1,3 @@
-using Gamelab.Assets;
-using Gamelab.Enemies.Hazards;
 using Gamelab.Enemies.Movement;
 using Gamelab.Enemies.Slots;
 using Gamelab.Particles;
@@ -18,25 +16,20 @@ namespace Gamelab.Enemies.Core;
 
 public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable, IBulletEmitter
 {
-    public EnemyDefinition Definition { get; }
-    public EnemyType EnemyType => Definition.Type;
     public EnemyTrainSlot Slot { get; }
     public float Health { get; protected set; }
     public bool IsAlive => Health > 0;
     public bool ShouldRemove { get; protected set; }
-    public abstract Color EnemyColor { get; }
 
     protected float Size => GamelabGame.Instance.GameplayConfig.EnemySize;
     protected readonly EnemyMovementController EnemyMovement;
 
     protected AbstractEnemy(
-        EnemyDefinition definition,
         Vector2 spawnPosition,
         EnemyTrainSlot slot,
         EnemyMovementProfile movementProfile)
     {
         Health = GamelabGame.Instance.GameplayConfig.EnemyHealth;
-        Definition = definition;
         Slot = slot;
         PhysicsBody = gameplayContext.PhysicsWorld.CreateCircle((Size / 2f).ToMeters(), 1f, spawnPosition.ToMeters(),
             BodyType.Dynamic);
@@ -83,12 +76,6 @@ public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable, IBull
 
     public virtual void TryShoot()
     {
-        return;
-    }
-
-    public virtual IEnemyHazard TryCreateHazard()
-    {
-        return null;
     }
 
     public void RemovePhysicsBody()
@@ -102,28 +89,7 @@ public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable, IBull
         PhysicsBody = null;
     }
 
-    public override void Draw(SpriteBatch spriteBatch)
-    {
-        if (!IsAlive || ShouldRemove) return;
-
-        Texture2D texture = AssetManager.EnemyTexture;
-        Vector2 origin = new Vector2(texture.Width / 2f, texture.Height);
-        Vector2 feetPosition = Position + new Vector2(0, Size / 2f);
-        float depth = RenderUtility.CalculateDepth(feetPosition.Y);
-        float scale = Size / texture.Width;
-
-        spriteBatch.Draw(
-            texture: texture,
-            position: feetPosition,
-            sourceRectangle: null,
-            color: EnemyColor,
-            rotation: 0f,
-            origin: origin,
-            scale: scale,
-            effects: SpriteEffects.None,
-            layerDepth: depth
-        );
-    }
+    public abstract override void Draw(SpriteBatch spriteBatch);
 
     protected bool HasReached(Vector2 targetPosition, float radius)
     {
@@ -133,20 +99,5 @@ public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable, IBull
     protected bool IsOffScreenLeft()
     {
         return Position.X < -Size;
-    }
-
-    protected bool IsOffScreenRight()
-    {
-        return Position.X > gameplayContext.ScreenWidth + Size;
-    }
-
-    protected bool IsOffScreenTop()
-    {
-        return Position.Y < -Size;
-    }
-
-    protected bool IsOffScreenBottom()
-    {
-        return Position.Y > gameplayContext.ScreenHeight + Size;
     }
 }

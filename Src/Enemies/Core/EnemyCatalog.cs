@@ -6,67 +6,33 @@ namespace Gamelab.Enemies.Core;
 
 public static class EnemyCatalog
 {
-    private static readonly EnemyType[] EarlyProceduralTypes =
+    private static readonly EnemyType[] ProceduralTypes =
     [
-        EnemyType.Mounter,
         EnemyType.Rifle
-    ];
-
-    private static readonly EnemyType[] MidProceduralTypes =
-    [
-        EnemyType.Mounter,
-        EnemyType.Rifle,
-        EnemyType.Molotov,
-        EnemyType.TarThrower
-    ];
-
-    private static readonly EnemyType[] LateProceduralTypes =
-    [
-        EnemyType.Mounter,
-        EnemyType.Rifle,
-        EnemyType.Shield,
-        EnemyType.Molotov,
-        EnemyType.TarThrower,
-        EnemyType.Anchor
     ];
 
     public static IReadOnlyList<EnemyType> GetProceduralTypesForLevel(int levelNumber)
     {
-        return levelNumber switch
-        {
-            <= 2 => EarlyProceduralTypes,
-            <= 4 => MidProceduralTypes,
-            _ => LateProceduralTypes,
-        };
+        return ProceduralTypes;
     }
 
     public static float GetProceduralWeight(EnemyType type, int levelNumber)
     {
-        return type switch
+        if (type != EnemyType.Rifle)
         {
-            EnemyType.Mounter => levelNumber <= 2 ? 1.25f : 0.9f,
-            EnemyType.Rifle => 1.2f + levelNumber * 0.05f,
-            EnemyType.Shield => levelNumber >= 5 ? 0.75f : 0f,
-            EnemyType.Anchor => levelNumber >= 6 ? 0.5f : 0f,
-            //DISABLE MOLOTOV FOR NOW
-            EnemyType.Molotov => levelNumber >= 3 ? 0f : 0f,
-            //DISABLE TAR THROWER FOR NOW
-            EnemyType.TarThrower => levelNumber >= 3 ? 0f : 0f,
-            _ => throw new ArgumentOutOfRangeException(nameof(type), type, "Unknown enemy type.")
-        };
+            throw new ArgumentOutOfRangeException(nameof(type), type, "Unknown enemy type.");
+        }
+
+        return 1.2f + levelNumber * 0.05f;
     }
 
     public static int GetCost(LevelGenerationConfig config, EnemyType type)
     {
-        return type switch
+        if (type != EnemyType.Rifle)
         {
-            EnemyType.Mounter => config.MounterCost,
-            EnemyType.Rifle => config.RifleCost,
-            EnemyType.Shield => config.ShieldCost,
-            EnemyType.Anchor => config.AnchorCost,
-            EnemyType.Molotov => config.MolotovCost,
-            EnemyType.TarThrower => config.TarThrowerCost,
-            _ => throw new ArgumentOutOfRangeException(nameof(type), type, "Unknown enemy type.")
-        };
+            throw new ArgumentOutOfRangeException(nameof(type), type, "Unknown enemy type.");
+        }
+
+        return config.RifleCost;
     }
 }

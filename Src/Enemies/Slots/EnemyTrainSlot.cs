@@ -13,22 +13,24 @@ public readonly struct EnemyTrainSlot(EnemySlotSide side, float positionRatio)
 {
     public EnemySlotSide Side { get; } = side;
     public float PositionRatio { get; } = positionRatio;
-    private readonly GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
 
     public Vector2 GetAnchor(float distanceFromTrain)
     {
-        return Side switch
+        GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
+        Rectangle bounds = gameplayContext.Map.GetBounds();
+
+        if (Side == EnemySlotSide.Top)
         {
-            EnemySlotSide.Top => new Vector2(
-                gameplayContext.Map.GetBounds().Left + gameplayContext.Map.GetBounds().Width * PositionRatio,
-                gameplayContext.Map.GetBounds().Top - distanceFromTrain
-            ),
-            EnemySlotSide.Bottom => new Vector2(
-                gameplayContext.Map.GetBounds().Left + gameplayContext.Map.GetBounds().Width * PositionRatio,
-                gameplayContext.Map.GetBounds().Bottom + distanceFromTrain
-            ),
-            _ => new Vector2(gameplayContext.Map.GetBounds().Right + distanceFromTrain,
-                gameplayContext.Map.GetBounds().Center.Y)
-        };
+            float topClearance = GamelabGame.Instance.GameplayConfig.TrainTileSize;
+            return new Vector2(
+                bounds.Left + bounds.Width * PositionRatio,
+                bounds.Top - distanceFromTrain - topClearance
+            );
+        }
+
+        return new Vector2(
+            bounds.Left + bounds.Width * PositionRatio,
+            bounds.Bottom + distanceFromTrain
+        );
     }
 }

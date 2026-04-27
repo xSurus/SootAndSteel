@@ -53,55 +53,10 @@ public class GameplayConfig
     public float EnemySpawnOffsetX { get; set; } = 100f;
 
     // Rifle enemy configuration
-    public float RifleMaxSpeed { get; set; } = 250f;
-    public float RiflePreferredDistance { get; set; } = 150f;
+    public float RifleMaxSpeed { get; set; } = 700f;
+    public float RiflePreferredDistance { get; set; } = 30f;
     public float EnemyShootCooldown { get; set; } = 2f;
     public float EnemyShootSpread { get; set; } = 0.2f;
-
-    // Shield enemy configuration
-    public float ShieldMaxSpeed { get; set; } = 220f;
-    public float ShieldPreferredDistance { get; set; } = 150f;
-    public float ShieldDurationSeconds { get; set; } = 1.2f;
-    public float ShieldAimDurationSeconds { get; set; } = 0.8f;
-    public float ShieldRecoverDurationSeconds { get; set; } = 0.8f;
-    public float ShieldBlockArcDegrees { get; set; } = 120f;
-
-    // Anchor enemy configuration
-    public float AnchorMaxSpeed { get; set; } = 220f;
-    public float AnchorPreferredDistance { get; set; } = 120f;
-    public float AnchorDeployDurationSeconds { get; set; } = 1f;
-    public float AnchorRetreatSpeed { get; set; } = 320f;
-    public float AnchorCutDurationSeconds { get; set; } = 1.75f;
-    public float AnchorSpeedMultiplierPerActiveAnchor { get; set; } = 0.5f;
-    public float AnchorMinimumSpeedMultiplier { get; set; } = 0.1f;
-
-    // Molotov enemy configuration
-    public float MolotovMaxSpeed { get; set; } = 210f;
-    public float MolotovPreferredDistance { get; set; } = 160f;
-    public float MolotovAimDurationSeconds { get; set; } = 0.8f;
-    public float MolotovRecoverDurationSeconds { get; set; } = 1f;
-    public float MolotovProjectileSpeed { get; set; } = 260f;
-    public float MolotovProjectileLifetime { get; set; } = 0.8f;
-    public float MolotovProjectileSize { get; set; } = 14f;
-    public float FireZoneRadius { get; set; } = 90f;
-    public float FireZoneDurationSeconds { get; set; } = 5f;
-
-    // Tar thrower configuration
-    public float TarThrowerMaxSpeed { get; set; } = 210f;
-    public float TarThrowerPreferredDistance { get; set; } = 160f;
-    public float TarThrowerAimDurationSeconds { get; set; } = 0.9f;
-    public float TarThrowerRecoverDurationSeconds { get; set; } = 1f;
-    public float TarProjectileSpeed { get; set; } = 240f;
-    public float TarProjectileLifetime { get; set; } = 0.85f;
-    public float TarProjectileSize { get; set; } = 14f;
-    public float TarCleanDurationSeconds { get; set; } = 1.75f;
-
-    // Mounter enemy configuration
-    public float MounterApproachSpeed { get; set; } = 200f;
-    public float MounterFleeSpeed { get; set; } = 350f;
-    public float MounterMountDuration { get; set; } = 0.3f;
-    public float MounterStealDuration { get; set; } = 1.5f;
-    public int MounterCoalAmount { get; set; } = 5;
 
     // Train temperature configuration
     public float TrainMaxTemperature { get; set; } = 100f;

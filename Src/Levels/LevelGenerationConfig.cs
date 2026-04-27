@@ -7,7 +7,7 @@ namespace Gamelab.Levels;
 /// Level distance scales linearly: <c>BaseDistance + DistanceGrowthPerLevel * (level - 1)</c>.
 /// Enemy budget scales exponentially with a linear component:
 /// <c>BaseEnemyBudget * BudgetMultiplierPerLevel ^ (level - 1) + BudgetGrowthPerLevel * (level - 1)</c>.
-/// Early procedural levels currently bias toward rifles while mounters remain the cheaper filler threat.
+/// Procedural levels currently spawn rifle enemies only.
 /// </summary>
 public class LevelGenerationConfig
 {
@@ -26,32 +26,8 @@ public class LevelGenerationConfig
     /// <summary>Exponential multiplier applied per level, compounding the budget growth.</summary>
     public float BudgetMultiplierPerLevel { get; set; } = 1.12f;
 
-    /// <summary>How many budget points a single Mounter costs.</summary>
-    public int MounterCost { get; set; } = 2;
-
     /// <summary>How many budget points a single Rifle costs.</summary>
     public int RifleCost { get; set; } = 3;
-
-    /// <summary>How many budget points a single Shield costs.</summary>
-    public int ShieldCost { get; set; } = 4;
-
-    /// <summary>How many budget points a single Anchor costs.</summary>
-    public int AnchorCost { get; set; } = 5;
-
-    /// <summary>How many budget points a single Molotov enemy costs.</summary>
-    public int MolotovCost { get; set; } = 4;
-
-    /// <summary>How many budget points a single TarThrower costs.</summary>
-    public int TarThrowerCost { get; set; } = 4;
-
-    /// <summary>Probability of spawning a Rifle (vs. Mounter) on level 1.</summary>
-    public float BaseRifleChance { get; set; } = 0.45f;
-
-    /// <summary>Per-level increase in Rifle spawn probability.</summary>
-    public float RifleChanceIncreasePerLevel { get; set; } = 0.02f;
-
-    /// <summary>Hard cap on Rifle spawn probability regardless of level number.</summary>
-    public float MaxRifleChance { get; set; } = 0.85f;
 
     /// <summary>Distance (world units) at the start of each level where no enemies spawn.</summary>
     public float SafeZoneDistance { get; set; } = 2000f;
