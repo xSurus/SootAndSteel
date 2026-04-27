@@ -219,6 +219,11 @@
 /processor:TextureProcessor
 /build:GumProject/spr_icon_propellant_24.png
 
+#begin GumProject/spr_xbox_start_32.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/spr_xbox_start_32.png
+
 #begin GumProject/xbox_buttons_spritesheet.png
 /importer:TextureImporter
 /processor:TextureProcessor

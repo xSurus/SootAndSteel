@@ -9,6 +9,7 @@ using Gamelab.Map.Train.State;
 using Gamelab.Particles;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.PhysicalEntities.Stations;
+using Gamelab.Components;
 using Gamelab.Players;
 using Gamelab.Screens.Camera;
 using Gamelab.Serialization;
@@ -40,6 +41,8 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
     private ParticleEmitter hubSnowEmitter;
     private WhiteFilterTransition departWhiteFilter;
     private PauseMenuController pauseMenu;
+    private CraftingHelp craftingHelp;
+    private bool craftingHelpVisible = true;
 
     private int worldWidth, worldHeight;
     private float accumulator;
@@ -73,6 +76,10 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
         pauseMenu.OnExitRequested += () => Game.SwitchToScreen(new Gamelab.JoinScreen(Game));
         if (hud.Desktop.Root is Panel rootPanel) rootPanel.Widgets.Add(pauseMenu.Overlay);
 
+        craftingHelp = new CraftingHelp();
+        craftingHelp.AddToRoot();
+        craftingHelp.IsVisible = craftingHelpVisible;
+
         var soundService = Services.GetService<ISoundService>();
         soundService.LoadSound(Sounds.AmbientSong);
         ambientMusic = soundService.GetSoundInstance(Sounds.AmbientSong);
@@ -94,6 +101,12 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
         {
             pauseMenu.Update(Game.playerManager.Configs);
             return;
+        }
+
+        if (IsCraftingHelpToggleRequested())
+        {
+            craftingHelpVisible = !craftingHelpVisible;
+            if (craftingHelp != null) craftingHelp.IsVisible = craftingHelpVisible;
         }
 
         if (isTransitioningToNextLevel)
@@ -147,6 +160,9 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
 
         base.Draw(gameTime);
     }
+
+    private bool IsCraftingHelpToggleRequested() =>
+        Game.playerManager.Configs.Any(c => c.Input.IsBackButtonJustPressed());
 
     private void InitializeContextAndSave()
     {

@@ -64,4 +64,7 @@ public class GamePadInputProvider(int controllerIndex) : AbstractInputProvider()
     // same as start for the controller
     public override bool IsPauseJustPressed() => currentGamePadState.Buttons.Start == ButtonState.Pressed &&
                                                  previousGamePadState.Buttons.Start == ButtonState.Released;
+
+    public override bool IsBackButtonJustPressed() => currentGamePadState.Buttons.Back == ButtonState.Pressed &&
+                                                      previousGamePadState.Buttons.Back == ButtonState.Released;
 }

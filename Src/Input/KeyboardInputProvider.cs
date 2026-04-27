@@ -59,4 +59,7 @@ public class KeyboardInputProvider(Keys up, Keys down, Keys left, Keys right, Ke
     
     public override bool IsPauseJustPressed() =>
         currentKeyboardState.IsKeyDown(Keys.Escape) && previousKeyboardState.IsKeyUp(Keys.Escape);
+
+    public override bool IsBackButtonJustPressed() =>
+        currentKeyboardState.IsKeyDown(Keys.H) && previousKeyboardState.IsKeyUp(Keys.H);
 }

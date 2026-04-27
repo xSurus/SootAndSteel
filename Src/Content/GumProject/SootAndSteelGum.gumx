@@ -55,6 +55,7 @@
   <ScreenReference Name="JoinScreen" />
   <ScreenReference Name="MainMenuScreen" />
   <ComponentReference Name="ButtonWithIcon" />
+  <ComponentReference Name="CraftingHelp" />
   <ComponentReference Name="JoinPlayerComponent" />
   <ComponentReference Name="MainMenuButton" />
   <ComponentReference Name="ShopItemType" />
