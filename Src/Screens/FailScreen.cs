@@ -34,9 +34,9 @@ public class FailScreen(GamelabGame game, FailureReason reason) : AbstractGameSc
     private static string GetReasonText(FailureReason r) => r switch
     {
         FailureReason.AllPlayersKnockedOut => "All players got knocked out.",
-        FailureReason.TrainFrozenHullBreached => "The train froze — hull breaches let the cold in.",
-        FailureReason.TrainFrozenFurnaceOut => "The train froze — the furnace went out.",
-        FailureReason.TrainFrozenBreachesAndFurnaceOut => "The train froze — breaches and a dead furnace.",
+        FailureReason.TrainFrozenHullBreached => "The train froze over as hull breaches let the cold in.",
+        FailureReason.TrainFrozenFurnaceOut => "The train froze over as the furnace went out.",
+        FailureReason.TrainFrozenBreachesAndFurnaceOut => "The train froze over as the furnace went out and breaches let the cold in.",
         FailureReason.TrainFrozenOther => "The train froze over.",
         _ => ""
     };
