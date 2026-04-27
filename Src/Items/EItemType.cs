@@ -10,7 +10,7 @@ public enum EItemType
     /// <summary>A baseline bullet component (BasicCasing, BasicProjectile, BasicPropellant, ...).</summary>
     Basic,
 
-    /// <summary>A non-baseline bullet component that upgrades a basic one (HomingCasing, ScatterProjectile, ...).</summary>
+    /// <summary>A non-baseline bullet component that upgrades a basic one (HomingPropellant, ScatterProjectile, ...).</summary>
     Upgrading,
 
     /// <summary>A station that performs a non-crafting world utility action (e.g. SpeedLever, Cannon).</summary>

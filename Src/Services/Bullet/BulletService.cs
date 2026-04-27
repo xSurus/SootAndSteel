@@ -13,7 +13,8 @@ namespace Gamelab.Services.Bullet;
 
 public class BulletService : IGameSystem, IBulletService
 {
-    protected List<BulletEntity> bullets = new();
+    protected List<BulletEntity> activeBullets = new();
+    private List<BulletEntity> pendingBullets = new();
     protected float gameTimeAccumulator;
     protected GamelabGame game;
     protected SpriteBatch spriteBatch;
@@ -31,12 +32,18 @@ public class BulletService : IGameSystem, IBulletService
         while (gameTimeAccumulator >= fixedDt)
         {
             RemoveStaleBullets();
-            foreach (var bullet in bullets)
+            foreach (var bullet in activeBullets)
             {
                 bullet.OnUpdate(fixedDt);
             }
 
             gameTimeAccumulator -= fixedDt;
+        }
+
+        if (pendingBullets.Count > 0)
+        {
+            activeBullets.AddRange(pendingBullets);
+            pendingBullets.Clear();
         }
     }
 
@@ -46,25 +53,27 @@ public class BulletService : IGameSystem, IBulletService
 
     public void Render(SpriteBatch sb)
     {
-        foreach (var bullet in bullets) bullet.Draw(sb);
+        foreach (var bullet in activeBullets) bullet.Draw(sb);
     }
 
     public void Shutdown()
     {
-        foreach (var bullet in bullets) bullet.Cleanup();
-        bullets.Clear();
+        foreach (var bullet in activeBullets) bullet.Cleanup();
+        activeBullets.Clear();
+        foreach (var bullet in pendingBullets) bullet.Cleanup();
+        pendingBullets.Clear();
     }
 
     public void EmitBullet(
         BulletItem bulletItem,
         Vector2 position,
         Vector2 direction,
-        IBulletEmitter owner)
+        IBulletEmitter initialShooter)
     {
         BulletStats stats = new BulletStats(game.GameplayConfig, position, direction);
         GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
-        BulletEntity bullet = new BulletEntity(bulletItem, stats, gameplayContext.PhysicsWorld, owner);
-        bullets.Add(bullet);
+        BulletEntity bullet = new BulletEntity(bulletItem, stats, gameplayContext.PhysicsWorld, initialShooter);
+        activeBullets.Add(bullet);
         bullet.OnCreate();
         bullet.OnSpawn();
     }
@@ -73,21 +82,23 @@ public class BulletService : IGameSystem, IBulletService
         BulletItem bulletItem,
         Vector2 position,
         Vector2 direction,
-        IBulletEmitter owner)
+        IBulletEmitter initialShooter,
+        IBulletEmitter directEmitter = null)
     {
         BulletStats stats = new BulletStats(game.GameplayConfig, position, direction);
         GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
-        BulletEntity bullet = new BulletEntity(bulletItem, stats, gameplayContext.PhysicsWorld, owner);
+        BulletEntity bullet =
+            new BulletEntity(bulletItem, stats, gameplayContext.PhysicsWorld, initialShooter, directEmitter);
         bullet.IsRootEntity = false;
-        bullets.Add(bullet);
+        pendingBullets.Add(bullet);
         bullet.OnCreate();
         bullet.OnSpawn();
     }
 
     private void RemoveStaleBullets()
     {
-        List<BulletEntity> staleBullets = bullets.Where(x => x == null || !x.IsActive).ToList();
+        List<BulletEntity> staleBullets = activeBullets.Where(x => x == null || !x.IsActive).ToList();
         foreach (var bullet in staleBullets) bullet.Cleanup();
-        bullets.RemoveAll(x => staleBullets.Contains(x));
+        activeBullets.RemoveAll(x => staleBullets.Contains(x));
     }
 }

@@ -1,10 +1,10 @@
 {
-  "BasicProjectile":{
+  "BasicProjectile": {
     "name": "Basic Projectile",
     "description": "A simple projectile that moves in a straight line and can damage targets on contact.",
     "color": "FF0000",
     "sprite": "BasicProjectile",
-    "appearsInShop": true,
+    "appearsInShop": false,
     "shopPrice": 18
   },
   "BasicPropellant": {
@@ -25,7 +25,7 @@
     "color": "FF7700",
     "sprite": "ScatterProjectile",
     "appearsInShop": true,
-    "shopPrice": 25
+    "shopPrice": 10
   },
   "EnemyProjectile": {
     "name": "Enemy Projectile",
@@ -33,12 +33,52 @@
     "color": "0000FF",
     "sprite": "BasicProjectile"
   },
-  "HomingCasing": {
-    "name": "Homing Casing",
-    "description": "A casing that allows the projectile to home in on targets, increasing accuracy but potentially reducing speed.",
+  "HomingPropellant": {
+    "name": "Homing Propellant",
+    "description": "A propellant that allows the projectile to home in on targets, increasing accuracy but potentially reducing speed.",
     "color": "0077FF",
-    "sprite": "HomingCasing",
+    "sprite": "BasicPropellant",
     "appearsInShop": true,
-    "shopPrice": 50
+    "shopPrice": 10
+  },
+  "ScatterCasing": {
+    "name": "Scatter Casing",
+    "description": "A casing that scatters into multiple shards after hitting an enemy, increasing spread but decreasing damage per shard.",
+    "color": "0077FF",
+    "sprite": "BasicCasing",
+    "appearsInShop": true,
+    "shopPrice": 10
+  },
+  "HeavyPropellant": {
+    "name": "Heavy Propellant",
+    "description": "A propellant that increases projectile damage and size while decreasing its speed",
+    "color": "0077FF",
+    "sprite": "BasicPropellant",
+    "appearsInShop": true,
+    "shopPrice": 10
+  },
+  "PiercingCasing": {
+    "name": "Piercing Casing",
+    "description": "A casing that makes the bullet pierce through multiple enemies at full damage!",
+    "color": "0077FF",
+    "sprite": "BasicCasing",
+    "appearsInShop": true,
+    "shopPrice": 10
+  },
+  "BurstProjectile": {
+    "name": "Burst Projectile",
+    "description": "A projectile that shoots three times in a row. How is that even possible?",
+    "color": "0077FF",
+    "sprite": "BasicProjectile",
+    "appearsInShop": true,
+    "shopPrice": 10
+  },
+  "BoomerangPropellant": {
+    "name": "BOOMerang",
+    "description": "A propellant that makes the projectile return to where it came from. Maybe not the best idea",
+    "color": "0077FF",
+    "sprite": "BasicPropellant",
+    "appearsInShop": true,
+    "shopPrice": 10
   }
 }

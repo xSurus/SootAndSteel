@@ -1,6 +1,5 @@
 using System;
 using Gamelab.Assets;
-using Gamelab.Enemies;
 using Gamelab.Enemies.Core;
 using Gamelab.PhysicalEntities.Bullets;
 using Gamelab.PhysicalEntities.Interfaces;
@@ -23,7 +22,7 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
     private bool isBreached;
     private readonly Vector2 dimensionsPixels;
     private bool isTop;
-    
+
     private ISoundService soundService;
 
     public ShootHoleWall(Vector2 dimensionsPixels, Vector2 positionPixels, bool isTop)
@@ -49,13 +48,13 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
             isBreached = true;
             gameplayContext.Events.FireWallBreached();
         }
-        
+
         soundService.PlayOnce(Sounds.WallHit);
     }
 
     public bool OnHit(BulletEntity bullet)
     {
-        if (bullet.Owner is AbstractEnemy && !IsBroken)
+        if (bullet.InitialShooter is AbstractEnemy && !IsBroken)
         {
             TakeDamage(bullet.Stats.Damage);
             return true;

@@ -17,7 +17,12 @@ public static class ComponentFactory
             ComponentIds.BasicPropellant => new BasicPropellant(),
             ComponentIds.ScatterProjectile => new ScatterProjectile(),
             ComponentIds.EnemyProjectile => new EnemyProjectile(),
-            ComponentIds.HomingCasing => new HomingCasing(),
+            ComponentIds.HomingPropellant => new HomingPropellant(),
+            ComponentIds.ScatterCasing => new ScatterCasing(),
+            ComponentIds.HeavyPropellant => new HeavyPropellant(),
+            ComponentIds.PiercingCasing => new PiercingCasing(),
+            ComponentIds.BurstProjectile => new BurstProjectile(),
+            ComponentIds.BoomerangPropellant => new BoomerangPropellant(),
 
             _ => throw new ArgumentOutOfRangeException(nameof(componentId), componentId,
                 $"Unknown component id '{componentId}'.")

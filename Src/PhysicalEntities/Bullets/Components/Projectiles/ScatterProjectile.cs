@@ -28,7 +28,7 @@ public class ScatterProjectile : AbstractComponent
                     bulletEntity.Item,
                     bulletEntity.Stats.Position,
                     bulletEntity.Stats.Direction,
-                    bulletEntity.Owner);
+                    bulletEntity.InitialShooter);
             }
         }
     }

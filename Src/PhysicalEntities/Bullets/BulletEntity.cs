@@ -20,7 +20,8 @@ public class BulletEntity : AbstractPhysicalEntity
     public List<IBulletEffect> Effects { get; }
     public bool IsActive { get; set; } = true;
     public bool IsRootEntity { get; set; } = true;
-    public IBulletEmitter Owner { get; set; }
+    public IBulletEmitter InitialShooter { get; set; }
+    public IBulletEmitter DirectEmitter { get; set; }
     public float Age { get; set; } = 0f;
     public World World { get; set; }
 
@@ -32,13 +33,15 @@ public class BulletEntity : AbstractPhysicalEntity
         BulletItem ammo,
         BulletStats stats,
         World world,
-        IBulletEmitter creator)
+        IBulletEmitter initialShooter,
+        IBulletEmitter directEmitter = null)
     {
         Stats = stats;
         Item = ammo;
         Effects = ammo.GetEffects();
         World = world;
-        Owner = creator;
+        InitialShooter = initialShooter;
+        DirectEmitter = directEmitter ?? initialShooter;
     }
 
     public override void Draw(SpriteBatch spriteBatch)
@@ -66,6 +69,11 @@ public class BulletEntity : AbstractPhysicalEntity
         foreach (var effect in Effects) effect.OnCreate(this);
 
         Debug.Assert(PhysicsBody != null, "PhysicsBody needs to be defined on create by one of the effects.");
+        if (PhysicsBody != null && Stats != null)
+        {
+            Vector2 currentVelocity = PhysicsBody.LinearVelocity;
+            PhysicsBody.LinearVelocity = Vector2.Normalize(currentVelocity) * Stats.Speed.ToMeters();
+        }
 
         PhysicsBody.OnCollision += OnCollision;
     }
