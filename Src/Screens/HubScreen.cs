@@ -232,7 +232,16 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
             foreach (var player in players)
                 player.Update(Game.GameplayConfig.FixedTimeStep);
 
-            gameplayContext.PhysicsWorld.Step(Game.GameplayConfig.FixedTimeStep);
+            try
+            {
+                gameplayContext.BeginPhysicsStep();
+                gameplayContext.PhysicsWorld.Step(Game.GameplayConfig.FixedTimeStep);
+            }
+            finally
+            {
+                gameplayContext.EndPhysicsStep();
+            }
+
             prepTrainMap.Update(Game.GameplayConfig.FixedTimeStep);
 
             accumulator -= Game.GameplayConfig.FixedTimeStep;

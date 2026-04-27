@@ -234,7 +234,16 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
             if (isFailureTriggered) return;
 
             trainMap.Update(fixedDt);
-            gameplayContext.PhysicsWorld.Step(fixedDt);
+            try
+            {
+                gameplayContext.BeginPhysicsStep();
+                gameplayContext.PhysicsWorld.Step(fixedDt);
+            }
+            finally
+            {
+                gameplayContext.EndPhysicsStep();
+            }
+
             UpdateAllPlayersStunnedFailure(fixedDt);
 
             if (isFailureTriggered) return;
@@ -260,7 +269,16 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         {
             foreach (Player player in players) player.Update(fixedDt);
             trainMap.Update(fixedDt);
-            gameplayContext.PhysicsWorld.Step(fixedDt);
+            try
+            {
+                gameplayContext.BeginPhysicsStep();
+                gameplayContext.PhysicsWorld.Step(fixedDt);
+            }
+            finally
+            {
+                gameplayContext.EndPhysicsStep();
+            }
+
             accumulator -= fixedDt;
         }
 
