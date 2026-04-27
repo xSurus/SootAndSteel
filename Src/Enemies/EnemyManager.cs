@@ -80,7 +80,9 @@ public class EnemyManager(LevelDefinition levelDef)
 
     private Vector2 GetSideAttackSpawnPosition(EnemyTrainSlot slot)
     {
-        float spawnX = gameplayContext.ScreenWidth + GamelabGame.Instance.GameplayConfig.EnemySpawnOffsetX;
+        var config = GamelabGame.Instance.GameplayConfig;
+        float rightOverflow = (gameplayContext.ScreenWidth / config.CameraMaxZoom - gameplayContext.ScreenWidth) / 2f;
+        float spawnX = gameplayContext.ScreenWidth + rightOverflow + config.EnemySpawnOffsetX;
         Vector2 anchor = slot.GetAnchor(EnemySize + RiflePreferredDistance);
         return new Vector2(spawnX, anchor.Y);
     }

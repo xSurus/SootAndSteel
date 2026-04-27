@@ -162,7 +162,7 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
 
     private void InitializeDimensions()
     {
-        worldWidth = virtualScreenSize.X;
+        worldWidth = virtualScreenSize.Y * 2;
         worldHeight = virtualScreenSize.Y * 2;
     }
 

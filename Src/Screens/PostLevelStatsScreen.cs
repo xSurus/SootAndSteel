@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Gamelab.Assets;
 using Gamelab.Particles;
@@ -8,7 +9,7 @@ using Myra.Graphics2D.UI;
 
 namespace Gamelab.Screens;
 
-public class PostLevelStatsScreen(GamelabGame game) : AbstractGameScreen(game)
+public class PostLevelStatsScreen : AbstractGameScreen
 {
     private enum Phase
     {
@@ -16,13 +17,37 @@ public class PostLevelStatsScreen(GamelabGame game) : AbstractGameScreen(game)
         FadeOutToHub,
     }
 
+    private readonly float actualTime;
+    private readonly float referenceTime;
+
+    public PostLevelStatsScreen(GamelabGame game) : this(game, 1f, 1f) { }
+
+    public PostLevelStatsScreen(GamelabGame game, float actualTime, float referenceTime) : base(game)
+    {
+        this.actualTime = actualTime;
+        this.referenceTime = referenceTime;
+    }
+
     private Desktop desktop;
     private readonly WhiteFilterTransition whiteToHub = new WhiteFilterTransition();
     private Phase phase;
 
+    private int baseReward;
+    private int expectedBonus;
+    private int actualBonus;
+
     public override void LoadContent()
     {
         base.LoadContent();
+
+        baseReward = Game.GameplayConfig.LevelBaseReward;
+        expectedBonus = Game.GameplayConfig.LevelReferenceBonus;
+        float rawBonus = expectedBonus * MathF.Sqrt(referenceTime / Math.Max(actualTime, 0.1f));
+        actualBonus = (int)MathF.Round(MathF.Max(0f, rawBonus));
+
+        int deliveryReward = baseReward + expectedBonus;
+        int timeAdjustment = actualBonus - expectedBonus;
+        float timeDelta = actualTime - referenceTime;
 
         var overlay = new Panel
         {
@@ -35,43 +60,70 @@ public class PostLevelStatsScreen(GamelabGame game) : AbstractGameScreen(game)
         {
             HorizontalAlignment = HorizontalAlignment.Center,
             VerticalAlignment = VerticalAlignment.Center,
-            Spacing = 22
+            Spacing = 18
         };
 
-        var title = new Label
+        stack.Widgets.Add(new Label
         {
             Text = $"Stage Complete: {StageNaming.GetStageTitle(Game.CurrentRun.CurrentLevel)}",
             Font = Game.fontSystem.GetFont(72),
             TextColor = Color.White,
             HorizontalAlignment = HorizontalAlignment.Center
-        };
+        });
 
-        var coal = new Label
+        stack.Widgets.Add(new Label
         {
-            Text = $"Level completed!",
-            Font = Game.fontSystem.GetFont(56),
+            Text = $"Delivery Reward:   +{deliveryReward}",
+            Font = Game.fontSystem.GetFont(52),
             TextColor = Color.White,
             HorizontalAlignment = HorizontalAlignment.Center
-        };
+        });
 
-        var hint = new Label
+        if (timeAdjustment != 0)
+        {
+            bool faster = timeDelta < 0;
+            string label = faster ? "Time Bonus:" : "Time Penalty:";
+            string sign = faster ? "+" : "";
+            Color color = faster ? new Color(80, 200, 80) : new Color(220, 150, 50);
+
+            stack.Widgets.Add(new Label
+            {
+                Text = $"{label,-18}{sign}{timeAdjustment}",
+                Font = Game.fontSystem.GetFont(52),
+                TextColor = color,
+                HorizontalAlignment = HorizontalAlignment.Center
+            });
+        }
+
+        stack.Widgets.Add(new Label
+        {
+            Text = "──────────────────",
+            Font = Game.fontSystem.GetFont(52),
+            TextColor = new Color(120, 120, 120),
+            HorizontalAlignment = HorizontalAlignment.Center
+        });
+
+        stack.Widgets.Add(new Label
+        {
+            Text = $"Total:            +{deliveryReward + timeAdjustment}",
+            Font = Game.fontSystem.GetFont(60),
+            TextColor = new Color(230, 200, 120),
+            HorizontalAlignment = HorizontalAlignment.Center
+        });
+
+        stack.Widgets.Add(new Label
         {
             Text = "Press Start / Continue",
             Font = Game.fontSystem.GetFont(40),
             TextColor = Color.LightBlue,
             HorizontalAlignment = HorizontalAlignment.Center
-        };
+        });
 
-        stack.Widgets.Add(title);
-        stack.Widgets.Add(coal);
-        stack.Widgets.Add(hint);
         overlay.Widgets.Add(stack);
-
         desktop = new Desktop { Root = overlay };
 
         var vfx = Services.GetService<IVfxService>();
-        var emitter = ParticleFactory.CreateSnowstorm();
-        vfx.AddContinuous(emitter);
+        vfx.AddContinuous(ParticleFactory.CreateSnowstorm());
         phase = Phase.WaitInput;
     }
 
@@ -85,8 +137,7 @@ public class PostLevelStatsScreen(GamelabGame game) : AbstractGameScreen(game)
         {
             if (Game.playerManager.Configs.Any(c => c.Input.IsPickupJustPressed() || c.Input.IsStartJustPressed()))
             {
-                int reward = 25;
-                Game.CurrentRun.AddCredits(reward);
+                Game.CurrentRun.AddCredits(baseReward + actualBonus);
                 whiteToHub.FadeIn(0.8f);
                 phase = Phase.FadeOutToHub;
             }
