@@ -1,20 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Gamelab.Enemies;
 using Gamelab.Enemies.Core;
 using Gamelab.Items.Bullets;
 using Microsoft.Xna.Framework;
 using nkast.Aether.Physics2D.Dynamics;
 
-namespace Gamelab.PhysicalEntities.Bullets.Components.Casings;
+namespace Gamelab.PhysicalEntities.Bullets.Components.Propellants;
 
-public class HomingCasing : AbstractComponent
+public class HomingPropellant : AbstractComponent
 {
-    public HomingCasing()
+    public HomingPropellant()
     {
-        Type = EComponentType.Casing;
-        ComponentId = ComponentIds.HomingCasing;
+        Type = EComponentType.Propellant;
+        ComponentId = ComponentIds.HomingPropellant;
     }
 
     public override void OnCreate(BulletEntity bulletEntity)

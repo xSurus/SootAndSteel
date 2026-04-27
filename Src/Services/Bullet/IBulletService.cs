@@ -11,5 +11,5 @@ public interface IBulletService
     public void EmitBullet(BulletItem bullet, Vector2 position, Vector2 direction, IBulletEmitter cannonStation);
 
     public void EmitAdditionalBullet(BulletItem bullet, Vector2 position, Vector2 direction,
-        IBulletEmitter cannonStation);
+        IBulletEmitter initialShooter, IBulletEmitter directEmitter = null);
 }

@@ -258,7 +258,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
 
     public bool OnHit(BulletEntity bullet)
     {
-        if (bullet.Owner is not AbstractEnemy || IsStunned)
+        if (bullet.InitialShooter is not AbstractEnemy || IsStunned)
         {
             return false;
         }

@@ -65,7 +65,7 @@ public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable, IBull
 
     public virtual bool OnHit(BulletEntity bullet)
     {
-        if (bullet.Owner.GetType() == typeof(CannonStation) && IsAlive && !ShouldRemove)
+        if (bullet.InitialShooter.GetType() == typeof(CannonStation) && IsAlive && !ShouldRemove)
         {
             TakeDamage(bullet.Stats.Damage);
             return true;
