@@ -32,14 +32,16 @@ public class WorldScroller
     private const float TreeHorizontalSpacingVariance = 180f;
     private const float MinTrunkBaseClearanceAboveTracks = 60f;
     private const float TrunkBaseOffsetBelowRailStrip = 300f;
-    private const float UpperTrunkBasePlacementBandHeight = 140f;
-    private const float LowerTrunkBasePlacementBandHeight = 140f;
+    private const float UpperTrunkBasePlacementBandHeight = 220f;
+    private const float LowerTrunkBasePlacementBandHeight = 220f;
 
     public WorldScroller()
     {
         centerY = (gameplayContext.ScreenHeight / 2.0f) - (AssetManager.TrainTrackTexture[0].Height / 2.0f);
-        int numTilesNeeded = (gameplayContext.ScreenWidth / TileWidth) + 3;
-        for (int i = 0; i < numTilesNeeded; i++)
+        float leftEdge = -LeftVisibleOverflow;
+        int startTile = (int)MathF.Floor(leftEdge / TileWidth);
+        int endTile = (gameplayContext.ScreenWidth / TileWidth) + 3;
+        for (int i = startTile; i < endTile; i++)
         {
             SpawnTile(i * TileWidth);
         }
@@ -54,6 +56,10 @@ public class WorldScroller
     }
 
     private float MaxVisibleWidth => gameplayContext.ScreenWidth / GamelabGame.Instance.GameplayConfig.CameraMinZoom;
+
+    // How far the camera can see past the world edges at the gameplay zoom cap.
+    private float LeftVisibleOverflow => (gameplayContext.ScreenWidth / GamelabGame.Instance.GameplayConfig.CameraMaxZoom - gameplayContext.ScreenWidth) / 2f;
+    private float VerticalVisibleOverflow => (gameplayContext.ScreenHeight / GamelabGame.Instance.GameplayConfig.CameraMaxZoom - gameplayContext.ScreenHeight) / 2f;
 
     private void SpawnInitialTrees()
     {
@@ -95,16 +101,15 @@ public class WorldScroller
 
     private float RandomTrunkBaseYAboveTheRailStrip(float railTopY, float scaledTreeHeight)
     {
-        float topOfTreeY = MathHelper.Lerp(0f, UpperTrunkBasePlacementBandHeight, (float)random.NextDouble());
-        float trunkBaseY = topOfTreeY + scaledTreeHeight;
-        float maxTrunkBaseYBeforeTrackZone = railTopY - MinTrunkBaseClearanceAboveTracks;
-        return Math.Min(trunkBaseY, maxTrunkBaseYBeforeTrackZone);
+        float minTrunkBase = -VerticalVisibleOverflow;
+        float maxTrunkBase = railTopY - MinTrunkBaseClearanceAboveTracks;
+        return MathHelper.Lerp(minTrunkBase, maxTrunkBase, (float)random.NextDouble());
     }
 
     private float RandomTrunkBaseYBelowTheRailStrip(float railBottomY)
     {
         float bandTopY = railBottomY + TrunkBaseOffsetBelowRailStrip;
-        float bandBottomY = MathF.Min(ScreenHeight, bandTopY + LowerTrunkBasePlacementBandHeight);
+        float bandBottomY = ScreenHeight + VerticalVisibleOverflow;
         return MathHelper.Lerp(bandTopY, bandBottomY, (float)random.NextDouble());
     }
 
@@ -117,7 +122,7 @@ public class WorldScroller
             tilePositions[i] = new Vector2(tilePositions[i].X - (speed * deltaTime), centerY + 20);
         }
 
-        if (tilePositions.Count > 0 && tilePositions[0].X < -TileWidth)
+        if (tilePositions.Count > 0 && tilePositions[0].X + TileWidth < -LeftVisibleOverflow)
         {
             float lastX = tilePositions[tilePositions.Count - 1].X;
             tilePositions.RemoveAt(0);
@@ -184,10 +189,10 @@ public class WorldScroller
     {
         Texture2D treeTex = AssetManager.GetDecorationTexture(PineDecorationKey);
         Vector2 origin = new Vector2(treeTex.Width / 2f, treeTex.Height);
-        const float treeLayerDepth = RenderUtility.BackgroundLayer + RenderUtility.Eps;
 
         foreach (ScrollerTree t in trees)
         {
+            float treeLayerDepth = RenderUtility.CalculateDepth(t.TrunkBase.Y);
             spriteBatch.Draw(treeTex, t.TrunkBase, null, Color.White, 0f, origin, t.Scale,
                 SpriteEffects.None, treeLayerDepth);
         }

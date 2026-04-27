@@ -104,9 +104,14 @@ public class GameplayConfig
     public float CannonCooldown { get; set; } = 0.5f;
     public float CannonRotationSpeed { get; set; } = 6f;
 
+    // Economy
+    public int LevelBaseReward { get; set; } = 25;
+    public int LevelReferenceBonus { get; set; } = 20;
+
     // Camera configuration
     public float CameraLerpFactor { get; set; } = 4.0f;
     public float CameraMinZoom { get; set; } = 0.4f;
+    public float CameraMaxZoom { get; set; } = 0.8f;
 
     public float GetThreatScaleForPlayerCount(int playerCount)
     {
