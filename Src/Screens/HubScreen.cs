@@ -196,7 +196,7 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
         prepTrainMap.LoadLayout(Game.CurrentRun.TrainLayout);
         gameplayContext.Map = prepTrainMap;
         int hubSeed = unchecked(Game.CurrentRun.RunSeed + Game.CurrentRun.CurrentLevel * 4242);
-        hubMap.RestockHubDragOffers(new Random(hubSeed), 4);
+        hubMap.RestockHubDragOffers(new Random(hubSeed), Game.CurrentRun.CurrentLevel + 3);
     }
 
     private void InitializePlayers()
