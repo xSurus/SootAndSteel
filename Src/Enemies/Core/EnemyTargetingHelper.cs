@@ -43,11 +43,6 @@ public static class EnemyTargetingHelper
     private static bool IsOnSide(GameplayContext gameplayContext, Vector2 position, EnemySlotSide side)
     {
         float centerY = gameplayContext.Map.GetBounds().Center.Y;
-        return side switch
-        {
-            EnemySlotSide.Top => position.Y < centerY,
-            EnemySlotSide.Bottom => position.Y > centerY,
-            _ => false
-        };
+        return side == EnemySlotSide.Top ? position.Y < centerY : position.Y > centerY;
     }
 }

@@ -44,7 +44,7 @@ public class EnemyMovementController(Body physicsBody, EnemyMovementProfile prof
 
         direction.Normalize();
         Vector2 desiredVelocity = direction * desiredSpeed;
-        Vector2 nextSelfVelocity = MoveSelfVelocityTowards(desiredVelocity, deltaTime);
+        Vector2 nextSelfVelocity = MoveSelfVelocityTowards(desiredVelocity, deltaTime, includeTrainDrift);
         Apply(nextSelfVelocity, includeTrainDrift);
     }
 
@@ -55,13 +55,13 @@ public class EnemyMovementController(Body physicsBody, EnemyMovementProfile prof
 
     public void UpdateStop(float deltaTime, bool includeTrainDrift = true)
     {
-        Vector2 nextSelfVelocity = MoveSelfVelocityTowards(Vector2.Zero, deltaTime);
+        Vector2 nextSelfVelocity = MoveSelfVelocityTowards(Vector2.Zero, deltaTime, includeTrainDrift);
         Apply(nextSelfVelocity, includeTrainDrift);
     }
 
-    private Vector2 MoveSelfVelocityTowards(Vector2 desiredVelocity, float deltaTime)
+    private Vector2 MoveSelfVelocityTowards(Vector2 desiredVelocity, float deltaTime, bool includeTrainDrift)
     {
-        Vector2 currentSelfVelocity = GetCurrentSelfVelocity();
+        Vector2 currentSelfVelocity = GetCurrentSelfVelocity(includeTrainDrift);
         float maxDelta = desiredVelocity.LengthSquared() > currentSelfVelocity.LengthSquared()
             ? Profile.Acceleration * deltaTime
             : Profile.Deceleration * deltaTime;
@@ -70,10 +70,10 @@ public class EnemyMovementController(Body physicsBody, EnemyMovementProfile prof
         return Clamp(nextSelfVelocity);
     }
 
-    private Vector2 GetCurrentSelfVelocity()
+    private Vector2 GetCurrentSelfVelocity(bool includeTrainDrift)
     {
         Vector2 totalVelocity = physicsBody.LinearVelocity.ToPixels();
-        return totalVelocity - GetTrainFrameDrift();
+        return includeTrainDrift ? totalVelocity - GetTrainFrameDrift() : totalVelocity;
     }
 
     private void Apply(Vector2 selfVelocity, bool includeTrainDrift)

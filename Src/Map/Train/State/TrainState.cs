@@ -12,8 +12,6 @@ public class TrainState
     private float AccelerationRate => GamelabGame.Instance.GameplayConfig.TrainAccelerationRate;
     public int numberBreachedWalls;
 
-    public int ActiveAnchorCount { get; private set; }
-
     public TrainSpeedSetting CurrentSpeed
     {
         get => currentSpeed;
@@ -43,7 +41,7 @@ public class TrainState
 
     public void Update(float deltaTime)
     {
-        float targetSpeed = GetAnchoredTargetSpeed();
+        float targetSpeed = currentSpeed.TargetSpeed;
         if (actualSpeed < targetSpeed)
         {
             actualSpeed = Math.Min(actualSpeed + AccelerationRate * deltaTime, targetSpeed);
@@ -85,16 +83,6 @@ public class TrainState
         MaintenanceScale = GamelabGame.Instance.GameplayConfig.GetMaintenanceScaleForPlayerCount(playerCount);
     }
 
-    public void AddAnchor()
-    {
-        ActiveAnchorCount++;
-    }
-
-    public void RemoveAnchor()
-    {
-        ActiveAnchorCount = Math.Max(0, ActiveAnchorCount - 1);
-    }
-
     public void DecreaseTemperature(float amount)
     {
         float newTemperature = Temperature - amount;
@@ -117,17 +105,4 @@ public class TrainState
         );
     }
 
-    private float GetAnchoredTargetSpeed()
-    {
-        if (ActiveAnchorCount <= 0)
-        {
-            return currentSpeed.TargetSpeed;
-        }
-
-        float multiplierPerAnchor = GamelabGame.Instance.GameplayConfig.AnchorSpeedMultiplierPerActiveAnchor;
-        float minimumMultiplier = GamelabGame.Instance.GameplayConfig.AnchorMinimumSpeedMultiplier;
-        float multiplier = MathF.Pow(multiplierPerAnchor, ActiveAnchorCount);
-        multiplier = Math.Clamp(multiplier, minimumMultiplier, 1f);
-        return currentSpeed.TargetSpeed * multiplier;
-    }
 }

@@ -1,5 +1,4 @@
 using System;
-using Gamelab.PhysicalEntities.Projectiles;
 
 namespace Gamelab.Events;
 

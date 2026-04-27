@@ -6,7 +6,7 @@ public class SpawnEvent
     public float Distance { get; set; }
 
     /// <summary>
-    /// Enemy type id. Valid values are: "Mounter", "Rifle", "Shield", "Anchor", "Molotov", "TarThrower".
+    /// Enemy type id. Valid value is: "Rifle".
     /// </summary>
     public string Type { get; set; } = "Rifle";
 

@@ -15,7 +15,6 @@ public static class AssetManager
     public static Texture2D PlayerTexture { get; private set; }
     public static Texture2D[] TileTexture { get; private set; }
     public static Texture2D[] TrainTrackTexture { get; private set; }
-    public static Texture2D EnemyTexture { get; private set; }
     public static Texture2D SmokeTexture { get; private set; }
     public static Texture2D SparkTexture { get; private set; }
     public static Texture2D HubTexture { get; private set; }
@@ -36,6 +35,9 @@ public static class AssetManager
         = new Dictionary<string, Texture2D>();
 
     public static Dictionary<string, Texture2D> NPCTextures { get; private set; }
+        = new Dictionary<string, Texture2D>();
+
+    public static Dictionary<string, Texture2D> EnemyTextures { get; private set; }
         = new Dictionary<string, Texture2D>();
 
     public static Dictionary<string, Texture2D> ItemTextures { get; private set; }
@@ -60,6 +62,7 @@ public static class AssetManager
         LoadPatchTextures(graphicsDevice);
         LoadTitleTexture(graphicsDevice);
         LoadNPCTextures(graphicsDevice);
+        LoadEnemyTextures(graphicsDevice);
         LoadItemTextures(graphicsDevice);
         // TODO add texture loading from json
     }
@@ -72,15 +75,16 @@ public static class AssetManager
         if (!Directory.Exists(dir))
         {
             Console.WriteLine($"[AssetManager] Characters folder not found: {dir}");
-            return;
         }
-
-        foreach (string path in Directory.GetFiles(dir, "*.png"))
+        else
         {
-            string key = Path.GetFileNameWithoutExtension(path);
-            using Stream stream = File.OpenRead(path);
-            CharacterTextures[key] = LoadTextureStream(graphicsDevice, stream);
-            logger.Info($"Loading character texture for '{key}'");
+            foreach (string path in Directory.GetFiles(dir, "*.png"))
+            {
+                string key = Path.GetFileNameWithoutExtension(path);
+                using Stream stream = File.OpenRead(path);
+                CharacterTextures[key] = LoadTextureStream(graphicsDevice, stream);
+                logger.Info($"Loading character texture for '{key}'");
+            }
         }
 
         // player texture
@@ -100,24 +104,6 @@ public static class AssetManager
         }
 
         PlayerTexture.SetData(data);
-
-        // enemy texture (square with darker center)
-        int enemyTextureSize = 64;
-        EnemyTexture = new Texture2D(graphicsDevice, enemyTextureSize, enemyTextureSize);
-        Color[] enemyData = new Color[enemyTextureSize * enemyTextureSize];
-
-        for (int y = 0; y < enemyTextureSize; y++)
-        {
-            for (int x = 0; x < enemyTextureSize; x++)
-            {
-                int border = 4;
-                bool isBorder = x < border || x >= enemyTextureSize - border ||
-                                y < border || y >= enemyTextureSize - border;
-                enemyData[y * enemyTextureSize + x] = isBorder ? Color.DarkRed : Color.White;
-            }
-        }
-
-        EnemyTexture.SetData(enemyData);
     }
 
     public static Texture2D GetPlayerTexture(string type)
@@ -224,6 +210,31 @@ public static class AssetManager
     public static Texture2D GetNPCTexture(string type)
     {
         return NPCTextures.TryGetValue(type, out var tex) ? tex : BlankTexture;
+    }
+
+    private static void LoadEnemyTextures(GraphicsDevice graphicsDevice)
+    {
+        string dir = Path.Combine(
+            AppDomain.CurrentDomain.BaseDirectory, "Assets", "Enemies");
+
+        if (!Directory.Exists(dir))
+        {
+            Console.WriteLine($"[AssetManager] Enemies folder not found: {dir}");
+            return;
+        }
+
+        foreach (string path in Directory.GetFiles(dir, "*.png"))
+        {
+            string key = Path.GetFileNameWithoutExtension(path);
+            using Stream stream = File.OpenRead(path);
+            EnemyTextures[key] = LoadTextureStream(graphicsDevice, stream);
+            logger.Info($"Loading enemy texture for '{key}'");
+        }
+    }
+
+    public static Texture2D GetEnemyTexture(string type)
+    {
+        return EnemyTextures.TryGetValue(type, out var tex) ? tex : BlankTexture;
     }
 
     private static void LoadItemTextures(GraphicsDevice graphicsDevice)
@@ -370,9 +381,6 @@ public static class AssetManager
         TrainTrackTexture[1]?.Dispose();
         TrainTrackTexture[1] = null;
 
-        EnemyTexture?.Dispose();
-        EnemyTexture = null;
-
         SparkTexture?.Dispose();
         SparkTexture = null;
 
@@ -410,5 +418,13 @@ public static class AssetManager
         foreach (var tex in NPCTextures.Values)
             tex?.Dispose();
         NPCTextures.Clear();
+
+        foreach (var tex in EnemyTextures.Values)
+            tex?.Dispose();
+        EnemyTextures.Clear();
+
+        foreach (var tex in ItemTextures.Values)
+            tex?.Dispose();
+        ItemTextures.Clear();
     }
 }
