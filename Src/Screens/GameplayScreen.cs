@@ -358,9 +358,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         TriggerFailure(ResolveTrainFreezeFailureReason(gameplayContext.State));
     }
 
-    /// <summary>
-    /// Matches <see cref="Map.Train.State.TrainState.Update"/>: freeze can come from breach cooling, engine-off cooling, or both.
-    /// </summary>
+
     private static FailureReason ResolveTrainFreezeFailureReason(TrainState state)
     {
         bool breaches = state.numberBreachedWalls > 0;

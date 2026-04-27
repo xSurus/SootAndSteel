@@ -8,24 +8,22 @@ using Myra.Graphics2D.UI;
 
 namespace Gamelab.Screens;
 
-/// <summary>
-/// All ways a run can end on <see cref="FailScreen"/>. Only <see cref="GameplayScreen"/> calls <see cref="GamelabGame.SwitchToScreen"/> with that screen.
-/// </summary>
+
 public enum FailureReason
 {
-    /// <summary>Every player was stunned longer than <c>AllPlayersStunnedFailDelaySeconds</c>.</summary>
+    
     AllPlayersKnockedOut,
 
-    /// <summary>Temperature hit 0 with hull breaches while the coal oven was still burning (breach cooling only).</summary>
+    
     TrainFrozenHullBreached,
 
-    /// <summary>Temperature hit 0 with the coal oven off and no breached walls (engine-off cooling only).</summary>
+   
     TrainFrozenFurnaceOut,
 
-    /// <summary>Temperature hit 0 with both breached walls and the coal oven off.</summary>
+    
     TrainFrozenBreachesAndFurnaceOut,
 
-    /// <summary>Temperature hit 0 but state did not match the cases above (should be rare; keeps UI safe if rules change).</summary>
+    
     TrainFrozenOther,
 }
 
