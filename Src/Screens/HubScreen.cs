@@ -12,6 +12,7 @@ using Gamelab.PhysicalEntities.Stations;
 using Gamelab.Players;
 using Gamelab.Screens.Camera;
 using Gamelab.Serialization;
+using Gamelab.Services.Bullet;
 using Gamelab.Services.Sound;
 using Gamelab.Services.Vfx;
 using Gamelab.UI;
@@ -126,8 +127,8 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         hubMap.Draw(spriteBatch);
         prepTrainMap.Draw(spriteBatch);
         Services.GetService<IVfxService>().Render(spriteBatch);
+        Services.GetService<IBulletService>().Render(spriteBatch);
         foreach (var player in players) player.Draw(spriteBatch);
-
         spriteBatch.End();
         hud.Draw();
         GumService.Default.Draw();
