@@ -25,7 +25,7 @@ public class CameraDirector(Point virtualScreenSize)
     }
 
     public void Update(OrthographicCamera camera, float dt, List<Player> players, Rectangle baseWindow,
-        int worldWidth, int worldHeight, bool allowOffWorldOverflow = false)
+        int worldWidth, int worldHeight, bool allowOffWorldOverflow = false, float maxZoom = 1f)
     {
         if (players.Count == 0) return;
 
@@ -57,7 +57,7 @@ public class CameraDirector(Point virtualScreenSize)
         // Zoom out only when the player vertical span exceeds the default viewport height.
         float spanY = MathF.Max(maxY - minY, virtualScreenSize.Y);
         float fitZoom = virtualScreenSize.Y / spanY;
-        float targetZoom = MathHelper.Clamp(fitZoom, ComputeMinAllowedZoom(worldWidth, worldHeight, allowOffWorldOverflow), 1f);
+        float targetZoom = MathHelper.Clamp(fitZoom, ComputeMinAllowedZoom(worldWidth, worldHeight, allowOffWorldOverflow), maxZoom);
 
         // Camera horizontal center is locked to the world's horizontal center; players never pull X.
         float targetCenterX = worldWidth / 2f;
@@ -75,7 +75,7 @@ public class CameraDirector(Point virtualScreenSize)
     }
 
     public void SnapToCenter(OrthographicCamera camera, Rectangle baseWindow, int worldWidth, int worldHeight,
-        bool allowOffWorldOverflow = false)
+        bool allowOffWorldOverflow = false, float maxZoom = 1f)
     {
         Vector2 center = new Vector2(
             worldWidth / 2f,
@@ -85,7 +85,7 @@ public class CameraDirector(Point virtualScreenSize)
         screenShakeIntensity = 0;
         screenShakeTimer = 0;
 
-        float initialZoom = MathHelper.Clamp(1f, ComputeMinAllowedZoom(worldWidth, worldHeight, allowOffWorldOverflow), 1f);
+        float initialZoom = MathHelper.Clamp(maxZoom, ComputeMinAllowedZoom(worldWidth, worldHeight, allowOffWorldOverflow), maxZoom);
         ApplyCamera(camera, initialZoom, center, worldWidth, worldHeight);
     }
 

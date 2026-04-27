@@ -54,6 +54,8 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
     private bool isFailureTriggered;
     private float allPlayersStunnedTimer;
     private float accumulator;
+    private float levelTimer;
+    private float completionTime;
 
     public override void LoadContent()
     {
@@ -79,6 +81,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
             return;
         }
 
+        levelTimer += dt;
         UpdatePhysics(dt);
         if (isFailureTriggered) return;
 
@@ -171,7 +174,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         camera = new OrthographicCamera(viewportAdapter);
         cameraDirector = new CameraDirector(virtualScreenSize);
         cameraDirector.SnapToCenter(camera, trainMap.GetBounds(), virtualScreenSize.X, virtualScreenSize.Y,
-            allowOffWorldOverflow: false);
+            allowOffWorldOverflow: true, maxZoom: Game.GameplayConfig.CameraMaxZoom);
         Services.GetService<IVfxService>().AddContinuous(ParticleFactory.CreateSnowstorm());
     }
 
@@ -245,7 +248,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         hud.Update(currentLevelDef);
         levelWatcher.Update(enemyManager);
         cameraDirector.Update(camera, dt, players, trainMap.GetBounds(), virtualScreenSize.X, virtualScreenSize.Y,
-            allowOffWorldOverflow: false);
+            allowOffWorldOverflow: true, maxZoom: Game.GameplayConfig.CameraMaxZoom);
     }
 
     private void HandleLevelTransition(float dt)
@@ -262,13 +265,14 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
         }
 
         cameraDirector.Update(camera, dt, players, trainMap.GetBounds(), virtualScreenSize.X, virtualScreenSize.Y,
-            allowOffWorldOverflow: false);
+            allowOffWorldOverflow: true, maxZoom: Game.GameplayConfig.CameraMaxZoom);
         endLevelWhiteFilter.Update(dt);
 
         if (endLevelWhiteFilter.IsDone)
         {
             Game.CurrentRun.TrainLayout = trainMap.CaptureLayout();
-            Game.SwitchToScreen(new PostLevelStatsScreen(Game));
+            float referenceTime = currentLevelDef.LevelDistance / Game.GameplayConfig.TrainSpeedDefault;
+            Game.SwitchToScreen(new PostLevelStatsScreen(Game, completionTime, referenceTime));
         }
     }
 
@@ -363,6 +367,7 @@ public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
 
     private void OnLevelCompleted()
     {
+        completionTime = levelTimer;
         trainSound?.Stop();
         gameplayContext.State.VictoryLapActive = true;
         endLevelWhiteFilter.FadeIn(4f);

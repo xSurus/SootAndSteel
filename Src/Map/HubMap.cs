@@ -253,7 +253,7 @@ public class HubMap : IDisposable
 
     private void DrawNpcs(SpriteBatch spriteBatch)
     {
-        Vector2 vendorPosition = new Vector2(1260, 580);
+        Vector2 vendorPosition = new Vector2(1260, 700);
         Texture2D vendorTex = AssetManager.GetNPCTexture("Vendor");
         Vector2 bottomCenterOrigin = new Vector2(vendorTex.Width / 2f, vendorTex.Height);
         float vendorScale = 0.3f;

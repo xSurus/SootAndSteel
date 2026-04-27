@@ -19,7 +19,7 @@ public enum EnemyState
 
 public class Enemy : AbstractEnemy
 {
-    private const float HorseSpriteScale = 0.6f;
+    private const float HorseSpriteScale = 0.45f;
     private const float HorseFramesPerSecond = 12f;
     private const float AttackPoseDurationSeconds = 0.5f;
 
@@ -133,7 +133,7 @@ public class Enemy : AbstractEnemy
         }
 
         int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
-        Vector2 drawPosition = Position + new Vector2(-3f * tileSize, -tileSize * 1.5f);
+        Vector2 drawPosition = Position + new Vector2(-2.25f * tileSize, -tileSize * 1.125f);
         Vector2 rifleBob = new Vector2(0f, currentHorseFrame / 3f);
         Vector2 feetPosition = Position + new Vector2(0f, Size / 2f);
         float horseDepth = RenderUtility.CalculateDepth(feetPosition.Y);
