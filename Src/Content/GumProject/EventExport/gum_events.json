@@ -1008,6 +1008,692 @@
         "ElementType": "Components",
         "EventType": 3,
         "TimestampUtc": "2026-04-26T17:35:11.6133774Z"
+      },
+      {
+        "NewName": "CraftingHelp",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 0,
+        "TimestampUtc": "2026-04-27T08:42:29.334725Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).Seperator1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:42:45.6970779Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).Seperator2",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:42:45.7068343Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).ButtonWithIconInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:42:45.7123579Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).ButtonWithIconInstance1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:42:45.7183093Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).ItemFunction",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:42:45.7242887Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).ItemName",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:42:45.7299389Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).ShopItemTypeInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:42:45.7357632Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).TextInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:42:45.7492764Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).Background",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:42:45.7553733Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).Wrapper",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:42:45.7619892Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).Interactions",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:42:45.7679115Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).Rectangle Seperator1 in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T08:42:53.8622152Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).Rectangle Seperator2 in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T08:42:53.8651681Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).Container Wrapper in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T08:42:53.8884937Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).ButtonWithIcon ButtonWithIconInstance in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T08:42:53.8912893Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).ButtonWithIcon ButtonWithIconInstance1 in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T08:42:53.8970864Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).Text ItemFunction in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T08:42:53.9025363Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).Text ItemName in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T08:42:53.9080973Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).ShopItemType ShopItemTypeInstance in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T08:42:53.9135846Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).Container Interactions in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T08:42:53.9191266Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).Text TextInstance in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T08:42:53.9246781Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).ButtonWithIconInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:43:58.3387114Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).ButtonWithIconInstance1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:43:58.3491265Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).ItemFunction",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:43:58.3682546Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).ItemName",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:43:58.3733158Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).ShopItemTypeInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:43:58.3798351Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).TextInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:43:58.3863079Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).Wrapper",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:43:58.392529Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).Interactions",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:43:58.397868Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).ButtonWithIcon ButtonWithIconInstance in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T08:44:09.3253108Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).ButtonWithIcon ButtonWithIconInstance1 in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T08:44:09.3345624Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).Text ItemFunction in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T08:44:09.3408721Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).Text ItemName in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T08:44:09.3455622Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).ShopItemType ShopItemTypeInstance in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T08:44:09.3491656Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).Text TextInstance in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T08:44:09.3547033Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).Container Interactions in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T08:44:09.3602438Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).TextInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:44:19.7508543Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).TextInstance1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:47:15.2772209Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).CraftingRecipeDescription",
+        "OldName": "CraftingHelp (Container).TextInstance1",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-04-27T08:48:43.5596134Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).ButtonWithIconInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:49:08.4099593Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).ButtonWithIconInstance1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:49:08.4193596Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).ItemFunction",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:49:08.4242564Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).ItemName",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:49:08.4299543Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).ShopItemTypeInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:49:08.4462652Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).TextInstance1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:49:08.4511882Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).Interactions",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:49:08.4577611Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).ButtonWithIcon ButtonWithIconInstance in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T08:49:10.1901462Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).ButtonWithIcon ButtonWithIconInstance1 in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T08:49:10.1910876Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).Text ItemFunction in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T08:49:10.198118Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).Text ItemName in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T08:49:10.2038537Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).ShopItemType ShopItemTypeInstance in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T08:49:10.2095333Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).Text TextInstance1 in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T08:49:10.2150234Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).Container Interactions in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T08:49:10.220549Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).ButtonWithIconInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:51:04.477119Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).ContainerInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:54:21.3459908Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).UpgradeExampleContainer",
+        "OldName": "CraftingHelp (Container).ContainerInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-04-27T08:54:55.151884Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).SpriteInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:55:03.3620397Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).SpriteInstance1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:55:05.9407044Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).SpriteInstance2",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:55:07.8298516Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).Basic",
+        "OldName": "CraftingHelp (Container).SpriteInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-04-27T08:55:14.2512734Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).Upgrade",
+        "OldName": "CraftingHelp (Container).SpriteInstance1",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-04-27T08:55:18.5915022Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).Upgraded",
+        "OldName": "CraftingHelp (Container).SpriteInstance2",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-04-27T08:55:22.9711711Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).Upgraded1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:58:45.8623513Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).Basic1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:58:45.8721194Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).Upgrade1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:58:45.8769277Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).UpgradeExampleContainer1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T08:58:45.9055052Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).ComponentExampleContainer",
+        "OldName": "CraftingHelp (Container).UpgradeExampleContainer1",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-04-27T08:59:50.6294401Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).Casing",
+        "OldName": "CraftingHelp (Container).Upgraded1",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-04-27T09:00:03.4887718Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).Propellant",
+        "OldName": "CraftingHelp (Container).Basic1",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-04-27T09:00:10.4345383Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).Projectile",
+        "OldName": "CraftingHelp (Container).Upgrade1",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-04-27T09:00:14.7875117Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).Projectile1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T09:02:37.6787116Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).Bullet",
+        "OldName": "CraftingHelp (Container).Projectile1",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-04-27T09:02:41.4643893Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).TextInstance1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T09:04:33.2874397Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).TextInstance2",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T09:05:02.7776726Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).TextInstance3",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T09:05:04.4975062Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).TextInstance4",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T09:05:16.9375307Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).TextInstance5",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-04-27T09:05:44.0996905Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).Equals",
+        "OldName": "CraftingHelp (Container).TextInstance5",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-04-27T09:05:51.6052718Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).Equals1",
+        "OldName": "CraftingHelp (Container).TextInstance4",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-04-27T09:06:01.6457223Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).Equals2",
+        "OldName": "CraftingHelp (Container).Equals",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-04-27T09:06:04.5653576Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).Plus1",
+        "OldName": "CraftingHelp (Container).TextInstance1",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-04-27T09:06:08.5648813Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).Plus2",
+        "OldName": "CraftingHelp (Container).TextInstance2",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-04-27T09:06:11.7249584Z"
+      },
+      {
+        "NewName": "CraftingHelp (Container).Plus3",
+        "OldName": "CraftingHelp (Container).TextInstance3",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-04-27T09:06:14.985128Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).Text Plus1 in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T09:31:42.225973Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).Text Plus2 in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T09:31:42.2362131Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).Text Plus3 in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T09:31:42.2458782Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).Text Equals1 in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T09:31:42.2653647Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).Text Equals2 in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T09:31:42.2763948Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).Sprite Casing in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T09:31:42.2848013Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).Sprite Propellant in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T09:31:42.293012Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).Sprite Projectile in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T09:31:42.3010734Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).Sprite Bullet in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T09:31:42.3091232Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).Container ComponentExampleContainer in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T09:31:42.3160321Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).Sprite Upgraded in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T09:31:49.5900753Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).Sprite Basic in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T09:31:49.5955573Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).Sprite Upgrade in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T09:31:49.6027041Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "CraftingHelp (Container).Container UpgradeExampleContainer in CraftingHelp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-04-27T09:31:49.6088219Z"
       }
     ]
   }
