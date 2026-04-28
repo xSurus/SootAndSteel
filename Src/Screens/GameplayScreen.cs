@@ -22,7 +22,7 @@ using Myra.Graphics2D.UI;
 
 namespace Gamelab.Screens;
 
-public class GameplayScreen(GamelabGame game) : AbstractGameScreen(game)
+public class GameplayScreen(GamelabGame game) : GamelabGameScreen(game)
 {
     private enum GameplayPhase
     {

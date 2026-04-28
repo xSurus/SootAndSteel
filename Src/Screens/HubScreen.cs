@@ -23,7 +23,7 @@ using Myra.Graphics2D.UI;
 
 namespace Gamelab.Screens;
 
-public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
+public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
 {
     private List<Player> players;
     private GameplayContext gameplayContext;

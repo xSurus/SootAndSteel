@@ -75,7 +75,7 @@ public class GamelabGame : Game
     /// </summary>
     public float GumViewportScale { get; private set; } = 1f;
 
-    private AbstractGameScreen nextScreen;
+    private GamelabGameScreen nextScreen;
     private string screenshotPath;
 
     public bool IsRunning => screenManager.ActiveScreen != null;
@@ -83,12 +83,12 @@ public class GamelabGame : Game
     public readonly INativeFmodLibrary nativeFmodLibrary;
     public EventInstance menuStabInstance;
 
-    public GamelabGame(RunMode runMode, INativeFmodLibrary nativeFmodLibrary)
+    public GamelabGame(RunMode runMode)
     {
         Instance = this;
 
         this.runMode = runMode;
-        this.nativeFmodLibrary = nativeFmodLibrary;
+        this.nativeFmodLibrary = new DesktopAndMacNativeFmodLibrary();
 
         graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
@@ -198,12 +198,12 @@ public class GamelabGame : Game
     /// Switch to the specified screen on the next update. Not transitioning immediately allows the current screen to finish its update and draw cycle, which can help avoid issues with switching screens in the middle of their logic.
     /// </summary>
     /// <param name="screen">The screen to switch to.</param>
-    public void SwitchToScreen(AbstractGameScreen screen)
+    public void SwitchToScreen(GamelabGameScreen screen)
     {
         nextScreen = screen;
     }
 
-    protected void SwitchToScreenImmediately(AbstractGameScreen screen)
+    protected void SwitchToScreenImmediately(GamelabGameScreen screen)
     {
         screenManager.ReplaceScreen(screen);
     }
@@ -276,7 +276,7 @@ public class GamelabGame : Game
         }
     }
 
-    /// <summary>Gum UI is authored at this resolution (same as <see cref="Screens.AbstractGameScreen"/> virtual size).</summary>
+    /// <summary>Gum UI is authored at this resolution (same as <see cref="Screens.GamelabGameScreen"/> virtual size).</summary>
     private const float GumDesignWidth = 1920f;
 
     private const float GumDesignHeight = 1080f;

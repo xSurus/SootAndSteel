@@ -8,7 +8,7 @@ using Myra.Graphics2D.UI;
 
 namespace Gamelab.Screens;
 
-public class FailScreen(GamelabGame game) : AbstractGameScreen(game)
+public class FailScreen(GamelabGame game) : GamelabGameScreen(game)
 {
     private Desktop desktop;
     private Label titleLabel;
