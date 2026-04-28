@@ -10,10 +10,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using FmodForFoxes;
 using Gamelab;
 using Gamelab.Screens;
-using Gamelab.Services.Sound;
 using Microsoft.Xna.Framework.Graphics;
 using NUnit.Framework.Constraints;
 using NUnit.Framework.Internal;
@@ -23,7 +21,9 @@ namespace Tests;
 
 public class CICD
 {
+#pragma warning disable NUnit1032 // game is disposed on the game thread, not in the OneTimeTearDown method
     private GamelabGame game;
+#pragma warning restore NUnit1032
     private Thread gameThread;
     private Exception gameException;
     private readonly Dictionary<string, double> metrics = [];
@@ -36,7 +36,7 @@ public class CICD
         metrics.Clear();
         isFirstTest = true;
 
-        game = new GamelabGame(RunMode.Release, new DesktopAndMacNativeFmodLibrary());
+        game = new GamelabGame(RunMode.Release);
 
         gameThread = new Thread(() =>
         {
@@ -48,7 +48,10 @@ public class CICD
             {
                 gameException = ex;
             }
-        }) {
+
+            game?.Dispose();
+        })
+        {
             IsBackground = true,
         };
         gameThread.Start();
@@ -61,8 +64,8 @@ public class CICD
         CheckGraphics();
     }
 
-    [Test, TestCaseSource(typeof(AbstractGameScreen), nameof(AbstractGameScreen.GetScreenFactories)), NonParallelizable, Order(2)]
-    public void TestScreen(AbstractGameScreen.Factory screenFactory)
+    [Test, TestCaseSource(typeof(GamelabGameScreen), nameof(GamelabGameScreen.GetScreenFactories)), NonParallelizable, Order(2)]
+    public void TestScreen(GamelabGameScreen.Factory screenFactory)
     {
         WaitForGameToStart();
         CheckGraphics();
@@ -82,7 +85,8 @@ public class CICD
         Directory.CreateDirectory(outputDir);
 
         var metricsPath = Path.Combine(outputDir, "Metrics.txt");
-        var metricsFileContent = string.Join(Environment.NewLine, metrics.Select(kvp => {
+        var metricsFileContent = string.Join(Environment.NewLine, metrics.Select(kvp =>
+        {
             var metricName = kvp.Key.Replace("[^a-zA-Z0-9]", "_").ToLowerInvariant();
             var metricValue = kvp.Value.ToString("F3", CultureInfo.InvariantCulture);
             return $"{metricName} {metricValue}";
@@ -90,7 +94,6 @@ public class CICD
         File.WriteAllText(metricsPath, metricsFileContent);
 
         game?.Exit();
-        game?.Dispose();
         gameThread?.Join();
     }
 
@@ -164,7 +167,7 @@ public class CICD
         AssertTimeout(() => File.Exists(path), 2, "Saving screenshot");
     }
 
-    private void AssertPerformance(AbstractGameScreen screen, double loadTimeout = 3, double measuringTime = 5, double minFps = 30)
+    private void AssertPerformance(GamelabGameScreen screen, double loadTimeout = 3, double measuringTime = 5, double minFps = 30)
     {
         var name = screen.GetType().Name;
         TestContext.Out.WriteLine($"Measuring performance of {name}...");
