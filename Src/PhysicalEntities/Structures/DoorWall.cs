@@ -17,7 +17,7 @@ public class DoorWall : AbstractPhysicalEntity, IInteractable
 {
     private readonly Vector2 dimensionsPixels;
     private bool isOpen = false;
-    
+
     protected readonly ISoundService soundService;
 
     public DoorWall(Vector2 dimensionsPixels, Vector2 positionPixels)
@@ -31,7 +31,7 @@ public class DoorWall : AbstractPhysicalEntity, IInteractable
             0f,
             BodyType.Static);
         PhysicsBody.Tag = this;
-        
+
         soundService = GamelabGame.Instance.Services.GetService<ISoundService>();
         soundService.LoadSound(Sounds.OpenDoor);
         soundService.LoadSound(Sounds.CloseDoor);
@@ -58,6 +58,7 @@ public class DoorWall : AbstractPhysicalEntity, IInteractable
         Vector2 bottomCenter = Position + new Vector2(0, dimensionsPixels.Y / 2f);
         float depth = RenderUtility.CalculateDepth(bottomCenter.Y);
 
-        spriteBatch.Draw(tex, bottomCenter, null, Color.White, 0f, origin, scale, SpriteEffects.None, depth);
+        spriteBatch.DrawWithHighlight(tex, bottomCenter, null, Color.White, 0f, origin, scale, SpriteEffects.None,
+            depth, IsHighlighted);
     }
 }

@@ -21,6 +21,7 @@ public class ComponentResourceStation(Vector2 position, string componentId)
     protected ComponentConfig DispensedComponentConfig => GamelabGame.Instance.ComponentRegistry.Get(ComponentId);
 
     private AbstractComponent dispensedComponentCache;
+
     private AbstractComponent DispensedComponent =>
         dispensedComponentCache ??= ComponentFactory.CreateDefinition(ComponentId);
 
@@ -69,8 +70,7 @@ public class ComponentResourceStation(Vector2 position, string componentId)
         Vector2 bottomCenter = Position + new Vector2(0, tileSize / 2f);
         float depth = RenderUtility.CalculateDepth(bottomCenter.Y);
 
-        spriteBatch.Draw(
-            texture: tex,
+        spriteBatch.DrawWithHighlight(texture: tex,
             position: bottomCenter,
             sourceRectangle: null,
             color: Color.White,
@@ -78,7 +78,8 @@ public class ComponentResourceStation(Vector2 position, string componentId)
             origin: origin,
             scale: scale,
             effects: SpriteEffects.None,
-            layerDepth: depth
+            layerDepth: depth,
+            IsHighlighted
         );
     }
 }

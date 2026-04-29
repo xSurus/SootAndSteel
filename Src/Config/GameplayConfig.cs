@@ -24,7 +24,7 @@ public class GameplayConfig
     public float PlayerLinearDamping { get; set; } = 20f;
     public float PlayerMaxVelocity { get; set; } = 5f;
     public float PlayerVelocityLerpFactor { get; set; } = 0.8f;
-    public float PlayerInteractDistancePixels { get; set; } = 60f;
+    public float PlayerInteractDistancePixels { get; set; } = 80f;
     public float PlayerHeldItemOffsetRadiusMultiplier { get; set; } = 1.5f;
     public float PlayerHeldItemSizeRadiusMultiplier { get; set; } = 0.8f;
     public float PlayerStunDurationSeconds { get; set; } = 4f;
