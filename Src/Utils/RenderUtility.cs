@@ -1,6 +1,7 @@
 using System;
 using Gamelab.Map.Train.State;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Gamelab.Utils;
 
@@ -13,14 +14,29 @@ public static class RenderUtility
     public const float TopEntityLayer = 0.92f;
     public const float OverlayBackLayer = 0.98f;
     public const float OverlayTopLayer = 0.99f;
+    public const float HighlightEps = 0.000001f;
     public const float Eps = 0.00001f;
 
     public static readonly Color SnowBackgroundColor = new(208, 232, 242);
+    public static readonly Color HighlightColor = new(80, 80, 80, 0);
 
     public static float CalculateDepth(float yPosition)
     {
         int worldHeight = GamelabGame.Instance.Services.GetService<GameplayContext>().WorldHeight;
         float normalizedY = Math.Clamp(yPosition / worldHeight, 0f, 1f);
         return 0.1f + (normalizedY * 0.8f);
+    }
+
+    public static void DrawWithHighlight(this SpriteBatch spriteBatch, Texture2D texture, Vector2 position,
+        Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effects,
+        float layerDepth, bool isHighlighted)
+    {
+        spriteBatch.Draw(texture, position, sourceRectangle, color, rotation, origin, scale, effects, layerDepth);
+
+        if (isHighlighted)
+        {
+            spriteBatch.Draw(texture, position, sourceRectangle, HighlightColor, rotation, origin, scale, effects,
+                layerDepth + HighlightEps);
+        }
     }
 }

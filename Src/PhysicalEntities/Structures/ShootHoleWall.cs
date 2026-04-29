@@ -104,8 +104,8 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
 
         float depth = RenderUtility.CalculateDepth(feetPosition.Y);
 
-        spriteBatch.Draw(wallTex, feetPosition, null, Color.White, 0f, origin, scale, SpriteEffects.None,
-            depth + RenderUtility.Eps);
+        spriteBatch.DrawWithHighlight(wallTex, feetPosition, null, Color.White, 0f, origin, scale, SpriteEffects.None,
+            depth + RenderUtility.Eps, isHighlighted: IsHighlighted);
 
         if (CurrentHealth < MaxHealth)
         {

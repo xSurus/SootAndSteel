@@ -61,6 +61,18 @@ public class BuyableStationWrapper : AbstractPhysicalEntity, IInteractable, IGra
         WrappedStation.Draw(spriteBatch);
     }
 
+    public override void OnHighlight(Player player)
+    {
+        base.OnHighlight(player);
+        WrappedStation.OnHighlight(player);
+    }
+
+    public override void OnHighlightRemoved(Player player)
+    {
+        base.OnHighlightRemoved(player);
+        WrappedStation.OnHighlightRemoved(player);
+    }
+
     public bool OnGrab(Player player, Vector2 grabPointWorldMeters)
     {
         return WrappedStation.OnGrab(player, grabPointWorldMeters);

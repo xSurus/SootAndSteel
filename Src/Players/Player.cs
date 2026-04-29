@@ -11,7 +11,6 @@ using Gamelab.Services.Sound;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended;
 using nkast.Aether.Physics2D.Dynamics;
 
 namespace Gamelab.Players;
@@ -461,7 +460,6 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
             );
         }
 
-        DrawInteractionTarget(spriteBatch);
         DrawHeldItem(spriteBatch, renderDepth + RenderUtility.Eps);
 
         float playerVisualHeight = texture.Height * 0.3f;
@@ -478,12 +476,6 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
             int itemSize = (int)(Radius * HeldItemSizeRadiusMultiplier);
             HeldItem.Draw(spriteBatch, itemPosition, itemSize, renderDepth);
         }
-    }
-
-    private void DrawInteractionTarget(SpriteBatch spriteBatch)
-    {
-        Vector2 targetPointPixels = Position + (LookDirection * InteractDistancePixels);
-        spriteBatch.DrawCircle(targetPointPixels, 5f, 12, Color.Red, 2f, layerDepth: RenderUtility.OverlayTopLayer);
     }
 
     private void DrawConcussionStars(SpriteBatch spriteBatch, float playerVisualHeight)
@@ -503,7 +495,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
             float angle = baseAngle + MathHelper.TwoPi / starCount * i;
             Vector2 starPos = center + new Vector2(
                 (float)Math.Cos(angle) * orbitRadius,
-                (float)Math.Sin(angle) * orbitRadius * 0.4f  // flatten into an ellipse
+                (float)Math.Sin(angle) * orbitRadius * 0.4f // flatten into an ellipse
             );
             Color color = i % 2 == 0 ? Color.Yellow : Color.Gold;
             spriteBatch.Draw(
@@ -511,7 +503,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
                 starPos,
                 null,
                 color,
-                angle,                          // each star rotates with its orbit angle
+                angle, // each star rotates with its orbit angle
                 new Vector2(0.5f, 0.5f),
                 starScale,
                 SpriteEffects.None,
