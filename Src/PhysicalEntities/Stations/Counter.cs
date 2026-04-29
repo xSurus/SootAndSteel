@@ -9,7 +9,8 @@ public class Counter(Vector2 position)
 {
     public override void OnPickup(Player interactingPlayer)
     {
-        if (interactingPlayer.HeldItem == null || HeldItem == null)
+        if ((interactingPlayer.HeldItem == null || HeldItem == null) &&
+            (interactingPlayer.HeldItem != null || HeldItem != null))
         {
             soundService.PlayOnce(HeldItem == null ? Sounds.DropItem : Sounds.PickupItem);
             (interactingPlayer.HeldItem, HeldItem) = (HeldItem, interactingPlayer.HeldItem);
