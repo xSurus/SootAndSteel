@@ -1,0 +1,140 @@
+{
+  "textures": [
+    {
+      "filename": "EnemyAtlas-texture-0.png",
+      "format": "RGBA8888",
+      "size": {
+        "w": 3610,
+        "h": 1506
+      },
+      "frames": {
+        "horse01": {
+          "frame": {
+            "x": 1,
+            "y": 1,
+            "w": 720,
+            "h": 500
+          }
+        },
+        "horse02": {
+          "frame": {
+            "x": 723,
+            "y": 1,
+            "w": 720,
+            "h": 500
+          }
+        },
+        "horse03": {
+          "frame": {
+            "x": 1445,
+            "y": 1,
+            "w": 720,
+            "h": 500
+          }
+        },
+        "horse04": {
+          "frame": {
+            "x": 2167,
+            "y": 1,
+            "w": 720,
+            "h": 500
+          }
+        },
+        "horse05": {
+          "frame": {
+            "x": 2889,
+            "y": 1,
+            "w": 720,
+            "h": 500
+          }
+        },
+        "horse06": {
+          "frame": {
+            "x": 1,
+            "y": 503,
+            "w": 720,
+            "h": 500
+          }
+        },
+        "horse07": {
+          "frame": {
+            "x": 723,
+            "y": 503,
+            "w": 720,
+            "h": 500
+          }
+        },
+        "horse08": {
+          "frame": {
+            "x": 1445,
+            "y": 503,
+            "w": 720,
+            "h": 500
+          }
+        },
+        "horse09": {
+          "frame": {
+            "x": 2167,
+            "y": 503,
+            "w": 720,
+            "h": 500
+          }
+        },
+        "horse010": {
+          "frame": {
+            "x": 2889,
+            "y": 503,
+            "w": 720,
+            "h": 500
+          }
+        },
+        "RifleHeadless": {
+          "frame": {
+            "x": 1,
+            "y": 1005,
+            "w": 720,
+            "h": 500
+          }
+        },
+        "RifleIdle": {
+          "frame": {
+            "x": 723,
+            "y": 1005,
+            "w": 720,
+            "h": 500
+          }
+        },
+        "RifleMiddle": {
+          "frame": {
+            "x": 1445,
+            "y": 1005,
+            "w": 720,
+            "h": 500
+          }
+        },
+        "RifleSemi": {
+          "frame": {
+            "x": 2167,
+            "y": 1005,
+            "w": 720,
+            "h": 500
+          }
+        },
+        "RifleWide": {
+          "frame": {
+            "x": 2889,
+            "y": 1005,
+            "w": 720,
+            "h": 500
+          }
+        }
+      }
+    }
+  ],
+  "meta": {
+    "app": "https://www.codeandweb.com/texturepacker",
+    "dataformat": "monogame-extended",
+    "version": "1.2",
+    "smartupdate": "$TexturePacker:SmartUpdate:d8ac14d12bc7f375ae1e6e3cf9ce9ac6:9fce01892af25fe82fcbe8466226c416:1724331537ca5ea3a46f51d5c7045056$"
+  }
+}

@@ -176,7 +176,7 @@
         <Value xsi:type="xsd:string">(A) Join</Value>
       </Variable>
       <Variable IsFile="true" Type="string" Name="PlayerFigure.SourceFile" ExposedAsName="SpriteInstanceSourceFile" SetsValue="true">
-        <Value xsi:type="xsd:string">..\..\Assets\Characters\IdleA1.png</Value>
+        <Value xsi:type="xsd:string">..\..\Content\Characters\IdleA1.png</Value>
       </Variable>
     </State>
     <State>
@@ -185,7 +185,7 @@
         <Value xsi:type="xsd:string">(A) Join</Value>
       </Variable>
       <Variable IsFile="true" Type="string" Name="PlayerFigure.SourceFile" ExposedAsName="SpriteInstanceSourceFile" SetsValue="true">
-        <Value xsi:type="xsd:string">..\..\Assets\Characters\IdleB1.png</Value>
+        <Value xsi:type="xsd:string">..\..\Content\Characters\IdleB1.png</Value>
       </Variable>
     </State>
     <State>
@@ -194,7 +194,7 @@
         <Value xsi:type="xsd:string">(A) Join</Value>
       </Variable>
       <Variable IsFile="true" Type="string" Name="PlayerFigure.SourceFile" ExposedAsName="SpriteInstanceSourceFile" SetsValue="true">
-        <Value xsi:type="xsd:string">..\..\Assets\Characters\IdleC1.png</Value>
+        <Value xsi:type="xsd:string">..\..\Content\Characters\IdleC1.png</Value>
       </Variable>
     </State>
     <State>
@@ -203,7 +203,7 @@
         <Value xsi:type="xsd:string">(A) Join</Value>
       </Variable>
       <Variable IsFile="true" Type="string" Name="PlayerFigure.SourceFile" ExposedAsName="SpriteInstanceSourceFile" SetsValue="true">
-        <Value xsi:type="xsd:string">..\..\Assets\Characters\IdleD1.png</Value>
+        <Value xsi:type="xsd:string">..\..\Content\Characters\IdleD1.png</Value>
       </Variable>
     </State>
   </Category>
