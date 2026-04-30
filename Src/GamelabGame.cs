@@ -12,6 +12,7 @@ using Gamelab.PhysicalEntities.Configurable;
 using Gamelab.Players;
 using Gamelab.Screens;
 using Gamelab.Serialization;
+using Gamelab.Services.Animation;
 using Gamelab.Services.Bullet;
 using Gamelab.Services.Random;
 using Gamelab.Services.Shop;
@@ -19,10 +20,9 @@ using Gamelab.Services.Sound;
 using Gamelab.Services.Vfx;
 using Gamelab.Systems;
 using Gamelab.Utils;
+using Gum.Forms.Controls;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Gum.Forms;
-using Gum.Forms.Controls;
 using MonoGame.Extended.Screens;
 using MonoGameGum;
 using Myra;
@@ -117,6 +117,10 @@ public class GamelabGame : Game
         Services.AddService((IBulletService)bulletService);
         systemManager.Add(bulletService);
 
+        IGameSystem animationService = new AnimationService();
+        Services.AddService((IAnimationService)animationService);
+        systemManager.Add(animationService);
+
         IRandomService randomService = new RandomService();
         Services.AddService(randomService);
     }
@@ -160,9 +164,9 @@ public class GamelabGame : Game
         PhysicsUtility.Initialize(GameplayConfig.PixelsPerMeter);
         ItemRegistry.Initialize();
         systemManager.InitializeAll(this);
-        AssetManager.LoadContent(graphics.GraphicsDevice);
+        AssetManager.LoadContent(Content, graphics.GraphicsDevice);
         CurrentRun = new RunSession();
-        screenManager.ShowScreen(new global::Gamelab.JoinScreen(this));
+        screenManager.ShowScreen(new JoinScreen(this));
         logger.Info("Game initialized");
     }
 
@@ -297,7 +301,7 @@ public class GamelabGame : Game
     {
         var gum = GumService.Default;
         if (!gum.IsInitialized) return;
- 
+
         var vp = GraphicsDevice.Viewport;
         if (vp.Width <= 0 || vp.Height <= 0) return;
 

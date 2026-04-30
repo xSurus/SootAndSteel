@@ -14,11 +14,1321 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin Characters/IdleA0.png
+/copy:Characters/IdleA0.png
+
+#begin Characters/IdleA1.png
+/copy:Characters/IdleA1.png
+
+#begin Characters/IdleA2.png
+/copy:Characters/IdleA2.png
+
+#begin Characters/IdleA3.png
+/copy:Characters/IdleA3.png
+
+#begin Characters/IdleB0.png
+/copy:Characters/IdleB0.png
+
+#begin Characters/IdleB1.png
+/copy:Characters/IdleB1.png
+
+#begin Characters/IdleB2.png
+/copy:Characters/IdleB2.png
+
+#begin Characters/IdleB3.png
+/copy:Characters/IdleB3.png
+
+#begin Characters/IdleC0.png
+/copy:Characters/IdleC0.png
+
+#begin Characters/IdleC1.png
+/copy:Characters/IdleC1.png
+
+#begin Characters/IdleC2.png
+/copy:Characters/IdleC2.png
+
+#begin Characters/IdleC3.png
+/copy:Characters/IdleC3.png
+
+#begin Characters/IdleD0.png
+/copy:Characters/IdleD0.png
+
+#begin Characters/IdleD1.png
+/copy:Characters/IdleD1.png
+
+#begin Characters/IdleD2.png
+/copy:Characters/IdleD2.png
+
+#begin Characters/IdleD3.png
+/copy:Characters/IdleD3.png
+
+#begin Components/BulletComponentSpriteSheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Components/BulletComponentSpriteSheet.png
+
+#begin Data/ComponentConfig.json
+/copy:Data/ComponentConfig.json
+
 #begin Data/example.json
 /copy:Data/example.json
 
 #begin Data/gameplay.json
 /copy:Data/gameplay.json
+
+#begin Data/StationConfig.json
+/copy:Data/StationConfig.json
+
+#begin Decorations/Snow_Covered_Pine.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Decorations/Snow_Covered_Pine.png
+
+#begin Enemies/EnemyAtlas-texture-0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Enemies/EnemyAtlas-texture-0.png
+
+#begin Enemies/EnemyAtlas.json
+/importer:TexturePackerJsonImporter
+/processor:TexturePackerProcessor
+/build:Enemies/EnemyAtlas.json
+
+#begin GumProject/BulletComponentSpriteSheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/BulletComponentSpriteSheet.png
+
+#begin GumProject/EventExport/gum_events.json
+/copy:GumProject/EventExport/gum_events.json
+
+#begin GumProject/ExampleSpriteFrame.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/ExampleSpriteFrame.png
+
+#begin GumProject/FontCache/Font0Papyrus_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font0Papyrus_0.png
+
+#begin GumProject/FontCache/Font15Papyrus_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font15Papyrus_0.png
+
+#begin GumProject/FontCache/Font15Ubuntu_Mono_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font15Ubuntu_Mono_0.png
+
+#begin GumProject/FontCache/Font16Berlin_Sans_FB_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font16Berlin_Sans_FB_0.png
+
+#begin GumProject/FontCache/Font16Berlin_Sans_FB_Demi_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font16Berlin_Sans_FB_Demi_0.png
+
+#begin GumProject/FontCache/Font16Berlin_Sans_FB_noSmooth_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font16Berlin_Sans_FB_noSmooth_0.png
+
+#begin GumProject/FontCache/Font16Bernard_MT_Condensed_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font16Bernard_MT_Condensed_0.png
+
+#begin GumProject/FontCache/Font16Blackadder_ITC_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font16Blackadder_ITC_0.png
+
+#begin GumProject/FontCache/Font16Papyrus_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font16Papyrus_0.png
+
+#begin GumProject/FontCache/Font17Berlin_Sans_FB_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font17Berlin_Sans_FB_0.png
+
+#begin GumProject/FontCache/Font17Berlin_Sans_FB_noSmooth_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font17Berlin_Sans_FB_noSmooth_0.png
+
+#begin GumProject/FontCache/Font18Arial_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Arial_0.png
+
+#begin GumProject/FontCache/Font18Arial_Black_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Arial_Black_0.png
+
+#begin GumProject/FontCache/Font18Arial_Narrow_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Arial_Narrow_0.png
+
+#begin GumProject/FontCache/Font18Bahnschrift_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Bahnschrift_0.png
+
+#begin GumProject/FontCache/Font18Bahnschrift_Condensed_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Bahnschrift_Condensed_0.png
+
+#begin GumProject/FontCache/Font18Bahnschrift_Light_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Bahnschrift_Light_0.png
+
+#begin GumProject/FontCache/Font18Bahnschrift_Light_Condensed_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Bahnschrift_Light_Condensed_0.png
+
+#begin GumProject/FontCache/Font18Bahnschrift_Light_noSmooth_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Bahnschrift_Light_noSmooth_0.png
+
+#begin GumProject/FontCache/Font18Bahnschrift_Light_o1_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Bahnschrift_Light_o1_0.png
+
+#begin GumProject/FontCache/Font18Bahnschrift_Light_o2_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Bahnschrift_Light_o2_0.png
+
+#begin GumProject/FontCache/Font18Bahnschrift_Light_o5_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Bahnschrift_Light_o5_0.png
+
+#begin GumProject/FontCache/Font18Bahnschrift_Light_SemiCondensed_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Bahnschrift_Light_SemiCondensed_0.png
+
+#begin GumProject/FontCache/Font18Bahnschrift_SemiBold_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Bahnschrift_SemiBold_0.png
+
+#begin GumProject/FontCache/Font18Bahnschrift_SemiBold_Condensed_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Bahnschrift_SemiBold_Condensed_0.png
+
+#begin GumProject/FontCache/Font18Bahnschrift_SemiBold_SemiConden_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Bahnschrift_SemiBold_SemiConden_0.png
+
+#begin GumProject/FontCache/Font18Bahnschrift_SemiCondensed_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Bahnschrift_SemiCondensed_0.png
+
+#begin GumProject/FontCache/Font18Bahnschrift_SemiLight_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Bahnschrift_SemiLight_0.png
+
+#begin GumProject/FontCache/Font18Bahnschrift_SemiLight_Condensed_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Bahnschrift_SemiLight_Condensed_0.png
+
+#begin GumProject/FontCache/Font18Bahnschrift_SemiLight_SemiConde_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Bahnschrift_SemiLight_SemiConde_0.png
+
+#begin GumProject/FontCache/Font18Baskerville_Old_Face_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Baskerville_Old_Face_0.png
+
+#begin GumProject/FontCache/Font18Bauhaus_93_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Bauhaus_93_0.png
+
+#begin GumProject/FontCache/Font18Bell_MT_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Bell_MT_0.png
+
+#begin GumProject/FontCache/Font18Berlin_Sans_FB_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Berlin_Sans_FB_0.png
+
+#begin GumProject/FontCache/Font18Berlin_Sans_FB_Demi_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Berlin_Sans_FB_Demi_0.png
+
+#begin GumProject/FontCache/Font18Bernard_MT_Condensed_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Bernard_MT_Condensed_0.png
+
+#begin GumProject/FontCache/Font18Blackadder_ITC_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Blackadder_ITC_0.png
+
+#begin GumProject/FontCache/Font18Bodoni_MT_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Bodoni_MT_0.png
+
+#begin GumProject/FontCache/Font18Bodoni_MT_Black_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Bodoni_MT_Black_0.png
+
+#begin GumProject/FontCache/Font18Bodoni_MT_Condensed_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Bodoni_MT_Condensed_0.png
+
+#begin GumProject/FontCache/Font18Bodoni_MT_Poster_Compressed_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Bodoni_MT_Poster_Compressed_0.png
+
+#begin GumProject/FontCache/Font18Book_Antiqua_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Book_Antiqua_0.png
+
+#begin GumProject/FontCache/Font18Bookman_Old_Style_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Bookman_Old_Style_0.png
+
+#begin GumProject/FontCache/Font18Bookshelf_Symbol_7_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Bookshelf_Symbol_7_0.png
+
+#begin GumProject/FontCache/Font18Bradley_Hand_ITC_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Bradley_Hand_ITC_0.png
+
+#begin GumProject/FontCache/Font18Britannic_Bold_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Britannic_Bold_0.png
+
+#begin GumProject/FontCache/Font18Papyrus_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Papyrus_0.png
+
+#begin GumProject/FontCache/Font18Stencil_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Stencil_0.png
+
+#begin GumProject/FontCache/Font18Ubuntu_Mono_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Ubuntu_Mono_0.png
+
+#begin GumProject/FontCache/Font18Yu_Gothic_Medium_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font18Yu_Gothic_Medium_0.png
+
+#begin GumProject/FontCache/Font1Papyrus_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font1Papyrus_0.png
+
+#begin GumProject/FontCache/Font20Arial_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font20Arial_0.png
+
+#begin GumProject/FontCache/Font20Arial_Narrow_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font20Arial_Narrow_0.png
+
+#begin GumProject/FontCache/Font20Bodoni_MT_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font20Bodoni_MT_0.png
+
+#begin GumProject/FontCache/Font20Hand_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font20Hand_0.png
+
+#begin GumProject/FontCache/Font20Papyrus_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font20Papyrus_0.png
+
+#begin GumProject/FontCache/Font20Ubuntu_Mono_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font20Ubuntu_Mono_0.png
+
+#begin GumProject/FontCache/Font22Bernard_MT_Condensed_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font22Bernard_MT_Condensed_0.png
+
+#begin GumProject/FontCache/Font22Bernard_MT_Condensed_noSmooth_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font22Bernard_MT_Condensed_noSmooth_0.png
+
+#begin GumProject/FontCache/Font25Bodoni_MT_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font25Bodoni_MT_0.png
+
+#begin GumProject/FontCache/Font25Papyrus_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font25Papyrus_0.png
+
+#begin GumProject/FontCache/Font30Papyrus_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font30Papyrus_0.png
+
+#begin GumProject/FontCache/Font30Ubuntu_Mono_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font30Ubuntu_Mono_0.png
+
+#begin GumProject/FontCache/Font40Ubuntu_Mono_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font40Ubuntu_Mono_0.png
+
+#begin GumProject/FontCache/Font50Ubuntu_Mono_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font50Ubuntu_Mono_0.png
+
+#begin GumProject/FontCache/Font60Ubuntu_Mono_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font60Ubuntu_Mono_0.png
+
+#begin GumProject/IdleA0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/IdleA0.png
+
+#begin GumProject/IdleA1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/IdleA1.png
+
+#begin GumProject/IdleA2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/IdleA2.png
+
+#begin GumProject/IdleA3.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/IdleA3.png
+
+#begin GumProject/IdleB0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/IdleB0.png
+
+#begin GumProject/IdleB1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/IdleB1.png
+
+#begin GumProject/IdleC0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/IdleC0.png
+
+#begin GumProject/IdleC1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/IdleC1.png
+
+#begin GumProject/IdleD0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/IdleD0.png
+
+#begin GumProject/IdleD1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/IdleD1.png
+
+#begin GumProject/spr_badge_9slice_64x24.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/spr_badge_9slice_64x24.png
+
+#begin GumProject/spr_coin_32.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/spr_coin_32.png
+
+#begin GumProject/spr_icon_casing_24.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/spr_icon_casing_24.png
+
+#begin GumProject/spr_icon_projectile_24.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/spr_icon_projectile_24.png
+
+#begin GumProject/spr_icon_propellant_24.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/spr_icon_propellant_24.png
+
+#begin GumProject/spr_xbtn_32.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/spr_xbtn_32.png
+
+#begin GumProject/spr_xbtn_48.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/spr_xbtn_48.png
+
+#begin GumProject/Title.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/Title.png
+
+#begin GumProject/tooltip_base_9slice_192x192.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/tooltip_base_9slice_192x192.png
+
+#begin GumProject/xbox_buttons_spritesheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/xbox_buttons_spritesheet.png
+
+#begin Hub.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Hub.png
+
+#begin Hub/Stake.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Hub/Stake.png
+
+#begin Hub/Village_Enter.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Hub/Village_Enter.png
+
+#begin Ice_Tile.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Ice_Tile.png
+
+#begin Items/BasicCasing.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Items/BasicCasing.png
+
+#begin Items/BasicProjectile.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Items/BasicProjectile.png
+
+#begin Items/BasicPropellant.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Items/BasicPropellant.png
+
+#begin Items/Bullet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Items/Bullet.png
+
+#begin Items/Coal.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Items/Coal.png
+
+#begin Items/Upgrade.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Items/Upgrade.png
+
+#begin Items/Upgraded.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Items/Upgraded.png
+
+#begin NPCs/Town1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:NPCs/Town1.png
+
+#begin NPCs/Vendor.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:NPCs/Vendor.png
 
 #begin placeholder_main_menu_background.png
 /importer:TextureImporter
@@ -32,455 +1342,395 @@
 /processorParam:TextureFormat=Color
 /build:placeholder_main_menu_background.png
 
+#begin Players/AllPlayersAtlas-texture.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Players/AllPlayersAtlas-texture.png
+
+#begin Players/AllPlayersAtlas.json
+/importer:TexturePackerJsonImporter
+/processor:TexturePackerProcessor
+/build:Players/AllPlayersAtlas.json
+
 #begin promptfont.ttf
 /copy:promptfont.ttf
 
-#begin Data/ComponentConfig.json
-/copy:Data/ComponentConfig.json
-
-#begin Data/StationConfig.json
-/copy:Data/StationConfig.json
-
-#begin GumProject/ExampleSpriteFrame.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/ExampleSpriteFrame.png
-
-#begin GumProject/EventExport/gum_events.json
-/copy:GumProject/EventExport/gum_events.json
-
-#begin GumProject/FontCache/Font18Arial_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Arial_0.png
-
-#begin GumProject/IdleA0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/IdleA0.png
-
-#begin GumProject/IdleA1.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/IdleA1.png
-
-#begin GumProject/IdleA2.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/IdleA2.png
-
-#begin GumProject/IdleA3.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/IdleA3.png
-
-#begin GumProject/FontCache/Font18Ubuntu_Mono_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Ubuntu_Mono_0.png
-
-#begin GumProject/FontCache/Font40Ubuntu_Mono_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font40Ubuntu_Mono_0.png
-
-#begin GumProject/FontCache/Font18Papyrus_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Papyrus_0.png
-
-#begin GumProject/FontCache/Font18Bahnschrift_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Bahnschrift_0.png
-
-#begin GumProject/FontCache/Font18Stencil_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Stencil_0.png
-
-#begin GumProject/FontCache/Font18Yu_Gothic_Medium_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Yu_Gothic_Medium_0.png
-
-#begin GumProject/FontCache/Font30Ubuntu_Mono_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font30Ubuntu_Mono_0.png
-
-#begin GumProject/FontCache/Font30Papyrus_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font30Papyrus_0.png
-
-#begin GumProject/FontCache/Font50Ubuntu_Mono_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font50Ubuntu_Mono_0.png
-
-#begin GumProject/FontCache/Font60Ubuntu_Mono_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font60Ubuntu_Mono_0.png
-
-#begin GumProject/IdleB0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/IdleB0.png
-
-#begin GumProject/IdleC0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/IdleC0.png
-
-#begin GumProject/IdleD0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/IdleD0.png
-
-#begin GumProject/IdleB1.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/IdleB1.png
-
-#begin GumProject/IdleC1.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/IdleC1.png
-
-#begin GumProject/IdleD1.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/IdleD1.png
-
-#begin GumProject/FontCache/Font15Papyrus_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font15Papyrus_0.png
-
-#begin GumProject/FontCache/Font20Papyrus_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font20Papyrus_0.png
-
-#begin GumProject/FontCache/Font0Papyrus_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font0Papyrus_0.png
-
-#begin GumProject/FontCache/Font16Papyrus_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font16Papyrus_0.png
-
-#begin GumProject/FontCache/Font1Papyrus_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font1Papyrus_0.png
-
-#begin GumProject/FontCache/Font25Papyrus_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font25Papyrus_0.png
-
-#begin GumProject/Title.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/Title.png
-
-#begin GumProject/BulletComponentSpriteSheet.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/BulletComponentSpriteSheet.png
-
-#begin GumProject/spr_badge_9slice_64x24.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/spr_badge_9slice_64x24.png
-
-#begin GumProject/spr_coin_32.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/spr_coin_32.png
-
-#begin GumProject/spr_icon_casing_24.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/spr_icon_casing_24.png
-
-#begin GumProject/spr_icon_projectile_24.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/spr_icon_projectile_24.png
-
-#begin GumProject/spr_icon_propellant_24.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/spr_icon_propellant_24.png
-
-#begin GumProject/xbox_buttons_spritesheet.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/xbox_buttons_spritesheet.png
-
-#begin GumProject/spr_xbtn_48.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/spr_xbtn_48.png
-
-#begin GumProject/tooltip_base_9slice_192x192.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/tooltip_base_9slice_192x192.png
-
-#begin GumProject/FontCache/Font15Ubuntu_Mono_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font15Ubuntu_Mono_0.png
-
-#begin GumProject/FontCache/Font16Berlin_Sans_FB_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font16Berlin_Sans_FB_0.png
-
-#begin GumProject/FontCache/Font18Arial_Black_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Arial_Black_0.png
-
-#begin GumProject/FontCache/Font18Arial_Narrow_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Arial_Narrow_0.png
-
-#begin GumProject/FontCache/Font18Bahnschrift_Condensed_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Bahnschrift_Condensed_0.png
-
-#begin GumProject/FontCache/Font18Bahnschrift_Light_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Bahnschrift_Light_0.png
-
-#begin GumProject/FontCache/Font18Bahnschrift_Light_Condensed_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Bahnschrift_Light_Condensed_0.png
-
-#begin GumProject/FontCache/Font18Bahnschrift_Light_SemiCondensed_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Bahnschrift_Light_SemiCondensed_0.png
-
-#begin GumProject/FontCache/Font18Bahnschrift_SemiBold_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Bahnschrift_SemiBold_0.png
-
-#begin GumProject/FontCache/Font18Bahnschrift_SemiBold_Condensed_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Bahnschrift_SemiBold_Condensed_0.png
-
-#begin GumProject/FontCache/Font18Bahnschrift_SemiBold_SemiConden_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Bahnschrift_SemiBold_SemiConden_0.png
-
-#begin GumProject/FontCache/Font18Bahnschrift_SemiCondensed_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Bahnschrift_SemiCondensed_0.png
-
-#begin GumProject/FontCache/Font18Bahnschrift_SemiLight_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Bahnschrift_SemiLight_0.png
-
-#begin GumProject/FontCache/Font18Bahnschrift_SemiLight_Condensed_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Bahnschrift_SemiLight_Condensed_0.png
-
-#begin GumProject/FontCache/Font18Bahnschrift_SemiLight_SemiConde_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Bahnschrift_SemiLight_SemiConde_0.png
-
-#begin GumProject/FontCache/Font18Baskerville_Old_Face_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Baskerville_Old_Face_0.png
-
-#begin GumProject/FontCache/Font18Bauhaus_93_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Bauhaus_93_0.png
-
-#begin GumProject/FontCache/Font18Bell_MT_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Bell_MT_0.png
-
-#begin GumProject/FontCache/Font18Berlin_Sans_FB_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Berlin_Sans_FB_0.png
-
-#begin GumProject/FontCache/Font18Berlin_Sans_FB_Demi_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Berlin_Sans_FB_Demi_0.png
-
-#begin GumProject/FontCache/Font18Bernard_MT_Condensed_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Bernard_MT_Condensed_0.png
-
-#begin GumProject/FontCache/Font18Blackadder_ITC_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Blackadder_ITC_0.png
-
-#begin GumProject/FontCache/Font18Bodoni_MT_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Bodoni_MT_0.png
-
-#begin GumProject/FontCache/Font18Bodoni_MT_Black_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Bodoni_MT_Black_0.png
-
-#begin GumProject/FontCache/Font18Bodoni_MT_Condensed_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Bodoni_MT_Condensed_0.png
-
-#begin GumProject/FontCache/Font18Bodoni_MT_Poster_Compressed_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Bodoni_MT_Poster_Compressed_0.png
-
-#begin GumProject/FontCache/Font18Bookman_Old_Style_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Bookman_Old_Style_0.png
-
-#begin GumProject/FontCache/Font18Bookshelf_Symbol_7_0.png
+#begin Rail_Tile_01.png
 /importer:TextureImporter
 /processor:TextureProcessor
-/build:GumProject/FontCache/Font18Bookshelf_Symbol_7_0.png
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Rail_Tile_01.png
 
-#begin GumProject/FontCache/Font18Book_Antiqua_0.png
+#begin Rail_Tile_02.png
 /importer:TextureImporter
 /processor:TextureProcessor
-/build:GumProject/FontCache/Font18Book_Antiqua_0.png
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Rail_Tile_02.png
 
-#begin GumProject/FontCache/Font18Bradley_Hand_ITC_0.png
+#begin Snow_Tile.png
 /importer:TextureImporter
 /processor:TextureProcessor
-/build:GumProject/FontCache/Font18Bradley_Hand_ITC_0.png
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Snow_Tile.png
 
-#begin GumProject/FontCache/Font18Britannic_Bold_0.png
+#begin Stations/BasicCasing.png
 /importer:TextureImporter
 /processor:TextureProcessor
-/build:GumProject/FontCache/Font18Britannic_Bold_0.png
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Stations/BasicCasing.png
 
-#begin GumProject/FontCache/Font20Arial_0.png
+#begin Stations/BasicProjectile.png
 /importer:TextureImporter
 /processor:TextureProcessor
-/build:GumProject/FontCache/Font20Arial_0.png
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Stations/BasicProjectile.png
 
-#begin GumProject/FontCache/Font20Arial_Narrow_0.png
+#begin Stations/BasicPropellant.png
 /importer:TextureImporter
 /processor:TextureProcessor
-/build:GumProject/FontCache/Font20Arial_Narrow_0.png
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Stations/BasicPropellant.png
 
-#begin GumProject/FontCache/Font20Bodoni_MT_0.png
+#begin Stations/Cannon.png
 /importer:TextureImporter
 /processor:TextureProcessor
-/build:GumProject/FontCache/Font20Bodoni_MT_0.png
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Stations/Cannon.png
 
-#begin GumProject/FontCache/Font20Hand_0.png
+#begin Stations/CopperResource.png
 /importer:TextureImporter
 /processor:TextureProcessor
-/build:GumProject/FontCache/Font20Hand_0.png
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Stations/CopperResource.png
 
-#begin GumProject/FontCache/Font20Ubuntu_Mono_0.png
+#begin Stations/Counter.png
 /importer:TextureImporter
 /processor:TextureProcessor
-/build:GumProject/FontCache/Font20Ubuntu_Mono_0.png
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Stations/Counter.png
 
-#begin GumProject/FontCache/Font22Bernard_MT_Condensed_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font22Bernard_MT_Condensed_0.png
+#begin Stations/HomingCasing.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Stations/HomingCasing.png
 
-#begin GumProject/spr_xbtn_32.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/spr_xbtn_32.png
+#begin Stations/ResourceCoal.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Stations/ResourceCoal.png
 
-#begin GumProject/FontCache/Font16Berlin_Sans_FB_Demi_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font16Berlin_Sans_FB_Demi_0.png
+#begin Stations/ScatterProjectile.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Stations/ScatterProjectile.png
 
-#begin GumProject/FontCache/Font16Berlin_Sans_FB_noSmooth_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font16Berlin_Sans_FB_noSmooth_0.png
+#begin Stations/SpeedLever.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Stations/SpeedLever.png
 
-#begin GumProject/FontCache/Font16Bernard_MT_Condensed_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font16Bernard_MT_Condensed_0.png
+#begin Stations/Workbench.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Stations/Workbench.png
 
-#begin GumProject/FontCache/Font16Blackadder_ITC_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font16Blackadder_ITC_0.png
+#begin Structures/BasicProjectile.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Structures/BasicProjectile.png
 
-#begin GumProject/FontCache/Font17Berlin_Sans_FB_noSmooth_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font17Berlin_Sans_FB_noSmooth_0.png
+#begin Structures/CoalWagon.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Structures/CoalWagon.png
 
-#begin GumProject/FontCache/Font25Bodoni_MT_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font25Bodoni_MT_0.png
+#begin Structures/CoalWagon2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Structures/CoalWagon2.png
 
-#begin GumProject/FontCache/Font22Bernard_MT_Condensed_noSmooth_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font22Bernard_MT_Condensed_noSmooth_0.png
+#begin Structures/HomingCasing.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Structures/HomingCasing.png
 
-#begin GumProject/FontCache/Font17Berlin_Sans_FB_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font17Berlin_Sans_FB_0.png
+#begin Structures/HubShopOffer.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Structures/HubShopOffer.png
 
-#begin GumProject/FontCache/Font18Bahnschrift_Light_o1_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Bahnschrift_Light_o1_0.png
+#begin Title.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Title.png
 
-#begin GumProject/FontCache/Font18Bahnschrift_Light_o5_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Bahnschrift_Light_o5_0.png
+#begin TitleB.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:TitleB.png
 
-#begin GumProject/FontCache/Font18Bahnschrift_Light_o2_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Bahnschrift_Light_o2_0.png
+#begin Train_Tile_A.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Train_Tile_A.png
 
-#begin GumProject/FontCache/Font18Bahnschrift_Light_noSmooth_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Bahnschrift_Light_noSmooth_0.png
+#begin Train_Tile_B.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Train_Tile_B.png
+
+#begin Walls/WallTileBottom.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Walls/WallTileBottom.png
+
+#begin Walls/WallTileBottomDoorClosed.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Walls/WallTileBottomDoorClosed.png
+
+#begin Walls/WallTileBottomDoorOpen.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Walls/WallTileBottomDoorOpen.png
+
+#begin Walls/WallTileTop.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Walls/WallTileTop.png
+
+#begin Walls/WallTileTopDoorClosed.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Walls/WallTileTopDoorClosed.png
+
+#begin Walls/WallTileTopDoorOpen.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Walls/WallTileTopDoorOpen.png
+
+#begin Walls/WallTileUpperLeftCorner.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Walls/WallTileUpperLeftCorner.png
+
+#begin Walls/WallTileUpperSide.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Walls/WallTileUpperSide.png
 

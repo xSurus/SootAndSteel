@@ -1,0 +1,148 @@
+{
+  "textures": [
+    {
+      "filename": "AllPlayersAtlas-texture.png",
+      "format": "RGBA8888",
+      "size": {
+        "w": 1648,
+        "h": 1608
+      },
+      "frames": {
+        "Player0_Idle1": {
+          "frame": {
+            "x": 1,
+            "y": 1,
+            "w": 410,
+            "h": 400
+          }
+        },
+        "Player0_Idle2": {
+          "frame": {
+            "x": 413,
+            "y": 1,
+            "w": 410,
+            "h": 400
+          }
+        },
+        "Player0_Idle3": {
+          "frame": {
+            "x": 825,
+            "y": 1,
+            "w": 410,
+            "h": 400
+          }
+        },
+        "Player0_Idle4": {
+          "frame": {
+            "x": 1237,
+            "y": 1,
+            "w": 410,
+            "h": 400
+          }
+        },
+        "Player1_Idle1": {
+          "frame": {
+            "x": 1,
+            "y": 403,
+            "w": 410,
+            "h": 400
+          }
+        },
+        "Player1_Idle2": {
+          "frame": {
+            "x": 413,
+            "y": 403,
+            "w": 410,
+            "h": 400
+          }
+        },
+        "Player1_Idle3": {
+          "frame": {
+            "x": 825,
+            "y": 403,
+            "w": 410,
+            "h": 400
+          }
+        },
+        "Player1_Idle4": {
+          "frame": {
+            "x": 1237,
+            "y": 403,
+            "w": 410,
+            "h": 400
+          }
+        },
+        "Player2_Idle1": {
+          "frame": {
+            "x": 1,
+            "y": 805,
+            "w": 410,
+            "h": 400
+          }
+        },
+        "Player2_Idle2": {
+          "frame": {
+            "x": 413,
+            "y": 805,
+            "w": 410,
+            "h": 400
+          }
+        },
+        "Player2_Idle3": {
+          "frame": {
+            "x": 825,
+            "y": 805,
+            "w": 410,
+            "h": 400
+          }
+        },
+        "Player2_Idle4": {
+          "frame": {
+            "x": 1237,
+            "y": 805,
+            "w": 410,
+            "h": 400
+          }
+        },
+        "Player3_Idle1": {
+          "frame": {
+            "x": 1,
+            "y": 1207,
+            "w": 410,
+            "h": 400
+          }
+        },
+        "Player3_Idle2": {
+          "frame": {
+            "x": 413,
+            "y": 1207,
+            "w": 410,
+            "h": 400
+          }
+        },
+        "Player3_Idle3": {
+          "frame": {
+            "x": 825,
+            "y": 1207,
+            "w": 410,
+            "h": 400
+          }
+        },
+        "Player3_Idle4": {
+          "frame": {
+            "x": 1237,
+            "y": 1207,
+            "w": 410,
+            "h": 400
+          }
+        }
+      }
+    }
+  ],
+  "meta": {
+    "app": "https://www.codeandweb.com/texturepacker",
+    "dataformat": "monogame-extended",
+    "version": "1.2",
+    "smartupdate": "$TexturePacker:SmartUpdate:74427193af181590e7d5c9acc9d8707c:7a03e09807829a021ca1d7e3fe7bf25b:827d7013b952366b4d95cd5ea2c32591$"
+  }
+}
