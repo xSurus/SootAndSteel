@@ -19,7 +19,7 @@
   "playerLinearDamping": 20.0,
   "playerMaxVelocity": 5.0,
   "playerVelocityLerpFactor": 0.8,
-  "playerInteractDistancePixels": 60.0,
+  "playerInteractDistancePixels": 80.0,
   "playerHeldItemOffsetRadiusMultiplier": 1.5,
   "playerHeldItemSizeRadiusMultiplier": 0.8,
   "playerForceMultiplier": 50.0,

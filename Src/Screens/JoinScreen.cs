@@ -14,7 +14,7 @@ namespace Gamelab;
 /// Multiplayer join MonoGame screen. Gum Forms UI is <see cref="Screens.JoinScreen"/> (generated); this type
 /// stays in namespace <see cref="Gamelab"/> so it does not collide with Gum when you regenerate code.
 /// </summary>
-public sealed class JoinScreen(GamelabGame game) : Screens.AbstractGameScreen(game)
+public sealed class JoinScreen(GamelabGame game) : Screens.GamelabGameScreen(game)
 {
     /// <summary>Names must match <c>JoinPlayerComponentAnimations.ganx</c> (set in Gum).</summary>
     private const string AnimPlayerJoined = "PlayerJoinedAnimation";

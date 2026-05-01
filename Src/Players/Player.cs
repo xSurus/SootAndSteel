@@ -7,11 +7,13 @@ using Gamelab.PhysicalEntities;
 using Gamelab.PhysicalEntities.Bullets;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.PhysicalEntities.Stations.Cannon;
+using Gamelab.Services.Animation;
 using Gamelab.Services.Sound;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
+using MonoGame.Extended.Graphics;
 using nkast.Aether.Physics2D.Dynamics;
 
 namespace Gamelab.Players;
@@ -50,12 +52,8 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
     private float patchRemoveTimer;
     private bool revivedThisFrame;
 
-
-    private string[] idleFrames = { "IdleA", "IdleB", "IdleC", "IdleD" };
-
-    private int currentFrame = 0;
-    private float animationTimer = 0f;
-    private float timePerFrame = 0.2f;
+    private AnimatedSprite playerSprite;
+    private IAnimationService animationService;
 
     private EventInstance walkSound;
 
@@ -74,22 +72,15 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
         soundService.RegisterParameter(walkSound, "Walk Speed",
             () => PhysicsBody.LinearVelocity.Length() / MaxVelocity);
         walkSound?.Start();
+
+        animationService = GamelabGame.Instance.Services.GetService<IAnimationService>();
+        playerSprite = new AnimatedSprite(AssetManager.PlayerSpriteSheet);
+        playerSprite.SetAnimation($"Player{PlayerConfiguration.PlayerIndex}_Idle");
+        animationService.Register(playerSprite);
     }
 
     public void Update(float dt)
     {
-        animationTimer += dt;
-        if (animationTimer >= timePerFrame)
-        {
-            currentFrame++;
-            if (currentFrame >= idleFrames.Length)
-            {
-                currentFrame = 0;
-            }
-
-            animationTimer -= timePerFrame;
-        }
-
         if (IsStunned)
         {
             UpdateStunned(dt);
@@ -419,52 +410,33 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        Texture2D texture = AssetManager.GetPlayerTexture(
-            $"{idleFrames[(currentFrame + PlayerConfiguration.PlayerIndex) % idleFrames.Length]}{PlayerConfiguration.PlayerIndex}");
+        if (playerSprite == null) return;
 
-        Vector2 origin = new Vector2(texture.Width / 2f, texture.Height);
         Vector2 feetPosition = Position + new Vector2(0, Radius);
-
         Color drawColor = IsStunned ? Color.Goldenrod : Color.White;
         bool isFacingRight = LookDirection.X > 0;
         SpriteEffects flipEffect = isFacingRight ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
         float renderDepth = RenderUtility.CalculateDepth(feetPosition.Y);
 
+        playerSprite.Color = drawColor;
+        playerSprite.Depth = renderDepth;
+        playerSprite.Effect = flipEffect;
+
         if (IsStunned)
         {
-            // Draw character lying on their side
-            Vector2 centerOrigin = new Vector2(texture.Width / 2f, texture.Height / 2f);
-            spriteBatch.Draw(
-                texture: texture,
-                position: Position,
-                sourceRectangle: null,
-                color: drawColor,
-                rotation: MathHelper.PiOver2,
-                origin: centerOrigin,
-                scale: 0.3f,
-                effects: flipEffect,
-                layerDepth: renderDepth
-            );
+            playerSprite.Origin =
+                new Vector2(playerSprite.TextureRegion.Width / 2f, playerSprite.TextureRegion.Height / 2f);
+            spriteBatch.Draw(playerSprite, Position, MathHelper.PiOver2, new Vector2(0.3f));
         }
         else
         {
-            spriteBatch.Draw(
-                texture: texture,
-                position: feetPosition,
-                sourceRectangle: null,
-                color: drawColor,
-                rotation: 0f,
-                origin: origin,
-                scale: 0.3f,
-                effects: flipEffect,
-                layerDepth: renderDepth
-            );
+            playerSprite.Origin = new Vector2(playerSprite.TextureRegion.Width / 2f, playerSprite.TextureRegion.Height);
+            spriteBatch.Draw(playerSprite, feetPosition, 0f, new Vector2(0.3f));
         }
 
-        DrawInteractionTarget(spriteBatch);
         DrawHeldItem(spriteBatch, renderDepth + RenderUtility.Eps);
 
-        float playerVisualHeight = texture.Height * 0.3f;
+        float playerVisualHeight = playerSprite.TextureRegion.Height * 0.3f;
         DrawConcussionStars(spriteBatch, playerVisualHeight);
         DrawStunProgress(spriteBatch, playerVisualHeight);
     }
@@ -478,12 +450,6 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
             int itemSize = (int)(Radius * HeldItemSizeRadiusMultiplier);
             HeldItem.Draw(spriteBatch, itemPosition, itemSize, renderDepth);
         }
-    }
-
-    private void DrawInteractionTarget(SpriteBatch spriteBatch)
-    {
-        Vector2 targetPointPixels = Position + (LookDirection * InteractDistancePixels);
-        spriteBatch.DrawCircle(targetPointPixels, 5f, 12, Color.Red, 2f, layerDepth: RenderUtility.OverlayTopLayer);
     }
 
     private void DrawConcussionStars(SpriteBatch spriteBatch, float playerVisualHeight)
@@ -503,7 +469,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
             float angle = baseAngle + MathHelper.TwoPi / starCount * i;
             Vector2 starPos = center + new Vector2(
                 (float)Math.Cos(angle) * orbitRadius,
-                (float)Math.Sin(angle) * orbitRadius * 0.4f  // flatten into an ellipse
+                (float)Math.Sin(angle) * orbitRadius * 0.4f // flatten into an ellipse
             );
             Color color = i % 2 == 0 ? Color.Yellow : Color.Gold;
             spriteBatch.Draw(
@@ -511,7 +477,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
                 starPos,
                 null,
                 color,
-                angle,                          // each star rotates with its orbit angle
+                angle, // each star rotates with its orbit angle
                 new Vector2(0.5f, 0.5f),
                 starScale,
                 SpriteEffects.None,
@@ -542,6 +508,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
 
     public void Dispose()
     {
+        animationService?.Unregister(playerSprite);
         if (walkSound != null)
         {
             walkSound.Stop();

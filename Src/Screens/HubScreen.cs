@@ -13,6 +13,7 @@ using Gamelab.Components;
 using Gamelab.Players;
 using Gamelab.Screens.Camera;
 using Gamelab.Serialization;
+using Gamelab.Services.Bullet;
 using Gamelab.Services.Sound;
 using Gamelab.Services.Vfx;
 using Gamelab.UI;
@@ -24,7 +25,7 @@ using Myra.Graphics2D.UI;
 
 namespace Gamelab.Screens;
 
-public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
+public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
 {
     private List<Player> players;
     private GameplayContext gameplayContext;
@@ -139,8 +140,8 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
         hubMap.Draw(spriteBatch);
         prepTrainMap.Draw(spriteBatch);
         Services.GetService<IVfxService>().Render(spriteBatch);
+        Services.GetService<IBulletService>().Render(spriteBatch);
         foreach (var player in players) player.Draw(spriteBatch);
-
         spriteBatch.End();
         hud.Draw();
         GumService.Default.Draw();
@@ -196,7 +197,7 @@ public class HubScreen(GamelabGame game) : AbstractGameScreen(game)
         prepTrainMap.LoadLayout(Game.CurrentRun.TrainLayout);
         gameplayContext.Map = prepTrainMap;
         int hubSeed = unchecked(Game.CurrentRun.RunSeed + Game.CurrentRun.CurrentLevel * 4242);
-        hubMap.RestockHubDragOffers(new Random(hubSeed), Game.CurrentRun.CurrentLevel + 3);
+        hubMap.RestockHubDragOffers(new Random(hubSeed), 4);
     }
 
     private void InitializePlayers()

@@ -9,7 +9,7 @@ using Myra.Graphics2D.UI;
 
 namespace Gamelab.Screens;
 
-public class PostLevelStatsScreen : AbstractGameScreen
+public class PostLevelStatsScreen : GamelabGameScreen
 {
     private enum Phase
     {

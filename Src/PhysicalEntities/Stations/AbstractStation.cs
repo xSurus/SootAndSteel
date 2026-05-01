@@ -17,7 +17,7 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
     protected StationConfig StationConfig => GamelabGame.Instance.StationRegistry.Get(StationId);
 
     public string StationId { get; protected set; }
-    
+
     protected readonly ISoundService soundService;
 
     // TODO swap to a texture instead of display color at some point
@@ -53,7 +53,7 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
         float collisionSizePixels = GamelabGame.Instance.GameplayConfig.TrainTileSize * 0.90f;
         float simSize = collisionSizePixels.ToMeters();
         PhysicsBody = gameplayContext.PhysicsWorld.CreateRectangle(simSize, simSize, 1f, position.ToMeters());
-        
+
         soundService = GamelabGame.Instance.Services.GetService<ISoundService>();
         soundService.LoadSound(Sounds.PickupItem);
         soundService.LoadSound(Sounds.DropItem);
@@ -118,8 +118,7 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
             float scale = tileSize / (float)tex.Width;
             Vector2 origin = new Vector2(tex.Width / 2f, tex.Height);
 
-            spriteBatch.Draw(
-                texture: tex,
+            spriteBatch.DrawWithHighlight(texture: tex,
                 position: bottomCenter,
                 sourceRectangle: null,
                 color: Color.White,
@@ -127,8 +126,8 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
                 origin: origin,
                 scale: scale,
                 effects: SpriteEffects.None,
-                layerDepth: depth
-            );
+                layerDepth: depth,
+                isHighlighted: IsHighlighted);
         }
 
         if (HeldItem != null)

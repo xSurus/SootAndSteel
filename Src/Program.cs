@@ -32,7 +32,7 @@ public static class Program
 
         var runCICDTest = options.GetValue(runCICDTestOption);
 
-        game = new GamelabGame(runMode, new DesktopAndMacNativeFmodLibrary());
+        game = new GamelabGame(runMode);
 
         if (runCICDTest)
         {
@@ -57,7 +57,7 @@ public static class Program
             Thread.Yield();
         }
 
-        var screenFactories = AbstractGameScreen.GetScreenFactories();
+        var screenFactories = GamelabGameScreen.GetScreenFactories();
         foreach (var screenFactory in screenFactories)
         {
             var screen = screenFactory.Instantiate(game);

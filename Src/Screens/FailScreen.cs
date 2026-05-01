@@ -27,7 +27,7 @@ public enum FailureReason
     TrainFrozenOther,
 }
 
-public class FailScreen(GamelabGame game, FailureReason reason) : AbstractGameScreen(game)
+public class FailScreen(GamelabGame game, FailureReason reason) : GamelabGameScreen(game)
 {
     private Desktop desktop;
 

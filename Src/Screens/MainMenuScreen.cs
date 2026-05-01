@@ -22,7 +22,7 @@ namespace Gamelab;
 /// stays in namespace <see cref="Gamelab"/> so it does not collide with Gum when you regenerate code, mirroring
 /// the pattern used by <see cref="JoinScreen"/>.
 /// </summary>
-public sealed class MainMenuScreen(GamelabGame game) : Screens.AbstractGameScreen(game)
+public sealed class MainMenuScreen(GamelabGame game) : Screens.GamelabGameScreen(game)
 {
     private readonly Logger logger = new("MainMenuScreen");
 

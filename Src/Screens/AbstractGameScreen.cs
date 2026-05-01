@@ -10,7 +10,7 @@ using MonoGame.Extended.ViewportAdapters;
 
 namespace Gamelab.Screens;
 
-public abstract class AbstractGameScreen(GamelabGame game) : GameScreen(game)
+public abstract class GamelabGameScreen(GamelabGame game) : GameScreen(game)
 {
     protected ViewportAdapter viewportAdapter;
     protected SpriteBatch spriteBatch;
@@ -80,15 +80,15 @@ public abstract class AbstractGameScreen(GamelabGame game) : GameScreen(game)
     public class Factory
     {
         public string name;
-        private readonly Func<GamelabGame, AbstractGameScreen> factory;
+        private readonly Func<GamelabGame, GamelabGameScreen> factory;
 
-        public Factory(string name, Func<GamelabGame, AbstractGameScreen> factory)
+        public Factory(string name, Func<GamelabGame, GamelabGameScreen> factory)
         {
             this.name = name;
             this.factory = factory;
         }
 
-        public AbstractGameScreen Instantiate(GamelabGame game) => factory(game);
+        public GamelabGameScreen Instantiate(GamelabGame game) => factory(game);
 
         public override string ToString() => name;
     }
@@ -103,10 +103,10 @@ public abstract class AbstractGameScreen(GamelabGame game) : GameScreen(game)
     {
         var screenTypes = AppDomain.CurrentDomain.GetAssemblies()
             .SelectMany(a => a.GetTypes())
-            .Where(t => t.IsSubclassOf(typeof(AbstractGameScreen)) && !t.IsAbstract)
+            .Where(t => t.IsSubclassOf(typeof(GamelabGameScreen)) && !t.IsAbstract)
             .ToList();
 
         return screenTypes.Select(t =>
-            new Factory(t.Name, game => { return (AbstractGameScreen)Activator.CreateInstance(t, game); }));
+            new Factory(t.Name, game => { return (GamelabGameScreen)Activator.CreateInstance(t, game); }));
     }
 }

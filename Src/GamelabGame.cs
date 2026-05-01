@@ -12,6 +12,7 @@ using Gamelab.PhysicalEntities.Configurable;
 using Gamelab.Players;
 using Gamelab.Screens;
 using Gamelab.Serialization;
+using Gamelab.Services.Animation;
 using Gamelab.Services.Bullet;
 using Gamelab.Services.Random;
 using Gamelab.Services.Shop;
@@ -19,10 +20,9 @@ using Gamelab.Services.Sound;
 using Gamelab.Services.Vfx;
 using Gamelab.Systems;
 using Gamelab.Utils;
+using Gum.Forms.Controls;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Gum.Forms;
-using Gum.Forms.Controls;
 using MonoGame.Extended.Screens;
 using MonoGameGum;
 using Myra;
@@ -75,7 +75,7 @@ public class GamelabGame : Game
     /// </summary>
     public float GumViewportScale { get; private set; } = 1f;
 
-    private AbstractGameScreen nextScreen;
+    private GamelabGameScreen nextScreen;
     private string screenshotPath;
 
     public bool IsRunning => screenManager.ActiveScreen != null;
@@ -83,12 +83,12 @@ public class GamelabGame : Game
     public readonly INativeFmodLibrary nativeFmodLibrary;
     public EventInstance menuStabInstance;
 
-    public GamelabGame(RunMode runMode, INativeFmodLibrary nativeFmodLibrary)
+    public GamelabGame(RunMode runMode)
     {
         Instance = this;
 
         this.runMode = runMode;
-        this.nativeFmodLibrary = nativeFmodLibrary;
+        this.nativeFmodLibrary = new DesktopAndMacNativeFmodLibrary();
 
         graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
@@ -116,6 +116,10 @@ public class GamelabGame : Game
         IGameSystem bulletService = new BulletService();
         Services.AddService((IBulletService)bulletService);
         systemManager.Add(bulletService);
+
+        IGameSystem animationService = new AnimationService();
+        Services.AddService((IAnimationService)animationService);
+        systemManager.Add(animationService);
 
         IRandomService randomService = new RandomService();
         Services.AddService(randomService);
@@ -160,9 +164,9 @@ public class GamelabGame : Game
         PhysicsUtility.Initialize(GameplayConfig.PixelsPerMeter);
         ItemRegistry.Initialize();
         systemManager.InitializeAll(this);
-        AssetManager.LoadContent(graphics.GraphicsDevice);
+        AssetManager.LoadContent(Content, graphics.GraphicsDevice);
         CurrentRun = new RunSession();
-        screenManager.ShowScreen(new global::Gamelab.JoinScreen(this));
+        screenManager.ShowScreen(new JoinScreen(this));
         logger.Info("Game initialized");
     }
 
@@ -198,12 +202,12 @@ public class GamelabGame : Game
     /// Switch to the specified screen on the next update. Not transitioning immediately allows the current screen to finish its update and draw cycle, which can help avoid issues with switching screens in the middle of their logic.
     /// </summary>
     /// <param name="screen">The screen to switch to.</param>
-    public void SwitchToScreen(AbstractGameScreen screen)
+    public void SwitchToScreen(GamelabGameScreen screen)
     {
         nextScreen = screen;
     }
 
-    protected void SwitchToScreenImmediately(AbstractGameScreen screen)
+    protected void SwitchToScreenImmediately(GamelabGameScreen screen)
     {
         screenManager.ReplaceScreen(screen);
     }
@@ -276,7 +280,7 @@ public class GamelabGame : Game
         }
     }
 
-    /// <summary>Gum UI is authored at this resolution (same as <see cref="Screens.AbstractGameScreen"/> virtual size).</summary>
+    /// <summary>Gum UI is authored at this resolution (same as <see cref="Screens.GamelabGameScreen"/> virtual size).</summary>
     private const float GumDesignWidth = 1920f;
 
     private const float GumDesignHeight = 1080f;
@@ -297,7 +301,7 @@ public class GamelabGame : Game
     {
         var gum = GumService.Default;
         if (!gum.IsInitialized) return;
- 
+
         var vp = GraphicsDevice.Viewport;
         if (vp.Width <= 0 || vp.Height <= 0) return;
 

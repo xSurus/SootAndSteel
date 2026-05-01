@@ -4,216 +4,222 @@ using Gamelab.Enemies.Core;
 using Gamelab.Enemies.Movement;
 using Gamelab.Enemies.Slots;
 using Gamelab.Items.Bullets;
+using Gamelab.Services.Animation;
 using Gamelab.Services.Bullet;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended.Graphics;
 
 namespace Gamelab.Enemies.Types;
 
-public enum EnemyState
+public enum HorseState
 {
     ApproachingSideAttackSlot,
     HoldingSideAttackSlot
+}
+
+public enum RiderState
+{
+    Idle,
+    Aiming,
+    Recoil
 }
 
 public class Enemy : AbstractEnemy
 {
     private const float HorseSpriteScale = 0.45f;
     private const float HorseFramesPerSecond = 12f;
-    private const float AttackPoseDurationSeconds = 0.5f;
-
-    private static readonly string[] HorseFrameKeys =
-    [
-        "horse01",
-        "horse02",
-        "horse03",
-        "horse04",
-        "horse05",
-        "horse06",
-        "horse07",
-        "horse08",
-        "horse09",
-        "horse010"
-    ];
+    private const int HorseRunCycleFrames = 10;
+    private const float AimDurationSeconds = 0.75f;
+    private const float RecoilDurationSeconds = 0.4f;
 
     private float ShootCooldown => GamelabGame.Instance.GameplayConfig.EnemyShootCooldown;
     private float PreferredDistance => GamelabGame.Instance.GameplayConfig.RiflePreferredDistance;
     private float EnemyShootSpread => GamelabGame.Instance.GameplayConfig.EnemyShootSpread;
-    private float HorseFrameDuration => 1f / HorseFramesPerSecond;
 
     private readonly Random random = Random.Shared;
-    private readonly Texture2D[] horseFrames;
-
+    private HorseState currentState = HorseState.ApproachingSideAttackSlot;
+    private RiderState currentRiderState = RiderState.Idle;
     private float timeSinceLastShot;
-    private EnemyState currentState = EnemyState.ApproachingSideAttackSlot;
-    private int currentHorseFrame;
-    private float horseAnimationTimer;
     private float attackPoseTimer;
     private float attackAngle;
+    private float aimTimer;
+    private float recoilTimer;
+
+    private readonly AnimatedSprite horseSprite;
+    private readonly AnimatedSprite riderTorsoSprite;
+    private readonly AnimatedSprite riderHeadSprite;
+    private readonly IAnimationService animationService;
+    private float animationTimer;
 
     public Enemy(Vector2 spawnPosition, EnemyTrainSlot slot)
-        : base(spawnPosition,
-            slot,
+        : base(spawnPosition, slot,
             EnemyMovementProfile.CreateDefault(GamelabGame.Instance.GameplayConfig.RifleMaxSpeed))
     {
         timeSinceLastShot = random.NextSingle() * ShootCooldown;
-        horseFrames = new Texture2D[HorseFrameKeys.Length];
-        for (int i = 0; i < HorseFrameKeys.Length; i++)
-        {
-            horseFrames[i] = AssetManager.GetEnemyTexture(HorseFrameKeys[i]);
-        }
+
+        animationService = GamelabGame.Instance.Services.GetService<IAnimationService>();
+        horseSprite = new AnimatedSprite(AssetManager.EnemySpriteSheet);
+        horseSprite.SetAnimation("Run");
+
+        riderHeadSprite = new AnimatedSprite(AssetManager.EnemySpriteSheet);
+        riderHeadSprite.SetAnimation("RifleIdle");
+
+        riderTorsoSprite = new AnimatedSprite(AssetManager.EnemySpriteSheet);
+        riderTorsoSprite.SetAnimation("RifleHeadless");
+
+        animationService.Register(riderHeadSprite);
+        animationService.Register(riderTorsoSprite);
+        animationService.Register(horseSprite);
     }
 
     public override void Update(float deltaTime)
     {
         base.Update(deltaTime);
-        UpdateHorseAnimation(deltaTime);
-        attackPoseTimer = Math.Max(0f, attackPoseTimer - deltaTime);
 
+        animationTimer += deltaTime;
+        attackPoseTimer = Math.Max(0f, attackPoseTimer - deltaTime);
+        timeSinceLastShot += deltaTime;
+
+        UpdateRiderStateMachine(deltaTime);
+        UpdateHorseStateMachine(deltaTime);
+        UpdateAnimationStates();
+    }
+
+    private void UpdateRiderStateMachine(float deltaTime)
+    {
+        switch (currentRiderState)
+        {
+            case RiderState.Idle:
+                break;
+
+            case RiderState.Aiming:
+                aimTimer -= deltaTime;
+                UpdateAttackAngle();
+
+                if (aimTimer <= 0)
+                {
+                    ExecuteFire();
+                    currentRiderState = RiderState.Recoil;
+                    recoilTimer = RecoilDurationSeconds;
+                }
+
+                break;
+
+            case RiderState.Recoil:
+                recoilTimer -= deltaTime;
+                if (recoilTimer <= 0)
+                {
+                    currentRiderState = RiderState.Idle;
+                }
+
+                break;
+        }
+    }
+
+    private void UpdateHorseStateMachine(float deltaTime)
+    {
         Vector2 slotAnchor = Slot.GetAnchor(Size + PreferredDistance);
         Vector2 approachAnchor = GetApproachAnchor(slotAnchor);
 
         switch (currentState)
         {
-            case EnemyState.ApproachingSideAttackSlot:
+            case HorseState.ApproachingSideAttackSlot:
                 EnemyMovement.UpdateTowardPoint(approachAnchor, deltaTime);
                 if (HasReached(approachAnchor, EnemyMovement.Profile.ArrivalRadius + 8f))
                 {
-                    currentState = EnemyState.HoldingSideAttackSlot;
+                    currentState = HorseState.HoldingSideAttackSlot;
                 }
 
                 break;
 
-            case EnemyState.HoldingSideAttackSlot:
+            case HorseState.HoldingSideAttackSlot:
                 EnemyMovement.UpdateHoldPosition(slotAnchor, deltaTime, includeTrainDrift: false);
                 break;
         }
-
-        timeSinceLastShot += deltaTime;
     }
 
     public override void TryShoot()
     {
-        if (currentState == EnemyState.ApproachingSideAttackSlot || timeSinceLastShot < ShootCooldown || !IsAlive ||
-            ShouldRemove)
-        {
+        if (currentState != HorseState.HoldingSideAttackSlot ||
+            timeSinceLastShot < ShootCooldown ||
+            currentRiderState != RiderState.Idle)
             return;
-        }
 
+        currentRiderState = RiderState.Aiming;
+        aimTimer = AimDurationSeconds;
         timeSinceLastShot = 0f;
+    }
 
+    private void ExecuteFire()
+    {
         Vector2 targetPoint = EnemyTargetingHelper.GetTargetPoint(gameplayContext, Slot.Side, Position);
-        Vector2 direction = targetPoint - Position;
-        if (direction != Vector2.Zero)
-        {
-            direction.Normalize();
-        }
+        Vector2 direction = Vector2.Normalize(targetPoint - Position);
 
         float spread = (random.NextSingle() - 0.5f) * EnemyShootSpread;
-        float angle = (float)Math.Atan2(direction.Y, direction.X) + spread;
-        direction = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
+        float finalAngle = (float)Math.Atan2(direction.Y, direction.X) + spread;
+        Vector2 finalDir = new Vector2((float)Math.Cos(finalAngle), (float)Math.Sin(finalAngle));
 
-        BulletItem ammo = new BulletItem("BasicProjectile", "BasicCasing", "BasicPropellant", "EnemyProjectile");
-        GamelabGame.Instance.Services.GetService<IBulletService>().EmitBullet(
-            ammo,
-            Position,
-            direction,
-            this);
+        BulletItem ammo = new BulletItem(ComponentIds.BasicProjectile, ComponentIds.BasicCasing,
+            ComponentIds.BasicPropellant, ComponentIds.EnemyProjectile);
+        GamelabGame.Instance.Services.GetService<IBulletService>().EmitBullet(ammo, Position, finalDir, this);
+    }
 
-        attackAngle = angle;
-        attackPoseTimer = AttackPoseDurationSeconds;
+    private void UpdateAttackAngle()
+    {
+        Vector2 targetPoint = EnemyTargetingHelper.GetTargetPoint(gameplayContext, Slot.Side, Position);
+        Vector2 direction = targetPoint - Position;
+        attackAngle = (float)Math.Atan2(direction.Y, direction.X);
     }
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        if (!IsAlive || ShouldRemove)
-        {
-            return;
-        }
+        if (!IsAlive || ShouldRemove) return;
 
         int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
         Vector2 drawPosition = Position + new Vector2(-2.25f * tileSize, -tileSize * 1.125f);
-        Vector2 rifleBob = new Vector2(0f, currentHorseFrame / 3f);
-        Vector2 feetPosition = Position + new Vector2(0f, Size / 2f);
-        float horseDepth = RenderUtility.CalculateDepth(feetPosition.Y);
-        float riderDepth = MathF.Min(RenderUtility.TopEntityLayer - 3f * RenderUtility.Eps,
-            horseDepth + RenderUtility.Eps);
-        float weaponDepth = MathF.Min(RenderUtility.TopEntityLayer - 2f * RenderUtility.Eps,
-            riderDepth + RenderUtility.Eps);
 
-        DrawSprite(spriteBatch, horseFrames[currentHorseFrame], drawPosition, SpriteEffects.None, horseDepth);
+        int simulatedFrame = (int)(animationTimer * HorseFramesPerSecond) % HorseRunCycleFrames;
+        Vector2 rifleBob = new Vector2(0f, simulatedFrame / 3f);
 
-        if (attackPoseTimer <= 0f)
-        {
-            DrawSprite(spriteBatch, AssetManager.GetEnemyTexture("RifleIdle"), drawPosition + rifleBob,
-                SpriteEffects.None, riderDepth);
-            return;
-        }
+        float horseDepth = RenderUtility.CalculateDepth(Position.Y + Size / 2f);
+        float riderDepth = horseDepth + 0.0001f;
+        float armDepth = horseDepth + 0.0002f;
 
-        DrawSprite(spriteBatch, AssetManager.GetEnemyTexture("RifleHeadless"), drawPosition + rifleBob,
-            SpriteEffects.None, riderDepth);
+        horseSprite.Depth = horseDepth;
+        spriteBatch.Draw(horseSprite, drawPosition, 0f, new Vector2(HorseSpriteScale));
 
-        (Texture2D poseTexture, SpriteEffects effects, Vector2 offset) = GetAttackPose(tileSize);
-        DrawSprite(spriteBatch, poseTexture, drawPosition + rifleBob + offset, effects, weaponDepth);
+        riderTorsoSprite.Depth = riderDepth;
+        spriteBatch.Draw(riderTorsoSprite, drawPosition + rifleBob, 0f, new Vector2(HorseSpriteScale));
+
+        riderHeadSprite.Depth = armDepth;
+        riderHeadSprite.Effect = (attackAngle > MathF.PI / 2f || attackAngle < -MathF.PI / 2f)
+            ? SpriteEffects.FlipHorizontally
+            : SpriteEffects.None;
+        spriteBatch.Draw(riderHeadSprite, drawPosition + rifleBob, 0f, new Vector2(HorseSpriteScale));
     }
 
-    private void UpdateHorseAnimation(float deltaTime)
+    private void UpdateAnimationStates()
     {
-        horseAnimationTimer += deltaTime;
-        while (horseAnimationTimer >= HorseFrameDuration)
+        if (currentRiderState == RiderState.Idle)
         {
-            currentHorseFrame = (currentHorseFrame + 1) % horseFrames.Length;
-            horseAnimationTimer -= HorseFrameDuration;
+            riderHeadSprite.SetAnimation("RifleIdle");
+        }
+        else
+        {
+            string animationName = GetAimAnimationName();
+            riderHeadSprite.SetAnimation(animationName);
         }
     }
 
-    private (Texture2D Texture, SpriteEffects Effects, Vector2 Offset) GetAttackPose(int tileSize)
+    private string GetAimAnimationName()
     {
         float adjustedAngle = Slot.Side == EnemySlotSide.Bottom ? -attackAngle : attackAngle;
-        Vector2 flipOffset = new Vector2(tileSize * 0.5f, 0f);
 
-        if (adjustedAngle > 5f * MathF.PI / 6f)
-        {
-            return (AssetManager.GetEnemyTexture("RifleWide"), SpriteEffects.None, Vector2.Zero);
-        }
-
-        if (adjustedAngle > 4f * MathF.PI / 6f)
-        {
-            return (AssetManager.GetEnemyTexture("RifleSemi"), SpriteEffects.None, Vector2.Zero);
-        }
-
-        if (adjustedAngle >= 3f * MathF.PI / 6f)
-        {
-            return (AssetManager.GetEnemyTexture("RifleMiddle"), SpriteEffects.None, Vector2.Zero);
-        }
-
-        if (adjustedAngle >= 2f * MathF.PI / 6f)
-        {
-            return (AssetManager.GetEnemyTexture("RifleMiddle"), SpriteEffects.FlipHorizontally, flipOffset);
-        }
-
-        if (adjustedAngle >= 1f * MathF.PI / 6f)
-        {
-            return (AssetManager.GetEnemyTexture("RifleSemi"), SpriteEffects.FlipHorizontally, flipOffset);
-        }
-
-        return (AssetManager.GetEnemyTexture("RifleWide"), SpriteEffects.FlipHorizontally, flipOffset);
-    }
-
-    private static void DrawSprite(SpriteBatch spriteBatch, Texture2D texture, Vector2 position, SpriteEffects effects,
-        float depth)
-    {
-        spriteBatch.Draw(
-            texture ?? AssetManager.BlankTexture,
-            position,
-            null,
-            Color.White,
-            0f,
-            Vector2.Zero,
-            HorseSpriteScale,
-            effects,
-            depth);
+        if (adjustedAngle > 5f * MathF.PI / 6f) return "RifleWide";
+        if (adjustedAngle > 4f * MathF.PI / 6f) return "RifleSemi";
+        return "RifleMiddle";
     }
 
     private Vector2 GetApproachAnchor(Vector2 slotAnchor)
