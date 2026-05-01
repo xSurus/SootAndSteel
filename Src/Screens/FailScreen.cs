@@ -29,6 +29,10 @@ public enum FailureReason
 
 public class FailScreen(GamelabGame game, FailureReason reason) : GamelabGameScreen(game)
 {
+    public FailScreen(GamelabGame game) : this(game, FailureReason.TrainFrozenOther)
+    {
+    }
+
     private Desktop desktop;
 
     private static string GetReasonText(FailureReason r) => r switch
