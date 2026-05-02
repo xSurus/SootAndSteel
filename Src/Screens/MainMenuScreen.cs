@@ -149,6 +149,7 @@ public sealed class MainMenuScreen(GamelabGame game) : Screens.GamelabGameScreen
             actionList.Add(ContinueGame);
         }
 
+
         buttonList.Add(menuUi.NewGameButton);
         actionList.Add(StartNewGame);
 
@@ -199,6 +200,7 @@ public sealed class MainMenuScreen(GamelabGame game) : Screens.GamelabGameScreen
             logger.Warning("Save file corrupted or missing. Defaulting to New Game.");
             StartNewGame();
         }
+
     }
 
     public override void Dispose()

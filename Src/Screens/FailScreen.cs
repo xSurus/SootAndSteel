@@ -8,11 +8,42 @@ using Myra.Graphics2D.UI;
 
 namespace Gamelab.Screens;
 
-public class FailScreen(GamelabGame game) : GamelabGameScreen(game)
+
+public enum FailureReason
 {
+    
+    AllPlayersKnockedOut,
+
+    
+    TrainFrozenHullBreached,
+
+   
+    TrainFrozenFurnaceOut,
+
+    
+    TrainFrozenBreachesAndFurnaceOut,
+
+    
+    TrainFrozenOther,
+}
+
+public class FailScreen(GamelabGame game, FailureReason reason) : GamelabGameScreen(game)
+{
+    public FailScreen(GamelabGame game) : this(game, FailureReason.TrainFrozenOther)
+    {
+    }
+
     private Desktop desktop;
-    private Label titleLabel;
-    private Label hintLabel;
+
+    private static string GetReasonText(FailureReason r) => r switch
+    {
+        FailureReason.AllPlayersKnockedOut => "All players got knocked out.",
+        FailureReason.TrainFrozenHullBreached => "The train froze over as hull breaches let the cold in.",
+        FailureReason.TrainFrozenFurnaceOut => "The train froze over as the furnace went out.",
+        FailureReason.TrainFrozenBreachesAndFurnaceOut => "The train froze over as the furnace went out and breaches let the cold in.",
+        FailureReason.TrainFrozenOther => "The train froze over.",
+        _ => ""
+    };
 
     public override void LoadContent()
     {
@@ -25,28 +56,38 @@ public class FailScreen(GamelabGame game) : GamelabGameScreen(game)
             VerticalAlignment = VerticalAlignment.Stretch
         };
 
-        titleLabel = new Label
+        var stack = new VerticalStackPanel
+        {
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center,
+            Spacing = 22
+        };
+
+        stack.Widgets.Add(new Label
         {
             Text = "You failed to deliver the coal",
             Font = Game.fontSystem.GetFont(64),
             TextColor = Color.White,
-            HorizontalAlignment = HorizontalAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Center,
-            Margin = new Thickness(0, -80, 0, 0)
-        };
+            HorizontalAlignment = HorizontalAlignment.Center
+        });
 
-        hintLabel = new Label
+        stack.Widgets.Add(new Label
+        {
+            Text = GetReasonText(reason),
+            Font = Game.fontSystem.GetFont(44),
+            TextColor = new Color(220, 200, 200),
+            HorizontalAlignment = HorizontalAlignment.Center
+        });
+
+        stack.Widgets.Add(new Label
         {
             Text = "Press to return to menu",
             Font = Game.fontSystem.GetFont(40),
             TextColor = Color.LightBlue,
-            HorizontalAlignment = HorizontalAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Center,
-            Margin = new Thickness(0, 20, 0, 0)
-        };
+            HorizontalAlignment = HorizontalAlignment.Center
+        });
 
-        root.Widgets.Add(titleLabel);
-        root.Widgets.Add(hintLabel);
+        root.Widgets.Add(stack);
         desktop.Root = root;
     }
 

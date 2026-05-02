@@ -44,10 +44,14 @@ public abstract class AbstractGrabbable : AbstractPhysicalEntity, IGrabbable
     public virtual void OnRelease(Player interactingPlayer)
     {
         if (!GrabJoints.TryGetValue(interactingPlayer, out WeldJoint joint)) return;
-        gameplayContext.PhysicsWorld.Remove(joint);
         GrabJoints.Remove(interactingPlayer);
         interactingPlayer.PhysicsBody.FixedRotation = true;
-        if (GrabJoints.Count == 0) OnLastRelease(interactingPlayer);
+        bool wasLastHolder = GrabJoints.Count == 0;
+        gameplayContext.DeferOrExecutePhysicsAction(() =>
+        {
+            gameplayContext.PhysicsWorld.Remove(joint);
+            if (wasLastHolder) OnLastRelease(interactingPlayer);
+        });
     }
 
     protected virtual void OnLastRelease(Player interactingPlayer)

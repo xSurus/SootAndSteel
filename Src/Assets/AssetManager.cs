@@ -64,7 +64,7 @@ public static class AssetManager
 
     private static void LoadDictionary(ContentManager content, Dictionary<string, Texture2D> dict, string folder)
     {
-        string directoryPath = Path.Combine(content.RootDirectory, folder);
+        string directoryPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, content.RootDirectory, folder);
 
         if (!Directory.Exists(directoryPath))
         {
