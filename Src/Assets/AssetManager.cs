@@ -35,6 +35,7 @@ public static class AssetManager
 
     public static SpriteSheet EnemySpriteSheet { get; private set; }
     public static SpriteSheet PlayerSpriteSheet { get; private set; }
+    public static SpriteSheet ConveyorSpriteSheet { get; private set; }
 
     public static void LoadContent(ContentManager content, GraphicsDevice graphicsDevice)
     {
@@ -60,6 +61,7 @@ public static class AssetManager
 
         LoadEnemyAnimations(content);
         LoadPlayerAnimations(content);
+        LoadConveyorAnimations(content);
     }
 
     private static void LoadDictionary(ContentManager content, Dictionary<string, Texture2D> dict, string folder)
@@ -184,6 +186,25 @@ public static class AssetManager
                 }
             });
         }
+    }
+
+    public static void LoadConveyorAnimations(ContentManager content)
+    {
+        Texture2DAtlas conveyorAtlas = content.Load<Texture2DAtlas>("Stations/ConveyorTop");
+        ConveyorSpriteSheet = new SpriteSheet("ConveyorSheet", conveyorAtlas);
+
+        TimeSpan frameDuration = TimeSpan.FromSeconds(0.1f);
+
+        ConveyorSpriteSheet.DefineAnimation("Run", builder =>
+        {
+            builder.IsLooping(true)
+                .AddFrame("Conveyor1", frameDuration)
+                .AddFrame("Conveyor2", frameDuration)
+                .AddFrame("Conveyor3", frameDuration)
+                .AddFrame("Conveyor4", frameDuration)
+                .AddFrame("Conveyor5", frameDuration)
+                .AddFrame("Conveyor6", frameDuration);
+        });
     }
 
     public static Texture2D GetStructureTexture(string type) =>

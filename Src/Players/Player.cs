@@ -12,13 +12,12 @@ using Gamelab.Services.Sound;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended;
 using MonoGame.Extended.Graphics;
 using nkast.Aether.Physics2D.Dynamics;
 
 namespace Gamelab.Players;
 
-public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
+public class Player : AbstractPhysicalEntity, IInteractable, IDamageable, IItemProvider, IItemReceiver
 {
     public PlayerConfiguration PlayerConfiguration { get; private set; }
     public Item HeldItem { get; set; }
@@ -54,6 +53,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
 
     private AnimatedSprite playerSprite;
     private IAnimationService animationService;
+    private ISoundService soundService = GamelabGame.Instance.Services.GetService<ISoundService>();
 
     private EventInstance walkSound;
 
@@ -66,7 +66,6 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
         PhysicsBody.FixedRotation = true;
         PhysicsBody.Tag = this;
 
-        var soundService = GamelabGame.Instance.Services.GetService<ISoundService>();
         soundService.LoadSound(Sounds.Walk);
         walkSound = soundService.GetSoundInstance(Sounds.Walk);
         soundService.RegisterParameter(walkSound, "Walk Speed",
@@ -406,6 +405,34 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable
         }
 
         highlightedEntity = closestEntity;
+    }
+
+    public Item PeekNextItem() => HeldItem;
+
+    public bool CanProvideItem(IItemReceiver consumer)
+    {
+        return true;
+    }
+
+    public virtual bool TryProvideItem(out Item item, IItemReceiver consumer = null)
+    {
+        item = HeldItem;
+        if (HeldItem != null && CanProvideItem(consumer))
+        {
+            HeldItem = null;
+            soundService.PlayOnce(Sounds.DropItem);
+            return true;
+        }
+
+        item = null;
+        return false;
+    }
+
+    public bool CanReceiveItem(Item item, IItemProvider source) => HeldItem == null;
+
+    public void ReceiveItem(Item item, IItemProvider source)
+    {
+        HeldItem = item;
     }
 
     public override void Draw(SpriteBatch spriteBatch)

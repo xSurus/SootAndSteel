@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Gamelab.Assets;
 using Gamelab.Items;
 using Gamelab.Items.Bullets;
+using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
 using Gamelab.Services.Sound;
 using Gamelab.Utils;
@@ -12,7 +14,7 @@ using EventInstance = FmodForFoxes.Studio.EventInstance;
 
 namespace Gamelab.PhysicalEntities.Stations;
 
-public class Workbench : AbstractStation
+public class Workbench : AbstractStation, IInteractable
 {
     private static readonly Logger Logger = new(StationIds.Workbench);
     protected List<BulletItem> PlacedItems { get; } = new();
@@ -20,41 +22,52 @@ public class Workbench : AbstractStation
     private float craftProgress = 0f;
     private bool isCrafting = false;
 
-    private readonly ISoundService soundService;
-    private EventInstance craftSound;
-
-    public Workbench(Vector2 position) : base(StationIds.Workbench, position)
+    public Workbench(Vector2 position, String stationId = StationIds.Workbench) : base(stationId, position)
     {
-        soundService = GamelabGame.Instance.Services.GetService<ISoundService>();
         soundService.LoadSound(Sounds.Craft);
-        craftSound = soundService.GetSoundInstance(Sounds.Craft);
+        EventInstance craftSound = soundService.GetSoundInstance(Sounds.Craft);
         soundService.RegisterParameter(craftSound, "Is Crafting", () => isCrafting ? 1.0f : 0.0f);
         craftSound?.Start();
     }
 
-    public override void OnPickup(Player interactingPlayer)
+    public override bool CanReceiveItem(Item item, IItemProvider source)
     {
-        if (craftProgress > 0f) return;
+        if (craftProgress > 0f) return false;
 
-        // player picks up item from workbench
-        if (interactingPlayer.HeldItem == null && PlacedItems.Any())
-        {
-            interactingPlayer.HeldItem = PlacedItems.Last();
-            PlacedItems.RemoveAt(PlacedItems.Count - 1);
-            soundService.PlayOnce(Sounds.PickupItem);
-            return;
-        }
-
-        // player places item onto workbench
-        if (ValidatePlace(interactingPlayer.HeldItem))
-        {
-            PlacedItems.Add((BulletItem)interactingPlayer.HeldItem);
-            interactingPlayer.HeldItem = null;
-            soundService.PlayOnce(Sounds.DropItem);
-        }
+        return ValidatePlace(item);
     }
 
-    public override void OnInteractHeld(Player interactingPlayer, float dt)
+    public override void ReceiveItem(Item item, IItemProvider source)
+    {
+        soundService.PlayOnce(Sounds.DropItem);
+        PlacedItems.Add((BulletItem)item);
+    }
+
+    public override Item PeekNextItem()
+    {
+        if (craftProgress > 0f) return null;
+        return PlacedItems.LastOrDefault();
+    }
+
+    public override bool TryProvideItem(out Item item, IItemReceiver consumer = null)
+    {
+        item = null;
+        if (!CanProvideItem(consumer)) return false;
+
+        item = PlacedItems.Last();
+        PlacedItems.RemoveAt(PlacedItems.Count - 1);
+
+        soundService.PlayOnce(Sounds.PickupItem);
+        if (consumer != null) ConsumerQueue.RemoveAll(t => t.Consumer == consumer);
+        return true;
+    }
+
+    public override bool CanProvideItem(IItemReceiver consumer)
+    {
+        return craftProgress == 0f && PlacedItems.Count > 0 && IsConsumerFirstInLine(consumer);
+    }
+
+    public void OnInteractHeld(Player interactingPlayer, float dt)
     {
         if (craftProgress > 0f || ValidateCraft())
         {
@@ -72,7 +85,7 @@ public class Workbench : AbstractStation
         }
     }
 
-    public override void OnInteractReleased(Player interactingPlayer)
+    public void OnInteractReleased(Player interactingPlayer)
     {
         isCrafting = false;
     }

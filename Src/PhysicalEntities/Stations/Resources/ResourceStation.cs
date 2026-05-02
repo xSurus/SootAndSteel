@@ -1,5 +1,5 @@
 using Gamelab.Items;
-using Gamelab.Players;
+using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Services.Sound;
 using Microsoft.Xna.Framework;
 
@@ -11,18 +11,35 @@ public class ResourceStation(
     : AbstractStation(StationIds.GetResourceStationId(resourceId), position)
 {
     protected string ResourceId { get; } = resourceId;
+    public override Item PeekNextItem() => new Item(ResourceId);
 
-    public override void OnPickup(Player interactingPlayer)
+    public override bool CanReceiveItem(Item item, IItemProvider source)
     {
-        if (interactingPlayer.HeldItem == null)
+        return item != null && item.Id == ResourceId;
+    }
+
+    public override void ReceiveItem(Item item, IItemProvider source)
+    {
+        soundService.PlayOnce(Sounds.DropItem);
+    }
+
+    public override bool CanProvideItem(IItemReceiver consumer)
+    {
+        return IsConsumerFirstInLine(consumer);
+    }
+
+    public override bool TryProvideItem(out Item item, IItemReceiver consumer = null)
+    {
+        if (!CanProvideItem(consumer))
         {
-            interactingPlayer.HeldItem = new Item(ResourceId);
-            soundService.PlayOnce(Sounds.PickupItem);
+            item = null;
+            return false;
         }
-        else if (interactingPlayer.HeldItem.Id == ResourceId)
-        {
-            interactingPlayer.HeldItem = null;
-            soundService.PlayOnce(Sounds.DropItem);
-        }
+
+        soundService.PlayOnce(Sounds.PickupItem);
+        item = new Item(ResourceId);
+        if (consumer != null) ConsumerQueue.RemoveAll(t => t.Consumer == consumer);
+
+        return true;
     }
 }

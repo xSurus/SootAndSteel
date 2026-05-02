@@ -5,6 +5,7 @@ using Gamelab.Items;
 using Gamelab.Items.Bullets;
 using Gamelab.Particles;
 using Gamelab.PhysicalEntities.Bullets.Components;
+using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
 using Gamelab.Services.Bullet;
 using Gamelab.Services.Sound;
@@ -15,11 +16,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Gamelab.PhysicalEntities.Stations.Cannon;
 
-public class CannonStation : AbstractStation, IBulletEmitter
+public class CannonStation : AbstractStation, IBulletEmitter, IInteractable
 {
     private readonly GameplayConfig config;
     private float cooldownTimer;
-    
+
     private ISoundService soundService;
 
     public Player SeatedPlayer { get; private set; }
@@ -36,6 +37,7 @@ public class CannonStation : AbstractStation, IBulletEmitter
 
     public override void Update(float dt)
     {
+        base.Update(dt);
         if (cooldownTimer > 0)
         {
             cooldownTimer -= dt;
@@ -59,33 +61,15 @@ public class CannonStation : AbstractStation, IBulletEmitter
         SeatedPlayer = null;
     }
 
-    public override void OnInteract(Player interactingPlayer)
+    public void OnInteract(Player interactingPlayer)
     {
-        if (cooldownTimer > 0f || HeldItem == null)
+        if (cooldownTimer > 0f)
         {
             return;
         }
 
-        Vector2 direction = AimDirection;
-        FireCannon(direction, (BulletItem)HeldItem);
-        HeldItem = null;
-    }
-
-    public override void OnPickup(Player interactingPlayer)
-    {
-        if (HeldItem != null || interactingPlayer.HeldItem == null)
-        {
-            return;
-        }
-
-        if (!IsBullet(interactingPlayer.HeldItem))
-        {
-            return;
-        }
-
-        HeldItem = interactingPlayer.HeldItem;
-        interactingPlayer.HeldItem = null;
-        soundService.PlayOnce(Sounds.CannonLoad);
+        ReloadCannon();
+        FireCannon();
     }
 
     private Vector2 AimDirection => new(
@@ -111,19 +95,43 @@ public class CannonStation : AbstractStation, IBulletEmitter
         PhysicsBody.Rotation = currentAngle + step;
     }
 
-    private void FireCannon(Vector2 direction, BulletItem ammo)
+    private void ReloadCannon()
     {
+        foreach (GridDirection dir in Enum.GetValues(typeof(GridDirection)))
+        {
+            AbstractStation neighbor = gameplayContext.Map.GetAdjacentStation(Position, dir);
+
+            if (neighbor is BulletRack provider)
+            {
+                if (provider.TryProvideItem(out Item bulletToFire))
+                {
+                    soundService.PlayOnce(Sounds.CannonLoad);
+                    HeldItem = bulletToFire;
+                }
+            }
+        }
+    }
+
+    private void FireCannon()
+    {
+        if (HeldItem == null)
+        {
+            return;
+        }
+
+        Vector2 direction = AimDirection;
         Vector2 cannonPosition = DrawPosition + new Vector2(config.TrainTileSize / 2f);
         float barrelLength = config.TrainTileSize * 0.5f;
         Vector2 position = cannonPosition + direction * barrelLength;
 
         direction.Normalize();
-        GamelabGame.Instance.Services.GetService<IBulletService>().EmitBullet(ammo, position, direction, this);
+        GamelabGame.Instance.Services.GetService<IBulletService>()
+            .EmitBullet((BulletItem)HeldItem, position, direction, this);
         GamelabGame.Instance.Services.GetService<IVfxService>()
             .EmitBurst(ParticleFactory.CreateCannonMuzzleFlash(position, direction));
         cooldownTimer = config.CannonCooldown;
-        
         soundService.PlayOnce(Sounds.CannonFire);
+        HeldItem = null;
     }
 
     public override void Draw(SpriteBatch spriteBatch)
@@ -151,10 +159,5 @@ public class CannonStation : AbstractStation, IBulletEmitter
             SpriteEffects.None,
             RenderUtility.TopEntityLayer
         );
-    }
-
-    private static bool IsBullet(Item item)
-    {
-        return item.Definition.Id == "Bullet" && ((BulletItem)item).Type == EComponentType.Bullet;
     }
 }

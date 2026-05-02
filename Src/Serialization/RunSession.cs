@@ -18,7 +18,7 @@ public class RunSession
 
     public bool TrySpendCredits(int amount)
     {
-        if (amount <= 0 || Credits < amount) return false;
+        if (amount < 0 || Credits < amount) return false;
         Credits -= amount;
         return true;
     }

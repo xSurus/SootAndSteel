@@ -1,16 +1,17 @@
 using System;
 using Gamelab.Map.Train.State;
+using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
 using Microsoft.Xna.Framework;
 
 namespace Gamelab.PhysicalEntities.Stations;
 
 public class SpeedLever(Vector2 position)
-    : AbstractStation(StationIds.SpeedLever, position)
+    : AbstractStation(StationIds.SpeedLever, position), IInteractable
 {
     public Action<Player> OnInteractOverride { get; set; }
 
-    public override void OnInteract(Player interactingPlayer)
+    public void OnInteract(Player interactingPlayer)
     {
         if (OnInteractOverride != null)
         {

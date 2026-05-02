@@ -1,20 +1,29 @@
 using System;
 using Gamelab.PhysicalEntities.Stations.Cannon;
+using Gamelab.PhysicalEntities.Stations.Conveyors;
 using Gamelab.PhysicalEntities.Stations.Resources;
+using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 
 namespace Gamelab.PhysicalEntities.Stations;
 
 public static class StationFactory
 {
-    public static AbstractStation CreateStation(string kindId, Vector2 centerPixels)
+    public static AbstractStation CreateStation(string kindId, Vector2 centerPixels,
+        GridDirection facingDirection = GridDirection.Right)
     {
         switch (kindId)
         {
             case StationIds.Cannon: return new CannonStation(centerPixels);
             case StationIds.Workbench: return new Workbench(centerPixels);
+            case StationIds.AutoWorkbench: return new AutoWorkbench(centerPixels);
             case StationIds.Counter: return new Counter(centerPixels);
             case StationIds.SpeedLever: return new SpeedLever(centerPixels);
+            case StationIds.BulletRack: return new BulletRack(centerPixels);
+            case StationIds.Conveyor: return new Conveyor(centerPixels, facingDirection);
+            case StationIds.UpgradedComponentConveyor:
+                return new UpgradedComponentConveyor(centerPixels, facingDirection);
+            case StationIds.BulletConveyor: return new BulletConveyor(centerPixels, facingDirection);
             case { } id when StationIds.IsComponentStationId(id):
                 return new ComponentResourceStation(centerPixels, StationIds.GetStationComponentId(id));
             case { } id when StationIds.IsResourceStationId(id):
