@@ -1,6 +1,8 @@
 using System.Linq;
 using Gamelab.Assets;
 using Gamelab.Particles;
+using Gamelab.Particles.Modifiers;
+using Gamelab.Services.Sound;
 using Gamelab.Services.Vfx;
 using Microsoft.Xna.Framework;
 using Myra.Graphics2D;
@@ -20,6 +22,9 @@ public class NextLevelIntroScreen(GamelabGame game) : GamelabGameScreen(game)
     private Desktop desktop;
     private readonly WhiteFilterTransition whiteToGameplay = new WhiteFilterTransition();
     private Phase phase;
+    private ISoundService soundService;
+    private ParticleEmitter snowstormEmitter;
+    private SnowstormTransition.Baseline snowstormBaseline;
 
     public override void LoadContent()
     {
@@ -75,7 +80,12 @@ public class NextLevelIntroScreen(GamelabGame game) : GamelabGameScreen(game)
         desktop = new Desktop { Root = overlay };
 
         var vfx = Services.GetService<IVfxService>();
-        vfx.AddContinuous(ParticleFactory.CreateSnowstorm());
+        snowstormEmitter = ParticleFactory.CreateSnowstorm();
+        snowstormEmitter.Modifiers.Add(new BlizzardGustModifier(() =>
+            phase == Phase.FadeOutToGameplay ? whiteToGameplay.Opacity : 0f));
+        snowstormBaseline = SnowstormTransition.Capture(snowstormEmitter);
+        vfx.AddContinuous(snowstormEmitter);
+        soundService = Services.GetService<ISoundService>();
         phase = Phase.Hold;
     }
 
@@ -84,12 +94,15 @@ public class NextLevelIntroScreen(GamelabGame game) : GamelabGameScreen(game)
         base.Update(gameTime);
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
         whiteToGameplay.Update(dt);
+        float blizzardT = phase == Phase.FadeOutToGameplay ? whiteToGameplay.Opacity : 0f;
+        SnowstormTransition.ApplyBlizzardIntensity(snowstormEmitter, snowstormBaseline, blizzardT);
 
         switch (phase)
         {
             case Phase.Hold:
                 if (Game.playerManager.Configs.Any(c => c.Input.IsPickupJustPressed() || c.Input.IsStartJustPressed()))
                 {
+                    soundService.PlayOnce(Sounds.MenuSelect);
                     whiteToGameplay.FadeIn(0.8f);
                     phase = Phase.FadeOutToGameplay;
                 }

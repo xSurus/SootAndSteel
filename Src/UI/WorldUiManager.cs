@@ -24,6 +24,7 @@ public class WorldUiManager(GamelabGame game)
 {
     /// <summary>Matches max local players; visible world tooltips are typically ≤ this in co-op.</summary>
     private const int MaxExpectedConcurrentTooltips = 4;
+    private const float TooltipCanvasMargin = 14f;
 
     private readonly Dictionary<ITooltipable, ToolTip> activeTooltips = new();
     private readonly List<LivePlacement> placementBuffer = new(MaxExpectedConcurrentTooltips);
@@ -52,6 +53,7 @@ public class WorldUiManager(GamelabGame game)
         }
 
         ResolveTooltipOverlaps(placementBuffer);
+        ClampTooltipsToCanvas(placementBuffer);
         foreach (var p in placementBuffer)
         {
             p.Tooltip.Visual.X = p.X;
@@ -109,10 +111,28 @@ public class WorldUiManager(GamelabGame game)
         // Gum Root and often reports the full canvas width (~1920), which pulls the box to screen center.
         GetTooltipPanelSize(tooltip, out width, out height);
 
-        // Visual.X/Y on the Gum root is the top-left corner; centre the tooltip horizontally
-        // above the item, lifting it above the tile.
+        float canvasH = GumService.Default.CanvasHeight;
+        float halfTile = tileSize / 2f;
+
+        // Visual.X/Y on the Gum root is the top-left corner; centre horizontally. Prefer above the
+        // item; if that would clip past the top (hub upgrades along the top edge), place below.
         x = gumCanvasPos.X - width / 2f;
-        y = gumCanvasPos.Y - tileSize / 2f - height - liftAmount;
+
+        float yAbove = gumCanvasPos.Y - halfTile - height - liftAmount;
+        float yBelow = gumCanvasPos.Y + halfTile + liftAmount;
+
+        if (yAbove >= TooltipCanvasMargin)
+        {
+            y = yAbove;
+        }
+        else if (yBelow + height <= canvasH - TooltipCanvasMargin)
+        {
+            y = yBelow;
+        }
+        else
+        {
+            y = MathHelper.Clamp(yAbove, TooltipCanvasMargin, MathHelper.Max(TooltipCanvasMargin, canvasH - height - TooltipCanvasMargin));
+        }
     }
 
     /// <summary>
@@ -179,6 +199,10 @@ public class WorldUiManager(GamelabGame game)
             }
         }
 
+    }
+
+    private static void ClampTooltipsToCanvas(List<LivePlacement> placements)
+    {
         float canvasW = GumService.Default.CanvasWidth;
         float canvasH = GumService.Default.CanvasHeight;
         if (canvasW <= 0f || canvasH <= 0f)
@@ -189,7 +213,8 @@ public class WorldUiManager(GamelabGame game)
         foreach (LivePlacement p in placements)
         {
             p.X = MathHelper.Clamp(p.X, 4f, MathHelper.Max(4f, canvasW - p.W - 4f));
-            p.Y = MathHelper.Clamp(p.Y, -400f, MathHelper.Max(-400f, canvasH - p.H - 4f));
+            p.Y = MathHelper.Clamp(p.Y, TooltipCanvasMargin,
+                MathHelper.Max(TooltipCanvasMargin, canvasH - p.H - TooltipCanvasMargin));
         }
     }
 

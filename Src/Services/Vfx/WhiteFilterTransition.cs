@@ -10,6 +10,7 @@ public sealed class WhiteFilterTransition
     private float fadeDuration;
     private float fadeTimer;
     private bool fading;
+    private bool smoothEasing = true;
 
     public float Opacity => opacity;
 
@@ -25,12 +26,13 @@ public sealed class WhiteFilterTransition
         fadeTimer = 0f;
     }
 
-    public void FadeIn(float durationSeconds) => FadeTo(1f, durationSeconds);
+    public void FadeIn(float durationSeconds, bool smoothEasing = true) => FadeTo(1f, durationSeconds, smoothEasing);
 
-    public void FadeOut(float durationSeconds) => FadeTo(0f, durationSeconds);
+    public void FadeOut(float durationSeconds, bool smoothEasing = true) => FadeTo(0f, durationSeconds, smoothEasing);
 
-    public void FadeTo(float target, float durationSeconds)
+    public void FadeTo(float target, float durationSeconds, bool smoothEasing = true)
     {
+        this.smoothEasing = smoothEasing;
         startOpacity = opacity;
         targetOpacity = Math.Clamp(target, 0f, 1f);
         fadeDuration = Math.Max(0.0001f, durationSeconds);
@@ -46,7 +48,8 @@ public sealed class WhiteFilterTransition
         }
 
         fadeTimer += dt;
-        float t = Math.Clamp(fadeTimer / fadeDuration, 0f, 1f);
+        float rawT = Math.Clamp(fadeTimer / fadeDuration, 0f, 1f);
+        float t = smoothEasing ? rawT * rawT * (3f - 2f * rawT) : rawT;
         opacity = startOpacity + (targetOpacity - startOpacity) * t;
 
         if (t >= 1f)

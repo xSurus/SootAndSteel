@@ -4,8 +4,8 @@ namespace Gamelab.Particles.Modifiers;
 
 public class DirectionalForceModifier(Vector2 direction, float strength) : IParticleModifier
 {
-    public readonly float Strength = strength;
-    public readonly Vector2 Direction = direction;
+    public Vector2 Direction { get; } = direction;
+    public float Strength { get; set; } = strength;
 
     public void Update(float dt, ref Particle particle)
     {

@@ -8,6 +8,7 @@ using Gamelab.Map;
 using Gamelab.Map.Train;
 using Gamelab.Map.Train.State;
 using Gamelab.Particles;
+using Gamelab.Particles.Modifiers;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.PhysicalEntities.Stations;
 using Gamelab.Components;
@@ -40,6 +41,7 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
     private HubOverlay hubOverlay;
     private WorldUiManager worldUiManager;
     private ParticleEmitter hubSnowEmitter;
+    private SnowstormTransition.Baseline hubSnowBaseline;
     private WhiteFilterTransition departWhiteFilter;
     private PauseMenuController pauseMenu;
     private CraftingHelp craftingHelp;
@@ -85,6 +87,9 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         cameraDirector.SnapToCenter(camera, prepTrainMap.GetBounds(), worldWidth, worldHeight,
             allowOffWorldOverflow: true);
         hubSnowEmitter = ParticleFactory.CreateSnowstorm();
+        hubSnowEmitter.Modifiers.Add(new BlizzardGustModifier(() =>
+            isTransitioningToNextLevel && departWhiteFilter != null ? departWhiteFilter.Opacity : 0f));
+        hubSnowBaseline = SnowstormTransition.Capture(hubSnowEmitter);
         Services.GetService<IVfxService>().AddContinuous(hubSnowEmitter);
 
         hubOverlay = new HubOverlay();
@@ -338,6 +343,8 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
     {
         worldUiManager.ClearAll();
         departWhiteFilter?.Update(dt);
+        float blizzardT = isTransitioningToNextLevel && departWhiteFilter != null ? departWhiteFilter.Opacity : 0f;
+        SnowstormTransition.ApplyBlizzardIntensity(hubSnowEmitter, hubSnowBaseline, blizzardT);
         if (departWhiteFilter is { IsDone: true })
         {
             Game.SwitchToScreen(new NextLevelIntroScreen(Game));

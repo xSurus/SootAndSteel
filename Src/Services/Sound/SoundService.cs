@@ -23,6 +23,9 @@ public class SoundService : ISoundService,
     {
         [Sounds.MenuSelect] = SoundCategory.Sfx,
         [Sounds.Train] = SoundCategory.Sfx,
+        [Sounds.PickupItem] = SoundCategory.Sfx,
+        [Sounds.DropItem] = SoundCategory.Sfx,
+        [Sounds.Craft] = SoundCategory.Sfx,
         [Sounds.AmbientSong] = SoundCategory.Music,
     };
 

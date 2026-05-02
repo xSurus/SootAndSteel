@@ -9,6 +9,7 @@ using Gamelab.Map;
 using Gamelab.Map.Train;
 using Gamelab.Map.Train.State;
 using Gamelab.Particles;
+using Gamelab.Particles.Modifiers;
 using Gamelab.Players;
 using Gamelab.Screens.Camera;
 using Gamelab.Serialization;
@@ -64,6 +65,8 @@ public class GameplayScreen : GamelabGameScreen
     private GameplayPhase phase = GameplayPhase.Running;
     private readonly WhiteFilterTransition endLevelWhiteFilter = new();
     private bool endOutroToHub;
+    private ParticleEmitter snowstormEmitter;
+    private SnowstormTransition.Baseline snowstormBaseline;
     private bool isFailureTriggered;
     private float allPlayersStunnedTimer;
     private float accumulator;
@@ -211,7 +214,11 @@ public class GameplayScreen : GamelabGameScreen
         cameraDirector = new CameraDirector(virtualScreenSize);
         cameraDirector.SnapToCenter(camera, trainMap.GetBounds(), virtualScreenSize.X, virtualScreenSize.Y,
             allowOffWorldOverflow: true, maxZoom: Game.GameplayConfig.CameraMaxZoom);
-        Services.GetService<IVfxService>().AddContinuous(ParticleFactory.CreateSnowstorm());
+        snowstormEmitter = ParticleFactory.CreateSnowstorm();
+        snowstormEmitter.Modifiers.Add(new BlizzardGustModifier(() =>
+            phase == GameplayPhase.EndOfLevelOutro ? endLevelWhiteFilter.Opacity : 0f));
+        snowstormBaseline = SnowstormTransition.Capture(snowstormEmitter);
+        Services.GetService<IVfxService>().AddContinuous(snowstormEmitter);
     }
 
     private void InitializeAudio()
@@ -325,6 +332,7 @@ public class GameplayScreen : GamelabGameScreen
         cameraDirector.Update(camera, dt, players, trainMap.GetBounds(), virtualScreenSize.X, virtualScreenSize.Y,
             allowOffWorldOverflow: true, maxZoom: Game.GameplayConfig.CameraMaxZoom);
         endLevelWhiteFilter.Update(dt);
+        SnowstormTransition.ApplyBlizzardIntensity(snowstormEmitter, snowstormBaseline, endLevelWhiteFilter.Opacity);
 
         if (endLevelWhiteFilter.IsDone)
         {
@@ -458,6 +466,11 @@ public class GameplayScreen : GamelabGameScreen
         }
         trainSound?.Stop();
         gameplayContext.State.VictoryLapActive = true;
+        for (int i = 0; i < 5; i++)
+        {
+            snowstormEmitter?.Emit();
+        }
+
         endLevelWhiteFilter.FadeIn(4f);
         phase = GameplayPhase.EndOfLevelOutro;
     }
