@@ -161,7 +161,7 @@ public class GamelabGame : Game
         fontSystem.AddFont(fontBytes);
         LoadConfigs();
         Services.AddService(typeof(IShopService), new ShopManager());
-        PhysicsUtility.Initialize(GameplayConfig.PixelsPerMeter);
+        WorldUtility.Initialize();
         ItemRegistry.Initialize();
         systemManager.InitializeAll(this);
         AssetManager.LoadContent(Content, graphics.GraphicsDevice);

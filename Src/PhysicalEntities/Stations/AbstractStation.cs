@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Gamelab.Assets;
 using Gamelab.Items;
 using Gamelab.PhysicalEntities.Configurable;
@@ -11,7 +12,8 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Gamelab.PhysicalEntities.Stations;
 
-public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPickable, IUpdatable, ITooltipable
+public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPickable, ITooltipable, IItemProvider,
+    IItemReceiver, IUpdatable
 {
     private static readonly Logger logger = new("Station");
     protected StationConfig StationConfig => GamelabGame.Instance.StationRegistry.Get(StationId);
@@ -19,10 +21,12 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
     public string StationId { get; protected set; }
 
     protected readonly ISoundService soundService;
-
-    // TODO swap to a texture instead of display color at some point
-    public Color DisplayColor { get; protected set; }
     public Item HeldItem { get; set; }
+    public virtual Item PeekNextItem() => HeldItem;
+    public virtual bool CanReceiveItem(Item item, IItemProvider source) => false;
+    protected List<ProviderTicket> ProviderQueue { get; } = [];
+    protected List<ConsumerTicket> ConsumerQueue { get; } = [];
+    private const float TimeUntilKick = 0.5f;
     public Vector2 DrawPosition => Position - new Vector2(GamelabGame.Instance.GameplayConfig.TrainTileSize / 2f);
     protected override bool AllowPlayerRotation { get; } = false;
     public virtual bool IsVisible => IsHighlighted && StationConfig != null;
@@ -59,24 +63,18 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
         soundService.LoadSound(Sounds.DropItem);
     }
 
-    public virtual void Update(float dt)
-    {
-    }
-
-    public virtual void OnInteract(Player interactingPlayer)
-    {
-    }
-
-    public virtual void OnInteractHeld(Player interactingPlayer, float dt)
-    {
-    }
-
-    public virtual void OnInteractReleased(Player interactingPlayer)
-    {
-    }
-
     public virtual void OnPickup(Player interactingPlayer)
     {
+        Item playerItem = interactingPlayer.PeekNextItem();
+        if (playerItem != null && CanReceiveItem(playerItem, interactingPlayer) &&
+            interactingPlayer.TryProvideItem(out Item playerItemTaken))
+        {
+            ReceiveItem(playerItemTaken, interactingPlayer);
+        }
+        else if (playerItem == null && TryProvideItem(out Item stationItem))
+        {
+            interactingPlayer.ReceiveItem(stationItem, this);
+        }
     }
 
     public virtual void OnPickupHeld(Player interactingPlayer, float dt)
@@ -87,6 +85,21 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
     {
         base.OnLastRelease(interactingPlayer);
         gameplayContext.Map?.SnapToNearestValidCell(this);
+    }
+
+    public virtual void Update(float dt)
+    {
+        for (int i = ProviderQueue.Count - 1; i >= 0; i--)
+        {
+            ProviderQueue[i].TimeSinceLastPing += dt;
+            if (ProviderQueue[i].TimeSinceLastPing > TimeUntilKick) ProviderQueue.RemoveAt(i);
+        }
+
+        for (int i = ConsumerQueue.Count - 1; i >= 0; i--)
+        {
+            ConsumerQueue[i].TimeSinceLastPing += dt;
+            if (ConsumerQueue[i].TimeSinceLastPing > TimeUntilKick) ConsumerQueue.RemoveAt(i);
+        }
     }
 
     public override void Draw(SpriteBatch spriteBatch)
@@ -135,5 +148,62 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
             Vector2 itemHoverPosition = bottomCenter + new Vector2(0, -tileSize * 0.8f);
             HeldItem.Draw(spriteBatch, itemHoverPosition, tileSize / 2, depth + RenderUtility.Eps);
         }
+    }
+
+    public virtual bool TryProvideItem(out Item item, IItemReceiver consumer = null)
+    {
+        item = HeldItem;
+        if (HeldItem != null && CanProvideItem(consumer))
+        {
+            HeldItem = null;
+            soundService.PlayOnce(Sounds.PickupItem);
+            if (consumer != null) ConsumerQueue.RemoveAll(t => t.Consumer == consumer);
+            return true;
+        }
+
+        item = null;
+        return false;
+    }
+
+    public virtual void ReceiveItem(Item item, IItemProvider source)
+    {
+        soundService.PlayOnce(Sounds.DropItem);
+        HeldItem = item;
+    }
+
+    public virtual void PingPushIntent(IItemProvider source, float dt)
+    {
+        ProviderTicket existingTicket = ProviderQueue.Find(t => t.Provider == source);
+        if (existingTicket != null)
+        {
+            existingTicket.TimeSinceLastPing = 0f;
+            return;
+        }
+
+        ProviderQueue.Add(new ProviderTicket(source));
+    }
+
+    public virtual void PingPullIntent(IItemReceiver consumer, float dt)
+    {
+        if (consumer == null) return;
+        var existingTicket = ConsumerQueue.Find(t => t.Consumer == consumer);
+        if (existingTicket != null)
+        {
+            existingTicket.TimeSinceLastPing = 0f;
+            return;
+        }
+
+        ConsumerQueue.Add(new ConsumerTicket(consumer));
+    }
+
+    protected bool IsConsumerFirstInLine(IItemReceiver consumer)
+    {
+        if (consumer == null || consumer is Player) return true;
+        return ConsumerQueue.Count == 0 || ConsumerQueue[0].Consumer == consumer;
+    }
+
+    public virtual bool CanProvideItem(IItemReceiver consumer)
+    {
+        return HeldItem != null && IsConsumerFirstInLine(consumer);
     }
 }

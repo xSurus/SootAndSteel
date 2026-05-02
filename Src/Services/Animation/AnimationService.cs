@@ -8,19 +8,36 @@ namespace Gamelab.Services.Animation;
 
 public class AnimationService : IAnimationService, IGameSystem, IDisposable
 {
-    private readonly List<AnimatedSprite> activeSprites = new();
+    private class AnimationEntry(AnimatedSprite sprite, bool isActive)
+    {
+        public AnimatedSprite Sprite { get; } = sprite;
+        public bool IsActive { get; set; } = isActive;
+    }
+
+    private readonly List<AnimationEntry> trackedSprites = new();
 
     public float TimeScale { get; set; } = 1.0f;
 
-    public void Register(AnimatedSprite sprite)
+    public void Register(AnimatedSprite sprite, bool startActive = true)
     {
-        if (!activeSprites.Contains(sprite))
-            activeSprites.Add(sprite);
+        if (!trackedSprites.Exists(e => e.Sprite == sprite))
+        {
+            trackedSprites.Add(new AnimationEntry(sprite, startActive));
+        }
     }
 
     public void Unregister(AnimatedSprite sprite)
     {
-        activeSprites.Remove(sprite);
+        trackedSprites.RemoveAll(e => e.Sprite == sprite);
+    }
+
+    public void SetActive(AnimatedSprite sprite, bool isActive)
+    {
+        AnimationEntry entry = trackedSprites.Find(e => e.Sprite == sprite);
+        if (entry != null)
+        {
+            entry.IsActive = isActive;
+        }
     }
 
     public void Initialize(GamelabGame game)
@@ -29,9 +46,12 @@ public class AnimationService : IAnimationService, IGameSystem, IDisposable
 
     public void Update(GameTime gameTime)
     {
-        for (int i = activeSprites.Count - 1; i >= 0; i--)
+        for (int i = trackedSprites.Count - 1; i >= 0; i--)
         {
-            activeSprites[i].Update(gameTime);
+            if (trackedSprites[i].IsActive)
+            {
+                trackedSprites[i].Sprite.Update(gameTime);
+            }
         }
     }
 
@@ -43,6 +63,6 @@ public class AnimationService : IAnimationService, IGameSystem, IDisposable
 
     public void Dispose()
     {
-        activeSprites.Clear();
+        trackedSprites.Clear();
     }
 }

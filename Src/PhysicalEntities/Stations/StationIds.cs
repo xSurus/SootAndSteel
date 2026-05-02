@@ -3,7 +3,12 @@ namespace Gamelab.PhysicalEntities.Stations;
 public static class StationIds
 {
     public const string Cannon = "Cannon";
+    public const string BulletRack = "BulletRack";
+    public const string Conveyor = "Conveyor";
+    public const string UpgradedComponentConveyor = "UpgradedComponentConveyor";
+    public const string BulletConveyor = "BulletConveyor";
     public const string Workbench = "Workbench";
+    public const string AutoWorkbench = "AutoWorkbench";
     public const string Counter = "Counter";
     public const string SpeedLever = "SpeedLever";
     public const string Resource = "Resource";

@@ -2,6 +2,7 @@ using System;
 using Gamelab.Map.Train.State;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended.Graphics;
 
 namespace Gamelab.Utils;
 
@@ -37,6 +38,26 @@ public static class RenderUtility
         {
             spriteBatch.Draw(texture, position, sourceRectangle, HighlightColor, rotation, origin, scale, effects,
                 layerDepth + HighlightEps);
+        }
+    }
+
+    public static void DrawWithHighlight(this SpriteBatch spriteBatch, AnimatedSprite sprite, Vector2 position,
+        float rotation, Vector2 scale, bool isHighlighted)
+    {
+        spriteBatch.Draw(sprite, position, rotation, scale);
+
+        if (isHighlighted)
+        {
+            Color originalColor = sprite.Color;
+            float originalDepth = sprite.Depth;
+
+            sprite.Color = HighlightColor;
+            sprite.Depth = originalDepth + HighlightEps;
+
+            spriteBatch.Draw(sprite, position, rotation, scale);
+
+            sprite.Color = originalColor;
+            sprite.Depth = originalDepth;
         }
     }
 }

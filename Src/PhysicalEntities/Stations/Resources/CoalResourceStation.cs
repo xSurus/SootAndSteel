@@ -1,5 +1,5 @@
 using Gamelab.Items;
-using Gamelab.Players;
+using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Services.Sound;
 using Microsoft.Xna.Framework;
 
@@ -14,17 +14,28 @@ public class CoalResourceStation : ResourceStation
         soundService.LoadSound(Sounds.ShovelDown);
     }
 
-    public override void OnPickup(Player interactingPlayer)
+    public override bool CanReceiveItem(Item item, IItemProvider source)
     {
-        if (interactingPlayer.HeldItem == null)
+        return item is { Id: "Coal" };
+    }
+
+    public override bool TryProvideItem(out Item item, IItemReceiver consumer = null)
+    {
+        if (!CanProvideItem(consumer))
         {
-            interactingPlayer.HeldItem = new Item(ResourceId);
-            soundService.PlayOnce(Sounds.ShovelUp);
+            item = null;
+            return false;
         }
-        else if (interactingPlayer.HeldItem.Id == ResourceId)
-        {
-            interactingPlayer.HeldItem = null;
-            soundService.PlayOnce(Sounds.ShovelDown);
-        }
+
+        soundService.PlayOnce(Sounds.ShovelUp);
+        item = new Item("Coal");
+        if (consumer != null) ConsumerQueue.RemoveAll(t => t.Consumer == consumer);
+
+        return true;
+    }
+
+    public override void ReceiveItem(Item item, IItemProvider source)
+    {
+        soundService.PlayOnce(Sounds.ShovelDown);
     }
 }

@@ -3,7 +3,7 @@ using Gamelab.Assets;
 using Gamelab.Items;
 using Gamelab.Items.Bullets;
 using Gamelab.PhysicalEntities.Bullets.Components;
-using Gamelab.Players;
+using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Services.Sound;
 using Gamelab.UI;
 using Gamelab.Utils;
@@ -46,19 +46,24 @@ public class ComponentResourceStation(Vector2 position, string componentId)
     public override Rectangle? IconSourceRect =>
         ShopItemIconAtlas.TryGetRect(DispensedComponent.Type, DispensedItemType);
 
-    public override void OnPickup(Player interactingPlayer)
+    public override bool CanReceiveItem(Item item, IItemProvider source)
     {
-        if (interactingPlayer.HeldItem == null)
+        return item is { Id: "Bullet" } && ((BulletItem)item).ComponentIds.SequenceEqual([ComponentId]);
+    }
+
+    public override bool TryProvideItem(out Item item, IItemReceiver consumer = null)
+    {
+        if (!CanProvideItem(consumer))
         {
-            interactingPlayer.HeldItem = new BulletItem(ComponentId);
-            soundService.PlayOnce(Sounds.PickupItem);
+            item = null;
+            return false;
         }
-        else if (interactingPlayer.HeldItem.Id == "Bullet"
-                 && ((BulletItem)interactingPlayer.HeldItem).ComponentIds.SequenceEqual([ComponentId]))
-        {
-            interactingPlayer.HeldItem = null;
-            soundService.PlayOnce(Sounds.DropItem);
-        }
+
+        soundService.PlayOnce(Sounds.PickupItem);
+        item = new BulletItem(ComponentId);
+        if (consumer != null) ConsumerQueue.RemoveAll(t => t.Consumer == consumer);
+
+        return true;
     }
 
     public override void Draw(SpriteBatch spriteBatch)

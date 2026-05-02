@@ -1597,6 +1597,18 @@
 /processorParam:TextureFormat=Color
 /build:Snow_Tile.png
 
+#begin Stations/AutoWorkbench.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Stations/AutoWorkbench.png
+
 #begin Stations/BasicCasing.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -1633,6 +1645,30 @@
 /processorParam:TextureFormat=Color
 /build:Stations/BasicPropellant.png
 
+#begin Stations/BulletConveyor.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Stations/BulletConveyor.png
+
+#begin Stations/BulletRack.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Stations/BulletRack.png
+
 #begin Stations/Cannon.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -1644,6 +1680,35 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Stations/Cannon.png
+
+#begin Stations/Conveyor.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Stations/Conveyor.png
+
+#begin Stations/ConveyorTop-texture.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Stations/ConveyorTop-texture.png
+
+#begin Stations/ConveyorTop.json
+/importer:TexturePackerJsonImporter
+/processor:TexturePackerProcessor
+/build:Stations/ConveyorTop.json
 
 #begin Stations/CopperResource.png
 /importer:TextureImporter
@@ -1716,6 +1781,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Stations/SpeedLever.png
+
+#begin Stations/UpgradedComponentConveyor.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Stations/UpgradedComponentConveyor.png
 
 #begin Stations/Workbench.png
 /importer:TextureImporter

@@ -1,0 +1,68 @@
+{
+  "textures": [
+    {
+      "filename": "ConveyorTop-texture.png",
+      "format": "RGBA8888",
+      "size": {
+        "w": 612,
+        "h": 102
+      },
+      "frames": {
+        "Conveyor1": {
+          "frame": {
+            "x": 1,
+            "y": 1,
+            "w": 100,
+            "h": 100
+          }
+        },
+        "Conveyor2": {
+          "frame": {
+            "x": 103,
+            "y": 1,
+            "w": 100,
+            "h": 100
+          }
+        },
+        "Conveyor3": {
+          "frame": {
+            "x": 205,
+            "y": 1,
+            "w": 100,
+            "h": 100
+          }
+        },
+        "Conveyor4": {
+          "frame": {
+            "x": 307,
+            "y": 1,
+            "w": 100,
+            "h": 100
+          }
+        },
+        "Conveyor5": {
+          "frame": {
+            "x": 409,
+            "y": 1,
+            "w": 100,
+            "h": 100
+          }
+        },
+        "Conveyor6": {
+          "frame": {
+            "x": 511,
+            "y": 1,
+            "w": 100,
+            "h": 100
+          }
+        }
+      }
+    }
+  ],
+  "meta": {
+    "app": "https://www.codeandweb.com/texturepacker",
+    "dataformat": "monogame-extended",
+    "version": "1.2",
+    "smartupdate": "$TexturePacker:SmartUpdate:1b627646221769276afc5af5f75d980e:5c3998192c89c17dcdaf24f5cc8bf267:bf823ffb8d4be2262723c35ed218edea$"
+  }
+}

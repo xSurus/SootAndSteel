@@ -8,13 +8,15 @@
     "name": "Workbench",
     "description": "Place ingredients with A.\nHold Interact (X) to craft or repair.",
     "itemType": "Utility",
-    "appearsInShop": true,
+    "appearsInShop": false,
     "shopPrice": 38
   },
-  "Anvil": {
-    "name": "Anvil",
-    "description": "Place ingredients with A.\nHold Interact (X) to craft.",
-    "itemType": "Crafting"
+  "AutoWorkbench": {
+    "name": "Automatic Anvil",
+    "description": "Place ingredients with A.\nHold Interact (X) to craft. Automatically crafts by itself",
+    "itemType": "Utility",
+    "appearsInShop": true,
+    "shopPrice": 0
   },
   "SpeedLever": {
     "name": "Speed Lever",
@@ -30,5 +32,31 @@
     "name": "Coal Box",
     "description": "Pickup (A) grabs coal to fuel the train's engine.",
     "itemType": "Resource"
+  },
+  "BulletRack": {
+    "name": "Bullet Rack",
+    "description": "Pickup (A) grabs or stores a Bullet",
+    "itemType": "Utility"
+  },
+  "Conveyor": {
+    "name": "Conveyor",
+    "description": "Moves items around",
+    "itemType": "Utility",
+    "appearsInShop": true,
+    "shopPrice": 0
+  },
+  "BulletConveyor": {
+    "name": "Bullet Conveyor",
+    "description": "Moves only fully crafted Bullets around",
+    "itemType": "Utility",
+    "appearsInShop": true,
+    "shopPrice": 0
+  },
+  "UpgradedComponentConveyor": {
+    "name": "Component Conveyor",
+    "description": "Moves only upgraded components around",
+    "itemType": "Utility",
+    "appearsInShop": true,
+    "shopPrice": 0
   }
 }

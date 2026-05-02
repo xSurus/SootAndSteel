@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Gamelab.Assets;
 using Gamelab.Config;
 using Gamelab.Items.Bullets;
@@ -7,6 +8,7 @@ using Gamelab.Map.Train.State;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.PhysicalEntities.Stations;
 using Gamelab.PhysicalEntities.Stations.Cannon;
+using Gamelab.PhysicalEntities.Stations.Conveyors;
 using Gamelab.PhysicalEntities.Stations.Resources;
 using Gamelab.PhysicalEntities.Structures;
 using Gamelab.Serialization;
@@ -28,6 +30,7 @@ public class TrainMap
     private readonly Random random = Random.Shared;
 
     public List<IPhysicalEntity> MapObjects { get; } = new();
+    private readonly Dictionary<Point, AbstractStation> stationGrid = new();
 
     public float originalSize => AssetManager.TileTexture[0].Width;
     public float scale => TileSize / originalSize;
@@ -87,6 +90,14 @@ public class TrainMap
         return new Point((int)(localPos.X / TileSize), (int)(localPos.Y / TileSize));
     }
 
+    public AbstractStation GetAdjacentStation(Vector2 currentWorldPos, GridDirection direction)
+    {
+        Point currentGrid = GetTileIndexFromPixels(currentWorldPos);
+        Point neighborGrid = currentGrid + direction.ToVector2().ToPoint();
+        stationGrid.TryGetValue(neighborGrid, out AbstractStation adjacentStation);
+        return adjacentStation;
+    }
+
     public List<StationSaveData> CaptureLayout()
     {
         List<StationSaveData> list = new();
@@ -101,7 +112,13 @@ public class TrainMap
             Point t = GetTileIndexFromPixels(station.Position);
             if (t.X >= 0 && t.X < Width && t.Y >= 0 && t.Y < Height)
             {
-                list.Add(new StationSaveData(kindId, t.X, t.Y));
+                GridDirection direction = GridDirection.Right;
+                if (station is Conveyor conveyor)
+                {
+                    direction = conveyor.FacingDirection;
+                }
+
+                list.Add(new StationSaveData(kindId, t.X, t.Y, direction));
             }
         }
 
@@ -120,7 +137,7 @@ public class TrainMap
         foreach (StationSaveData e in layout)
         {
             Vector2 center = GetTileCenterPixels(e.TileX, e.TileY);
-            AbstractStation station = StationFactory.CreateStation(e.KindId, center);
+            AbstractStation station = StationFactory.CreateStation(e.KindId, center, e.FacingDirection);
             MapObjects.Add(station);
             SnapToNearestValidCell(station);
         }
@@ -169,17 +186,24 @@ public class TrainMap
 
     public void AddDefaultStationLoadout()
     {
-        MapObjects.Add(new SpeedLever(GetTileCenterPixels(7, 3)));
-        MapObjects.Add(new CannonStation(GetTileCenterPixels(5, 2)));
-        MapObjects.Add(new ComponentResourceStation(GetTileCenterPixels(2, 0), ComponentIds.BasicCasing));
-        MapObjects.Add(new ComponentResourceStation(GetTileCenterPixels(2, 4), ComponentIds.BasicProjectile));
-        MapObjects.Add(new ComponentResourceStation(GetTileCenterPixels(3, 0), ComponentIds.BasicPropellant));
-        MapObjects.Add(new CoalResourceStation(GetTileCenterPixels(7, 0)));
-        MapObjects.Add(new Workbench(GetTileCenterPixels(1, 0)));
-        MapObjects.Add(new Workbench(GetTileCenterPixels(1, 4)));
-        MapObjects.Add(new Counter(GetTileCenterPixels(0, 0)));
-        MapObjects.Add(new Counter(GetTileCenterPixels(0, 4)));
-        MapObjects.Add(new Counter(GetTileCenterPixels(3, 4)));
+        AddStationAndSnap(new BulletRack(GetTileCenterPixels(4, 2)));
+        AddStationAndSnap(new SpeedLever(GetTileCenterPixels(7, 3)));
+        AddStationAndSnap(new CannonStation(GetTileCenterPixels(5, 2)));
+        AddStationAndSnap(new ComponentResourceStation(GetTileCenterPixels(2, 0), ComponentIds.BasicCasing));
+        AddStationAndSnap(new ComponentResourceStation(GetTileCenterPixels(2, 4), ComponentIds.BasicProjectile));
+        AddStationAndSnap(new ComponentResourceStation(GetTileCenterPixels(3, 0), ComponentIds.BasicPropellant));
+        AddStationAndSnap(new CoalResourceStation(GetTileCenterPixels(7, 0)));
+        AddStationAndSnap(new Workbench(GetTileCenterPixels(1, 0)));
+        AddStationAndSnap(new Workbench(GetTileCenterPixels(1, 4)));
+        AddStationAndSnap(new Counter(GetTileCenterPixels(0, 0)));
+        AddStationAndSnap(new Counter(GetTileCenterPixels(0, 4)));
+        AddStationAndSnap(new Counter(GetTileCenterPixels(3, 4)));
+    }
+
+    private void AddStationAndSnap(AbstractStation station)
+    {
+        MapObjects.Add(station);
+        SnapToNearestValidCell(station);
     }
 
     public void SnapToNearestValidCell(AbstractStation station)
@@ -190,6 +214,13 @@ public class TrainMap
         {
             Vector2 targetCenterMeters = GetTileCenterMeters(gridPos.X, gridPos.Y);
             station.PhysicsBody.Position = targetCenterMeters;
+            var existingPair = stationGrid.FirstOrDefault(x => x.Value == station);
+            if (existingPair.Value != null)
+            {
+                stationGrid.Remove(existingPair.Key);
+            }
+
+            stationGrid[gridPos] = station;
         }
     }
 
