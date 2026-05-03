@@ -16,6 +16,8 @@ public static class AssetManager
     public static Texture2D BlankTexture { get; private set; }
     public static Texture2D SmokeTexture { get; private set; }
     public static Texture2D SparkTexture { get; private set; }
+    public static Texture2D FootprintTrainTexture { get; private set; }
+    public static Texture2D FootprintSnowTexture { get; private set; }
 
     public static Texture2D[] TileTexture { get; private set; } = new Texture2D[2];
     public static Texture2D[] TrainTrackTexture { get; private set; } = new Texture2D[2];
@@ -57,6 +59,8 @@ public static class AssetManager
         LoadDictionary(content, StationTextures, "Stations");
         LoadDictionary(content, HubDecorationTextures, "Hub");
         LoadDictionary(content, DecorationTextures, "Decorations");
+        FootprintTrainTexture = GetDecorationTexture("FootprintTrain");
+        FootprintSnowTexture = GetDecorationTexture("FootprintSnow");
         LoadDictionary(content, WallTextures, "Walls");
         LoadDictionary(content, StructureTextures, "Structures");
         LoadDictionary(content, NPCTextures, "NPCs");
@@ -250,6 +254,9 @@ public static class AssetManager
 
         SmokeTexture?.Dispose();
         SmokeTexture = null;
+
+        FootprintTrainTexture = null;
+        FootprintSnowTexture = null;
 
         StationTextures.Clear();
         HubDecorationTextures.Clear();

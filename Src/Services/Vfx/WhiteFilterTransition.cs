@@ -10,7 +10,7 @@ public sealed class WhiteFilterTransition
     private float fadeDuration;
     private float fadeTimer;
     private bool fading;
-    private bool smoothEasing = true;
+    private bool smoothEasing;
 
     public float Opacity => opacity;
 

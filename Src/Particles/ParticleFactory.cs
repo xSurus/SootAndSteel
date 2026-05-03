@@ -223,7 +223,7 @@ public static class ParticleFactory
         };
 
         emitter.Modifiers.Add(new FadeOutModifier(0.3f));
-        emitter.Modifiers.Add(new DirectionalForceModifier(Vector2.UnitY * -1, 90f));
+        emitter.Modifiers.Add(new DirectionalForceModifier(-Vector2.UnitY, 90f));
 
         return emitter;
     }

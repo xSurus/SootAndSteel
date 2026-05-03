@@ -19,6 +19,7 @@ using Gamelab.Services.Bullet;
 using Gamelab.Services.Sound;
 using Gamelab.Services.Vfx;
 using Gamelab.UI;
+using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
@@ -48,6 +49,19 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
     private bool craftingHelpVisible = true;
     private DialogueOverlay departureHintOverlay;
     private string currentDepartureHintKey;
+
+    private struct Footprint
+    {
+        public Vector2 Position;
+        public float Rotation;
+        public float Age;
+        public bool IsOnTrain;
+        public const float MaxAge = 4f;
+    }
+
+    private readonly List<Footprint> footprints = [];
+    private float[] footstepTimers;
+    private bool[] footstepSide;
 
     private int worldWidth, worldHeight;
     private float accumulator;
@@ -151,6 +165,7 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         }
 
         UpdatePhysics(dt);
+        UpdateFootsteps(dt);
 
         cameraDirector.Update(camera, dt, players, prepTrainMap.GetBounds(), worldWidth, worldHeight,
             allowOffWorldOverflow: true);
@@ -175,6 +190,7 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
 
         hubMap.Draw(spriteBatch);
         prepTrainMap.Draw(spriteBatch);
+        DrawFootprints(spriteBatch);
         Services.GetService<IVfxService>().Render(spriteBatch);
         Services.GetService<IBulletService>().Render(spriteBatch);
         foreach (var player in players) player.Draw(spriteBatch);
@@ -237,6 +253,9 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         {
             players.Add(new Player(prepTrainMap.GetTileCenterPixels(playerConfig.PlayerIndex, 1), playerConfig));
         }
+
+        footstepTimers = new float[players.Count];
+        footstepSide = new bool[players.Count];
     }
 
     private void InitializeSpeedLever()
@@ -295,6 +314,55 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
             prepTrainMap.Update(Game.GameplayConfig.FixedTimeStep);
 
             accumulator -= Game.GameplayConfig.FixedTimeStep;
+        }
+    }
+
+    private static readonly Vector2 FootprintOrigin = new(12f, 8f);
+
+    private void DrawFootprints(SpriteBatch spriteBatch)
+    {
+        foreach (var fp in footprints)
+        {
+            float t = fp.Age / Footprint.MaxAge;
+            float alpha = (1f - t * t) * (fp.IsOnTrain ? 0.7f : 0.5f);
+            Texture2D tex = fp.IsOnTrain ? AssetManager.FootprintTrainTexture : AssetManager.FootprintSnowTexture;
+            spriteBatch.Draw(tex, fp.Position, null, Color.White * alpha,
+                fp.Rotation + MathF.PI / 2f, FootprintOrigin, 2f, SpriteEffects.None, RenderUtility.FloorLayer + 0.01f);
+        }
+    }
+
+    private void UpdateFootsteps(float dt)
+    {
+        for (int i = footprints.Count - 1; i >= 0; i--)
+        {
+            var fp = footprints[i];
+            fp.Age += dt;
+            if (fp.Age >= Footprint.MaxAge)
+                footprints.RemoveAt(i);
+            else
+                footprints[i] = fp;
+        }
+
+        for (int i = 0; i < players.Count; i++)
+        {
+            Vector2 vel = players[i].PhysicsBody.LinearVelocity;
+            if (vel.LengthSquared() < 0.05f)
+            {
+                footstepTimers[i] = 0f;
+                continue;
+            }
+
+            footstepTimers[i] -= dt;
+            if (footstepTimers[i] <= 0f)
+            {
+                Vector2 dir = Vector2.Normalize(vel);
+                Vector2 perp = new Vector2(-dir.Y, dir.X);
+                footstepSide[i] = !footstepSide[i];
+                Vector2 pos = players[i].Position + perp * (footstepSide[i] ? 6f : -6f);
+                bool onTrain = prepTrainMap.GetBounds().Contains((int)pos.X, (int)pos.Y);
+                footprints.Add(new Footprint { Position = pos, Rotation = MathF.Atan2(dir.Y, dir.X), Age = 0f, IsOnTrain = onTrain });
+                footstepTimers[i] = 0.2f;
+            }
         }
     }
 

@@ -109,7 +109,7 @@ public class CannonStation : AbstractStation, IBulletEmitter, IInteractable, ICa
         return true;
     }
 
-    public override void OnInteract(Player interactingPlayer)
+    public void OnInteract(Player interactingPlayer)
     {
         if (cooldownTimer > 0f)
         {

@@ -197,8 +197,7 @@ public class PostLevelStatsScreen : GamelabGameScreen
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
         whiteToHub.Update(dt);
         float blizzardT = phase == Phase.FadeOutToHub ? whiteToHub.Opacity : 0f;
-        if (blizzardT > 0.0001f)
-            SnowstormTransition.ApplyBlizzardIntensity(snowstormEmitter, snowstormBaseline, blizzardT);
+        SnowstormTransition.ApplyBlizzardIntensity(snowstormEmitter, snowstormBaseline, blizzardT);
 
         switch (phase)
         {
@@ -211,7 +210,7 @@ public class PostLevelStatsScreen : GamelabGameScreen
                         c.Input.IsPickupJustPressed() || c.Input.IsStartJustPressed()))
                 {
                     soundService.PlayOnce(Sounds.MenuSelect);
-                    Game.CurrentRun.AddCredits(baseReward + actualBonus);
+                    Game.CurrentRun.AddCredits(targetTotalCredits);
                     whiteToHub.FadeIn(0.8f);
                     phase = Phase.FadeOutToHub;
                 }
