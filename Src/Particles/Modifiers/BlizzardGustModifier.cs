@@ -2,9 +2,6 @@ using System;
 
 namespace Gamelab.Particles.Modifiers;
 
-/// <summary>
-/// Extra wind and flutter during white-out transitions (screen-blizzard feel).
-/// </summary>
 public sealed class BlizzardGustModifier(Func<float> getBlizzard01) : IParticleModifier
 {
     public void Update(float dt, ref Particle particle)

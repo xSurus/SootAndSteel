@@ -4,9 +4,6 @@ using Gamelab.Particles.Modifiers;
 
 namespace Gamelab.Particles;
 
-/// <summary>
-/// Ramps snow emission and fall speed from a captured baseline as white-out opacity increases.
-/// </summary>
 public static class SnowstormTransition
 {
     public readonly struct Baseline

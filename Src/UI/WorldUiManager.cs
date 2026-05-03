@@ -114,8 +114,6 @@ public class WorldUiManager(GamelabGame game)
         float canvasH = GumService.Default.CanvasHeight;
         float halfTile = tileSize / 2f;
 
-        // Visual.X/Y on the Gum root is the top-left corner; centre horizontally. Prefer above the
-        // item; if that would clip past the top (hub upgrades along the top edge), place below.
         x = gumCanvasPos.X - width / 2f;
 
         float yAbove = gumCanvasPos.Y - halfTile - height - liftAmount;
