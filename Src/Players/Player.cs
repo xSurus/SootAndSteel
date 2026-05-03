@@ -253,7 +253,8 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable, IItemP
 
     public bool OnHit(BulletEntity bullet)
     {
-        if (bullet.InitialShooter is not AbstractEnemy || IsStunned)
+        // prevents players from being hit by bullets while in cannon
+        if (bullet.InitialShooter is not AbstractEnemy || IsStunned || SeatedAt != null)
         {
             return false;
         }

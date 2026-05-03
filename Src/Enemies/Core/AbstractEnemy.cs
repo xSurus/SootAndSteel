@@ -75,6 +75,8 @@ public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable, IBull
         {
             soundService.PlayOnce(Sounds.EnemyHit);
             TakeDamage(bullet.Stats.Damage);
+            var vfxService = GamelabGame.Instance.Services.GetService<IVfxService>();
+            vfxService.EmitBurst(ParticleFactory.CreateBloodHit(Position));
             return true;
         }
 

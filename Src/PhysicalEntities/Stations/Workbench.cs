@@ -4,9 +4,11 @@ using System.Linq;
 using Gamelab.Assets;
 using Gamelab.Items;
 using Gamelab.Items.Bullets;
+using Gamelab.Particles;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
 using Gamelab.Services.Sound;
+using Gamelab.Services.Vfx;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -21,11 +23,14 @@ public class Workbench : AbstractStation, IInteractable
 
     private float craftProgress = 0f;
     private bool isCrafting = false;
+    private float sparkCooldown = 0f;
+
+    private EventInstance craftSound;
 
     public Workbench(Vector2 position, String stationId = StationIds.Workbench) : base(stationId, position)
     {
         soundService.LoadSound(Sounds.Craft);
-        EventInstance craftSound = soundService.GetSoundInstance(Sounds.Craft);
+        craftSound = soundService.GetSoundInstance(Sounds.Craft);
         soundService.RegisterParameter(craftSound, "Is Crafting", () => isCrafting ? 1.0f : 0.0f);
         craftSound?.Start();
     }
@@ -75,19 +80,37 @@ public class Workbench : AbstractStation, IInteractable
             isCrafting = true;
         }
 
+        if (isCrafting)
+        {
+            sparkCooldown -= dt;
+            if (sparkCooldown <= 0f)
+            {
+                GamelabGame.Instance.Services.GetService<IVfxService>()
+                    .EmitBurst(ParticleFactory.CreateWorkbenchSpark(Position));
+                sparkCooldown = 0.25f;
+            }
+        }
+
         if (craftProgress >= 2f) // TODO add dynamic craft time
         {
+            var vfx = GamelabGame.Instance.Services.GetService<IVfxService>();
+            vfx.EmitBurst(ParticleFactory.CreateWorkbenchSpark(Position));
+            vfx.EmitBurst(ParticleFactory.CreateWorkbenchSpark(Position));
+            vfx.EmitBurst(ParticleFactory.CreateWorkbenchSpark(Position));
+
             BulletItem craftedItem = new BulletItem(PlacedItems.ToArray());
             PlacedItems.Clear();
             PlacedItems.Add(craftedItem);
             craftProgress = 0f;
             isCrafting = false;
+            sparkCooldown = 0f;
         }
     }
 
     public void OnInteractReleased(Player interactingPlayer)
     {
         isCrafting = false;
+        sparkCooldown = 0f;
     }
 
     public override void Draw(SpriteBatch spriteBatch)

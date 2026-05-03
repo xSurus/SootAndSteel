@@ -32,9 +32,9 @@ public class PostLevelStatsScreen : GamelabGameScreen
         this.referenceTime = referenceTime;
     }
 
-    private const float DimFadeSeconds = 0.38f;
-    private const float CountUpSeconds = 0.62f;
-    private const float CreditTickInterval = 0.14f;
+    private const float DimFadeSeconds = 0.6f;
+    private const float CountUpSeconds = 1.1f;
+    private const float CreditTickInterval = 0.10f;
 
     private Desktop desktop;
     private Label titleLabel;
@@ -197,7 +197,8 @@ public class PostLevelStatsScreen : GamelabGameScreen
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
         whiteToHub.Update(dt);
         float blizzardT = phase == Phase.FadeOutToHub ? whiteToHub.Opacity : 0f;
-        SnowstormTransition.ApplyBlizzardIntensity(snowstormEmitter, snowstormBaseline, blizzardT);
+        if (blizzardT > 0.0001f)
+            SnowstormTransition.ApplyBlizzardIntensity(snowstormEmitter, snowstormBaseline, blizzardT);
 
         switch (phase)
         {
@@ -237,7 +238,7 @@ public class PostLevelStatsScreen : GamelabGameScreen
         if (totalLineCelebrateT > 0f)
         {
             totalLineCelebrateT -= dt;
-            float punch = SmoothStep(totalLineCelebrateT / 0.22f);
+            float punch = SmoothStep(Math.Clamp(totalLineCelebrateT / 0.22f, 0f, 1f));
             int size = (int)Math.Round(60 + 10 * punch);
             totalLabel.Font = Game.fontSystem.GetFont(size);
             totalLabel.TextColor = LerpColor(Color.White, new Color(230, 200, 120), 1f - punch);
@@ -251,10 +252,10 @@ public class PostLevelStatsScreen : GamelabGameScreen
 
         float t = revealClock;
         float tTitle = DimFadeSeconds;
-        float tDelivery = tTitle + 0.28f;
-        float tTime = tDelivery + 0.28f;
-        float tDivider = hasTimeLine ? tTime + 0.24f : tDelivery + 0.28f;
-        float tTotal = tDivider + 0.18f;
+        float tDelivery = tTitle + 0.45f;
+        float tTime = tDelivery + 0.45f;
+        float tDivider = hasTimeLine ? tTime + 0.38f : tDelivery + 0.45f;
+        float tTotal = tDivider + 0.28f;
 
         if (t >= tTitle && !playedTitleCue)
         {

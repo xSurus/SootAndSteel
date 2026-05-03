@@ -20,9 +20,6 @@ public class CannonStation : AbstractStation, IBulletEmitter, IInteractable, ICa
 {
     private readonly GameplayConfig config;
     private float cooldownTimer;
-
-    private ISoundService soundService;
-
     public Player SeatedPlayer { get; private set; }
 
     public CannonStation(Vector2 position)
@@ -30,7 +27,6 @@ public class CannonStation : AbstractStation, IBulletEmitter, IInteractable, ICa
     {
         config = GamelabGame.Instance.GameplayConfig;
         cooldownTimer = 0f;
-        soundService = GamelabGame.Instance.Services.GetService<ISoundService>();
         soundService.LoadSound(Sounds.CannonLoad);
         soundService.LoadSound(Sounds.CannonFire);
     }
@@ -57,11 +53,63 @@ public class CannonStation : AbstractStation, IBulletEmitter, IInteractable, ICa
     public override void OnRelease(Player interactingPlayer)
     {
         if (SeatedPlayer != interactingPlayer) return;
+
+        Vector2 ejectPosition = FindEjectPosition();
+        SeatedPlayer.PhysicsBody.Position = ejectPosition.ToMeters();
+
         SeatedPlayer.UnseatFrom(this);
         SeatedPlayer = null;
     }
 
-    public void OnInteract(Player interactingPlayer)
+    private Vector2 FindEjectPosition()
+    {
+        var map = gameplayContext.Map;
+        int tileSize = map.TileSize;
+
+        Vector2[] offsets =
+        {
+            new Vector2(-tileSize, 0),
+            new Vector2(tileSize, 0),
+            new Vector2(0, -tileSize),
+            new Vector2(0, tileSize),
+            new Vector2(-tileSize, -tileSize),
+            new Vector2(tileSize, -tileSize),
+            new Vector2(-tileSize, tileSize),
+            new Vector2(tileSize, tileSize),
+        };
+
+        foreach (Vector2 offset in offsets)
+        {
+            Vector2 candidate = Position + offset;
+            if (IsTileFree(candidate, map))
+                return candidate;
+        }
+
+        return Position;
+    }
+
+    private bool IsTileFree(Vector2 pixelPosition, Gamelab.Map.Train.TrainMap map)
+    {
+        Point candidateTile = map.GetTileIndexFromPixels(pixelPosition);
+
+        if (candidateTile.X < 0 || candidateTile.X >= map.Width ||
+            candidateTile.Y < 0 || candidateTile.Y >= map.Height)
+            return false;
+
+        foreach (var entity in map.MapObjects)
+        {
+            if (entity is not AbstractStation station) continue;
+            if (ReferenceEquals(station, this)) continue;
+
+            Point stationTile = map.GetTileIndexFromPixels(station.Position);
+            if (stationTile == candidateTile)
+                return false;
+        }
+
+        return true;
+    }
+
+    public override void OnInteract(Player interactingPlayer)
     {
         if (cooldownTimer > 0f)
         {

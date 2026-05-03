@@ -95,7 +95,8 @@ public class NextLevelIntroScreen(GamelabGame game) : GamelabGameScreen(game)
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
         whiteToGameplay.Update(dt);
         float blizzardT = phase == Phase.FadeOutToGameplay ? whiteToGameplay.Opacity : 0f;
-        SnowstormTransition.ApplyBlizzardIntensity(snowstormEmitter, snowstormBaseline, blizzardT);
+        if (blizzardT > 0.0001f)
+            SnowstormTransition.ApplyBlizzardIntensity(snowstormEmitter, snowstormBaseline, blizzardT);
 
         switch (phase)
         {

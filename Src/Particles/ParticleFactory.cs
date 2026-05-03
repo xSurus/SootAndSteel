@@ -108,6 +108,29 @@ public static class ParticleFactory
         return emitter;
     }
 
+    public static ParticleEmitter CreateBloodHit(Vector2 position)
+    {
+        var emitter = new ParticleEmitter(50, AssetManager.SparkTexture)
+        {
+            Position = position,
+            AutoTrigger = false,
+            Profile = new CircleProfile(radius: 3f, onlyRing: false, radiateOutward: true),
+            Parameters = new ParticleReleaseParameters
+            {
+                MinQuantity = 3, MaxQuantity = 6,
+                MinSpeed = 60f, MaxSpeed = 180f,
+                MinAge = 0.2f, MaxAge = 0.5f,
+                MinSize = 0.06f, MaxSize = 0.22f,
+                Color = Color.DarkRed
+            }
+        };
+
+        emitter.Modifiers.Add(new FadeOutModifier(0.3f));
+        emitter.Modifiers.Add(new DirectionalForceModifier(Vector2.UnitY, 120f));
+
+        return emitter;
+    }
+
     public static ParticleEmitter CreateOvenSmoke(Vector2 position)
     {
         var emitter = new ParticleEmitter(200, AssetManager.SparkTexture)
@@ -134,6 +157,30 @@ public static class ParticleFactory
         return emitter;
     }
 
+    public static ParticleEmitter CreateBuyParticles(Vector2 position)
+    {
+        var emitter = new ParticleEmitter(64, AssetManager.SparkTexture)
+        {
+            Position = position,
+            AutoTrigger = false,
+            Profile = new ConeProfile(new Vector2(0, -1), MathHelper.Pi / 2f),
+
+            Parameters = new ParticleReleaseParameters
+            {
+                MinQuantity = 18, MaxQuantity = 28,
+                MinSpeed = 180f, MaxSpeed = 420f,
+                MinAge = 0.5f, MaxAge = 1.1f,
+                MinSize = 0.14f, MaxSize = 0.32f,
+                Color = new Color(60, 220, 80)
+            }
+        };
+
+        emitter.Modifiers.Add(new FadeOutModifier(0.5f));
+        emitter.Modifiers.Add(new DirectionalForceModifier(Vector2.UnitY, 100f));
+
+        return emitter;
+    }
+
     public static ParticleEmitter CreateCannonMuzzleFlash(Vector2 position, Vector2 direction)
     {
         var emitter = new ParticleEmitter(200, AssetManager.SparkTexture)
@@ -153,6 +200,30 @@ public static class ParticleFactory
         };
 
         emitter.Modifiers.Add(new FadeOutModifier(0.2f));
+
+        return emitter;
+    }
+
+    public static ParticleEmitter CreateWorkbenchSpark(Vector2 position)
+    {
+        var emitter = new ParticleEmitter(32, AssetManager.SparkTexture)
+        {
+            Position = position,
+            AutoTrigger = false,
+            Profile = new CircleProfile(radius: 4f, onlyRing: false, radiateOutward: true),
+
+            Parameters = new ParticleReleaseParameters
+            {
+                MinQuantity = 2, MaxQuantity = 4,
+                MinSpeed = 80f, MaxSpeed = 240f,
+                MinAge = 0.1f, MaxAge = 0.4f,
+                MinSize = 0.18f, MaxSize = 0.50f,
+                Color = new Color(255, 200, 80)
+            }
+        };
+
+        emitter.Modifiers.Add(new FadeOutModifier(0.3f));
+        emitter.Modifiers.Add(new DirectionalForceModifier(Vector2.UnitY * -1, 90f));
 
         return emitter;
     }

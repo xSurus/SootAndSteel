@@ -1,8 +1,10 @@
 using Gamelab.Data;
+using Gamelab.Particles;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
 using Gamelab.Services.Shop;
 using Gamelab.Services.Sound;
+using Gamelab.Services.Vfx;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -54,6 +56,8 @@ public class BuyableStationWrapper : AbstractPhysicalEntity, IInteractable, IGra
     {
         if (GamelabGame.Instance.CurrentRun.TrySpendCredits(Cost))
         {
+            GamelabGame.Instance.Services.GetService<IVfxService>()
+                .EmitBurst(ParticleFactory.CreateBuyParticles(Position));
             PhysicsBody.Tag = WrappedStation;
             gameplayContext.Map.MapObjects.Add(WrappedStation);
             gameplayContext.Map.SnapToNearestValidCell(WrappedStation);
