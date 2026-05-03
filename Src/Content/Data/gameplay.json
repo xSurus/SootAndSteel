@@ -21,7 +21,7 @@
   "playerVelocityLerpFactor": 0.8,
   "playerInteractDistancePixels": 80.0,
   "playerHeldItemOffsetRadiusMultiplier": 1.5,
-  "playerHeldItemSizeRadiusMultiplier": 0.8,
+  "playerHeldItemSizeRadiusMultiplier": 1.5,
   "playerForceMultiplier": 50.0,
   "playerStunDurationSeconds": 4.0,
   "playerReviveDurationSeconds": 1.5,

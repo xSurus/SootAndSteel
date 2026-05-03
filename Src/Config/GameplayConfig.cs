@@ -26,7 +26,7 @@ public class GameplayConfig
     public float PlayerVelocityLerpFactor { get; set; } = 0.8f;
     public float PlayerInteractDistancePixels { get; set; } = 80f;
     public float PlayerHeldItemOffsetRadiusMultiplier { get; set; } = 1.5f;
-    public float PlayerHeldItemSizeRadiusMultiplier { get; set; } = 1.3f;
+    public float PlayerHeldItemSizeRadiusMultiplier { get; set; } = 5f;
     public float PlayerStunDurationSeconds { get; set; } = 4f;
     public float PlayerReviveDurationSeconds { get; set; } = 1.5f;
     public float AllPlayersStunnedFailDelaySeconds { get; set; } = 1.5f;
