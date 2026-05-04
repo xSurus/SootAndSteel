@@ -6,6 +6,10 @@ using Gamelab.Enemies.Slots;
 using Gamelab.Items.Bullets;
 using Gamelab.Services.Animation;
 using Gamelab.Services.Bullet;
+using Gamelab.Particles;
+using Gamelab.PhysicalEntities.Bullets;
+using Gamelab.PhysicalEntities.Stations.Cannon;
+using Gamelab.Services.Vfx;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -16,14 +20,16 @@ namespace Gamelab.Enemies.Types;
 public enum HorseState
 {
     ApproachingSideAttackSlot,
-    HoldingSideAttackSlot
+    HoldingSideAttackSlot,
+    Fleeing
 }
 
 public enum RiderState
 {
     Idle,
     Aiming,
-    Recoil
+    Recoil,
+    Dead
 }
 
 public class Enemy : AbstractEnemy
@@ -46,6 +52,8 @@ public class Enemy : AbstractEnemy
     private float attackAngle;
     private float aimTimer;
     private float recoilTimer;
+    private float _fleeTimer;
+    private float _fleeDirection;
 
     private readonly AnimatedSprite horseSprite;
     private readonly AnimatedSprite riderTorsoSprite;
@@ -115,6 +123,15 @@ public class Enemy : AbstractEnemy
                 }
 
                 break;
+
+            case RiderState.Dead:
+                _fleeTimer -= deltaTime;
+                if (_fleeTimer <= 0)
+                {
+                    _fleeDirection = 1f;
+                    currentState = HorseState.Fleeing;
+                }
+                break;
         }
     }
 
@@ -137,11 +154,21 @@ public class Enemy : AbstractEnemy
             case HorseState.HoldingSideAttackSlot:
                 EnemyMovement.UpdateHoldPosition(slotAnchor, deltaTime, includeTrainDrift: false);
                 break;
+
+            case HorseState.Fleeing:
+                PhysicsBody.LinearVelocity = new Vector2(_fleeDirection * GamelabGame.Instance.GameplayConfig.RifleMaxSpeed * 1.1f, 0f).ToMeters();
+                if (Position.X > gameplayContext.ScreenWidth + 600f || Position.X < -Size)
+                {
+                    ShouldRemove = true;
+                }
+                break;
         }
     }
 
     public override void TryShoot()
     {
+        if (currentRiderState == RiderState.Dead) return;
+
         if (currentState != HorseState.HoldingSideAttackSlot ||
             timeSinceLastShot < ShootCooldown ||
             currentRiderState != RiderState.Idle)
@@ -164,6 +191,31 @@ public class Enemy : AbstractEnemy
         BulletItem ammo = new BulletItem(ComponentIds.BasicProjectile, ComponentIds.BasicCasing,
             ComponentIds.BasicPropellant, ComponentIds.EnemyProjectile);
         GamelabGame.Instance.Services.GetService<IBulletService>().EmitBullet(ammo, Position, finalDir, this);
+    }
+
+    public override bool OnHit(BulletEntity bullet)
+    {
+        if (currentRiderState == RiderState.Dead) return false;
+
+        if (bullet.InitialShooter.GetType() == typeof(CannonStation) && IsAlive && !ShouldRemove)
+        {
+            if (Health - bullet.Stats.Damage <= 0)
+            {
+                Health = 1;
+                var vfxService = GamelabGame.Instance.Services.GetService<IVfxService>();
+                vfxService.EmitBurst(ParticleFactory.CreateBloodSplatter(Position));
+                StartFleeingDeath();
+                return true;
+            }
+        }
+
+        return base.OnHit(bullet);
+    }
+
+    private void StartFleeingDeath()
+    {
+        currentRiderState = RiderState.Dead;
+        _fleeTimer = GamelabGame.Instance.GameplayConfig.EnemyFleeDelay;
     }
 
     private void UpdateAttackAngle()
@@ -193,15 +245,20 @@ public class Enemy : AbstractEnemy
         riderTorsoSprite.Depth = riderDepth;
         spriteBatch.Draw(riderTorsoSprite, drawPosition + rifleBob, 0f, new Vector2(HorseSpriteScale));
 
-        riderHeadSprite.Depth = armDepth;
-        riderHeadSprite.Effect = (attackAngle > MathF.PI / 2f || attackAngle < -MathF.PI / 2f)
-            ? SpriteEffects.FlipHorizontally
-            : SpriteEffects.None;
-        spriteBatch.Draw(riderHeadSprite, drawPosition + rifleBob, 0f, new Vector2(HorseSpriteScale));
+        if (currentRiderState != RiderState.Dead)
+        {
+            riderHeadSprite.Depth = armDepth;
+            riderHeadSprite.Effect = (attackAngle > MathF.PI / 2f || attackAngle < -MathF.PI / 2f)
+                ? SpriteEffects.FlipHorizontally
+                : SpriteEffects.None;
+            spriteBatch.Draw(riderHeadSprite, drawPosition + rifleBob, 0f, new Vector2(HorseSpriteScale));
+        }
     }
 
     private void UpdateAnimationStates()
     {
+        if (currentRiderState == RiderState.Dead) return;
+
         if (currentRiderState == RiderState.Idle)
         {
             riderHeadSprite.SetAnimation("RifleIdle");
