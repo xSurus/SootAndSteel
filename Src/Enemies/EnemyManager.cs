@@ -20,7 +20,11 @@ public class EnemyManager(LevelDefinition levelDef)
     private float EnemySize => GamelabGame.Instance.GameplayConfig.EnemySize;
     private float RiflePreferredDistance => GamelabGame.Instance.GameplayConfig.RiflePreferredDistance;
     public bool HasActiveThreats => enemies.Count > 0;
+<<<<<<< HEAD
     public bool HasAnyEnemyTakenDamage => enemies.Exists(e => e.Health < GamelabGame.Instance.GameplayConfig.EnemyHealth);
+=======
+    public IReadOnlyList<AbstractEnemy> ActiveEnemies => enemies;
+>>>>>>> 88610d3 (feat(enemies): expose ActiveEnemies as IReadOnlyList on EnemyManager)
 
     public void Update(float deltaTime)
     {
