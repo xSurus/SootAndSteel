@@ -41,7 +41,7 @@ public class FootprintSystem
 
     private static ParticleEmitter CreateEmitter(Texture2D texture, Color color)
     {
-        var emitter = new ParticleEmitter(256, texture)
+        var emitter = new ParticleEmitter(400, texture)
         {
             AutoTrigger = false,
             Layer = RenderUtility.FloorLayer + 0.01f,
@@ -112,6 +112,7 @@ public class FootprintSystem
         }
     }
 
+    // Emitters are shared — set Position and Rotation immediately before Emit() so each stamp lands correctly.
     private static void StampFootprint(Vector2 entityPosition, Vector2 velocity, bool side, ParticleEmitter emitter)
     {
         Vector2 dir = Vector2.Normalize(velocity);
