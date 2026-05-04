@@ -27,6 +27,15 @@ public class Workbench : AbstractStation, IInteractable
 
     private EventInstance craftSound;
 
+    private Vector2 TableTopCenter
+    {
+        get
+        {
+            int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
+            return Position + new Vector2(0, tileSize / 2f - tileSize * 0.8f);
+        }
+    }
+
     public Workbench(Vector2 position, String stationId = StationIds.Workbench) : base(stationId, position)
     {
         soundService.LoadSound(Sounds.Craft);
@@ -86,7 +95,7 @@ public class Workbench : AbstractStation, IInteractable
             if (sparkCooldown <= 0f)
             {
                 GamelabGame.Instance.Services.GetService<IVfxService>()
-                    .EmitBurst(ParticleFactory.CreateWorkbenchSpark(Position));
+                    .EmitBurst(ParticleFactory.CreateWorkbenchSpark(TableTopCenter));
                 sparkCooldown = 0.25f;
             }
         }
@@ -94,9 +103,9 @@ public class Workbench : AbstractStation, IInteractable
         if (craftProgress >= 2f) // TODO add dynamic craft time
         {
             var vfx = GamelabGame.Instance.Services.GetService<IVfxService>();
-            vfx.EmitBurst(ParticleFactory.CreateWorkbenchSpark(Position));
-            vfx.EmitBurst(ParticleFactory.CreateWorkbenchSpark(Position));
-            vfx.EmitBurst(ParticleFactory.CreateWorkbenchSpark(Position));
+            vfx.EmitBurst(ParticleFactory.CreateWorkbenchSpark(TableTopCenter));
+            vfx.EmitBurst(ParticleFactory.CreateWorkbenchSpark(TableTopCenter));
+            vfx.EmitBurst(ParticleFactory.CreateWorkbenchSpark(TableTopCenter));
 
             BulletItem craftedItem = new BulletItem(PlacedItems.ToArray());
             PlacedItems.Clear();

@@ -13,4 +13,5 @@ public class ParticleReleaseParameters
     public float MinSize = 1f;
     public float MaxSize = 1f;
     public Color Color = Color.White;
+    public float Rotation = 0f;
 }

@@ -324,7 +324,7 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         foreach (var fp in footprints)
         {
             float t = fp.Age / Footprint.MaxAge;
-            float alpha = (1f - t * t) * (fp.IsOnTrain ? 0.7f : 0.5f);
+            float alpha = (1f - t * t) * (fp.IsOnTrain ? 0.35f : 0.5f);
             Texture2D tex = fp.IsOnTrain ? AssetManager.FootprintTrainTexture : AssetManager.FootprintSnowTexture;
             spriteBatch.Draw(tex, fp.Position, null, Color.White * alpha,
                 fp.Rotation + MathF.PI / 2f, FootprintOrigin, 2f, SpriteEffects.None, RenderUtility.FloorLayer + 0.01f);

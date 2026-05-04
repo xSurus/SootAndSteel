@@ -159,7 +159,7 @@ public static class ParticleFactory
 
     public static ParticleEmitter CreateBuyParticles(Vector2 position)
     {
-        var emitter = new ParticleEmitter(64, AssetManager.SparkTexture)
+        var emitter = new ParticleEmitter(64, AssetManager.DollarTexture)
         {
             Position = position,
             AutoTrigger = false,
@@ -168,15 +168,15 @@ public static class ParticleFactory
             Parameters = new ParticleReleaseParameters
             {
                 MinQuantity = 18, MaxQuantity = 28,
-                MinSpeed = 180f, MaxSpeed = 420f,
-                MinAge = 0.5f, MaxAge = 1.1f,
-                MinSize = 0.14f, MaxSize = 0.32f,
+                MinSpeed = 60f, MaxSpeed = 140f,
+                MinAge = 0.8f, MaxAge = 1.6f,
+                MinSize = 0.4f, MaxSize = 0.9f,
                 Color = new Color(60, 220, 80)
             }
         };
 
         emitter.Modifiers.Add(new FadeOutModifier(0.5f));
-        emitter.Modifiers.Add(new DirectionalForceModifier(Vector2.UnitY, 100f));
+        emitter.Modifiers.Add(new DirectionalForceModifier(Vector2.UnitY, 80f));
 
         return emitter;
     }

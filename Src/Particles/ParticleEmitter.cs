@@ -30,6 +30,7 @@ public class ParticleEmitter
     }
 
     public float AutoTriggerFrequency { get; set; }
+    public float Layer { get; set; } = RenderUtility.ParticlesLayer;
     private float triggerTimer;
 
     public IParticleProfile Profile { get; set; }
@@ -70,6 +71,7 @@ public class ParticleEmitter
             particles[activeParticles].Size = size;
             particles[activeParticles].InitialColor = Parameters.Color;
             particles[activeParticles].Color = Parameters.Color;
+            particles[activeParticles].Rotation = Parameters.Rotation;
 
             activeParticles++;
         }
@@ -117,7 +119,7 @@ public class ParticleEmitter
         for (int i = 0; i < activeParticles; i++)
         {
             spriteBatch.Draw(Texture, particles[i].Position, null, particles[i].Color,
-                particles[i].Rotation, origin, particles[i].Size, SpriteEffects.None, RenderUtility.ParticlesLayer);
+                particles[i].Rotation, origin, particles[i].Size, SpriteEffects.None, Layer);
         }
     }
 }
