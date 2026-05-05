@@ -60,6 +60,7 @@ public class Enemy : AbstractEnemy
     private readonly AnimatedSprite riderHeadSprite;
     private readonly IAnimationService animationService;
     private float animationTimer;
+    private ParticleEmitter _neckBleedEmitter;
 
     public Enemy(Vector2 spawnPosition, EnemyTrainSlot slot)
         : base(spawnPosition, slot,
@@ -85,6 +86,12 @@ public class Enemy : AbstractEnemy
     public override void Update(float deltaTime)
     {
         base.Update(deltaTime);
+
+        if (ShouldRemove && _neckBleedEmitter != null)
+        {
+            _neckBleedEmitter.ShouldRemove = true;
+            _neckBleedEmitter = null;
+        }
 
         animationTimer += deltaTime;
         attackPoseTimer = Math.Max(0f, attackPoseTimer - deltaTime);
@@ -131,6 +138,8 @@ public class Enemy : AbstractEnemy
                     _fleeDirection = 1f;
                     currentState = HorseState.Fleeing;
                 }
+                if (_neckBleedEmitter != null)
+                    _neckBleedEmitter.Position = GetNeckPosition();
                 break;
         }
     }
@@ -203,8 +212,8 @@ public class Enemy : AbstractEnemy
             {
                 Health = 1;
                 var vfxService = GamelabGame.Instance.Services.GetService<IVfxService>();
-                vfxService.EmitBurst(ParticleFactory.CreateBloodSplatter(Position));
-                StartFleeingDeath();
+                vfxService.EmitBurst(ParticleFactory.CreateBloodSplatter(GetNeckPosition()));
+                StartFleeingDeath(vfxService);
                 return true;
             }
         }
@@ -212,10 +221,19 @@ public class Enemy : AbstractEnemy
         return base.OnHit(bullet);
     }
 
-    private void StartFleeingDeath()
+    private void StartFleeingDeath(IVfxService vfxService)
     {
         currentRiderState = RiderState.Dead;
         _fleeTimer = GamelabGame.Instance.GameplayConfig.EnemyFleeDelay;
+
+        _neckBleedEmitter = ParticleFactory.CreateNeckBleed(GetNeckPosition());
+        vfxService.AddContinuous(_neckBleedEmitter);
+    }
+
+    private Vector2 GetNeckPosition()
+    {
+        int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
+        return Position + new Vector2(-tileSize * 0.8f, -tileSize * 1.8f);
     }
 
     private void UpdateAttackAngle()
