@@ -233,7 +233,11 @@ public class Enemy : AbstractEnemy
     private Vector2 GetNeckPosition()
     {
         int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
-        return Position + new Vector2(-tileSize * 0.8f, -tileSize * 1.8f);
+        // RifleHeadless neck stump top at frame px (372, 174), drawn at scale 0.45
+        // from draw offset (-2.25 * tileSize, -1.125 * tileSize)
+        return Position + new Vector2(
+            -2.25f * tileSize + 372 * HorseSpriteScale,
+            -1.125f * tileSize + 174 * HorseSpriteScale);
     }
 
     private void UpdateAttackAngle()
