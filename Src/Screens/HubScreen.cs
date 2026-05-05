@@ -55,6 +55,7 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
     private FootprintSystem footprintSystem;
     private SpeedLever _speedLever;
     private AnimatedSprite[] _playerHeadSprites;
+    private readonly List<int> _leverReadyOrder = [];
 
     private int worldWidth, worldHeight;
     private float accumulator;
@@ -277,11 +278,15 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
                     if (justBecameReady)
                     {
                         readyPlayers.Add(playerIndex);
+                        _leverReadyOrder.Remove(playerIndex);
+                        _leverReadyOrder.Add(playerIndex);
                         lastReadyPlayerIndex = playerIndex;
                     }
-                    else if (lastReadyPlayerIndex == playerIndex)
+                    else
                     {
-                        lastReadyPlayerIndex = null;
+                        _leverReadyOrder.Remove(playerIndex);
+                        if (lastReadyPlayerIndex == playerIndex)
+                            lastReadyPlayerIndex = null;
                     }
 
                     allowDepartWithPendingItems = false;
@@ -330,6 +335,7 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
             .ToList();
 
         readyPlayers.RemoveWhere(index => !joinedPlayerIndices.Contains(index));
+        _leverReadyOrder.RemoveAll(index => !joinedPlayerIndices.Contains(index) || !readyPlayers.Contains(index));
 
         bool allReady = joinedPlayerIndices.Count > 0 &&
                         joinedPlayerIndices.All(index => readyPlayers.Contains(index));
@@ -363,29 +369,26 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
 
     private void DrawLeverHeads(SpriteBatch spriteBatch)
     {
-        if (_speedLever == null || readyPlayers.Count == 0 || _playerHeadSprites == null) return;
+        if (_speedLever == null || _leverReadyOrder.Count == 0 || _playerHeadSprites == null) return;
 
         const float gap = 2f;
         int tileSize = Game.GameplayConfig.TrainTileSize;
 
-        var sorted = readyPlayers.OrderBy(p => p.PlayerConfiguration.PlayerIndex).ToList();
-
-        AnimatedSprite sample = _playerHeadSprites[sorted[0].PlayerConfiguration.PlayerIndex];
-        float cellWidth = (tileSize - 2f - gap) / 2f;
+        AnimatedSprite sample = _playerHeadSprites[_leverReadyOrder[0]];
+        float cellWidth = tileSize * 0.55f;
         float headScale = cellWidth / sample.TextureRegion.Width;
         float cellHeight = sample.TextureRegion.Height * headScale;
 
-        // Grid fills from bottom-left, left-to-right then upward
-        // col = i % 2, row = i / 2 (0 = bottom row, 1 = top row)
+        // 2x2 grid, slots fill left-to-right then upward; insertion order preserved
         float gridLeft = _speedLever.Position.X - tileSize / 2f + 1f;
         float gridBottom = _speedLever.Position.Y + tileSize / 2f;
 
-        for (int i = 0; i < sorted.Count; i++)
+        for (int i = 0; i < _leverReadyOrder.Count; i++)
         {
             int col = i % 2;
             int row = i / 2;
 
-            int idx = sorted[i].PlayerConfiguration.PlayerIndex;
+            int idx = _leverReadyOrder[i];
             AnimatedSprite sprite = _playerHeadSprites[idx];
             sprite.Origin = new Vector2(sprite.TextureRegion.Width / 2f, sprite.TextureRegion.Height);
             sprite.Depth = RenderUtility.OverlayTopLayer;
