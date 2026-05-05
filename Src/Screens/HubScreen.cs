@@ -22,7 +22,9 @@ using Gamelab.UI;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Gamelab.Services.Animation;
 using MonoGame.Extended;
+using MonoGame.Extended.Graphics;
 using MonoGameGum;
 
 namespace Gamelab.Screens;
@@ -51,6 +53,8 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
     private string currentDepartureHintKey;
 
     private FootprintSystem footprintSystem;
+    private SpeedLever _speedLever;
+    private AnimatedSprite[] _playerHeadSprites;
 
     private int worldWidth, worldHeight;
     private float accumulator;
@@ -182,6 +186,7 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         Services.GetService<IVfxService>().Render(spriteBatch);
         Services.GetService<IBulletService>().Render(spriteBatch);
         foreach (var player in players) player.Draw(spriteBatch);
+        DrawLeverHeads(spriteBatch);
         spriteBatch.End();
         GumService.Default.Draw();
         spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
@@ -243,6 +248,16 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         }
 
         footprintSystem = new FootprintSystem(Services.GetService<IVfxService>(), players.Count);
+
+        var animService = GamelabGame.Instance.Services.GetService<IAnimationService>();
+        _playerHeadSprites = new AnimatedSprite[Game.playerManager.Configs.Count];
+        foreach (var config in Game.playerManager.Configs)
+        {
+            var sprite = new AnimatedSprite(AssetManager.PlayerSpriteSheet);
+            sprite.SetAnimation($"Player{config.PlayerIndex}_Idle");
+            animService.Register(sprite);
+            _playerHeadSprites[config.PlayerIndex] = sprite;
+        }
     }
 
     private void InitializeSpeedLever()
@@ -251,6 +266,7 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         {
             if (entity is SpeedLever lever)
             {
+                _speedLever = lever;
                 lever.OnInteractOverride = player =>
                 {
                     if (isDepartDecisionOpen)
@@ -345,6 +361,41 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         previousPendingShopCount = pendingShopCount;
     }
 
+    private void DrawLeverHeads(SpriteBatch spriteBatch)
+    {
+        if (_speedLever == null || readyPlayers.Count == 0 || _playerHeadSprites == null) return;
+
+        const float gap = 2f;
+        int tileSize = Game.GameplayConfig.TrainTileSize;
+
+        var sorted = readyPlayers.OrderBy(p => p.PlayerConfiguration.PlayerIndex).ToList();
+
+        AnimatedSprite sample = _playerHeadSprites[sorted[0].PlayerConfiguration.PlayerIndex];
+        float cellWidth = (tileSize - 2f - gap) / 2f;
+        float headScale = cellWidth / sample.TextureRegion.Width;
+        float cellHeight = sample.TextureRegion.Height * headScale;
+
+        // Grid fills from bottom-left, left-to-right then upward
+        // col = i % 2, row = i / 2 (0 = bottom row, 1 = top row)
+        float gridLeft = _speedLever.Position.X - tileSize / 2f + 1f;
+        float gridBottom = _speedLever.Position.Y + tileSize / 2f;
+
+        for (int i = 0; i < sorted.Count; i++)
+        {
+            int col = i % 2;
+            int row = i / 2;
+
+            int idx = sorted[i].PlayerConfiguration.PlayerIndex;
+            AnimatedSprite sprite = _playerHeadSprites[idx];
+            sprite.Origin = new Vector2(sprite.TextureRegion.Width / 2f, sprite.TextureRegion.Height);
+            sprite.Depth = RenderUtility.OverlayTopLayer;
+
+            float x = gridLeft + col * (cellWidth + gap) + cellWidth / 2f;
+            float y = gridBottom - row * (cellHeight + gap);
+            spriteBatch.Draw(sprite, new Vector2(x, y), 0f, new Vector2(headScale));
+        }
+    }
+
     private void HandleLevelTransition(float dt)
     {
         worldUiManager.ClearAll();
@@ -379,6 +430,16 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         prepTrainMap = null;
         ambientMusic?.Stop();
         ambientMusic?.Dispose();
+        if (_playerHeadSprites != null)
+        {
+            var animService = GamelabGame.Instance.Services.GetService<IAnimationService>();
+            foreach (var sprite in _playerHeadSprites)
+            {
+                if (sprite != null) animService?.Unregister(sprite);
+            }
+            _playerHeadSprites = null;
+        }
+
         if (players != null)
         {
             foreach (Player player in players)
