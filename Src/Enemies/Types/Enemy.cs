@@ -40,6 +40,18 @@ public class Enemy : AbstractEnemy
     private const int HorseRunCycleFrames = 10;
     private const float AimDurationSeconds = 0.75f;
     private const float RecoilDurationSeconds = 0.4f;
+    private const int HorseFrameHeight = 500;
+
+    // Hooves sit at the bottom of the sprite frame; derive Y from sprite geometry.
+    public override Vector2 FeetPosition
+    {
+        get
+        {
+            int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
+            float drawY = Position.Y - tileSize * 1.125f;
+            return new Vector2(Position.X, drawY + HorseFrameHeight * HorseSpriteScale);
+        }
+    }
 
     protected virtual float ShootCooldown => GamelabGame.Instance.GameplayConfig.EnemyShootCooldown;
     private float PreferredDistance => GamelabGame.Instance.GameplayConfig.RiflePreferredDistance;

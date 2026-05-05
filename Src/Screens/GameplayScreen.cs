@@ -62,6 +62,8 @@ public class GameplayScreen : GamelabGameScreen
     private EventInstance trainSound;
     private EventInstance ambientMusic;
 
+    private FootprintSystem footprintSystem;
+
     private GameplayPhase phase = GameplayPhase.Running;
     private readonly WhiteFilterTransition endLevelWhiteFilter = new();
     private bool endOutroToHub;
@@ -205,7 +207,11 @@ public class GameplayScreen : GamelabGameScreen
             players.Add(new Player(trainMap.GetTileCenterPixels(playerConfig.PlayerIndex, 1), playerConfig));
         }
 
+<<<<<<< HEAD
         director?.Initialize(trainMap, gameplayContext);
+=======
+        footprintSystem = new FootprintSystem(Services.GetService<IVfxService>(), players.Count);
+>>>>>>> 3982e7c (footprint system for hub and gameplay screens and feet position fix)
     }
 
     private void InitializeCameraAndVfx()
@@ -272,6 +278,8 @@ public class GameplayScreen : GamelabGameScreen
             foreach (Player player in players) player.Update(fixedDt);
 
             enemyManager.Update(fixedDt);
+            footprintSystem.Update(fixedDt, players, _ => true);
+            footprintSystem.UpdateHorses(fixedDt, enemyManager.ActiveEnemies);
             gameplayContext.State.Update(fixedDt);
             gameplayContext.PatchManager.Update(fixedDt, gameplayContext.State);
 

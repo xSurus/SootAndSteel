@@ -18,6 +18,7 @@ public static class AssetManager
     public static Texture2D SparkTexture { get; private set; }
     public static Texture2D FootprintTrainTexture { get; private set; }
     public static Texture2D FootprintSnowTexture { get; private set; }
+    public static Texture2D DollarTexture { get; private set; }
 
     public static Texture2D[] TileTexture { get; private set; } = new Texture2D[2];
     public static Texture2D[] TrainTrackTexture { get; private set; } = new Texture2D[2];
@@ -141,6 +142,32 @@ public static class AssetManager
         }
 
         SparkTexture.SetData(sparkData);
+
+        // 16x16 pixel-art dollar sign
+        byte[] dollarPattern =
+        {
+            0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,
+            0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,
+            0,0,1,1,0,0,1,1,0,0,1,1,0,0,0,0,
+            0,0,1,1,0,0,1,1,0,0,0,0,0,0,0,0,
+            0,0,1,1,0,0,1,1,0,0,0,0,0,0,0,0,
+            0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,
+            0,0,0,0,0,0,1,1,0,0,1,1,0,0,0,0,
+            0,0,0,0,0,0,1,1,0,0,1,1,0,0,0,0,
+            0,0,1,1,0,0,1,1,0,0,1,1,0,0,0,0,
+            0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,
+            0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        };
+        DollarTexture = new Texture2D(graphicsDevice, 16, 16);
+        Color[] dollarData = new Color[256];
+        for (int i = 0; i < 256; i++)
+            dollarData[i] = dollarPattern[i] == 1 ? Color.White : Color.Transparent;
+        DollarTexture.SetData(dollarData);
     }
 
     public static void LoadEnemyAnimations(ContentManager content)
@@ -257,6 +284,7 @@ public static class AssetManager
 
         FootprintTrainTexture = null;
         FootprintSnowTexture = null;
+        DollarTexture = null;
 
         StationTextures.Clear();
         HubDecorationTextures.Clear();

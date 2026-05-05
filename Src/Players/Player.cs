@@ -43,6 +43,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable, IItemP
         GamelabGame.Instance.GameplayConfig.PlayerHeldItemSizeRadiusMultiplier;
 
     private float Radius => GamelabGame.Instance.GameplayConfig.PlayerRadiusPixels;
+    public Vector2 FeetPosition => new(Position.X, Position.Y + Radius);
     private float Density => GamelabGame.Instance.GameplayConfig.PlayerDensity;
     private float LinearDampening => GamelabGame.Instance.GameplayConfig.PlayerLinearDamping;
 

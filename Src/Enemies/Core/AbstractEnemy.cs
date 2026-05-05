@@ -24,9 +24,14 @@ public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable, IBull
     public bool ShouldRemove { get; protected set; }
 
     protected float Size => GamelabGame.Instance.GameplayConfig.EnemySize;
+<<<<<<< HEAD
     protected virtual float StartingHealth => GamelabGame.Instance.GameplayConfig.EnemyHealth;
     protected readonly EnemyMovementController enemyMovement;
     protected readonly ISoundService soundService;
+=======
+    public virtual Vector2 FeetPosition => new(Position.X, Position.Y + Size / 2f);
+    protected readonly EnemyMovementController EnemyMovement;
+>>>>>>> 3982e7c (footprint system for hub and gameplay screens and feet position fix)
 
     protected AbstractEnemy(
         Vector2 spawnPosition,

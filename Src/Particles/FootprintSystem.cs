@@ -20,7 +20,7 @@ public class FootprintSystem
 
     private readonly float[] stepTimers;
     private readonly bool[] stepSides;
-    private readonly Dictionary<AbstractEnemy, (float timer, bool side)> horseState = new();
+    private readonly Dictionary<AbstractEnemy, (float timer, bool side, Vector2 dir)> horseState = new();
 
     private const float StepInterval = 0.2f;
     private const float StepOffset = 6f;
@@ -34,6 +34,7 @@ public class FootprintSystem
 
         snowEmitter = CreateEmitter(AssetManager.FootprintSnowTexture, Color.White * 0.5f);
         woodEmitter = CreateEmitter(AssetManager.FootprintTrainTexture, Color.White * 0.35f);
+        snowEmitter.Modifiers.Add(new TrainWindModifier());
 
         vfxService.AddContinuous(snowEmitter);
         vfxService.AddContinuous(woodEmitter);
@@ -74,7 +75,7 @@ public class FootprintSystem
             if (stepTimers[i] <= 0f)
             {
                 stepSides[i] = !stepSides[i];
-                StampFootprint(players[i].Position, vel, stepSides[i], isOnTrain(players[i].Position) ? woodEmitter : snowEmitter);
+                StampFootprint(players[i].FeetPosition, vel, stepSides[i], isOnTrain(players[i].FeetPosition) ? woodEmitter : snowEmitter);
                 stepTimers[i] = StepInterval;
             }
         }
@@ -91,12 +92,16 @@ public class FootprintSystem
         foreach (var horse in horses)
         {
             if (!horseState.TryGetValue(horse, out var state))
-                state = (0f, false);
+                state = (0f, false, Vector2.Zero);
 
             Vector2 vel = horse.PhysicsBody.LinearVelocity;
-            if (vel.LengthSquared() < 0.05f)
+            if (vel.LengthSquared() >= 0.05f)
+                state.dir = Vector2.Normalize(vel);
+
+            // Skip if we have no direction yet (horse hasn't moved at all)
+            if (state.dir == Vector2.Zero)
             {
-                horseState[horse] = (0f, state.side);
+                horseState[horse] = state;
                 continue;
             }
 
@@ -104,7 +109,7 @@ public class FootprintSystem
             if (state.timer <= 0f)
             {
                 state.side = !state.side;
-                StampFootprint(horse.Position, vel, state.side, snowEmitter);
+                StampFootprint(horse.FeetPosition, state.dir, state.side, snowEmitter);
                 state.timer = StepInterval;
             }
 
