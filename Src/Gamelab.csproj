@@ -160,7 +160,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Update="Assets\Items\*.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
