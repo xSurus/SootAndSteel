@@ -1715,6 +1715,18 @@
 /processorParam:TextureFormat=Color
 /build:Structures/CoalWagon2.png
 
+#begin Structures/TrainNose.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Structures/TrainNose.png
+
 #begin Structures/HomingPropellant.png
 /importer:TextureImporter
 /processor:TextureProcessor

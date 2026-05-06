@@ -1,5 +1,6 @@
 using System;
 using Gamelab.Assets;
+using Gamelab.Map.Train;
 using Gamelab.Map.Train.State;
 using Gamelab.Particles;
 using Gamelab.PhysicalEntities.Interfaces;
@@ -111,25 +112,48 @@ public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        Vector2 centerBottom = Position + new Vector2(0, heightPixels / 2f);
-        float depth = RenderUtility.CalculateDepth(centerBottom.Y);
-        Vector2 origin = new Vector2(0.5f, 1f);
-        spriteBatch.Draw(AssetManager.BlankTexture, centerBottom, null, Color.DarkGray, 0f, origin,
-            new Vector2(widthPixels, heightPixels), SpriteEffects.None, depth);
+        int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
+        // Match TrainMap.DrawTrainTiles scaling so cab/nose art shares the same pixel density as train tiles.
+        float tileScale = tileSize / (float)AssetManager.TileTexture[0].Width;
 
+        TrainMap map = gameplayContext.Map;
+        Vector2 feetAnchor = map != null
+            ? map.GetTileTopLeftPixels(map.Width, map.Height - 1) + new Vector2(0, map.TileSize)
+            : Position + new Vector2(0, heightPixels / 2f);
+
+        float depth = RenderUtility.CalculateDepth(feetAnchor.Y);
+
+        Texture2D tex = AssetManager.GetStructureTexture("TrainNose");
+        if (tex != AssetManager.BlankTexture)
+        {
+            // Pivot at bottom-left of the texture so the back of the nose lines up with the cab seam (column Width).
+            Vector2 origin = new Vector2(0f, tex.Height);
+            spriteBatch.Draw(tex, feetAnchor, null, Color.White, 0f, origin, tileScale, SpriteEffects.None, depth);
+        }
+        else
+        {
+            Vector2 centerBottom = Position + new Vector2(0, heightPixels / 2f);
+            Vector2 placeholderOrigin = new Vector2(0.5f, 1f);
+            spriteBatch.Draw(AssetManager.BlankTexture, centerBottom, null, Color.DarkGray, 0f, placeholderOrigin,
+                new Vector2(widthPixels, heightPixels), SpriteEffects.None, depth);
+        }
+
+        float barDepth = depth + RenderUtility.Eps;
         int barMaxWidth = (int)(widthPixels * 0.8f);
         int barHeight = 12;
-        Vector2 barPos = centerBottom + new Vector2(-barMaxWidth / 2f, -barHeight - 5f);
+        // Keep fuel UI near the top of the car so it is not confused with wheels / tracks.
+        float barTopY = Position.Y - heightPixels / 2f + tileSize * 0.35f;
+        Vector2 barPos = new Vector2(Position.X - barMaxWidth / 2f, barTopY);
 
         float fuelRatio = Math.Max(0f, currentFuel / maxFuel);
         int currentBarWidth = (int)(barMaxWidth * fuelRatio);
 
         spriteBatch.Draw(AssetManager.BlankTexture, new Rectangle((int)barPos.X, (int)barPos.Y, barMaxWidth, barHeight),
-            null, Color.Black, 0f, Vector2.Zero, SpriteEffects.None, depth + RenderUtility.Eps);
+            null, Color.Black, 0f, Vector2.Zero, SpriteEffects.None, barDepth);
 
         Color barColor = currentFuel <= LowFuelThreshold ? Color.Red : Color.DarkOrange;
         spriteBatch.Draw(AssetManager.BlankTexture,
             new Rectangle((int)barPos.X, (int)barPos.Y, currentBarWidth, barHeight), null, barColor, 0f, Vector2.Zero,
-            SpriteEffects.None, depth + 2 * RenderUtility.Eps);
+            SpriteEffects.None, barDepth + RenderUtility.Eps);
     }
 }
