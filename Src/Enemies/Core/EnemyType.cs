@@ -2,5 +2,6 @@ namespace Gamelab.Enemies.Core;
 
 public enum EnemyType
 {
-    Rifle
+    Rifle,
+    Dummy
 }

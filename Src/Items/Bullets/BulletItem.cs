@@ -85,14 +85,14 @@ public class BulletItem : Item
 
     public List<IBulletEffect> GetEffects()
     {
-        return [..effects];
+        return effects;
     }
 
     public bool IsEqual(Item other)
     {
         if (other == null) return false;
         if (other.GetType() != GetType()) return false;
-        return ((BulletItem)other).ComponentIds.SequenceEqual(ComponentIds);
+        return ((BulletItem)other).GetEffects().Select(k => k.Guid).SequenceEqual(effects.Select(k => k.Guid));
     }
 
     public override void Draw(SpriteBatch spriteBatch, Vector2 position, int size, float depth)
@@ -190,10 +190,9 @@ public class BulletItem : Item
 
     private void EnsureBasicIsFirst()
     {
-        if (effects.First().IsBasic) return;
-        int basicIdx = effects.FindIndex(x => x.IsBasic);
-        IBulletEffect basicEffect = effects[basicIdx];
-        effects.RemoveAt(basicIdx);
-        effects.Insert(0, basicEffect);
+        List<IBulletEffect> tmp = effects;
+        effects = new();
+        effects.AddRange(tmp.Where(e => e.IsBasic));
+        effects.AddRange(tmp.Where(e => !e.IsBasic));
     }
 }

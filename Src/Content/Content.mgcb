@@ -1114,6 +1114,18 @@
 /processorParam:TextureFormat=Color
 /build:GumProject/spr_icon_propellant_24.png
 
+#begin GumProject/spr_xbox_start_32.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/spr_xbox_start_32.png
+
 #begin GumProject/spr_xbtn_32.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -1362,206 +1374,7 @@
 #begin promptfont.ttf
 /copy:promptfont.ttf
 
-#begin Data/ComponentConfig.json
-/copy:Data/ComponentConfig.json
-
-#begin Data/StationConfig.json
-/copy:Data/StationConfig.json
-
-#begin GumProject/ExampleSpriteFrame.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/ExampleSpriteFrame.png
-
-#begin GumProject/EventExport/gum_events.json
-/copy:GumProject/EventExport/gum_events.json
-
-#begin GumProject/FontCache/Font18Arial_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Arial_0.png
-
-#begin GumProject/IdleA0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/IdleA0.png
-
-#begin GumProject/IdleA1.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/IdleA1.png
-
-#begin GumProject/IdleA2.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/IdleA2.png
-
-#begin GumProject/IdleA3.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/IdleA3.png
-
-#begin GumProject/FontCache/Font18Ubuntu_Mono_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Ubuntu_Mono_0.png
-
-#begin GumProject/FontCache/Font40Ubuntu_Mono_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font40Ubuntu_Mono_0.png
-
-#begin GumProject/FontCache/Font18Papyrus_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Papyrus_0.png
-
-#begin GumProject/FontCache/Font18Bahnschrift_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Bahnschrift_0.png
-
-#begin GumProject/FontCache/Font18Stencil_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Stencil_0.png
-
-#begin GumProject/FontCache/Font18Yu_Gothic_Medium_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Yu_Gothic_Medium_0.png
-
-#begin GumProject/FontCache/Font30Ubuntu_Mono_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font30Ubuntu_Mono_0.png
-
-#begin GumProject/FontCache/Font30Papyrus_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font30Papyrus_0.png
-
-#begin GumProject/FontCache/Font50Ubuntu_Mono_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font50Ubuntu_Mono_0.png
-
-#begin GumProject/FontCache/Font60Ubuntu_Mono_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font60Ubuntu_Mono_0.png
-
-#begin GumProject/IdleB0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/IdleB0.png
-
-#begin GumProject/IdleC0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/IdleC0.png
-
-#begin GumProject/IdleD0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/IdleD0.png
-
-#begin GumProject/IdleB1.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/IdleB1.png
-
-#begin GumProject/IdleC1.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/IdleC1.png
-
-#begin GumProject/IdleD1.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/IdleD1.png
-
-#begin GumProject/FontCache/Font15Papyrus_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font15Papyrus_0.png
-
-#begin GumProject/FontCache/Font20Papyrus_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font20Papyrus_0.png
-
-#begin GumProject/FontCache/Font0Papyrus_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font0Papyrus_0.png
-
-#begin GumProject/FontCache/Font16Papyrus_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font16Papyrus_0.png
-
-#begin GumProject/FontCache/Font1Papyrus_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font1Papyrus_0.png
-
-#begin GumProject/FontCache/Font25Papyrus_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font25Papyrus_0.png
-
-#begin GumProject/Title.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/Title.png
-
-#begin GumProject/BulletComponentSpriteSheet.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/BulletComponentSpriteSheet.png
-
-#begin GumProject/spr_badge_9slice_64x24.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/spr_badge_9slice_64x24.png
-
-#begin GumProject/spr_coin_32.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/spr_coin_32.png
-
-#begin GumProject/spr_icon_casing_24.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/spr_icon_casing_24.png
-
-#begin GumProject/spr_icon_projectile_24.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/spr_icon_projectile_24.png
-
-#begin GumProject/spr_icon_propellant_24.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/spr_icon_propellant_24.png
-
-#begin GumProject/spr_xbox_start_32.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/spr_xbox_start_32.png
-
-#begin GumProject/xbox_buttons_spritesheet.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/xbox_buttons_spritesheet.png
-
-#begin GumProject/spr_xbtn_48.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/spr_xbtn_48.png
-
-#begin GumProject/tooltip_base_9slice_192x192.png
+#begin Rail_Tile_01.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1842,7 +1655,7 @@
 /processorParam:TextureFormat=Color
 /build:Structures/CoalWagon2.png
 
-#begin Structures/HomingCasing.png
+#begin Structures/HomingPropellant.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1852,7 +1665,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Structures/HomingCasing.png
+/build:Structures/HomingPropellant.png
 
 #begin Structures/HubShopOffer.png
 /importer:TextureImporter

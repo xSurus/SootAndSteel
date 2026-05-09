@@ -3,13 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using Gamelab.Enemies.Core;
 using Gamelab.Items.Bullets;
+using Gamelab.Utils;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended;
 using nkast.Aether.Physics2D.Dynamics;
 
 namespace Gamelab.PhysicalEntities.Bullets.Components.Propellants;
 
 public class HomingPropellant : AbstractComponent
 {
+    private Random random = Random.Shared;
+    private float initialLockOnDelay = 0.5f;
+    private float lockOnInterval = 0.3f;
+    private float timer;
+    private Body lockedOnEnemy;
+    private Vector2 randomizedLockOnOffset = Vector2.Zero;
+    private bool hasSpedUp;
+    
+    private readonly Color searching = new Color(255, 255, 255, 1);
+    private readonly Color homing = new Color(255, 0, 0, 1);
+    
     public HomingPropellant()
     {
         Type = EComponentType.Propellant;
@@ -20,28 +34,69 @@ public class HomingPropellant : AbstractComponent
     {
         bulletEntity.Stats.Speed *= 0.5f;
         bulletEntity.Stats.Spread *= 1.5f;
+        initialLockOnDelay += random.NextSingle() / 2f;
+        randomizedLockOnOffset = new Vector2(random.NextSingle() * 50, random.NextSingle() * 50)
+            - new Vector2(25f, 25f);
+        randomizedLockOnOffset = randomizedLockOnOffset.ToMeters();
     }
 
     public override void OnUpdate(BulletEntity bulletEntity, float deltaTime)
     {
+        timer += deltaTime;
+
+        if (timer >= initialLockOnDelay + lockOnInterval)
+        {
+            lockedOnEnemy = LockOnEnemy(bulletEntity);
+            timer -= lockOnInterval;
+        }
+
         var body = bulletEntity.PhysicsBody;
-        var target = LockOnEnemy(bulletEntity);
-
-        if (target == null) return;
-
-        float maxRotation = 1.5f;
-
-        Vector2 desiredDirection = target.Position - body.Position;
-        float targetAngle = (float)Math.Atan2(desiredDirection.Y, desiredDirection.X);
-        float currentAngle = (float)Math.Atan2(body.LinearVelocity.Y, body.LinearVelocity.X);
-        float angleDifference = MathHelper.WrapAngle(targetAngle - currentAngle);
+        
+        float maxRotation = 1.8f;
+        float angle = (float)Math.Atan2(body.LinearVelocity.Y, body.LinearVelocity.X);
         float maxRotationThisFrame = maxRotation * deltaTime;
-        float rotationAmount = Math.Clamp(angleDifference, -maxRotationThisFrame, maxRotationThisFrame);
-        float newAngle = currentAngle + rotationAmount;
-        float currentSpeed = body.LinearVelocity.Length();
+        float speed = body.LinearVelocity.Length();
+        if (lockedOnEnemy != null)
+        {
+            Vector2 desiredDirection = lockedOnEnemy.Position + randomizedLockOnOffset - body.Position;
+            float targetAngle = (float)Math.Atan2(desiredDirection.Y, desiredDirection.X);
+            float angleDifference = MathHelper.WrapAngle(targetAngle - angle);
+            float rotationAmount = Math.Clamp(angleDifference, -maxRotationThisFrame, maxRotationThisFrame);
+            angle += rotationAmount;
+
+            if (!hasSpedUp)
+            {
+                speed *= 2f;
+                hasSpedUp = true;
+            }
+        } 
+
         body.LinearVelocity = new Vector2(
-            (float)Math.Cos(newAngle) * currentSpeed,
-            (float)Math.Sin(newAngle) * currentSpeed
+            (float)Math.Cos(angle) * speed,
+            (float)Math.Sin(angle) * speed
+        );
+    }
+
+    public override void OnDraw(BulletEntity bulletEntity, SpriteBatch spriteBatch)
+    {
+        Vector2 bottomCenter = bulletEntity.Position + new Vector2(0, bulletEntity.Stats.Size / 2f);
+        float renderDepth = RenderUtility.CalculateDepth(bottomCenter.Y) - 0.001f;
+        Vector2 direction = Vector2.Normalize(bulletEntity.PhysicsBody.LinearVelocity);
+        Vector2 position = bulletEntity.PhysicsBody.Position.ToPixels();
+        
+        spriteBatch.DrawLine(
+            position,
+            position + Vector2.Rotate(direction, -Single.Pi/4) * 300,
+            lockedOnEnemy != null ? homing : searching,
+            2f,
+            renderDepth
+        );
+        spriteBatch.DrawLine(
+            position,
+            position + Vector2.Rotate(direction, Single.Pi/4) * 300,
+            lockedOnEnemy != null ? homing : searching,
+            2f,
+            renderDepth
         );
     }
 
