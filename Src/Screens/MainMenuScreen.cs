@@ -108,6 +108,11 @@ public sealed class MainMenuScreen(GamelabGame game) : Screens.GamelabGameScreen
             soundService.PlayOnce(Sounds.MenuSelect);
             actions[selectedIndex].Invoke();
         }
+
+        if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) && Keyboard.GetState().IsKeyDown(Keys.R))
+        {
+            Game.SwitchToScreen(new ShootingRangeScreen(Game));
+        }
     }
 
     public override void Draw(GameTime gameTime)

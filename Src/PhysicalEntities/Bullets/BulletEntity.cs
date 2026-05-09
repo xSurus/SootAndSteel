@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -15,15 +16,14 @@ namespace Gamelab.PhysicalEntities.Bullets;
 
 public class BulletEntity : AbstractPhysicalEntity
 {
-    public BulletStats Stats { get; }
+    public BulletStats Stats;
     public BulletItem Item { get; }
     public List<IBulletEffect> Effects { get; }
     public bool IsActive { get; set; } = true;
-    public bool IsRootEntity { get; set; } = true;
     public IBulletEmitter InitialShooter { get; set; }
-    public IBulletEmitter DirectEmitter { get; set; }
     public float Age { get; set; } = 0f;
     public World World { get; set; }
+    public BulletEntity ChildTemplate { get; set; }
 
     private float pierceCount;
 
@@ -33,39 +33,47 @@ public class BulletEntity : AbstractPhysicalEntity
         BulletItem ammo,
         BulletStats stats,
         World world,
-        IBulletEmitter initialShooter,
-        IBulletEmitter directEmitter = null)
+        IBulletEmitter initialShooter)
     {
         Stats = stats;
         Item = ammo;
         Effects = ammo.GetEffects();
         World = world;
         InitialShooter = initialShooter;
-        DirectEmitter = directEmitter ?? initialShooter;
+    }
+
+    public BulletEntity(BulletEntity parent, IBulletEffect spawningEffect = null)
+    {
+        Stats = parent.Stats;
+        Item = parent.Item;
+        World = parent.World;
+        InitialShooter = parent.InitialShooter;
+        ChildTemplate = parent.ChildTemplate;
+        
+        // Create copies of every effect
+        Effects = new();
+        foreach (var e in parent.Effects)
+        {
+            IBulletEffect effect = ComponentFactory.CreateDefinition(e.ComponentId);
+            effect.Copy(e);
+            if (spawningEffect != null && effect.Guid == spawningEffect.Guid)
+            {
+                effect.IsRootEffect = false;
+            }
+            Effects.Add(effect);
+        }
     }
 
     public override void Draw(SpriteBatch spriteBatch)
     {
         if (!IsActive) return;
-        Vector2 bottomCenter = Position + new Vector2(0, Stats.Size / 2f);
-        float renderDepth = RenderUtility.CalculateDepth(bottomCenter.Y);
-        Vector2 origin = new Vector2(0.5f, 1f);
-
-        spriteBatch.Draw(
-            texture: AssetManager.BlankTexture,
-            position: bottomCenter,
-            sourceRectangle: null,
-            color: Stats.Color,
-            rotation: 0f,
-            origin: origin,
-            scale: new Vector2(Stats.Size, Stats.Size),
-            effects: SpriteEffects.None,
-            layerDepth: renderDepth
-        );
+        foreach (var effect in Effects) effect.OnDraw(this, spriteBatch);
     }
 
     public void OnCreate()
     {
+        ChildTemplate = new BulletEntity(this);
+        
         foreach (var effect in Effects) effect.OnCreate(this);
 
         Debug.Assert(PhysicsBody != null, "PhysicsBody needs to be defined on create by one of the effects.");
@@ -92,6 +100,12 @@ public class BulletEntity : AbstractPhysicalEntity
         hitCooldown = hitCooldown.Where(kvp => kvp.Value > 0).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
     }
 
+    public void OnDraw(SpriteBatch spriteBatch)
+    {
+        if (!IsActive) return;
+        foreach (var effect in Effects) effect.OnDraw(this, spriteBatch);
+    }
+
     public bool OnCollision(Fixture sender, Fixture other, Contact contact)
     {
         if (IsActive
@@ -113,6 +127,11 @@ public class BulletEntity : AbstractPhysicalEntity
         return false;
     }
 
+    public void AddHitCooldown(IDamageable hitEntity, float cooldown)
+    {
+        hitCooldown[hitEntity] = cooldown;
+    }
+
     public void Cleanup()
     {
         IsActive = false;
@@ -120,5 +139,10 @@ public class BulletEntity : AbstractPhysicalEntity
         Effects.Clear();
         PhysicsBody?.World.Remove(PhysicsBody);
         PhysicsBody = null;
+    }
+
+    public IBulletEffect GetEffect(IBulletEffect effect)
+    {
+        return Effects.Find(e => e.Guid == effect.Guid);
     }
 }

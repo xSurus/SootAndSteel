@@ -3,16 +3,29 @@ using Microsoft.Xna.Framework;
 
 namespace Gamelab.PhysicalEntities.Bullets;
 
-public class BulletStats(GameplayConfig config, Vector2 position, Vector2 direction)
+public record struct BulletStats
 {
-    public float Speed { get; set; } = config.CannonProjectileSpeed;
-    public float Damage { get; set; } = config.CannonProjectileDamage;
-    public float Pierce { get; set; } = config.CannonProjectilePierce;
-    public float Size { get; set; } = config.CannonProjectileSize;
-    public float Spread { get; set; } = config.CannonProjectileSpread;
+    public float Speed { get; set; }
+    public float Damage { get; set; }
+    public float Pierce { get; set; }
+    public float Size { get; set; }
+    public float Spread { get; set; }
+    public float Lifetime { get; set; }
+    public Vector2 Position { get; set; }
+    public Vector2 Direction { get; set; }
+    public Color Color { get; set; }
 
-    public float Lifetime { get; set; } = config.CannonProjectileLifetime;
-    public Vector2 Position { get; set; } = position;
-    public Vector2 Direction { get; set; } = direction;
-    public Color Color { get; set; } = Color.Cyan;
+    public BulletStats(GameplayConfig config, Vector2 position, Vector2 direction)
+    {
+        Speed = config.CannonProjectileSpeed;
+        Damage = config.CannonProjectileDamage;
+        Pierce = config.CannonProjectilePierce;
+        Size = config.CannonProjectileSize;
+        Spread = config.CannonProjectileSpread;
+        Lifetime = config.CannonProjectileLifetime;
+
+        Position = position;
+        Direction = direction;
+        Color = Color.Black;
+    }
 }

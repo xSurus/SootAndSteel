@@ -162,7 +162,7 @@ public class Enemy : AbstractEnemy
         Vector2 finalDir = new Vector2((float)Math.Cos(finalAngle), (float)Math.Sin(finalAngle));
 
         BulletItem ammo = new BulletItem(ComponentIds.BasicProjectile, ComponentIds.BasicCasing,
-            ComponentIds.BasicPropellant, ComponentIds.EnemyProjectile);
+            ComponentIds.BasicPropellant, ComponentIds.EnemyCasing);
         GamelabGame.Instance.Services.GetService<IBulletService>().EmitBullet(ammo, Position, finalDir, this);
     }
 

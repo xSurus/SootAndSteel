@@ -12,8 +12,8 @@ public class HeavyPropellant : AbstractComponent
 
     public override void OnCreate(BulletEntity bulletEntity)
     {
-        bulletEntity.Stats.Damage *= 2.0f;
-        bulletEntity.Stats.Speed *= 0.3f;
-        bulletEntity.Stats.Size *= 2f;
+        bulletEntity.Stats.Damage *= 2f;
+        bulletEntity.Stats.Speed *= 0.7f;
+        bulletEntity.Stats.Size *= 1.5f;
     }
 }

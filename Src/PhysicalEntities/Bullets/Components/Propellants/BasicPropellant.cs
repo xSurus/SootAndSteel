@@ -1,8 +1,10 @@
 using System;
+using Gamelab.Assets;
 using Gamelab.Items.Bullets;
 using Gamelab.Services.Random;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using nkast.Aether.Physics2D.Dynamics;
 
 namespace Gamelab.PhysicalEntities.Bullets.Components.Propellants;
@@ -28,7 +30,12 @@ public class BasicPropellant : AbstractComponent
         bulletEntity.PhysicsBody.IgnoreGravity = true;
         bulletEntity.PhysicsBody.IsBullet = true;
         bulletEntity.PhysicsBody.FixedRotation = true;
+        bulletEntity.PhysicsBody.Enabled = false;
+    }
 
+    public override void OnSpawn(BulletEntity bulletEntity)
+    {
+        bulletEntity.PhysicsBody.Enabled = true;
         IRandomService randomService = GamelabGame.Instance.Services.GetService<IRandomService>();
         float randomSpread = (float)randomService.SampleGaussian(0, bulletEntity.Stats.Spread / 3f);
         Vector2 directionWithSpread = Vector2.Rotate(bulletEntity.Stats.Direction, randomSpread);
@@ -43,5 +50,24 @@ public class BasicPropellant : AbstractComponent
         {
             bulletEntity.IsActive = false;
         }
+    }
+
+    public override void OnDraw(BulletEntity bulletEntity, SpriteBatch spriteBatch)
+    {
+        Vector2 bottomCenter = bulletEntity.Position + new Vector2(0, bulletEntity.Stats.Size / 2f);
+        float renderDepth = RenderUtility.CalculateDepth(bottomCenter.Y);
+        Vector2 origin = new Vector2(0.5f, 1f);
+
+        spriteBatch.Draw(
+            texture: AssetManager.BlankTexture,
+            position: bottomCenter,
+            sourceRectangle: null,
+            color: bulletEntity.Stats.Color,
+            rotation: 0f,
+            origin: origin,
+            scale: new Vector2(bulletEntity.Stats.Size, bulletEntity.Stats.Size),
+            effects: SpriteEffects.None,
+            layerDepth: renderDepth
+        );
     }
 }
