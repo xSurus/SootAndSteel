@@ -12,7 +12,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Gamelab.PhysicalEntities.Stations;
 
-public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPickable, ITooltipable, IItemProvider,
+public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPickable, IItemProvider,
     IItemReceiver, IUpdatable
 {
     private static readonly Logger logger = new("Station");
@@ -29,7 +29,6 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
     private const float TimeUntilKick = 0.5f;
     public Vector2 DrawPosition => Position - new Vector2(GamelabGame.Instance.GameplayConfig.TrainTileSize / 2f);
     protected override bool AllowPlayerRotation { get; } = false;
-    public virtual bool IsVisible => IsHighlighted && StationConfig != null;
 
     public virtual string GetTitle()
     {
@@ -48,8 +47,6 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
         StationConfig?.ItemType is { } itemType ? ShopItemIconAtlas.GetItemTypeName(itemType) : null;
 
     public virtual Rectangle? IconSourceRect => null;
-
-    public virtual int? Cost => null;
 
     protected AbstractStation(string stationId, Vector2 position)
     {

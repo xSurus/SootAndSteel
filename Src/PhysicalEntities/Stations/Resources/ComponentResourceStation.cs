@@ -35,8 +35,6 @@ public class ComponentResourceStation(Vector2 position, string componentId)
         return DispensedComponentConfig?.Description ?? "No description";
     }
 
-    public override bool IsVisible => IsHighlighted && DispensedComponentConfig != null;
-
     public EItemType DispensedItemType => DispensedComponent.IsBasic ? EItemType.Basic : EItemType.Upgrading;
 
     public override string CategoryName => ShopItemIconAtlas.GetComponentTypeName(DispensedComponent.Type);
