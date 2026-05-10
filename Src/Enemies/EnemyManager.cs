@@ -20,6 +20,7 @@ public class EnemyManager(LevelDefinition levelDef)
     private float EnemySize => GamelabGame.Instance.GameplayConfig.EnemySize;
     private float RiflePreferredDistance => GamelabGame.Instance.GameplayConfig.RiflePreferredDistance;
     public bool HasActiveThreats => enemies.Count > 0;
+    public bool HasAnyEnemyTakenDamage => enemies.Exists(e => e.Health < GamelabGame.Instance.GameplayConfig.EnemyHealth);
 
     public void Update(float deltaTime)
     {
@@ -55,7 +56,7 @@ public class EnemyManager(LevelDefinition levelDef)
 
     private void SpawnFromEvent(SpawnEvent spawnEvent)
     {
-        EnemyDefinition.Parse(spawnEvent.Type);
+        EnemyDefinition def = EnemyDefinition.Parse(spawnEvent.Type);
         EnemySlotSide side = spawnEvent.Side?.ToLowerInvariant() switch
         {
             "top" => EnemySlotSide.Top,
@@ -63,10 +64,10 @@ public class EnemyManager(LevelDefinition levelDef)
             _ => random.NextSingle() < 0.5f ? EnemySlotSide.Top : EnemySlotSide.Bottom
         };
 
-        SpawnEnemy(side);
+        SpawnEnemy(side, def.Type);
     }
 
-    private void SpawnEnemy(EnemySlotSide preferredSide)
+    private void SpawnEnemy(EnemySlotSide preferredSide, EnemyType type = EnemyType.Rifle)
     {
         if (!slotManager.TryReserveSideAttackSlotOnSide(preferredSide, out EnemyTrainSlot slot))
         {
@@ -74,7 +75,7 @@ public class EnemyManager(LevelDefinition levelDef)
         }
 
         Vector2 spawnPosition = GetSideAttackSpawnPosition(slot);
-        AbstractEnemy enemy = EnemyFactory.Create(spawnPosition, slot);
+        AbstractEnemy enemy = EnemyFactory.Create(spawnPosition, slot, type);
         enemies.Add(enemy);
     }
 
