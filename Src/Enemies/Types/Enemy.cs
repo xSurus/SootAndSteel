@@ -9,6 +9,7 @@ using Gamelab.Services.Bullet;
 using Gamelab.Particles;
 using Gamelab.PhysicalEntities.Bullets;
 using Gamelab.PhysicalEntities.Stations.Cannon;
+using Gamelab.PhysicalEntities.Structures;
 using Gamelab.Services.Vfx;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
@@ -206,7 +207,7 @@ public class Enemy : AbstractEnemy
     {
         if (currentRiderState == RiderState.Dead) return false;
 
-        if (bullet.InitialShooter.GetType() == typeof(CannonStation) && IsAlive && !ShouldRemove)
+        if ((bullet.InitialShooter is CannonStation or CannonSlot) && IsAlive && !ShouldRemove)
         {
             if (Health - bullet.Stats.Damage <= 0)
             {
