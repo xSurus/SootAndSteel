@@ -21,24 +21,26 @@ partial class HubOverlay
         if (CurrencyDisplayInstance != null)
             CurrencyDisplayInstance.AmountText = currentCredits.ToString();
 
-        bool allReady = joinedPlayerIndices.Count > 0;
-        for (int i = 0; i < joinedPlayerIndices.Count; i++)
-        {
-            if (!readyPlayers.Contains(joinedPlayerIndices[i]))
-            {
-                allReady = false;
-                break;
-            }
-        }
-
         if (PlayersReadyInstance != null)
         {
-            PlayersReadyInstance.ReadyState = allReady
+            PlayersReadyInstance.ReadyState = AreAllPlayersReady(readyPlayers, joinedPlayerIndices)
                 ? PlayersReady.Ready.allReady
                 : PlayersReady.Ready.notReady;
         }
 
         SyncReadySprites(readyPlayers, joinedPlayerIndices);
+    }
+
+    private static bool AreAllPlayersReady(HashSet<int> readyPlayers, IReadOnlyList<int> joinedPlayerIndices)
+    {
+        if (joinedPlayerIndices.Count == 0)
+            return false;
+        for (int i = 0; i < joinedPlayerIndices.Count; i++)
+        {
+            if (!readyPlayers.Contains(joinedPlayerIndices[i]))
+                return false;
+        }
+        return true;
     }
 
     private void SyncReadySprites(HashSet<int> readyPlayers, IReadOnlyList<int> joinedPlayerIndices)
@@ -81,5 +83,4 @@ partial class HubOverlay
         if (PlayersReadyInstance?.BrownPlayer != null) PlayersReadyInstance.BrownPlayer.Visible = visible;
         if (PlayersReadyInstance?.YellowPlayer != null) PlayersReadyInstance.YellowPlayer.Visible = visible;
     }
-
 }
