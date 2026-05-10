@@ -40,7 +40,7 @@ public class Enemy : AbstractEnemy
     private const float AimDurationSeconds = 0.75f;
     private const float RecoilDurationSeconds = 0.4f;
 
-    private float ShootCooldown => GamelabGame.Instance.GameplayConfig.EnemyShootCooldown;
+    protected virtual float ShootCooldown => GamelabGame.Instance.GameplayConfig.EnemyShootCooldown;
     private float PreferredDistance => GamelabGame.Instance.GameplayConfig.RiflePreferredDistance;
     private float EnemyShootSpread => GamelabGame.Instance.GameplayConfig.EnemyShootSpread;
 

@@ -38,7 +38,7 @@ public class SpeedLever
 
         if (!gameplayContext.State.IsCoalOvenBurning)
         {
-            gameplayContext.State.CurrentSpeed = TrainSpeedSetting.Slow;
+            gameplayContext.State.SlowDownIfRunning();
             return;
         }
 

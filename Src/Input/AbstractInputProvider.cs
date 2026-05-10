@@ -26,6 +26,7 @@ public abstract class AbstractInputProvider : IInputProvider
     public abstract bool IsPickupJustPressed();
     public abstract bool IsPickupHeld();
     public abstract bool IsStartJustPressed();
+    public abstract bool IsStartHeld();
     public abstract bool IsPauseJustPressed();
     public abstract bool IsBackButtonJustPressed();
 

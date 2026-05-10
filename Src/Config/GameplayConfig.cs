@@ -56,6 +56,8 @@ public class GameplayConfig
     public float RifleMaxSpeed { get; set; } = 700f;
     public float RiflePreferredDistance { get; set; } = 30f;
     public float EnemyShootCooldown { get; set; } = 2f;
+    public float TutorialEnemyShootCooldown { get; set; } = 6f;
+    public float TutorialEnemyHealth { get; set; } = 1f;
     public float EnemyShootSpread { get; set; } = 0.2f;
     public float EnemyFleeDelay { get; set; } = 0.75f;
 
