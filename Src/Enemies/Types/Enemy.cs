@@ -152,8 +152,8 @@ public class Enemy : AbstractEnemy
         switch (currentState)
         {
             case HorseState.ApproachingSideAttackSlot:
-                EnemyMovement.UpdateTowardPoint(approachAnchor, deltaTime);
-                if (HasReached(approachAnchor, EnemyMovement.Profile.ArrivalRadius + 8f))
+                enemyMovement.UpdateTowardPoint(approachAnchor, deltaTime);
+                if (HasReached(approachAnchor, enemyMovement.Profile.ArrivalRadius + 8f))
                 {
                     currentState = HorseState.HoldingSideAttackSlot;
                 }
@@ -161,7 +161,7 @@ public class Enemy : AbstractEnemy
                 break;
 
             case HorseState.HoldingSideAttackSlot:
-                EnemyMovement.UpdateHoldPosition(slotAnchor, deltaTime, includeTrainDrift: false);
+                enemyMovement.UpdateHoldPosition(slotAnchor, deltaTime, includeTrainDrift: false);
                 break;
 
             case HorseState.Fleeing:

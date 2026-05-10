@@ -39,7 +39,7 @@ public class Workbench : AbstractStation, IInteractable
 
     public override void ReceiveItem(Item item, IItemProvider source)
     {
-        soundService.PlayOnce(Sounds.DropItem);
+        soundService.PlayOnce(ItemIsGranular(item) ? Sounds.ShovelDown : Sounds.DropItem);
         PlacedItems.Add((BulletItem)item);
     }
 
@@ -57,7 +57,7 @@ public class Workbench : AbstractStation, IInteractable
         item = PlacedItems.Last();
         PlacedItems.RemoveAt(PlacedItems.Count - 1);
 
-        soundService.PlayOnce(Sounds.PickupItem);
+        soundService.PlayOnce(ItemIsGranular(item) ? Sounds.ShovelUp : Sounds.PickupItem);
         if (consumer != null) ConsumerQueue.RemoveAll(t => t.Consumer == consumer);
         return true;
     }

@@ -50,6 +50,7 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
     private bool isTransitioningToNextLevel;
 
     private EventInstance ambientMusic;
+    private EventInstance leverSound;
 
     public override void LoadContent()
     {
@@ -81,8 +82,11 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
 
         var soundService = Services.GetService<ISoundService>();
         soundService.LoadSound(Sounds.AmbientSong);
+        soundService.LoadSound(Sounds.SpeedChange);
         ambientMusic = soundService.GetSoundInstance(Sounds.AmbientSong);
         ambientMusic?.Start();
+        leverSound = soundService.GetSoundInstance(Sounds.SpeedChange);
+        soundService.RegisterParameter(leverSound, "New Speed Setting", () => readyPlayers.Count() - 1);
     }
 
     public override void Update(GameTime gameTime)
@@ -212,6 +216,7 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
                 {
                     if (!readyPlayers.Remove(player))
                         readyPlayers.Add(player);
+                    leverSound.Start();
                 };
                 break;
             }
