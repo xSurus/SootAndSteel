@@ -185,7 +185,7 @@ public class TrainMap
 
         Vector2 cannonWagonCenter = new Vector2(
             Position.X - cannonWagonWidth / 2f,
-            Position.Y + Height * TileSize - CannonWagon.HeightTiles * TileSize / 2f + TileSize);
+            Position.Y + Height * TileSize - CannonWagon.HeightTiles * TileSize / 2f + TileSize / 2f);
         var cannonWagon = new CannonWagon(cannonWagonCenter);
         MapObjects.Add(cannonWagon);
         MapObjects.Add(cannonWagon.TopSlot);
@@ -194,7 +194,7 @@ public class TrainMap
         MapObjects.Add(cannonWagon.BottomRack);
 
         Vector2 coalWagonPos = new Vector2(
-            Position.X - cannonWagonWidth - 2 * TileSize,
+            Position.X - cannonWagonWidth - 1.5f * TileSize,
             Position.Y + (Height * TileSize) / 2f);
         MapObjects.Add(new CoalWagon(coalWagonPos));
 
