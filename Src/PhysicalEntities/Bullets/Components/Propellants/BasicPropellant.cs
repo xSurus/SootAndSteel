@@ -5,6 +5,7 @@ using Gamelab.Services.Random;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended;
 using nkast.Aether.Physics2D.Dynamics;
 
 namespace Gamelab.PhysicalEntities.Bullets.Components.Propellants;
@@ -54,18 +55,20 @@ public class BasicPropellant : AbstractComponent
 
     public override void OnDraw(BulletEntity bulletEntity, SpriteBatch spriteBatch)
     {
-        Vector2 bottomCenter = bulletEntity.Position + new Vector2(0, bulletEntity.Stats.Size / 2f);
+        Vector2 bottomCenter = bulletEntity.Position + new Vector2(0, -bulletEntity.Stats.Size / 2f);
         float renderDepth = RenderUtility.CalculateDepth(bottomCenter.Y);
         Vector2 origin = new Vector2(0.5f, 1f);
+        Vector2 scale = new Vector2(bulletEntity.Stats.Size, bulletEntity.Stats.Size) 
+                        / (GamelabGame.Instance.GameplayConfig.CannonProjectileSize * 6f);
 
         spriteBatch.Draw(
-            texture: AssetManager.BlankTexture,
+            texture: AssetManager.BulletEntityTexture,
             position: bottomCenter,
             sourceRectangle: null,
-            color: bulletEntity.Stats.Color,
-            rotation: 0f,
+            color: Color.White,
+            rotation: bulletEntity.PhysicsBody.LinearVelocity.ToAngle(),
             origin: origin,
-            scale: new Vector2(bulletEntity.Stats.Size, bulletEntity.Stats.Size),
+            scale: scale,
             effects: SpriteEffects.None,
             layerDepth: renderDepth
         );
