@@ -1890,3 +1890,38 @@
 /processor:TextureProcessor
 /build:GumProject/01_slider_track_empty.png
 
+#begin GumProject/FontCache/Font20Bernard_MT_Condensed_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font20Bernard_MT_Condensed_0.png
+
+#begin GumProject/FontCache/Font220Bernard_MT_Condensed_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font220Bernard_MT_Condensed_0.png
+
+#begin GumProject/FontCache/Font220Bernard_MT_Condensed_1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font220Bernard_MT_Condensed_1.png
+
+#begin GumProject/FontCache/Font220Bernard_MT_Condensed_2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font220Bernard_MT_Condensed_2.png
+
+#begin GumProject/FontCache/Font22Ubuntu_Mono_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font22Ubuntu_Mono_0.png
+
+#begin GumProject/FontCache/Font22Ubuntu_Mono_Bold_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font22Ubuntu_Mono_Bold_0.png
+
+#begin GumProject/FontCache/Font25Ubuntu_Mono_Bold_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font25Ubuntu_Mono_Bold_0.png
+

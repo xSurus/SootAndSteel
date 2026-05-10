@@ -31,12 +31,12 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
 
     private HubMap hubMap;
     private TrainMap prepTrainMap;
-    private readonly HashSet<Player> readyPlayers = [];
+    private readonly HashSet<int> readyPlayers = [];
 
     private OrthographicCamera camera;
     private CameraDirector cameraDirector;
 
-    private HubHud hud;
+    private HubOverlay hubOverlay;
     private WorldUiManager worldUiManager;
     private ParticleEmitter hubSnowEmitter;
     private WhiteFilterTransition departWhiteFilter;
@@ -71,7 +71,8 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         hubSnowEmitter = ParticleFactory.CreateSnowstorm();
         Services.GetService<IVfxService>().AddContinuous(hubSnowEmitter);
 
-        hud = new HubHud(Game);
+        hubOverlay = new HubOverlay();
+        hubOverlay.AddToRoot();
         worldUiManager = new WorldUiManager(Game);
         pauseMenu = new PauseMenuController();
         pauseMenu.OnExitRequested += () => Game.SwitchToScreen(new Gamelab.JoinScreen(Game));
@@ -86,7 +87,7 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         ambientMusic = soundService.GetSoundInstance(Sounds.AmbientSong);
         ambientMusic?.Start();
         leverSound = soundService.GetSoundInstance(Sounds.SpeedChange);
-        soundService.RegisterParameter(leverSound, "New Speed Setting", () => readyPlayers.Count() - 1);
+        soundService.RegisterParameter(leverSound, "New Speed Setting", () => readyPlayers.Count - 1);
     }
 
     public override void Update(GameTime gameTime)
@@ -145,7 +146,6 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         Services.GetService<IBulletService>().Render(spriteBatch);
         foreach (var player in players) player.Draw(spriteBatch);
         spriteBatch.End();
-        hud.Draw();
         GumService.Default.Draw();
         spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
         if (departWhiteFilter != null && departWhiteFilter.Opacity > 0.001f)
@@ -214,8 +214,9 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
             {
                 lever.OnInteractOverride = player =>
                 {
-                    if (!readyPlayers.Remove(player))
-                        readyPlayers.Add(player);
+                    int playerIndex = player.PlayerConfiguration.PlayerIndex;
+                    if (!readyPlayers.Remove(playerIndex))
+                        readyPlayers.Add(playerIndex);
                     leverSound.Start();
                 };
                 break;
@@ -249,12 +250,18 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
 
     private void UpdateDepartureLogic(float dt)
     {
-        readyPlayers.RemoveWhere(p => !players.Contains(p));
-        bool allReady = players.Count > 0 && readyPlayers.Count == players.Count;
+        List<int> joinedPlayerIndices = players
+            .Select(p => p.PlayerConfiguration.PlayerIndex)
+            .ToList();
+
+        readyPlayers.RemoveWhere(index => !joinedPlayerIndices.Contains(index));
+
+        bool allReady = joinedPlayerIndices.Count > 0 &&
+                        joinedPlayerIndices.All(index => readyPlayers.Contains(index));
+
         int pendingShopCount = prepTrainMap.MapObjects.Count(e =>
             e is BuyableStationWrapper && prepTrainMap.GetBounds().Contains(e.Position));
-        hud.Update(allReady, pendingShopCount, departHoldTimer, Game.GameplayConfig.DepartHoldSeconds,
-            readyPlayers.Count, players.Count);
+        hubOverlay.Update(readyPlayers, joinedPlayerIndices);
 
         bool canDepart = allReady && pendingShopCount == 0;
         departHoldTimer = canDepart ? departHoldTimer + dt : 0f;

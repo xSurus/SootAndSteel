@@ -56,6 +56,8 @@
   <ScreenReference Name="MainMenuScreen" />
   <ComponentReference Name="ButtonWithIcon" />
   <ComponentReference Name="CraftingHelp" />
+  <ComponentReference Name="CurrencyDisplay" />
+  <ComponentReference Name="HubOverlay" />
   <ComponentReference Name="JoinPlayerComponent" />
   <ComponentReference Name="MainMenuButton" />
   <ComponentReference Name="MenuButtonWithIcon" />
@@ -63,6 +65,7 @@
   <ComponentReference Name="OptionsMenu" />
   <ComponentReference Name="OptionsOverlay" />
   <ComponentReference Name="PauseOverlay" />
+  <ComponentReference Name="PlayersReady" />
   <ComponentReference Name="ShopItemType" />
   <ComponentReference Name="Slider" />
   <ComponentReference Name="ToolTip" />

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ComponentSave xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>CurrencyDisplay</Name>
+  <BaseType>Container</BaseType>
+  <State>
+    <Name>Default</Name>
+    <Variable Type="int" Name="Amount.Blue" SetsValue="true">
+      <Value xsi:type="xsd:int">38</Value>
+    </Variable>
+    <Variable IsFont="true" Type="string" Name="Amount.Font" SetsValue="true">
+      <Value xsi:type="xsd:string">Ubuntu Mono</Value>
+    </Variable>
+    <Variable Type="int" Name="Amount.FontSize" SetsValue="true">
+      <Value xsi:type="xsd:int">25</Value>
+    </Variable>
+    <Variable Type="int" Name="Amount.Green" SetsValue="true">
+      <Value xsi:type="xsd:int">89</Value>
+    </Variable>
+    <Variable Type="float" Name="Amount.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="Amount.HeightUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="bool" Name="Amount.IsBold" SetsValue="true">
+      <Value xsi:type="xsd:boolean">true</Value>
+    </Variable>
+    <Variable Type="int" Name="Amount.Red" SetsValue="true">
+      <Value xsi:type="xsd:int">114</Value>
+    </Variable>
+    <Variable Type="string" Name="Amount.Text" ExposedAsName="AmountText" SetsValue="true">
+      <Value xsi:type="xsd:string">100</Value>
+    </Variable>
+    <Variable Type="float" Name="Amount.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="Amount.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="float" Name="Amount.X" SetsValue="true">
+      <Value xsi:type="xsd:float">55</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="Amount.XOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="float" Name="Amount.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="VerticalAlignment" Name="Amount.YOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="Amount.YUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">7</Value>
+    </Variable>
+    <Variable Type="float" Name="CurrencyIcon.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">150</Value>
+    </Variable>
+    <Variable IsFile="true" Type="string" Name="CurrencyIcon.SourceFile" SetsValue="true">
+      <Value xsi:type="xsd:string">spr_coin_32.png</Value>
+    </Variable>
+    <Variable Type="float" Name="CurrencyIcon.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">150</Value>
+    </Variable>
+    <Variable Type="VerticalAlignment" Name="CurrencyIcon.YOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="CurrencyIcon.YUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">7</Value>
+    </Variable>
+    <Variable Type="float" Name="Height" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="HeightUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="State" Name="State" Category="States and Visibility" SetsValue="false">
+      <Value xsi:type="xsd:string">Default</Value>
+    </Variable>
+    <Variable Type="float" Name="Width" SetsValue="true">
+      <Value xsi:type="xsd:float">80</Value>
+    </Variable>
+  </State>
+  <Instance Name="CurrencyIcon" BaseType="Sprite" />
+  <Instance Name="Amount" BaseType="Text" />
+  <Behaviors />
+</ComponentSave>
