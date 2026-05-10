@@ -92,6 +92,27 @@ public class DialogueOverlay
         RefreshLayoutAndPosition();
     }
 
+    public void ShowDecision(DialogueLine line, string leftButtonText, string rightButtonText)
+    {
+        // Keep decision prompts at the same lower screen position as passive hints,
+        // but still show interaction buttons.
+        passiveTutorialChromeHidden = true;
+        SetInteractionChromeVisible(true);
+
+        CurrentLine = line;
+        fullBodyText = line.Text ?? "";
+        revealedCharCount = fullBodyText.Length;
+        revealCarryOver = 0f;
+        hasWorldAnchor = false;
+
+        bubble.DialogName.Text = line.SpeakerName;
+        bubble.DialogText = fullBodyText;
+        ConfigureInteractionRow(leftButtonText, rightButtonText);
+        bubble.Tail.Visible = false;
+        bubble.Visual.Visible = true;
+        RefreshLayoutAndPosition();
+    }
+
     public void ShowPassive(DialogueLine line)
     {
         passiveTutorialChromeHidden = true;
@@ -143,14 +164,14 @@ public class DialogueOverlay
             bubble.ButtonWithIconInstance1.Visual.Visible = visible;
     }
 
-    private void ConfigureInteractionRow()
+    private void ConfigureInteractionRow(string leftText = null, string rightText = null)
     {
         if (bubble.ButtonWithIconInstance is { } left)
         {
             left.Visual.Visible = true;
             left.TextInstance.FontSize = InteractionHintFontSize;
             XboxButtonGlyphs.ApplyFaceButton(left, XboxButtonAtlas.Face.Y);
-            left.ButtonText = "Dismiss";
+            left.ButtonText = leftText ?? "Dismiss";
             SyncDismissButtonInteractivity();
         }
 
@@ -159,7 +180,7 @@ public class DialogueOverlay
         right.Visual.Visible = true;
         right.TextInstance.FontSize = InteractionHintFontSize;
         XboxButtonGlyphs.ApplyFaceButton(right, XboxButtonAtlas.Face.X);
-        right.ButtonText = MoreLinesQueued ? "Continue" : "Close";
+        right.ButtonText = rightText ?? (MoreLinesQueued ? "Continue" : "Close");
     }
 
     public bool IsDismissInputAllowed => CurrentLine != null && IsLineFullyRevealed;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FmodForFoxes.Studio;
 using Gamelab.Assets;
+using Gamelab.Dialogue;
 using Gamelab.Map;
 using Gamelab.Map.Train;
 using Gamelab.Map.Train.State;
@@ -31,26 +32,41 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
 
     private HubMap hubMap;
     private TrainMap prepTrainMap;
-    private readonly HashSet<Player> readyPlayers = [];
+    private readonly HashSet<int> readyPlayers = [];
 
     private OrthographicCamera camera;
     private CameraDirector cameraDirector;
 
-    private HubHud hud;
+    private HubOverlay hubOverlay;
     private WorldUiManager worldUiManager;
     private ParticleEmitter hubSnowEmitter;
     private WhiteFilterTransition departWhiteFilter;
     private PauseMenuController pauseMenu;
     private CraftingHelp craftingHelp;
     private bool craftingHelpVisible = true;
+    private DialogueOverlay departureHintOverlay;
+    private string currentDepartureHintKey;
 
     private int worldWidth, worldHeight;
     private float accumulator;
     private float departHoldTimer;
+    private float hubElapsedSeconds;
     private bool isTransitioningToNextLevel;
 
     private EventInstance ambientMusic;
     private EventInstance leverSound;
+    private const float LeverHintDelaySeconds = 5f;
+    private const float HintVisibleSeconds = 8f;
+    private const float DepartDecisionInputBlockSeconds = 0.2f;
+    private const string HintKeyLever = "lever";
+
+    private float departureHintVisibleTimer;
+    private bool isDepartDecisionOpen;
+    private int? departDecisionPlayerIndex;
+    private int? lastReadyPlayerIndex;
+    private bool allowDepartWithPendingItems;
+    private int previousPendingShopCount;
+    private float departDecisionInputBlockTimer;
 
     public override void LoadContent()
     {
@@ -71,7 +87,8 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         hubSnowEmitter = ParticleFactory.CreateSnowstorm();
         Services.GetService<IVfxService>().AddContinuous(hubSnowEmitter);
 
-        hud = new HubHud(Game);
+        hubOverlay = new HubOverlay();
+        hubOverlay.AddToRoot();
         worldUiManager = new WorldUiManager(Game);
         pauseMenu = new PauseMenuController();
         pauseMenu.OnExitRequested += () => Game.SwitchToScreen(new Gamelab.JoinScreen(Game));
@@ -79,6 +96,16 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         craftingHelp = new CraftingHelp();
         craftingHelp.AddToRoot();
         craftingHelp.IsVisible = craftingHelpVisible;
+        departureHintOverlay = new DialogueOverlay();
+        currentDepartureHintKey = null;
+        hubElapsedSeconds = 0f;
+        departureHintVisibleTimer = 0f;
+        isDepartDecisionOpen = false;
+        departDecisionPlayerIndex = null;
+        lastReadyPlayerIndex = null;
+        allowDepartWithPendingItems = false;
+        previousPendingShopCount = 0;
+        departDecisionInputBlockTimer = 0f;
 
         var soundService = Services.GetService<ISoundService>();
         soundService.LoadSound(Sounds.AmbientSong);
@@ -86,7 +113,7 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         ambientMusic = soundService.GetSoundInstance(Sounds.AmbientSong);
         ambientMusic?.Start();
         leverSound = soundService.GetSoundInstance(Sounds.SpeedChange);
-        soundService.RegisterParameter(leverSound, "New Speed Setting", () => readyPlayers.Count() - 1);
+        soundService.RegisterParameter(leverSound, "New Speed Setting", () => readyPlayers.Count - 1);
     }
 
     public override void Update(GameTime gameTime)
@@ -124,6 +151,8 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
             allowOffWorldOverflow: true);
         hubSnowEmitter.Position = camera.Position + camera.Origin;
         worldUiManager.Update(prepTrainMap.MapObjects, camera.GetViewMatrix());
+        departureHintOverlay?.SyncFollowCamera(camera.GetViewMatrix());
+        departureHintOverlay?.Update(gameTime);
 
         UpdateDepartureLogic(dt);
     }
@@ -145,7 +174,6 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         Services.GetService<IBulletService>().Render(spriteBatch);
         foreach (var player in players) player.Draw(spriteBatch);
         spriteBatch.End();
-        hud.Draw();
         GumService.Default.Draw();
         spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
         if (departWhiteFilter != null && departWhiteFilter.Opacity > 0.001f)
@@ -214,8 +242,26 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
             {
                 lever.OnInteractOverride = player =>
                 {
-                    if (!readyPlayers.Remove(player))
-                        readyPlayers.Add(player);
+                    if (isDepartDecisionOpen)
+                        return;
+
+                    int playerIndex = player.PlayerConfiguration.PlayerIndex;
+                    bool justBecameReady = !readyPlayers.Remove(playerIndex);
+                    if (justBecameReady)
+                    {
+                        readyPlayers.Add(playerIndex);
+                        lastReadyPlayerIndex = playerIndex;
+                    }
+                    else if (lastReadyPlayerIndex == playerIndex)
+                    {
+                        lastReadyPlayerIndex = null;
+                    }
+
+                    allowDepartWithPendingItems = false;
+
+                    if (justBecameReady)
+                        TryOpenDepartDecisionForLastReady(playerIndex);
+
                     leverSound.Start();
                 };
                 break;
@@ -249,14 +295,32 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
 
     private void UpdateDepartureLogic(float dt)
     {
-        readyPlayers.RemoveWhere(p => !players.Contains(p));
-        bool allReady = players.Count > 0 && readyPlayers.Count == players.Count;
-        int pendingShopCount = prepTrainMap.MapObjects.Count(e =>
-            e is BuyableStationWrapper && prepTrainMap.GetBounds().Contains(e.Position));
-        hud.Update(allReady, pendingShopCount, departHoldTimer, Game.GameplayConfig.DepartHoldSeconds,
-            readyPlayers.Count, players.Count);
+        hubElapsedSeconds += dt;
+        UpdateDepartDecisionInput(dt);
 
-        bool canDepart = allReady && pendingShopCount == 0;
+        List<int> joinedPlayerIndices = players
+            .Select(p => p.PlayerConfiguration.PlayerIndex)
+            .ToList();
+
+        readyPlayers.RemoveWhere(index => !joinedPlayerIndices.Contains(index));
+
+        bool allReady = joinedPlayerIndices.Count > 0 &&
+                        joinedPlayerIndices.All(index => readyPlayers.Contains(index));
+
+        int pendingShopCount = CountPendingShopItemsOffBoard();
+        if (allowDepartWithPendingItems && pendingShopCount > previousPendingShopCount)
+            allowDepartWithPendingItems = false;
+        if (!allReady || pendingShopCount == 0)
+            allowDepartWithPendingItems = false;
+
+        hubOverlay.Update(readyPlayers, joinedPlayerIndices);
+        UpdateDepartureHints(allReady, dt);
+        EnsureDepartDecisionShown(allReady, pendingShopCount, joinedPlayerIndices);
+
+        bool blockedByNotAllReady = !allReady;
+        bool blockedByPendingShopItems = pendingShopCount > 0 && !allowDepartWithPendingItems;
+        bool blockedByDepartDecision = isDepartDecisionOpen;
+        bool canDepart = !blockedByNotAllReady && !blockedByPendingShopItems && !blockedByDepartDecision;
         departHoldTimer = canDepart ? departHoldTimer + dt : 0f;
 
         if (departHoldTimer >= Game.GameplayConfig.DepartHoldSeconds)
@@ -266,6 +330,8 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
             departWhiteFilter.FadeIn(0.8f);
             isTransitioningToNextLevel = true;
         }
+
+        previousPendingShopCount = pendingShopCount;
     }
 
     private void HandleLevelTransition(float dt)
@@ -281,6 +347,16 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
     public override void UnloadContent()
     {
         worldUiManager?.ClearAll();
+        departureHintOverlay?.Hide();
+        departureHintOverlay = null;
+        currentDepartureHintKey = null;
+        departureHintVisibleTimer = 0f;
+        isDepartDecisionOpen = false;
+        departDecisionPlayerIndex = null;
+        lastReadyPlayerIndex = null;
+        allowDepartWithPendingItems = false;
+        previousPendingShopCount = 0;
+        departDecisionInputBlockTimer = 0f;
         pauseMenu?.Dispose();
         GumService.Default.Root.Children.Clear();
         Game.Services.RemoveService(typeof(GameplayContext));
@@ -301,5 +377,147 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         }
 
         base.UnloadContent();
+    }
+
+    private void UpdateDepartureHints(bool allReady, float dt)
+    {
+        if (isDepartDecisionOpen)
+            return;
+
+        string conditionHintKey = null;
+        if (!allReady && hubElapsedSeconds >= LeverHintDelaySeconds)
+            conditionHintKey = HintKeyLever;
+
+        if (conditionHintKey != currentDepartureHintKey)
+        {
+            currentDepartureHintKey = conditionHintKey;
+            departureHintVisibleTimer = 0f;
+
+            if (departureHintOverlay == null)
+                return;
+
+            if (conditionHintKey == null)
+            {
+                departureHintOverlay.Hide();
+                return;
+            }
+
+            ShowDepartureHint(conditionHintKey);
+            departureHintVisibleTimer = HintVisibleSeconds;
+            return;
+        }
+
+        if (conditionHintKey == null || departureHintOverlay == null)
+            return;
+
+        if (departureHintVisibleTimer <= 0f)
+            return;
+
+        departureHintVisibleTimer -= dt;
+        if (departureHintVisibleTimer <= 0f)
+            departureHintOverlay.Hide();
+    }
+
+    private void ShowDepartureHint(string hintKey)
+    {
+        if (departureHintOverlay == null)
+            return;
+
+        string text = hintKey switch
+        {
+            HintKeyLever => "To depart, each player should interact with the lever.",
+            _ => null,
+        };
+        if (text == null)
+            return;
+
+        departureHintOverlay.SetWorldAnchor(null);
+        departureHintOverlay.ShowPassive(new DialogueLine("Hint", text));
+    }
+
+    private int CountPendingShopItemsOffBoard()
+    {
+        Rectangle trainBounds = prepTrainMap.GetBounds();
+        return prepTrainMap.MapObjects.Count(entity =>
+            entity is AbstractStation && !trainBounds.Contains(entity.Position));
+    }
+
+    private void TryOpenDepartDecisionForLastReady(int playerIndex)
+    {
+        List<int> joinedPlayerIndices = players
+            .Select(p => p.PlayerConfiguration.PlayerIndex)
+            .ToList();
+
+        bool allReady = joinedPlayerIndices.Count > 0 &&
+                        joinedPlayerIndices.All(index => readyPlayers.Contains(index));
+        if (!allReady)
+            return;
+
+        int pendingShopCount = CountPendingShopItemsOffBoard();
+        if (pendingShopCount <= 0)
+            return;
+
+        OpenDepartDecision(playerIndex);
+    }
+
+    private void UpdateDepartDecisionInput(float dt)
+    {
+        if (!isDepartDecisionOpen)
+            return;
+
+        if (departDecisionInputBlockTimer > 0f)
+        {
+            departDecisionInputBlockTimer -= dt;
+            return;
+        }
+
+        bool acceptDepart = Game.playerManager.Configs.Any(config => config.Input.IsInteractJustPressed());
+        bool setNotReady = Game.playerManager.Configs.Any(config => config.Input.IsGrabJustPressed());
+        if (!acceptDepart && !setNotReady)
+            return;
+
+        if (setNotReady && departDecisionPlayerIndex.HasValue)
+        {
+            readyPlayers.Remove(departDecisionPlayerIndex.Value);
+            allowDepartWithPendingItems = false;
+        }
+        else if (acceptDepart)
+        {
+            allowDepartWithPendingItems = true;
+        }
+
+        isDepartDecisionOpen = false;
+        departDecisionPlayerIndex = null;
+        departureHintOverlay?.Hide();
+    }
+
+    private void EnsureDepartDecisionShown(bool allReady, int pendingShopCount, IReadOnlyList<int> joinedPlayerIndices)
+    {
+        if (isDepartDecisionOpen || allowDepartWithPendingItems)
+            return;
+        if (!allReady || pendingShopCount <= 0)
+            return;
+
+        int fallbackPlayer = lastReadyPlayerIndex
+                             ?? (joinedPlayerIndices.Count > 0 ? joinedPlayerIndices[joinedPlayerIndices.Count - 1] : -1);
+        if (fallbackPlayer >= 0)
+            OpenDepartDecision(fallbackPlayer);
+    }
+
+    private void OpenDepartDecision(int playerIndex)
+    {
+        if (departureHintOverlay == null)
+            return;
+
+        isDepartDecisionOpen = true;
+        departDecisionPlayerIndex = playerIndex;
+        currentDepartureHintKey = null;
+        departureHintVisibleTimer = 0f;
+        departDecisionInputBlockTimer = DepartDecisionInputBlockSeconds;
+        departureHintOverlay.SetWorldAnchor(null);
+        departureHintOverlay.ShowDecision(
+            new DialogueLine("Hint", "Bought items are still off-board. Depart anyway?"),
+            "No",
+            "Yes");
     }
 }
