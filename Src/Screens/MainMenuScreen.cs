@@ -124,17 +124,6 @@ public sealed class MainMenuScreen(GamelabGame game) : Screens.GamelabGameScreen
 
         Gum.Draw();
 
-        if (optionsPanel != null && optionsPanel.IsOpen)
-        {
-            spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
-            optionsPanel.Draw(
-                spriteBatch,
-                virtualScreenSize,
-                Game.fontSystem.GetFont(72),
-                Game.fontSystem.GetFont(40));
-            spriteBatch.End();
-        }
-
         base.Draw(gameTime);
     }
 
@@ -210,6 +199,7 @@ public sealed class MainMenuScreen(GamelabGame game) : Screens.GamelabGameScreen
 
     public override void Dispose()
     {
+        optionsPanel?.Dispose();
         soundService?.UnloadSound(Sounds.MenuSelect);
         base.Dispose();
     }

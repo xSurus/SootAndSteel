@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Gamelab.Components;
 using Gamelab.Input;
+using Gamelab.UI;
 using Gum.Forms;
 using Gum.Wireframe;
 using Microsoft.Xna.Framework;
@@ -49,7 +50,10 @@ public sealed class JoinScreen(GamelabGame game) : Screens.GamelabGameScreen(gam
                  {
                      joinUi.First_Player, joinUi.Second_Player, joinUi.Third_Player, joinUi.Fourth_Player
                  })
+        {
             p.Visual.PlayAnimation(AnimPlayerEmpty);
+            SetJoinButtonState(p, isJoined: false);
+        }
     }
 
     public override void UnloadContent()
@@ -105,11 +109,15 @@ public sealed class JoinScreen(GamelabGame game) : Screens.GamelabGameScreen(gam
             JoinPlayerComponent p = players[i];
 
             if (isJoined)
+            {
                 p.Visual.PlayAnimation(AnimPlayerJoined);
+                SetJoinButtonState(p, isJoined: true);
+            }
             else
             {
                 p.Visual.StopAnimation();
                 p.Visual.PlayAnimation(AnimPlayerEmpty);
+                SetJoinButtonState(p, isJoined: false);
             }
         }
 
@@ -132,5 +140,24 @@ public sealed class JoinScreen(GamelabGame game) : Screens.GamelabGameScreen(gam
     {
         Gum.Draw();
         base.Draw(gameTime);
+    }
+
+    private static void SetJoinButtonState(JoinPlayerComponent playerSlot, bool isJoined)
+    {
+        if (playerSlot.Join is not { } joinButton)
+        {
+            return;
+        }
+
+        if (isJoined)
+        {
+            XboxButtonGlyphs.ApplyFaceButton(joinButton, XboxButtonAtlas.Face.Start);
+            joinButton.ButtonText = "Joined";
+        }
+        else
+        {
+            XboxButtonGlyphs.ApplyFaceButton(joinButton, XboxButtonAtlas.Face.A);
+            joinButton.ButtonText = "Join";
+        }
     }
 }

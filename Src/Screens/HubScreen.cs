@@ -21,7 +21,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using MonoGameGum;
-using Myra.Graphics2D.UI;
 
 namespace Gamelab.Screens;
 
@@ -75,7 +74,6 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         worldUiManager = new WorldUiManager(Game);
         pauseMenu = new PauseMenuController();
         pauseMenu.OnExitRequested += () => Game.SwitchToScreen(new Gamelab.JoinScreen(Game));
-        if (hud.Desktop.Root is Panel rootPanel) rootPanel.Widgets.Add(pauseMenu.Overlay);
 
         craftingHelp = new CraftingHelp();
         craftingHelp.AddToRoot();
@@ -152,11 +150,6 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
                 Color.White * departWhiteFilter.Opacity);
         }
 
-        pauseMenu.OptionsPanel.Draw(
-            spriteBatch,
-            virtualScreenSize,
-            Game.fontSystem.GetFont(72),
-            Game.fontSystem.GetFont(40));
         spriteBatch.End();
 
         base.Draw(gameTime);
@@ -283,6 +276,7 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
     public override void UnloadContent()
     {
         worldUiManager?.ClearAll();
+        pauseMenu?.Dispose();
         GumService.Default.Root.Children.Clear();
         Game.Services.RemoveService(typeof(GameplayContext));
         Services.GetService<IVfxService>().ClearAll();

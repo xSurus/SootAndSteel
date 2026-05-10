@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ComponentSave xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>PauseOverlay</Name>
+  <BaseType>Container</BaseType>
+  <State>
+    <Name>Default</Name>
+    <Variable Type="string" Name="Background.Parent" SetsValue="true" />
+    <Variable Type="float" Name="Background.Rotation" SetsValue="true">
+      <Value xsi:type="xsd:float">1</Value>
+    </Variable>
+    <Variable IsFile="true" Type="string" Name="Background.SourceFile" SetsValue="true">
+      <Value xsi:type="xsd:string">spr_pause_paper_burnt_380x280.png</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="Background.XOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="Background.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">6</Value>
+    </Variable>
+    <Variable Type="float" Name="Background.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="VerticalAlignment" Name="Background.YOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="Background.YUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">7</Value>
+    </Variable>
+    <Variable Type="string" Name="Continue.ContainedType" SetsValue="true">
+      <Value xsi:type="xsd:string">NineSlice</Value>
+    </Variable>
+    <Variable Type="float" Name="Continue.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="Continue.HeightUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="string" Name="Continue.MenuButtonLable" SetsValue="true">
+      <Value xsi:type="xsd:string">Continue</Value>
+    </Variable>
+    <Variable Type="string" Name="Continue.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">MenuItemContainer</Value>
+    </Variable>
+    <Variable Type="Selected" Name="Continue.SelectedState" SetsValue="true">
+      <Value xsi:type="xsd:string">isSelected</Value>
+    </Variable>
+    <Variable Type="string" Name="Continue.TextInstanceText" SetsValue="true">
+      <Value xsi:type="xsd:string">Continue</Value>
+    </Variable>
+    <Variable Type="float" Name="Continue.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="Continue.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="float" Name="Continue.X" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="Continue.XOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="Continue.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">6</Value>
+    </Variable>
+    <Variable Type="float" Name="Exit.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="Exit.HeightUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="string" Name="Exit.MenuButtonLable" SetsValue="true">
+      <Value xsi:type="xsd:string">Exit</Value>
+    </Variable>
+    <Variable Type="string" Name="Exit.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">MenuItemContainer</Value>
+    </Variable>
+    <Variable Type="Selected" Name="Exit.SelectedState" SetsValue="true">
+      <Value xsi:type="xsd:string">notSelected</Value>
+    </Variable>
+    <Variable Type="string" Name="Exit.TextInstanceText" SetsValue="true">
+      <Value xsi:type="xsd:string">Exit</Value>
+    </Variable>
+    <Variable Type="float" Name="Exit.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="Exit.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="float" Name="Exit.X" SetsValue="true">
+      <Value xsi:type="xsd:float">10</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="Exit.XOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="Exit.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">6</Value>
+    </Variable>
+    <Variable Type="float" Name="Height" SetsValue="true">
+      <Value xsi:type="xsd:float">100</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="HeightUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="int" Name="ItemFunction.Alpha" SetsValue="true">
+      <Value xsi:type="xsd:int">144</Value>
+    </Variable>
+    <Variable Type="int" Name="ItemFunction.Blue" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable IsFont="true" Type="string" Name="ItemFunction.Font" SetsValue="true">
+      <Value xsi:type="xsd:string">Ubuntu Mono</Value>
+    </Variable>
+    <Variable Type="int" Name="ItemFunction.FontSize" SetsValue="true">
+      <Value xsi:type="xsd:int">11</Value>
+    </Variable>
+    <Variable Type="int" Name="ItemFunction.Green" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="float" Name="ItemFunction.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="ItemFunction.HeightUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="ItemFunction.HorizontalAlignment" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="int" Name="ItemFunction.OutlineThickness" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="string" Name="ItemFunction.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">Background</Value>
+    </Variable>
+    <Variable Type="int" Name="ItemFunction.Red" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="string" Name="ItemFunction.Text" SetsValue="true">
+      <Value xsi:type="xsd:string">- ALL STOP -</Value>
+    </Variable>
+    <Variable Type="float" Name="ItemFunction.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">150</Value>
+    </Variable>
+    <Variable Type="float" Name="ItemFunction.X" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="ItemFunction.XOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="ItemFunction.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">6</Value>
+    </Variable>
+    <Variable Type="float" Name="ItemFunction.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">83</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="ItemFunction.YUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="ChildrenLayout" Name="MenuItemContainer.ChildrenLayout" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="float" Name="MenuItemContainer.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="MenuItemContainer.HeightUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="string" Name="MenuItemContainer.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">Background</Value>
+    </Variable>
+    <Variable Type="float" Name="MenuItemContainer.StackSpacing" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="float" Name="MenuItemContainer.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="MenuItemContainer.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="float" Name="MenuItemContainer.X" SetsValue="true">
+      <Value xsi:type="xsd:float">47.59024</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="MenuItemContainer.XOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="MenuItemContainer.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">2</Value>
+    </Variable>
+    <Variable Type="float" Name="MenuItemContainer.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">71.020386</Value>
+    </Variable>
+    <Variable Type="VerticalAlignment" Name="MenuItemContainer.YOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="MenuItemContainer.YUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">3</Value>
+    </Variable>
+    <Variable Type="float" Name="Options.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="Options.HeightUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="string" Name="Options.MenuButtonLable" SetsValue="true">
+      <Value xsi:type="xsd:string">Options</Value>
+    </Variable>
+    <Variable Type="string" Name="Options.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">MenuItemContainer</Value>
+    </Variable>
+    <Variable Type="Selected" Name="Options.SelectedState" SetsValue="true">
+      <Value xsi:type="xsd:string">notSelected</Value>
+    </Variable>
+    <Variable Type="string" Name="Options.TextInstanceText" SetsValue="true">
+      <Value xsi:type="xsd:string">Options</Value>
+    </Variable>
+    <Variable Type="float" Name="Options.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="Options.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="float" Name="Options.X" SetsValue="true">
+      <Value xsi:type="xsd:float">-5</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="Options.XOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="Options.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">6</Value>
+    </Variable>
+    <Variable Type="int" Name="Pause.Blue" SetsValue="true">
+      <Value xsi:type="xsd:int">9</Value>
+    </Variable>
+    <Variable IsFont="true" Type="string" Name="Pause.Font" SetsValue="true">
+      <Value xsi:type="xsd:string">Special Elite</Value>
+    </Variable>
+    <Variable Type="int" Name="Pause.FontSize" SetsValue="true">
+      <Value xsi:type="xsd:int">40</Value>
+    </Variable>
+    <Variable Type="int" Name="Pause.Green" SetsValue="true">
+      <Value xsi:type="xsd:int">17</Value>
+    </Variable>
+    <Variable Type="float" Name="Pause.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">100</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="Pause.HeightUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="Pause.HorizontalAlignment" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="string" Name="Pause.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">Background</Value>
+    </Variable>
+    <Variable Type="int" Name="Pause.Red" SetsValue="true">
+      <Value xsi:type="xsd:int">17</Value>
+    </Variable>
+    <Variable Type="string" Name="Pause.Text" SetsValue="true">
+      <Value xsi:type="xsd:string">Paused</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="Pause.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="float" Name="Pause.X" SetsValue="true">
+      <Value xsi:type="xsd:float">-4</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="Pause.XOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="Pause.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">6</Value>
+    </Variable>
+    <Variable Type="float" Name="Pause.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">41</Value>
+    </Variable>
+    <Variable Type="State" Name="State" Category="States and Visibility" SetsValue="false">
+      <Value xsi:type="xsd:string">Default</Value>
+    </Variable>
+    <Variable Type="int" Name="TextInstance.Blue" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable IsFont="true" Type="string" Name="TextInstance.Font" SetsValue="true">
+      <Value xsi:type="xsd:string">Ubuntu Mono</Value>
+    </Variable>
+    <Variable Type="int" Name="TextInstance.Green" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="TextInstance.HorizontalAlignment" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="string" Name="TextInstance.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">Background</Value>
+    </Variable>
+    <Variable Type="int" Name="TextInstance.Red" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="string" Name="TextInstance.Text" SetsValue="true">
+      <Value xsi:type="xsd:string">-----------------------</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="TextInstance.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="float" Name="TextInstance.X" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="TextInstance.XOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="TextInstance.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">6</Value>
+    </Variable>
+    <Variable Type="float" Name="TextInstance.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">104</Value>
+    </Variable>
+    <Variable Type="int" Name="Vigniette.Alpha" SetsValue="true">
+      <Value xsi:type="xsd:int">199</Value>
+    </Variable>
+    <Variable Type="int" Name="Vigniette.Blue" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="int" Name="Vigniette.Green" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="float" Name="Vigniette.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">100</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="Vigniette.HeightUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="float?" Name="Vigniette.MaxWidth" SetsValue="true" />
+    <Variable Type="int" Name="Vigniette.Red" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="float" Name="Vigniette.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">100</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="Vigniette.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="float" Name="Width" SetsValue="true">
+      <Value xsi:type="xsd:float">100</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+  </State>
+  <Instance Name="Vigniette" BaseType="ColoredRectangle" />
+  <Instance Name="Continue" BaseType="MenuButtonWithIcon" />
+  <Instance Name="Options" BaseType="MenuButtonWithIcon" />
+  <Instance Name="Exit" BaseType="MenuButtonWithIcon" />
+  <Instance Name="Pause" BaseType="Text" />
+  <Instance Name="TextInstance" BaseType="Text" />
+  <Instance Name="ItemFunction" BaseType="Text" />
+  <Instance Name="MenuItemContainer" BaseType="Container" />
+  <Instance Name="Background" BaseType="Sprite" />
+  <Behaviors />
+</ComponentSave>

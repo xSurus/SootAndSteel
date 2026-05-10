@@ -58,7 +58,13 @@
   <ComponentReference Name="CraftingHelp" />
   <ComponentReference Name="JoinPlayerComponent" />
   <ComponentReference Name="MainMenuButton" />
+  <ComponentReference Name="MenuButtonWithIcon" />
+  <ComponentReference Name="MenuItemAdjustable" />
+  <ComponentReference Name="OptionsMenu" />
+  <ComponentReference Name="OptionsOverlay" />
+  <ComponentReference Name="PauseOverlay" />
   <ComponentReference Name="ShopItemType" />
+  <ComponentReference Name="Slider" />
   <ComponentReference Name="ToolTip" />
   <StandardElementReference Name="Circle" />
   <StandardElementReference Name="ColoredRectangle" />

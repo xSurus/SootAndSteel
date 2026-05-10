@@ -11,10 +11,9 @@ public class OptionsViewModel
         Master,
         Music,
         Sfx,
-        Back,
     }
 
-    private static readonly Row[] DefaultRowOrder = [Row.Master, Row.Music, Row.Sfx, Row.Back];
+    private static readonly Row[] DefaultRowOrder = [Row.Master, Row.Music, Row.Sfx];
 
     private readonly ISoundService soundService;
 
@@ -71,17 +70,9 @@ public class OptionsViewModel
         OnSelectionChanged?.Invoke();
     }
 
-    public static bool IsAdjustable(Row row) => row != Row.Back;
-
     public void DecreaseSelected() => AdjustSelected(-VolumeStep);
 
     public void IncreaseSelected() => AdjustSelected(VolumeStep);
-
-    /// <summary>Activate the currently selected non-adjustable row (e.g. Back).</summary>
-    public void ConfirmSelection()
-    {
-        if (SelectedRow == Row.Back) Close();
-    }
 
     public float VolumeOf(Row row) => row switch
     {
@@ -96,14 +87,12 @@ public class OptionsViewModel
         Row.Master => "Master Volume",
         Row.Music => "Ambient / Music",
         Row.Sfx => "Sound Effects",
-        Row.Back => "Back",
         _ => string.Empty,
     };
 
     private void AdjustSelected(float delta)
     {
         Row row = SelectedRow;
-        if (!IsAdjustable(row)) return;
 
         SoundSettings s = soundService.Settings;
         switch (row)

@@ -18,7 +18,7 @@ using Gamelab.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
-using Myra.Graphics2D.UI;
+using MonoGameGum;
 
 namespace Gamelab.Screens;
 
@@ -44,7 +44,6 @@ public class GameplayScreen(GamelabGame game) : GamelabGameScreen(game)
 
     private GameplayHud hud;
     private PauseMenuController pauseMenu;
-    private Desktop desktop;
     private ISoundService soundService;
     private EventInstance trainSound;
     private EventInstance ambientMusic;
@@ -131,6 +130,7 @@ public class GameplayScreen(GamelabGame game) : GamelabGameScreen(game)
         trainSound?.Dispose();
         ambientMusic?.Stop();
         ambientMusic?.Dispose();
+        pauseMenu?.Dispose();
 
         base.UnloadContent();
     }
@@ -196,12 +196,6 @@ public class GameplayScreen(GamelabGame game) : GamelabGameScreen(game)
         hud = new GameplayHud();
         pauseMenu = new PauseMenuController();
         pauseMenu.OnExitRequested += () => Game.SwitchToScreen(new Gamelab.JoinScreen(Game));
-
-        desktop = new Desktop();
-        var mainPanel = new Panel
-            { HorizontalAlignment = HorizontalAlignment.Stretch, VerticalAlignment = VerticalAlignment.Stretch };
-        mainPanel.Widgets.Add(pauseMenu.Overlay);
-        desktop.Root = mainPanel;
     }
 
     private bool UpdatePauseMenu()
@@ -344,7 +338,6 @@ public class GameplayScreen(GamelabGame game) : GamelabGameScreen(game)
     {
         spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
         hud.Draw(spriteBatch, virtualScreenSize);
-        desktop.Render();
 
         float w = endLevelWhiteFilter.Opacity;
         if (w > 0.001f)
@@ -353,13 +346,8 @@ public class GameplayScreen(GamelabGame game) : GamelabGameScreen(game)
                 Color.White * w);
         }
 
-        pauseMenu.OptionsPanel.Draw(
-            spriteBatch,
-            virtualScreenSize,
-            Game.fontSystem.GetFont(72),
-            Game.fontSystem.GetFont(40));
-
         spriteBatch.End();
+        GumService.Default.Draw();
     }
 
     private void OnWallBreached()
