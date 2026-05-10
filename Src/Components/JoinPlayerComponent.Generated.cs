@@ -1,4 +1,5 @@
 //Code for JoinPlayerComponent (Container)
+using Gamelab.Components;
 using Gum.Converters;
 using Gum.DataTypes;
 using Gum.Managers;
@@ -70,7 +71,7 @@ if(element == null) throw new System.InvalidOperationException("Could not find a
         }
     }
     public SpriteRuntime PlayerFigure { get; protected set; }
-    public TextRuntime Join { get; protected set; }
+    public ButtonWithIcon Join { get; protected set; }
     public ContainerRuntime Player { get; protected set; }
 
 
@@ -101,7 +102,7 @@ if(element == null) throw new System.InvalidOperationException("Could not find a
     {
         base.ReactToVisualChanged();
         PlayerFigure = this.Visual?.GetGraphicalUiElementByName("PlayerFigure") as global::MonoGameGum.GueDeriving.SpriteRuntime;
-        Join = this.Visual?.GetGraphicalUiElementByName("Join") as global::MonoGameGum.GueDeriving.TextRuntime;
+        Join = global::Gum.Forms.GraphicalUiElementFormsExtensions.TryGetFrameworkElementByName<ButtonWithIcon>(this.Visual,"Join");
         Player = this.Visual?.GetGraphicalUiElementByName("Player") as global::MonoGameGum.GueDeriving.ContainerRuntime;
         PlayerJoinedAnimation = this.Visual.GetAnimation("PlayerJoinedAnimation");
         PlayerEmptyAnimation = this.Visual.GetAnimation("PlayerEmptyAnimation");

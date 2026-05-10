@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
+using Gamelab.Services.Sound;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using nkast.Aether.Physics2D.Dynamics;
@@ -14,6 +15,15 @@ public abstract class AbstractGrabbable : AbstractPhysicalEntity, IGrabbable
     public bool IsBeingHeld => GrabJoints.Count > 0;
 
     protected abstract bool AllowPlayerRotation { get; }
+
+    private readonly ISoundService soundService;
+    
+    public AbstractGrabbable()
+    {
+        soundService = GamelabGame.Instance.Services.GetService<ISoundService>();
+        soundService.LoadSound(Sounds.GrabStation);
+        soundService.LoadSound(Sounds.DropStation);
+    }
 
     public virtual bool OnGrab(Player interactingPlayer, Vector2 grabPointWorldMeters)
     {
@@ -30,6 +40,8 @@ public abstract class AbstractGrabbable : AbstractPhysicalEntity, IGrabbable
 
         interactingPlayer.PhysicsBody.FixedRotation = !AllowPlayerRotation;
 
+        soundService.PlayOnce(Sounds.GrabStation);
+        
         return true;
     }
 
@@ -51,6 +63,7 @@ public abstract class AbstractGrabbable : AbstractPhysicalEntity, IGrabbable
         {
             gameplayContext.PhysicsWorld.Remove(joint);
             if (wasLastHolder) OnLastRelease(interactingPlayer);
+            soundService.PlayOnce(Sounds.DropStation);
         });
     }
 

@@ -19,19 +19,19 @@
     "color": "0000FF",
     "sprite": "BasicCasing"
   },
-  "ScatterProjectile": {
-    "name": "Scatter Projectile",
-    "description": "A projectile that splits into four smaller projectiles upon firing, increasing the area of effect, but reducing damage per fragment.",
+  "ScatterCasing": {
+    "name": "Scatter Casing",
+    "description": "A casing that holds many small pellets, increasing the area of effect, but reducing damage per fragment.",
     "color": "FF7700",
-    "sprite": "ScatterProjectile",
+    "sprite": "BasicCasing",
     "appearsInShop": true,
     "shopPrice": 10
   },
-  "EnemyProjectile": {
-    "name": "Enemy Projectile",
-    "description": "[Internal Only] A projectile fired by enemies, which may have different properties such as speed, damage, or special effects.",
+  "EnemyCasing": {
+    "name": "Enemy Casing",
+    "description": "[Internal Only] A casing fired by enemies, which may have different properties such as speed, damage, or special effects.",
     "color": "0000FF",
-    "sprite": "BasicProjectile"
+    "sprite": "BasicCasing"
   },
   "HomingPropellant": {
     "name": "Homing Propellant",
@@ -41,11 +41,11 @@
     "appearsInShop": true,
     "shopPrice": 10
   },
-  "ScatterCasing": {
-    "name": "Scatter Casing",
-    "description": "A casing that scatters into multiple shards after hitting an enemy, increasing spread but decreasing damage per shard.",
+  "FrangibleProjectile": {
+    "name": "Frangible Projectile",
+    "description": "A projectile that scatters into multiple shards after hitting an enemy, increasing spread but decreasing damage per shard.",
     "color": "0077FF",
-    "sprite": "BasicCasing",
+    "sprite": "BasicProjectile",
     "appearsInShop": true,
     "shopPrice": 10
   },
@@ -57,19 +57,19 @@
     "appearsInShop": true,
     "shopPrice": 10
   },
-  "PiercingCasing": {
-    "name": "Piercing Casing",
-    "description": "A casing that makes the bullet pierce through multiple enemies at full damage!",
+  "PiercingProjectile": {
+    "name": "Piercing Projectile",
+    "description": "A projectile that makes the bullet pierce through multiple enemies at full damage!",
     "color": "0077FF",
-    "sprite": "BasicCasing",
+    "sprite": "BasicProjectile",
     "appearsInShop": true,
     "shopPrice": 10
   },
-  "BurstProjectile": {
-    "name": "Burst Projectile",
-    "description": "A projectile that shoots three times in a row. How is that even possible?",
+  "BurstCasing": {
+    "name": "Burst Casing",
+    "description": "A casing that shoots three times in a row. How is that even possible?",
     "color": "0077FF",
-    "sprite": "BasicProjectile",
+    "sprite": "BasicCasing",
     "appearsInShop": true,
     "shopPrice": 10
   },
@@ -78,6 +78,22 @@
     "description": "A propellant that makes the projectile return to where it came from. Maybe not the best idea",
     "color": "0077FF",
     "sprite": "BasicPropellant",
+    "appearsInShop": true,
+    "shopPrice": 10
+  },
+  "RapidFireCasing": {
+    "name": "Rapid Fire Casing",
+    "description": "A casing of 10 small pellets, fired over time and dealing reduced damage on hit. Great to overwhelm a large amount of enemies.",
+    "color": "0077FF",
+    "sprite": "BasicCasing",
+    "appearsInShop": true,
+    "shopPrice": 10
+  },
+  "MatryoshkaProjectile": {
+    "name": "Matryoshka Projectile",
+    "description": "A Russian classic. This projectile releases smaller versions of itself on hit, hurdling towards the next enemy.",
+    "color": "0077FF",
+    "sprite": "BasicProjectile",
     "appearsInShop": true,
     "shopPrice": 10
   }

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{9ab295dd-2cf7-48de-b58c-ed92137cf4e7}">
+		<property name="assetPath">
+			<value>sfx/enemy hit/enemy_hit-6.mp3</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>24</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>0.45600000000000002</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{c7be4079-4b34-4803-977f-2108dc223288}</destination>
+		</relationship>
+	</object>
+</objects>

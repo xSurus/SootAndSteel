@@ -2,6 +2,7 @@ using Gamelab.Data;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
 using Gamelab.Services.Shop;
+using Gamelab.Services.Sound;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -33,6 +34,8 @@ public class BuyableStationWrapper : AbstractPhysicalEntity, IInteractable, IGra
     // ITooltipable contract is the optional view of the same value.
     int? ITooltipable.Cost => Cost;
 
+    private readonly ISoundService soundService;
+
     public BuyableStationWrapper(string stationKindId, Vector2 position)
     {
         StationKindId = stationKindId;
@@ -43,6 +46,8 @@ public class BuyableStationWrapper : AbstractPhysicalEntity, IInteractable, IGra
         WrappedStation = StationFactory.CreateStation(StationKindId, position);
         PhysicsBody = WrappedStation.PhysicsBody;
         PhysicsBody.Tag = this;
+        soundService = GamelabGame.Instance.Services.GetService<ISoundService>();
+        soundService.LoadSound(Sounds.Purchase);
     }
 
     public void OnInteract(Player interactingPlayer)
@@ -53,6 +58,7 @@ public class BuyableStationWrapper : AbstractPhysicalEntity, IInteractable, IGra
             gameplayContext.Map.MapObjects.Add(WrappedStation);
             gameplayContext.Map.SnapToNearestValidCell(WrappedStation);
             gameplayContext.Map.MapObjects.Remove(this);
+            soundService.PlayOnce(Sounds.Purchase);
         }
     }
 

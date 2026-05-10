@@ -1,13 +1,15 @@
 using Gamelab.Enemies.Slots;
-using EnemyEntity = Gamelab.Enemies.Types.Enemy;
+using Gamelab.Enemies.Types;
 using Microsoft.Xna.Framework;
 
 namespace Gamelab.Enemies.Core;
 
 public static class EnemyFactory
 {
-    public static AbstractEnemy Create(Vector2 spawnPosition, EnemyTrainSlot slot)
+    public static AbstractEnemy Create(Vector2 spawnPosition, EnemyTrainSlot slot, EnemyType type = EnemyType.Rifle)
     {
-        return new EnemyEntity(spawnPosition, slot);
+        return type == EnemyType.TutorialRifle
+            ? new TutorialEnemy(spawnPosition, slot)
+            : new Enemy(spawnPosition, slot);
     }
 }

@@ -72,7 +72,7 @@ public class CannonStation : AbstractStation, IBulletEmitter, IInteractable, ICa
         FireCannon();
     }
 
-    private Vector2 AimDirection => new(
+    public Vector2 AimDirection => new(
         (float)Math.Cos(PhysicsBody.Rotation),
         (float)Math.Sin(PhysicsBody.Rotation)
     );
@@ -112,7 +112,7 @@ public class CannonStation : AbstractStation, IBulletEmitter, IInteractable, ICa
         }
     }
 
-    private void FireCannon()
+    public void FireCannon()
     {
         if (HeldItem == null)
         {

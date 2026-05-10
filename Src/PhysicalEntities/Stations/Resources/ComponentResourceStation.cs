@@ -35,8 +35,6 @@ public class ComponentResourceStation(Vector2 position, string componentId)
         return DispensedComponentConfig?.Description ?? "No description";
     }
 
-    public override bool IsVisible => IsHighlighted && DispensedComponentConfig != null;
-
     public EItemType DispensedItemType => DispensedComponent.IsBasic ? EItemType.Basic : EItemType.Upgrading;
 
     public override string CategoryName => ShopItemIconAtlas.GetComponentTypeName(DispensedComponent.Type);
@@ -59,8 +57,8 @@ public class ComponentResourceStation(Vector2 position, string componentId)
             return false;
         }
 
-        soundService.PlayOnce(Sounds.PickupItem);
         item = new BulletItem(ComponentId);
+        soundService.PlayOnce(DispensedComponent.Type == EComponentType.Propellant ? Sounds.ShovelUp : Sounds.PickupItem);
         if (consumer != null) ConsumerQueue.RemoveAll(t => t.Consumer == consumer);
 
         return true;

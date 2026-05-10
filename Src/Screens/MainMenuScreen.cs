@@ -9,6 +9,7 @@ using Gamelab.Serialization;
 using Gamelab.Services.Sound;
 using Gamelab.Particles;
 using Gamelab.Services.Vfx;
+using Gamelab.Tutorial;
 using Gamelab.UI;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
@@ -108,6 +109,11 @@ public sealed class MainMenuScreen(GamelabGame game) : Screens.GamelabGameScreen
             soundService.PlayOnce(Sounds.MenuSelect);
             actions[selectedIndex].Invoke();
         }
+
+        if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) && Keyboard.GetState().IsKeyDown(Keys.R))
+        {
+            Game.SwitchToScreen(new ShootingRangeScreen(Game));
+        }
     }
 
     public override void Draw(GameTime gameTime)
@@ -118,17 +124,6 @@ public sealed class MainMenuScreen(GamelabGame game) : Screens.GamelabGameScreen
         spriteBatch.End();
 
         Gum.Draw();
-
-        if (optionsPanel != null && optionsPanel.IsOpen)
-        {
-            spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
-            optionsPanel.Draw(
-                spriteBatch,
-                virtualScreenSize,
-                Game.fontSystem.GetFont(72),
-                Game.fontSystem.GetFont(40));
-            spriteBatch.End();
-        }
 
         base.Draw(gameTime);
     }
@@ -184,7 +179,10 @@ public sealed class MainMenuScreen(GamelabGame game) : Screens.GamelabGameScreen
     {
         SaveManager.DeleteSave();
         Game.CurrentRun = new RunSession();
-        Game.SwitchToScreen(new HubScreen(Game));
+        if (!Game.CurrentRun.TutorialCompleted)
+            Game.SwitchToScreen(new GameplayScreen(Game, new TutorialDirector()));
+        else
+            Game.SwitchToScreen(new HubScreen(Game));
     }
 
     private void ContinueGame()
@@ -205,6 +203,7 @@ public sealed class MainMenuScreen(GamelabGame game) : Screens.GamelabGameScreen
 
     public override void Dispose()
     {
+        optionsPanel?.Dispose();
         soundService?.UnloadSound(Sounds.MenuSelect);
         base.Dispose();
     }

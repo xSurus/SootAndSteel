@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="40" viewBox="0 0 600 40">
+  <!-- Slider Fill (Active portion) - diagonal hatched bar -->
+  <!-- Designed at full width (600). In Figma: resize horizontally to set the % -->
+  <defs>
+    <pattern id="diagHatch" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="10" height="10" fill="#5a3a22"/>
+      <line x1="0" y1="0" x2="0" y2="10" stroke="#3a2010" stroke-width="3"/>
+    </pattern>
+  </defs>
+
+  <!-- Base bar -->
+  <rect x="0" y="0" width="600" height="40" fill="#5a3a22"/>
+
+  <!-- Diagonal hatching overlay -->
+  <rect x="0" y="0" width="600" height="40" fill="url(#diagHatch)"/>
+
+  <!-- Highlight on top edge -->
+  <rect x="0" y="0" width="600" height="2" fill="#7a5238" opacity="0.6"/>
+
+  <!-- Shadow on bottom edge -->
+  <rect x="0" y="38" width="600" height="2" fill="#1a0a02" opacity="0.5"/>
+
+  <!-- Outer border -->
+  <rect x="0.75" y="0.75" width="598.5" height="38.5" fill="none" stroke="#2a1810" stroke-width="1.5"/>
+</svg>

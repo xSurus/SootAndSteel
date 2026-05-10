@@ -15,7 +15,7 @@ public class MainMenuPanel
     public MainMenuViewModel ViewModel => viewModel;
 
     public MainMenuPanel(GamelabGame game, Action onContinueSelected, Action onStartNewSelected,
-        Action onOptionsSelected, Action onQuitSelected)
+        Action onShootingRangeSelected, Action onOptionsSelected, Action onQuitSelected)
     {
         this.game = game;
 
@@ -25,9 +25,10 @@ public class MainMenuPanel
             entries.Add(new MainMenuViewModel.Entry("Continue Game", onContinueSelected));
         }
         entries.Add(new MainMenuViewModel.Entry("New Game", onStartNewSelected));
+        entries.Add(new MainMenuViewModel.Entry("Shooting Range", onShootingRangeSelected));
         entries.Add(new MainMenuViewModel.Entry("Options", onOptionsSelected));
         entries.Add(new MainMenuViewModel.Entry("Quit Game", onQuitSelected));
-
+        
         viewModel = new MainMenuViewModel(entries);
     }
 
@@ -58,7 +59,7 @@ public class MainMenuPanel
 
         IReadOnlyList<MainMenuViewModel.Entry> entries = viewModel.Entries;
         int firstItemY = panelRect.Y + (entries.Count > 3 ? -20 : 20);
-        int itemSpacing = 85;
+        int itemSpacing = 65;
 
         for (int i = 0; i < entries.Count; i++)
         {

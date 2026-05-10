@@ -32,6 +32,7 @@ public class TrainState
 
     public float DistanceTraveled { get; private set; }
     public float MaintenanceScale { get; private set; } = 1f;
+    public float TemperatureDecreaseScale { get; set; } = 1f;
 
     public TrainState(RunSession session)
     {
@@ -56,6 +57,7 @@ public class TrainState
             float temperatureDecrease =
                 GamelabGame.Instance.GameplayConfig.TrainTemperatureDecreasePerSecondPerBreachedWall *
                 MaintenanceScale *
+                TemperatureDecreaseScale *
                 numberBreachedWalls *
                 deltaTime;
             DecreaseTemperature(temperatureDecrease);
@@ -65,6 +67,7 @@ public class TrainState
         {
             float temperatureDecrease = GamelabGame.Instance.GameplayConfig.TrainTemperatureDecreasePerSecondEngineOff *
                                         MaintenanceScale *
+                                        TemperatureDecreaseScale *
                                         deltaTime;
             DecreaseTemperature(temperatureDecrease);
         }
@@ -81,6 +84,12 @@ public class TrainState
     public void ConfigurePlayerScaling(int playerCount)
     {
         MaintenanceScale = GamelabGame.Instance.GameplayConfig.GetMaintenanceScaleForPlayerCount(playerCount);
+    }
+
+    public void SlowDownIfRunning()
+    {
+        if (CurrentSpeed != TrainSpeedSetting.Stopped)
+            CurrentSpeed = TrainSpeedSetting.Slow;
     }
 
     public void DecreaseTemperature(float amount)

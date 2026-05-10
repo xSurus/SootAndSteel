@@ -73,7 +73,6 @@ public class SoundService : ISoundService,
         sound.Stop();
         sound.Volume = ComputeCategoryVolume(GetCategoryFor(id));
         sound.Start();
-        logger.Info("Playing sound: " + id);
     }
 
     public EventInstance GetSoundInstance(string id)

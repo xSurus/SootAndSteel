@@ -9,6 +9,7 @@ public class RunSession
     public int Credits { get; set; } = 0;
     public List<StationSaveData> TrainLayout { get; set; } = new();
     public int RunSeed { get; set; } = Random.Shared.Next();
+    public bool TutorialCompleted { get; set; } = false;
 
     public void AddCredits(int amount)
     {

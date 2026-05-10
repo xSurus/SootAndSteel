@@ -3,6 +3,7 @@ using FmodForFoxes.Studio;
 using Gamelab.Assets;
 using Gamelab.Enemies.Core;
 using Gamelab.Items;
+using Gamelab.Items.Bullets;
 using Gamelab.PhysicalEntities;
 using Gamelab.PhysicalEntities.Bullets;
 using Gamelab.PhysicalEntities.Interfaces;
@@ -69,6 +70,8 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable, IItemP
         walkSound = soundService.GetSoundInstance(Sounds.Walk);
         soundService.RegisterParameter(walkSound, "Walk Speed",
             () => PhysicsBody.LinearVelocity.Length() / MaxVelocity);
+        soundService.RegisterParameter(walkSound, "Material",
+            () => PlayerIsInTrain() ? (int)WalkMaterial.Wood : (int)WalkMaterial.Snow);
         walkSound?.Start();
 
         animationService = GamelabGame.Instance.Services.GetService<IAnimationService>();
@@ -422,7 +425,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable, IItemP
         if (HeldItem != null && CanProvideItem(consumer))
         {
             HeldItem = null;
-            soundService.PlayOnce(Sounds.DropItem);
+            soundService.PlayOnce(ItemIsGranular(item) ? Sounds.ShovelDown : Sounds.DropItem);
             return true;
         }
 
@@ -555,6 +558,16 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable, IItemP
             RenderUtility.OverlayTopLayer);
     }
 
+    protected bool ItemIsGranular(Item item)
+    {
+        return (item is BulletItem && ((BulletItem) item).Type == EComponentType.Propellant) || item.Id == "Coal";
+    }
+
+    protected bool PlayerIsInTrain()
+    {
+        return gameplayContext.Map.GetBounds().Contains(Position);
+    }
+    
     public void Dispose()
     {
         animationService?.Unregister(playerSprite);

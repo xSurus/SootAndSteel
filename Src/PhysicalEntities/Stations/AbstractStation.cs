@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Gamelab.Assets;
 using Gamelab.Items;
+using Gamelab.Items.Bullets;
 using Gamelab.PhysicalEntities.Configurable;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
@@ -12,7 +13,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Gamelab.PhysicalEntities.Stations;
 
-public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPickable, ITooltipable, IItemProvider,
+public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPickable, IItemProvider,
     IItemReceiver, IUpdatable
 {
     private static readonly Logger logger = new("Station");
@@ -29,7 +30,6 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
     private const float TimeUntilKick = 0.5f;
     public Vector2 DrawPosition => Position - new Vector2(GamelabGame.Instance.GameplayConfig.TrainTileSize / 2f);
     protected override bool AllowPlayerRotation { get; } = false;
-    public virtual bool IsVisible => IsHighlighted && StationConfig != null;
 
     public virtual string GetTitle()
     {
@@ -49,8 +49,6 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
 
     public virtual Rectangle? IconSourceRect => null;
 
-    public virtual int? Cost => null;
-
     protected AbstractStation(string stationId, Vector2 position)
     {
         StationId = stationId;
@@ -61,6 +59,8 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
         soundService = GamelabGame.Instance.Services.GetService<ISoundService>();
         soundService.LoadSound(Sounds.PickupItem);
         soundService.LoadSound(Sounds.DropItem);
+        soundService.LoadSound(Sounds.ShovelUp);
+        soundService.LoadSound(Sounds.ShovelDown);
     }
 
     public virtual void OnPickup(Player interactingPlayer)
@@ -156,7 +156,7 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
         if (HeldItem != null && CanProvideItem(consumer))
         {
             HeldItem = null;
-            soundService.PlayOnce(Sounds.PickupItem);
+            soundService.PlayOnce(ItemIsGranular(item) ? Sounds.ShovelUp : Sounds.PickupItem);
             if (consumer != null) ConsumerQueue.RemoveAll(t => t.Consumer == consumer);
             return true;
         }
@@ -167,7 +167,7 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
 
     public virtual void ReceiveItem(Item item, IItemProvider source)
     {
-        soundService.PlayOnce(Sounds.DropItem);
+        soundService.PlayOnce(ItemIsGranular(item) ? Sounds.ShovelDown : Sounds.DropItem);
         HeldItem = item;
     }
 
@@ -205,5 +205,10 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
     public virtual bool CanProvideItem(IItemReceiver consumer)
     {
         return HeldItem != null && IsConsumerFirstInLine(consumer);
+    }
+    
+    protected bool ItemIsGranular(Item item)
+    {
+        return (item is BulletItem && ((BulletItem) item).Type == EComponentType.Propellant) || item.Id == "Coal";
     }
 }

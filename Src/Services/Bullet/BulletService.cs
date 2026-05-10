@@ -13,11 +13,16 @@ namespace Gamelab.Services.Bullet;
 
 public class BulletService : IGameSystem, IBulletService
 {
+    private class PendingBullet(float timeRemaining, BulletEntity bulletEntity)
+    {
+        public float TimeRemaining = timeRemaining;
+        public BulletEntity Bullet => bulletEntity;
+    }
+    
     protected List<BulletEntity> activeBullets = new();
-    private List<BulletEntity> pendingBullets = new();
+    private List<PendingBullet> pendingBullets = new();
     protected float gameTimeAccumulator;
     protected GamelabGame game;
-    protected SpriteBatch spriteBatch;
 
     public void Initialize(GamelabGame game)
     {
@@ -37,13 +42,23 @@ public class BulletService : IGameSystem, IBulletService
                 bullet.OnUpdate(fixedDt);
             }
 
+            foreach (var bullet in pendingBullets)
+            {
+                bullet.TimeRemaining -= dt;
+            }
+
             gameTimeAccumulator -= fixedDt;
         }
 
         if (pendingBullets.Count > 0)
         {
-            activeBullets.AddRange(pendingBullets);
-            pendingBullets.Clear();
+            List<BulletEntity> spawningBullets = new();
+            spawningBullets.AddRange(pendingBullets
+                .Where(b => b.TimeRemaining < 0f)
+                .Select(b => b.Bullet));
+            pendingBullets = pendingBullets.Where(b => b.TimeRemaining > 0f).ToList();
+            foreach (var bullet in spawningBullets) bullet.OnSpawn();
+            activeBullets.AddRange(spawningBullets);
         }
     }
 
@@ -60,11 +75,11 @@ public class BulletService : IGameSystem, IBulletService
     {
         foreach (var bullet in activeBullets) bullet.Cleanup();
         activeBullets.Clear();
-        foreach (var bullet in pendingBullets) bullet.Cleanup();
+        foreach (var bullet in pendingBullets) bullet.Bullet.Cleanup();
         pendingBullets.Clear();
     }
 
-    public void EmitBullet(
+    public BulletEntity EmitBullet(
         BulletItem bulletItem,
         Vector2 position,
         Vector2 direction,
@@ -76,23 +91,19 @@ public class BulletService : IGameSystem, IBulletService
         activeBullets.Add(bullet);
         bullet.OnCreate();
         bullet.OnSpawn();
+        return bullet;
     }
 
-    public void EmitAdditionalBullet(
-        BulletItem bulletItem,
-        Vector2 position,
-        Vector2 direction,
-        IBulletEmitter initialShooter,
-        IBulletEmitter directEmitter = null)
+    public BulletEntity EmitAdditionalBullet(
+        BulletEntity bulletEntity,
+        IBulletEffect spawningEffect,
+        float delay = 0f)
     {
-        BulletStats stats = new BulletStats(game.GameplayConfig, position, direction);
-        GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
         BulletEntity bullet =
-            new BulletEntity(bulletItem, stats, gameplayContext.PhysicsWorld, initialShooter, directEmitter);
-        bullet.IsRootEntity = false;
-        pendingBullets.Add(bullet);
+            new BulletEntity(bulletEntity, spawningEffect);
+        pendingBullets.Add(new PendingBullet(delay, bullet));
         bullet.OnCreate();
-        bullet.OnSpawn();
+        return bullet;
     }
 
     private void RemoveStaleBullets()
