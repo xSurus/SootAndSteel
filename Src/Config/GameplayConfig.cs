@@ -57,6 +57,7 @@ public class GameplayConfig
     public float RiflePreferredDistance { get; set; } = 30f;
     public float EnemyShootCooldown { get; set; } = 2f;
     public float EnemyShootSpread { get; set; } = 0.2f;
+    public float EnemyFleeDelay { get; set; } = 0.75f;
 
     // Train temperature configuration
     public float TrainMaxTemperature { get; set; } = 100f;

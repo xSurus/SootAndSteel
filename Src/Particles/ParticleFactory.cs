@@ -84,6 +84,30 @@ public static class ParticleFactory
         return emitter;
     }
 
+    public static ParticleEmitter CreateNeckBleed(Vector2 position)
+    {
+        var emitter = new ParticleEmitter(200, AssetManager.SparkTexture)
+        {
+            Position = position,
+            AutoTrigger = true,
+            AutoTriggerFrequency = 0.05f,
+            Profile = new ConeProfile(new Vector2(0f, -1f), MathHelper.PiOver4),
+            Parameters = new ParticleReleaseParameters
+            {
+                MinQuantity = 2, MaxQuantity = 4,
+                MinSpeed = 30f, MaxSpeed = 80f,
+                MinAge = 0.3f, MaxAge = 0.6f,
+                MinSize = 0.5f, MaxSize = 1.0f,
+                Color = Color.DarkRed
+            }
+        };
+
+        emitter.Modifiers.Add(new FadeOutModifier(0.4f));
+        emitter.Modifiers.Add(new DirectionalForceModifier(Vector2.UnitY, 500f));
+
+        return emitter;
+    }
+
     public static ParticleEmitter CreateOvenSmoke(Vector2 position)
     {
         var emitter = new ParticleEmitter(200, AssetManager.SparkTexture)
