@@ -157,6 +157,33 @@ public static class ParticleFactory
         return emitter;
     }
 
+    public static ParticleEmitter CreateChimneySmoke()
+    {
+        var emitter = new ParticleEmitter(1000, AssetManager.GetItemTexture("Coal"))
+        {
+            Position = Vector2.Zero,
+            AutoTrigger = false,
+            AutoTriggerFrequency = 0.1f,
+            Profile = new ConeProfile(new Vector2(0f, -1f), MathHelper.PiOver4),
+
+            Parameters = new ParticleReleaseParameters
+            {
+                MinQuantity = 8, MaxQuantity = 14,
+                MinSpeed = 80f, MaxSpeed = 150f,
+                MinAge = 3.5f, MaxAge = 6.0f,
+                MinSize = 0.35f, MaxSize = 0.75f,
+                Color = new Color(40, 40, 40, 100)
+            }
+        };
+
+        emitter.Modifiers.Add(new FadeInModifier(0.3f));
+        emitter.Modifiers.Add(new FadeOutModifier(1.2f));
+        emitter.Modifiers.Add(new TrainWindModifier());
+        emitter.Modifiers.Add(new DirectionalForceModifier(Vector2.UnitY, 20f));
+
+        return emitter;
+    }
+
     public static ParticleEmitter CreateBuyParticles(Vector2 position)
     {
         var emitter = new ParticleEmitter(128, AssetManager.DollarTexture)

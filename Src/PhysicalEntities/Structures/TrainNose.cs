@@ -21,6 +21,11 @@ public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
     private float RefuelAmount => GamelabGame.Instance.GameplayConfig.CoalOvenRefuelAmount;
     private float LowFuelThreshold => GamelabGame.Instance.GameplayConfig.CoalOvenLowFuelThreshold;
     private ParticleEmitter smokeEmitter;
+    private ParticleEmitter chimneyEmitter;
+    private const float ChimneyOffsetX = 650f;
+    private const float ChimneyOffsetY = -520f;
+    private const float NoseDrawOffsetX = -10f;
+    private const float NoseDrawOffsetY = 15f;
     private float heightPixels;
     private float widthPixels;
     
@@ -41,17 +46,27 @@ public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
             position.ToMeters());
         smokeEmitter = ParticleFactory.CreateOvenSmoke(position);
         GamelabGame.Instance.Services.GetService<IVfxService>()?.AddContinuous(smokeEmitter);
-        
+
+        chimneyEmitter = ParticleFactory.CreateChimneySmoke();
+        GamelabGame.Instance.Services.GetService<IVfxService>()?.AddContinuous(chimneyEmitter);
+
         soundService = GamelabGame.Instance.Services.GetService<ISoundService>();
         soundService.LoadSound(Sounds.ShovelDown);
     }
 
     public void Update(float dt)
     {
+        TrainMap map = gameplayContext.Map;
+        if (map != null)
+            chimneyEmitter.Position = map.GetTileTopLeftPixels(map.Width, map.Height - 1)
+                + new Vector2(0, map.TileSize)
+                + new Vector2(ChimneyOffsetX, ChimneyOffsetY);
+
         if (!gameplayContext.State.FuelBurningEnabled)
         {
             gameplayContext.State.IsCoalOvenBurning = currentFuel > 0f;
             smokeEmitter.AutoTrigger = false;
+            chimneyEmitter.AutoTrigger = false;
             return;
         }
 
@@ -61,12 +76,22 @@ public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
             float speedMultiplier = GetInterpolatedBurnMultiplier(gameplayContext.State.actualSpeed);
             currentFuel -= BurnRate * gameplayContext.State.MaintenanceScale * speedMultiplier * dt;
             smokeEmitter.AutoTrigger = true;
+
+            bool chimneyActive = gameplayContext.State.actualSpeed > 0f;
+            chimneyEmitter.AutoTrigger = chimneyActive;
+            if (chimneyActive)
+            {
+                float maxSpeed = TrainSpeedSetting.Fast.TargetSpeed;
+                float speedT = MathHelper.Clamp(gameplayContext.State.actualSpeed / maxSpeed, 0f, 1f);
+                chimneyEmitter.AutoTriggerFrequency = MathHelper.Lerp(0.30f, 0.04f, speedT);
+            }
         }
         else
         {
             gameplayContext.State.IsCoalOvenBurning = false;
             gameplayContext.State.SlowDownIfRunning();
             smokeEmitter.AutoTrigger = false;
+            chimneyEmitter.AutoTrigger = false;
         }
     }
 
@@ -128,7 +153,7 @@ public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
         {
             // Pivot at bottom-left of the texture so the back of the nose lines up with the cab seam (column Width).
             Vector2 origin = new Vector2(0f, tex.Height);
-            spriteBatch.Draw(tex, feetAnchor, null, Color.White, 0f, origin, tileScale, SpriteEffects.None, depth);
+            spriteBatch.Draw(tex, feetAnchor + new Vector2(NoseDrawOffsetX, NoseDrawOffsetY), null, Color.White, 0f, origin, tileScale, SpriteEffects.None, depth);
         }
         else
         {
