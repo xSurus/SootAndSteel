@@ -32,10 +32,11 @@ public static class AssetManager
     public static Dictionary<string, Texture2D> StructureTextures { get; private set; } = new();
     public static Dictionary<string, Texture2D> NPCTextures { get; private set; } = new();
     public static Dictionary<string, Texture2D> ItemTextures { get; private set; } = new();
-
     public static SpriteSheet EnemySpriteSheet { get; private set; }
     public static SpriteSheet PlayerSpriteSheet { get; private set; }
     public static SpriteSheet ConveyorSpriteSheet { get; private set; }
+    public static Texture2D[] PlayerCannonTopTextures { get; private set; } = new Texture2D[4];
+    public static Texture2D[] PlayerCannonBottomTextures { get; private set; } = new Texture2D[4];
 
     public static void LoadContent(ContentManager content, GraphicsDevice graphicsDevice)
     {
@@ -58,9 +59,9 @@ public static class AssetManager
         LoadDictionary(content, StructureTextures, "Structures");
         LoadDictionary(content, NPCTextures, "NPCs");
         LoadDictionary(content, ItemTextures, "Items");
-
         LoadEnemyAnimations(content);
         LoadPlayerAnimations(content);
+        LoadPlayerCannonTextures(content);
         LoadConveyorAnimations(content);
     }
 
@@ -185,6 +186,16 @@ public static class AssetManager
                     builder.AddFrame($"Player{p}_Idle{f}", frameDuration);
                 }
             });
+        }
+    }
+
+    private static void LoadPlayerCannonTextures(ContentManager content)
+    {
+        char[] letters = ['A', 'B', 'C', 'D'];
+        for (int i = 0; i < 4; i++)
+        {
+            PlayerCannonTopTextures[i] = content.Load<Texture2D>($"Players/CannonTop{letters[i]}");
+            PlayerCannonBottomTextures[i] = content.Load<Texture2D>($"Players/CannonBottom{letters[i]}");
         }
     }
 

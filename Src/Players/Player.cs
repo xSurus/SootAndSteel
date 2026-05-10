@@ -6,7 +6,6 @@ using Gamelab.Items;
 using Gamelab.PhysicalEntities;
 using Gamelab.PhysicalEntities.Bullets;
 using Gamelab.PhysicalEntities.Interfaces;
-using Gamelab.PhysicalEntities.Stations.Cannon;
 using Gamelab.Services.Animation;
 using Gamelab.Services.Sound;
 using Gamelab.Utils;
@@ -22,7 +21,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable, IItemP
     public PlayerConfiguration PlayerConfiguration { get; private set; }
     public Item HeldItem { get; set; }
     public IGrabbable GrabbedObject { get; private set; }
-    public CannonStation SeatedAt { get; private set; }
+    public ICannonSeat SeatedAt { get; private set; }
     public PlayerCondition Condition { get; private set; } = PlayerCondition.Active;
     public bool IsStunned => Condition == PlayerCondition.Stunned;
     public float ReviveProgress { get; private set; }
@@ -176,24 +175,27 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable, IItemP
             GrabbedObject = null;
         }
 
-        SeatedAt?.OnRelease(this);
+        var seat = SeatedAt;
+        SeatedAt = null;
+        seat?.OnRelease(this);
 
         HeldItem = null;
     }
 
-    public void SeatAt(CannonStation cannon)
+    public void SeatAt(ICannonSeat seat)
     {
-        SeatedAt = cannon;
+        SeatedAt?.OnRelease(this);
+        SeatedAt = seat;
         PhysicsBody.LinearVelocity = Vector2.Zero;
-        PhysicsBody.Position = cannon.PhysicsBody.Position;
+        PhysicsBody.Position = seat.PhysicsBody.Position;
         PhysicsBody.BodyType = BodyType.Static;
     }
 
-    public void UnseatFrom(CannonStation cannon)
+    public void UnseatFrom(ICannonSeat seat)
     {
-        if (SeatedAt != cannon) return;
+        if (SeatedAt != null && SeatedAt != seat) return;
         SeatedAt = null;
-        if (ReferenceEquals(GrabbedObject, cannon)) GrabbedObject = null;
+        if (GrabbedObject is not null && ReferenceEquals(GrabbedObject, seat)) GrabbedObject = null;
         PhysicsBody.BodyType = BodyType.Dynamic;
         PhysicsBody.LinearVelocity = Vector2.Zero;
     }
@@ -435,9 +437,28 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable, IItemP
         HeldItem = item;
     }
 
+    private void DrawSeated(SpriteBatch spriteBatch)
+    {
+        int idx = PlayerConfiguration.PlayerIndex;
+        Texture2D topTex = AssetManager.PlayerCannonTopTextures[idx];
+        Texture2D bottomTex = AssetManager.PlayerCannonBottomTextures[idx];
+        float depth = RenderUtility.CalculateDepth(Position.Y);
+        const float scale = 0.3f;
+        Vector2 topOrigin = new Vector2(topTex.Width / 2f, topTex.Height / 2f);
+        Vector2 bottomOrigin = new Vector2(bottomTex.Width / 2f, bottomTex.Height / 2f);
+        spriteBatch.Draw(bottomTex, Position, null, Color.White, 0f, bottomOrigin, scale, SpriteEffects.None, depth - RenderUtility.Eps);
+        spriteBatch.Draw(topTex, Position, null, Color.White, 0f, topOrigin, scale, SpriteEffects.None, depth + RenderUtility.Eps);
+    }
+
     public override void Draw(SpriteBatch spriteBatch)
     {
         if (playerSprite == null) return;
+
+        if (SeatedAt != null)
+        {
+            DrawSeated(spriteBatch);
+            return;
+        }
 
         Vector2 feetPosition = Position + new Vector2(0, Radius);
         Color drawColor = IsStunned ? Color.Goldenrod : Color.White;

@@ -9,7 +9,7 @@ public class Item(string id)
     public string Id { get; } = id;
     public ItemDefinition Definition => ItemRegistry.Get(Id);
 
-    public virtual void Draw(SpriteBatch spriteBatch, Vector2 position, int size, float depth)
+    public virtual void Draw(SpriteBatch spriteBatch, Vector2 position, int size, float depth, float rotation = 0f)
     {
         Texture2D tex = AssetManager.GetItemTexture(Id);
 
@@ -23,7 +23,7 @@ public class Item(string id)
                 position: position,
                 sourceRectangle: null,
                 color: Color.White,
-                rotation: 0f,
+                rotation: rotation,
                 origin: origin,
                 scale: scale,
                 effects: SpriteEffects.None,
@@ -40,7 +40,7 @@ public class Item(string id)
                 position: position,
                 sourceRectangle: sourceRect,
                 color: Definition.Color,
-                rotation: 0f,
+                rotation: rotation,
                 origin: origin,
                 scale: 1f,
                 effects: SpriteEffects.None,

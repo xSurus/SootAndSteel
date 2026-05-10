@@ -87,7 +87,7 @@ public class TrainMap
     public Point GetTileIndexFromPixels(Vector2 pixelPosition)
     {
         Vector2 localPos = pixelPosition - Position;
-        return new Point((int)(localPos.X / TileSize), (int)(localPos.Y / TileSize));
+        return new Point((int)MathF.Floor(localPos.X / TileSize), (int)MathF.Floor(localPos.Y / TileSize));
     }
 
     public AbstractStation GetAdjacentStation(Vector2 currentWorldPos, GridDirection direction)
@@ -167,9 +167,13 @@ public class TrainMap
                 MapObjects.Add(new ShootHoleWall(wallSize, bottomPos, false));
         }
 
+        // left side wall with passage gap matching DrawSideWalls door rows
+        int doorYMin = Height / 2 - 1;
+        int doorYMax = Height / 2;
         float tileSimSize = TileSize.ToMeters();
         for (int y = 0; y < Height; y++)
         {
+            if (y >= doorYMin && y <= doorYMax) continue;
             Vector2 wallCenterMeters = GetTileCenterMeters(-1, y);
             gameplayContext.PhysicsWorld.CreateRectangle(tileSimSize, tileSimSize, 1f, wallCenterMeters);
         }
@@ -177,18 +181,35 @@ public class TrainMap
 
     public void AddDefaultStructures()
     {
+        float cannonWagonWidth = CannonWagon.WidthTiles * TileSize;
+
+        Vector2 cannonWagonCenter = new Vector2(
+            Position.X - cannonWagonWidth / 2f,
+            Position.Y + Height * TileSize - CannonWagon.HeightTiles * TileSize / 2f + TileSize);
+        var cannonWagon = new CannonWagon(cannonWagonCenter);
+        MapObjects.Add(cannonWagon);
+        MapObjects.Add(cannonWagon.TopSlot);
+        MapObjects.Add(cannonWagon.BottomSlot);
+        MapObjects.Add(cannonWagon.TopRack);
+        MapObjects.Add(cannonWagon.BottomRack);
+
         Vector2 coalWagonPos = new Vector2(
-            Position.X - 3 * TileSize,
+            Position.X - cannonWagonWidth - 2 * TileSize,
             Position.Y + (Height * TileSize) / 2f);
         MapObjects.Add(new CoalWagon(coalWagonPos));
+
         MapObjects.Add(new TrainNose(GetTileCenterPixels(8, 2)));
+        gameplayContext.PhysicsWorld.CreateRectangle(
+            TileSize.ToMeters(),
+            (Height * TileSize).ToMeters(),
+            1f,
+            new Vector2(Position.X + Width * TileSize + TileSize / 2f,
+                        Position.Y + Height * TileSize / 2f).ToMeters());
     }
 
     public void AddDefaultStationLoadout()
     {
-        AddStationAndSnap(new BulletRack(GetTileCenterPixels(4, 2)));
         AddStationAndSnap(new SpeedLever(GetTileCenterPixels(7, 3)));
-        AddStationAndSnap(new CannonStation(GetTileCenterPixels(5, 2)));
         AddStationAndSnap(new ComponentResourceStation(GetTileCenterPixels(2, 0), ComponentIds.BasicCasing));
         AddStationAndSnap(new ComponentResourceStation(GetTileCenterPixels(2, 4), ComponentIds.BasicProjectile));
         AddStationAndSnap(new ComponentResourceStation(GetTileCenterPixels(3, 0), ComponentIds.BasicPropellant));
@@ -249,8 +270,13 @@ public class TrainMap
         spriteBatch.Draw(upperLeftCornerTex, ulFeet, null, Color.White,
             0f, upperLeftCornerOrigin, scale, SpriteEffects.None, ulDepth);
 
+        int doorYMin = Height / 2 - 1;
+        int doorYMax = Height / 2;
+
         for (int y = 0; y < Height; y++)
         {
+            if (y >= doorYMin && y <= doorYMax) continue;
+
             Texture2D upperSideTex = AssetManager.GetWallTexture("WallTileUpperSide");
             Vector2 upperSideOrigin = new Vector2(upperSideTex.Width / 2f, upperSideTex.Height);
 

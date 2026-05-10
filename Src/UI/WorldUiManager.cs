@@ -5,6 +5,7 @@ using Gamelab.Items;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.PhysicalEntities.Stations;
 using Gamelab.PhysicalEntities.Stations.Cannon;
+using Gamelab.PhysicalEntities.Structures;
 using Gamelab.PhysicalEntities.Stations.Resources;
 using Microsoft.Xna.Framework;
 using MonoGameGum;
@@ -359,8 +360,7 @@ public class WorldUiManager(GamelabGame game)
                 ApplyFaceButtonIcon(right, XboxButtonAtlas.Face.A);
                 right.ButtonText = "Take";
                 break;
-
-            case CannonStation:
+            case CannonSlot:
                 left.Visual.Visible = true;
                 right.Visual.Visible = true;
                 ApplyFaceButtonIcon(left, XboxButtonAtlas.Face.Y);

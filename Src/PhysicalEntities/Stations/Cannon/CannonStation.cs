@@ -16,7 +16,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Gamelab.PhysicalEntities.Stations.Cannon;
 
-public class CannonStation : AbstractStation, IBulletEmitter, IInteractable
+public class CannonStation : AbstractStation, IBulletEmitter, IInteractable, ICannonSeat
 {
     private readonly GameplayConfig config;
     private float cooldownTimer;

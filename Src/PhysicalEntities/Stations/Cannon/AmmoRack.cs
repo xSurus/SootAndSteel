@@ -1,5 +1,8 @@
+using System;
 using System.Collections.Generic;
+using Gamelab.Assets;
 using Gamelab.Items;
+using Gamelab.Players;
 using Gamelab.Items.Bullets;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Services.Sound;
@@ -13,8 +16,10 @@ public class BulletRack(Vector2 position)
     : AbstractStation(StationIds.BulletRack, position)
 {
     private readonly List<Item> storedBullets = [];
-    private const int MaxCapacity = 4;
+    private const int MaxCapacity = 5;
     public override Item PeekNextItem() => storedBullets.Count > 0 ? storedBullets[0] : null;
+
+    public override bool OnGrab(Player interactingPlayer, Vector2 grabPointWorldMeters) => false;
 
     public override bool CanProvideItem(IItemReceiver consumer)
     {
@@ -49,30 +54,24 @@ public class BulletRack(Vector2 position)
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        base.Draw(spriteBatch);
-
+        Texture2D bgTex = AssetManager.GetStructureTexture("BulletRack");
         int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
         Vector2 feetPosition = Position + new Vector2(0, tileSize / 2f);
         float depth = RenderUtility.CalculateDepth(feetPosition.Y);
+        float bgScale = tileSize / (float)bgTex.Width * 1.2f;
+        spriteBatch.DrawWithHighlight(bgTex, feetPosition, null, Color.White, 0f,
+            new Vector2(bgTex.Width / 2f, bgTex.Height), bgScale, SpriteEffects.None, depth, IsHighlighted);
 
         if (storedBullets.Count > 0)
         {
-            int drawItemSize = (int)(tileSize * 0.4f);
-            float quadOffset = tileSize * 0.2f;
-            Vector2 tableTopCenter = feetPosition + new Vector2(0, -tileSize * 0.8f);
-
-            Vector2[] gridOffsets =
-            {
-                new Vector2(-quadOffset, -quadOffset),
-                new Vector2(quadOffset, -quadOffset),
-                new Vector2(-quadOffset, quadOffset),
-                new Vector2(quadOffset, quadOffset)
-            };
+            int drawItemSize = (int)(tileSize * 0.3f);
+            float slotSpacing = tileSize * 0.2f;
+            Vector2 tableTopCenter = feetPosition + new Vector2(-tileSize * 0.1f, -tileSize * 1.2f);
 
             for (int i = 0; i < storedBullets.Count; i++)
             {
-                Vector2 itemPos = tableTopCenter + gridOffsets[i];
-                storedBullets[i].Draw(spriteBatch, itemPos, drawItemSize, depth + RenderUtility.Eps);
+                float y = (i - (MaxCapacity - 1) / 2f) * slotSpacing;
+                storedBullets[i].Draw(spriteBatch, tableTopCenter + new Vector2(0, y), drawItemSize, depth + RenderUtility.Eps, MathF.PI / 2f);
             }
         }
     }

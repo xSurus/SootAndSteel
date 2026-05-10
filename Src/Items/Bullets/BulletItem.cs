@@ -95,7 +95,7 @@ public class BulletItem : Item
         return ((BulletItem)other).ComponentIds.SequenceEqual(ComponentIds);
     }
 
-    public override void Draw(SpriteBatch spriteBatch, Vector2 position, int size, float depth)
+    public override void Draw(SpriteBatch spriteBatch, Vector2 position, int size, float depth, float rotation = 0f)
     {
         Texture2D baseTex = AssetManager.BlankTexture;
         Color drawColor = color;
@@ -112,7 +112,9 @@ public class BulletItem : Item
             drawColor = Color.White;
             scale = size / (float)baseTex.Width;
             sourceRect = null;
-            origin = new Vector2(baseTex.Width / 2f, baseTex.Height);
+            origin = rotation == 0f
+                ? new Vector2(baseTex.Width / 2f, baseTex.Height)
+                : new Vector2(baseTex.Width / 2f, baseTex.Height / 2f);
         }
 
         spriteBatch.Draw(
@@ -120,7 +122,7 @@ public class BulletItem : Item
             position: position,
             sourceRectangle: sourceRect,
             color: drawColor,
-            rotation: 0f,
+            rotation: rotation,
             origin: origin,
             scale: scale,
             effects: SpriteEffects.None,

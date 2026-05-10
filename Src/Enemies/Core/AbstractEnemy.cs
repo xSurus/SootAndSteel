@@ -6,6 +6,7 @@ using Gamelab.PhysicalEntities.Bullets;
 using Gamelab.PhysicalEntities.Bullets.Components;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.PhysicalEntities.Stations.Cannon;
+using Gamelab.PhysicalEntities.Structures;
 using Gamelab.Services.Vfx;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
@@ -65,7 +66,7 @@ public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable, IBull
 
     public virtual bool OnHit(BulletEntity bullet)
     {
-        if (bullet.InitialShooter.GetType() == typeof(CannonStation) && IsAlive && !ShouldRemove)
+        if ((bullet.InitialShooter is CannonStation or CannonSlot) && IsAlive && !ShouldRemove)
         {
             TakeDamage(bullet.Stats.Damage);
             return true;
