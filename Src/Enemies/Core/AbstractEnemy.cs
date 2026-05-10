@@ -23,6 +23,7 @@ public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable, IBull
     public bool ShouldRemove { get; protected set; }
 
     protected float Size => GamelabGame.Instance.GameplayConfig.EnemySize;
+    protected virtual float StartingHealth => GamelabGame.Instance.GameplayConfig.EnemyHealth;
     protected readonly EnemyMovementController enemyMovement;
     protected readonly ISoundService soundService;
 
@@ -31,7 +32,7 @@ public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable, IBull
         EnemyTrainSlot slot,
         EnemyMovementProfile movementProfile)
     {
-        Health = GamelabGame.Instance.GameplayConfig.EnemyHealth;
+        Health = StartingHealth;
         Slot = slot;
         PhysicsBody = gameplayContext.PhysicsWorld.CreateCircle((Size / 2f).ToMeters(), 1f, spawnPosition.ToMeters(),
             BodyType.Dynamic);

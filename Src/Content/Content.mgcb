@@ -838,6 +838,18 @@
 /processorParam:TextureFormat=Color
 /build:GumProject/FontCache/Font20Ubuntu_Mono_0.png
 
+#begin GumProject/FontCache/Font20Special_Elite_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/FontCache/Font20Special_Elite_0.png
+
 #begin GumProject/FontCache/Font22Bernard_MT_Condensed_0.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -1924,4 +1936,20 @@
 /importer:TextureImporter
 /processor:TextureProcessor
 /build:GumProject/FontCache/Font25Ubuntu_Mono_Bold_0.png
+
+#begin GumProject/npc_bubble_nineslice.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/npc_bubble_nineslice.png
+
+#begin GumProject/npc_bubble_namebar_nineslice.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/npc_bubble_namebar_nineslice.png
+
+#begin GumProject/npc_bubble_tail.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/npc_bubble_tail.png
+
 

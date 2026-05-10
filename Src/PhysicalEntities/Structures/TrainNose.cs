@@ -64,7 +64,7 @@ public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
         else
         {
             gameplayContext.State.IsCoalOvenBurning = false;
-            gameplayContext.State.CurrentSpeed = TrainSpeedSetting.Slow;
+            gameplayContext.State.SlowDownIfRunning();
             smokeEmitter.AutoTrigger = false;
         }
     }
@@ -102,6 +102,11 @@ public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
             interactingPlayer.HeldItem = null;
             soundService.PlayOnce(Sounds.ShovelDown);
         }
+    }
+
+    public void SetFuelLevel(float fuel)
+    {
+        currentFuel = MathHelper.Clamp(fuel, 0f, maxFuel);
     }
 
     public override void Draw(SpriteBatch spriteBatch)

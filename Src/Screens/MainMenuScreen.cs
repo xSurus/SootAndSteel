@@ -9,6 +9,7 @@ using Gamelab.Serialization;
 using Gamelab.Services.Sound;
 using Gamelab.Particles;
 using Gamelab.Services.Vfx;
+using Gamelab.Tutorial;
 using Gamelab.UI;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
@@ -178,7 +179,10 @@ public sealed class MainMenuScreen(GamelabGame game) : Screens.GamelabGameScreen
     {
         SaveManager.DeleteSave();
         Game.CurrentRun = new RunSession();
-        Game.SwitchToScreen(new HubScreen(Game));
+        if (!Game.CurrentRun.TutorialCompleted)
+            Game.SwitchToScreen(new GameplayScreen(Game, new TutorialDirector()));
+        else
+            Game.SwitchToScreen(new HubScreen(Game));
     }
 
     private void ContinueGame()

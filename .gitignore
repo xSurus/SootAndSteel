@@ -70,3 +70,5 @@ Tests/Output/
 !Src/PipelineReferences/*
 
 /.idea
+
+.worktrees/
