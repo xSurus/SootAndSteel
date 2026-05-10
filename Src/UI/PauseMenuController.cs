@@ -1,38 +1,33 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Gamelab.Components;
 using Gamelab.Players;
 using Gamelab.Services.Sound;
-using Microsoft.Xna.Framework;
-using Myra.Graphics2D;
-using Myra.Graphics2D.Brushes;
-using Myra.Graphics2D.UI;
+using MonoGameGum;
 
 namespace Gamelab.UI;
 
 public class PauseMenuController
 {
     private readonly ISoundService soundService = GamelabGame.Instance.Services.GetService<ISoundService>();
-
-    private readonly Panel overlay;
-    private readonly Label continueLabel;
-    private readonly Label optionsLabel;
-    private readonly Label exitLabel;
-    private readonly Label[] selectableLabels;
+    private readonly PauseOverlay overlay;
+    private readonly MenuButtonWithIcon[] selectableButtons;
     private int selectionIndex;
 
     public bool IsPaused { get; private set; }
-    public Panel Overlay => overlay;
     public OptionsPanel OptionsPanel { get; }
 
     public event Action OnExitRequested;
 
     public PauseMenuController()
     {
-        overlay = BuildOverlay(out continueLabel, out optionsLabel, out exitLabel);
-        selectableLabels = [continueLabel, optionsLabel, exitLabel];
+        overlay = new PauseOverlay();
+        overlay.AddToRoot();
+        overlay.Visual.Visible = false;
+        selectableButtons = [overlay.Continue, overlay.Options, overlay.Exit];
         OptionsPanel = new OptionsPanel(GamelabGame.Instance);
-        OptionsPanel.OnClosed += () => overlay.Visible = IsPaused;
+        OptionsPanel.OnClosed += () => overlay.Visual.Visible = IsPaused;
         UpdateSelectionVisuals();
     }
 
@@ -46,7 +41,7 @@ public class PauseMenuController
     {
         IsPaused = !IsPaused;
         selectionIndex = 0;
-        overlay.Visible = IsPaused;
+        overlay.Visual.Visible = IsPaused;
         if (!IsPaused && OptionsPanel.IsOpen)
         {
             OptionsPanel.Close();
@@ -60,9 +55,9 @@ public class PauseMenuController
 
         if (OptionsPanel.IsOpen)
         {
-            overlay.Visible = false;
+            overlay.Visual.Visible = false;
             OptionsPanel.Update(playerConfigs);
-            if (!OptionsPanel.IsOpen) overlay.Visible = IsPaused;
+            if (!OptionsPanel.IsOpen) overlay.Visual.Visible = IsPaused;
             return;
         }
 
@@ -79,13 +74,13 @@ public class PauseMenuController
 
         if (moveUp)
         {
-            selectionIndex = (selectionIndex - 1 + selectableLabels.Length) % selectableLabels.Length;
+            selectionIndex = (selectionIndex - 1 + selectableButtons.Length) % selectableButtons.Length;
             UpdateSelectionVisuals();
             soundService.PlayOnce(Sounds.MenuSelect);
         }
         else if (moveDown)
         {
-            selectionIndex = (selectionIndex + 1) % selectableLabels.Length;
+            selectionIndex = (selectionIndex + 1) % selectableButtons.Length;
             UpdateSelectionVisuals();
             soundService.PlayOnce(Sounds.MenuSelect);
         }
@@ -101,7 +96,7 @@ public class PauseMenuController
                 break;
             case 1:
                 OptionsPanel.Open();
-                overlay.Visible = false;
+                overlay.Visual.Visible = false;
                 break;
             case 2:
                 OnExitRequested?.Invoke();
@@ -111,75 +106,17 @@ public class PauseMenuController
 
     private void UpdateSelectionVisuals()
     {
-        for (int i = 0; i < selectableLabels.Length; i++)
+        for (int i = 0; i < selectableButtons.Length; i++)
         {
-            selectableLabels[i].TextColor = i == selectionIndex ? Color.LightBlue : Color.White;
+            selectableButtons[i].SelectedState = i == selectionIndex
+                ? MenuButtonWithIcon.Selected.isSelected
+                : MenuButtonWithIcon.Selected.notSelected;
         }
     }
 
-    private static Panel BuildOverlay(out Label continueLabel, out Label optionsLabel, out Label exitLabel)
+    public void Dispose()
     {
-        var overlay = new Panel
-        {
-            Background = new SolidBrush(new Color(0, 0, 0, 180)),
-            HorizontalAlignment = HorizontalAlignment.Stretch,
-            VerticalAlignment = VerticalAlignment.Stretch,
-            Visible = false
-        };
-
-        var modal = new Panel
-        {
-            Width = 420,
-            Height = 340,
-            Background = new SolidBrush(new Color(25, 25, 30, 230)),
-            HorizontalAlignment = HorizontalAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Center
-        };
-
-        var font = GamelabGame.Instance.fontSystem;
-
-        var stack = new VerticalStackPanel
-        {
-            Spacing = 20,
-            Padding = new Thickness(40),
-            HorizontalAlignment = HorizontalAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Center
-        };
-
-        stack.Widgets.Add(new Label
-        {
-            Text = "PAUSED",
-            Font = font.GetFont(64),
-            HorizontalAlignment = HorizontalAlignment.Center,
-            TextColor = Color.White
-        });
-
-        continueLabel = new Label
-        {
-            Text = "CONTINUE",
-            Font = font.GetFont(40),
-            HorizontalAlignment = HorizontalAlignment.Center
-        };
-
-        optionsLabel = new Label
-        {
-            Text = "OPTIONS",
-            Font = font.GetFont(40),
-            HorizontalAlignment = HorizontalAlignment.Center
-        };
-
-        exitLabel = new Label
-        {
-            Text = "EXIT",
-            Font = font.GetFont(40),
-            HorizontalAlignment = HorizontalAlignment.Center
-        };
-
-        stack.Widgets.Add(continueLabel);
-        stack.Widgets.Add(optionsLabel);
-        stack.Widgets.Add(exitLabel);
-        modal.Widgets.Add(stack);
-        overlay.Widgets.Add(modal);
-        return overlay;
+        OptionsPanel.Dispose();
+        GumService.Default.Root.Children.Remove(overlay.Visual);
     }
 }

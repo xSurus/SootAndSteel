@@ -1823,3 +1823,58 @@
 /processorParam:TextureFormat=Color
 /build:Walls/WallTileUpperSide.png
 
+#begin GumProject/spr_chevron_32.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/spr_chevron_32.png
+
+#begin GumProject/spr_pause_paper_380x280.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/spr_pause_paper_380x280.png
+
+#begin GumProject/FontCache/Font18Special_Elite_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font18Special_Elite_0.png
+
+#begin GumProject/FontCache/Font20Ubuntu_Mono_noSmooth_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font20Ubuntu_Mono_noSmooth_0.png
+
+#begin GumProject/FontCache/Font25Special_Elite_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font25Special_Elite_0.png
+
+#begin GumProject/FontCache/Font40Special_Elite_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font40Special_Elite_0.png
+
+#begin GumProject/FontCache/Font11Ubuntu_Mono_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font11Ubuntu_Mono_0.png
+
+#begin GumProject/FontCache/Font12Ubuntu_Mono_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font12Ubuntu_Mono_0.png
+
+#begin GumProject/FontCache/Font13Ubuntu_Mono_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FontCache/Font13Ubuntu_Mono_0.png
+
+#begin GumProject/spr_pause_paper_burnt_380x280.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/spr_pause_paper_burnt_380x280.png
+
+#begin GumProject/01_slider_track_empty.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/01_slider_track_empty.png
+
