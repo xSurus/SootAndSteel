@@ -2010,3 +2010,8 @@
 /processorParam:TextureFormat=Color
 /build:Walls/WallTileUpperSide.png
 
+#begin Structures/TrainNose.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Structures/TrainNose.png
+
