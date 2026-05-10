@@ -98,6 +98,7 @@ public class CannonWagon : AbstractPhysicalEntity, IPickable, IUpdatable
 
         var bottomSeatPos = centerPixels + new Vector2(visualOffset, bottomSeatOffsetY);
         bottomSlot = new CannonSlot(bottomSeatPos, arcMin: 0f, arcMax: MathF.PI, defaultAngle: MathF.PI / 2f, exitOffsetPixels: new Vector2(0, -tileSize));
+        bottomSlot.DrawOffset = new Vector2(0, -tileSize * 0.4f);
         bottomRack = new BulletRack(centerPixels + new Vector2(visualOffset + 1.1f * tileSize, bottomSeatOffsetY - 0.3f * tileSize));
         bottomSlot.SetPairedRack(bottomRack);
 
@@ -135,8 +136,8 @@ public class CannonWagon : AbstractPhysicalEntity, IPickable, IUpdatable
         topSlot.Draw(spriteBatch);
         bottomSlot.Draw(spriteBatch);
 
-        DrawRotatingCannon(spriteBatch, "CannonTop", bottomSlot, bottomBarrelPos, bottomDepth, MathF.PI / 2f, bottom: true);
-        DrawRotatingCannon(spriteBatch, "CannonBottom", topSlot, topBarrelPos, RenderUtility.BackgroundLayer, -MathF.PI / 2f, bottom: false);
+        DrawRotatingCannon(spriteBatch, "CannonTop", bottomSlot, bottomBarrelPos, bottomDepth + 0.01f, MathF.PI / 2f, bottom: true);
+        DrawRotatingCannon(spriteBatch, "CannonBottom", topSlot, topBarrelPos, RenderUtility.FloorLayer - 3 * RenderUtility.Eps, -MathF.PI / 2f, bottom: false);
 
         DrawFrontWall(spriteBatch, bottomBarrelPos, bottomDepth + 0.02f);
     }

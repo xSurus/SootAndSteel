@@ -36,6 +36,7 @@ public class CannonSlot : ICannonSeat, IBulletEmitter, IHighlightable, IPickable
     private readonly string textureName;
     private readonly Vector2 exitOffsetMeters;
 
+    public Vector2 DrawOffset { get; set; } = Vector2.Zero;
     public Player SeatedPlayer { get; private set; }
     public float AimAngle { get; private set; }
     public IReadOnlyList<BulletItem> AmmoRack => ammoRack;

@@ -442,12 +442,13 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable, IItemP
         int idx = PlayerConfiguration.PlayerIndex;
         Texture2D topTex = AssetManager.PlayerCannonTopTextures[idx];
         Texture2D bottomTex = AssetManager.PlayerCannonBottomTextures[idx];
-        float depth = RenderUtility.CalculateDepth(Position.Y);
+        Vector2 drawPos = Position + SeatedAt.DrawOffset;
+        float depth = RenderUtility.CalculateDepth(drawPos.Y);
         const float scale = 0.3f;
         Vector2 topOrigin = new Vector2(topTex.Width / 2f, topTex.Height / 2f);
         Vector2 bottomOrigin = new Vector2(bottomTex.Width / 2f, bottomTex.Height / 2f);
-        spriteBatch.Draw(bottomTex, Position, null, Color.White, 0f, bottomOrigin, scale, SpriteEffects.None, depth - RenderUtility.Eps);
-        spriteBatch.Draw(topTex, Position, null, Color.White, 0f, topOrigin, scale, SpriteEffects.None, depth + RenderUtility.Eps);
+        spriteBatch.Draw(bottomTex, drawPos, null, Color.White, 0f, bottomOrigin, scale, SpriteEffects.None, depth - RenderUtility.Eps);
+        spriteBatch.Draw(topTex, drawPos, null, Color.White, 0f, topOrigin, scale, SpriteEffects.None, depth + RenderUtility.Eps);
     }
 
     public override void Draw(SpriteBatch spriteBatch)

@@ -192,7 +192,7 @@ public class WorldScroller
 
         foreach (ScrollerTree t in trees)
         {
-            float treeLayerDepth = RenderUtility.CalculateDepth(t.TrunkBase.Y);
+            float treeLayerDepth = RenderUtility.CalculateWorldObjectDepth(t.TrunkBase.Y);
             spriteBatch.Draw(treeTex, t.TrunkBase, null, Color.White, 0f, origin, t.Scale,
                 SpriteEffects.None, treeLayerDepth);
         }

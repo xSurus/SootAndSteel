@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -47,18 +48,22 @@ public class BulletEntity : AbstractPhysicalEntity
     public override void Draw(SpriteBatch spriteBatch)
     {
         if (!IsActive) return;
-        Vector2 bottomCenter = Position + new Vector2(0, Stats.Size / 2f);
-        float renderDepth = RenderUtility.CalculateDepth(bottomCenter.Y);
-        Vector2 origin = new Vector2(0.5f, 1f);
+        Texture2D tex = AssetManager.GetItemTexture("Bullet");
+        if (tex == null) return;
+
+        float renderDepth = RenderUtility.CalculateDepth(Position.Y);
+        float rotation = MathF.Atan2(PhysicsBody.LinearVelocity.Y, PhysicsBody.LinearVelocity.X) + MathF.PI / 2f;
+        float scale = Stats.Size / (float)tex.Width;
+        Vector2 origin = new Vector2(tex.Width / 2f, tex.Height / 2f);
 
         spriteBatch.Draw(
-            texture: AssetManager.BlankTexture,
-            position: bottomCenter,
+            texture: tex,
+            position: Position,
             sourceRectangle: null,
-            color: Stats.Color,
-            rotation: 0f,
+            color: Color.White,
+            rotation: rotation,
             origin: origin,
-            scale: new Vector2(Stats.Size, Stats.Size),
+            scale: scale,
             effects: SpriteEffects.None,
             layerDepth: renderDepth
         );
