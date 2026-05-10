@@ -23,6 +23,7 @@ public static class AssetManager
     public static Texture2D TitleTexture { get; private set; }
     public static Texture2D SnowPatchTexture { get; private set; }
     public static Texture2D IcePatchTexture { get; private set; }
+    public static Texture2D BulletEntityTexture { get; private set; }
 
     public static Dictionary<string, Texture2D> CharacterTextures { get; private set; } = new();
     public static Dictionary<string, Texture2D> StationTextures { get; private set; } = new();
@@ -49,6 +50,7 @@ public static class AssetManager
         TitleTexture = content.Load<Texture2D>("Title");
         SnowPatchTexture = content.Load<Texture2D>("Snow_Tile");
         IcePatchTexture = content.Load<Texture2D>("Ice_Tile");
+        BulletEntityTexture = content.Load<Texture2D>("Bullet_Entity");
 
         LoadDictionary(content, CharacterTextures, "Characters");
         LoadDictionary(content, StationTextures, "Stations");
