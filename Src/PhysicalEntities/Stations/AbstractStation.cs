@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Gamelab.Assets;
 using Gamelab.Items;
+using Gamelab.Items.Bullets;
 using Gamelab.PhysicalEntities.Configurable;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
@@ -58,6 +59,8 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
         soundService = GamelabGame.Instance.Services.GetService<ISoundService>();
         soundService.LoadSound(Sounds.PickupItem);
         soundService.LoadSound(Sounds.DropItem);
+        soundService.LoadSound(Sounds.ShovelUp);
+        soundService.LoadSound(Sounds.ShovelDown);
     }
 
     public virtual void OnPickup(Player interactingPlayer)
@@ -153,7 +156,7 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
         if (HeldItem != null && CanProvideItem(consumer))
         {
             HeldItem = null;
-            soundService.PlayOnce(Sounds.PickupItem);
+            soundService.PlayOnce(ItemIsGranular(item) ? Sounds.ShovelUp : Sounds.PickupItem);
             if (consumer != null) ConsumerQueue.RemoveAll(t => t.Consumer == consumer);
             return true;
         }
@@ -164,7 +167,7 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
 
     public virtual void ReceiveItem(Item item, IItemProvider source)
     {
-        soundService.PlayOnce(Sounds.DropItem);
+        soundService.PlayOnce(ItemIsGranular(item) ? Sounds.ShovelDown : Sounds.DropItem);
         HeldItem = item;
     }
 
@@ -202,5 +205,10 @@ public abstract class AbstractStation : AbstractGrabbable, IInteractable, IPicka
     public virtual bool CanProvideItem(IItemReceiver consumer)
     {
         return HeldItem != null && IsConsumerFirstInLine(consumer);
+    }
+    
+    protected bool ItemIsGranular(Item item)
+    {
+        return (item is BulletItem && ((BulletItem) item).Type == EComponentType.Propellant) || item.Id == "Coal";
     }
 }

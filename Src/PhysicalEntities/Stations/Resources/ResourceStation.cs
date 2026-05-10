@@ -20,7 +20,7 @@ public class ResourceStation(
 
     public override void ReceiveItem(Item item, IItemProvider source)
     {
-        soundService.PlayOnce(Sounds.DropItem);
+        soundService.PlayOnce(ResourceId == "Coal" ? Sounds.ShovelDown : Sounds.DropItem);
     }
 
     public override bool CanProvideItem(IItemReceiver consumer)
@@ -36,7 +36,7 @@ public class ResourceStation(
             return false;
         }
 
-        soundService.PlayOnce(Sounds.PickupItem);
+        soundService.PlayOnce(ResourceId == "Coal" ? Sounds.ShovelUp : Sounds.PickupItem);
         item = new Item(ResourceId);
         if (consumer != null) ConsumerQueue.RemoveAll(t => t.Consumer == consumer);
 

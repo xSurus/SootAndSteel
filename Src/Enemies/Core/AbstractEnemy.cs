@@ -6,6 +6,7 @@ using Gamelab.PhysicalEntities.Bullets;
 using Gamelab.PhysicalEntities.Bullets.Components;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.PhysicalEntities.Stations.Cannon;
+using Gamelab.Services.Sound;
 using Gamelab.Services.Vfx;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
@@ -22,7 +23,8 @@ public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable, IBull
     public bool ShouldRemove { get; protected set; }
 
     protected float Size => GamelabGame.Instance.GameplayConfig.EnemySize;
-    protected readonly EnemyMovementController EnemyMovement;
+    protected readonly EnemyMovementController enemyMovement;
+    protected readonly ISoundService soundService;
 
     protected AbstractEnemy(
         Vector2 spawnPosition,
@@ -41,7 +43,9 @@ public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable, IBull
             fixture.IsSensor = true;
         }
 
-        EnemyMovement = new EnemyMovementController(PhysicsBody, movementProfile);
+        enemyMovement = new EnemyMovementController(PhysicsBody, movementProfile);
+        soundService = GamelabGame.Instance.Services.GetService<ISoundService>();
+        soundService.LoadSound(Sounds.EnemyHit);
     }
 
     public virtual void Update(float deltaTime)
@@ -67,6 +71,7 @@ public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable, IBull
     {
         if (bullet.InitialShooter.GetType() == typeof(CannonStation) && IsAlive && !ShouldRemove)
         {
+            soundService.PlayOnce(Sounds.EnemyHit);
             TakeDamage(bullet.Stats.Damage);
             return true;
         }

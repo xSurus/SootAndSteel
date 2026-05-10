@@ -16,8 +16,11 @@ public static class Sounds
     public const string DropItem = "event:/Gameplay/Drop Item";
     public const string OpenDoor = "event:/Gameplay/Open Door";
     public const string CloseDoor = "event:/Gameplay/Close Door";
-    // TODO: add sound pull speed lever
-    // TODO: add sound carrying
+    public const string EnemyHit = "event:/Gameplay/Enemy Hit";
+    public const string SpeedChange = "event:/Gameplay/Speed Change";
+    public const string Purchase =  "event:/Gameplay/Purchase";
+    public const string GrabStation =  "event:/Gameplay/Grab Station";
+    public const string DropStation =  "event:/Gameplay/Drop Station";
     
     // Music
     public const string AmbientSong = "event:/Music/Ambient";
