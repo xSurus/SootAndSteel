@@ -2015,3 +2015,73 @@
 /processor:TextureProcessor
 /build:Structures/TrainNose.png
 
+#begin Structures/BulletRack.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Structures/BulletRack.png
+
+#begin Structures/CannonWagonFrontWall.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Structures/CannonWagonFrontWall.png
+
+#begin Structures/CannonTop.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Structures/CannonTop.png
+
+#begin Structures/CannonBottom.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Structures/CannonBottom.png
+
+#begin Structures/CannonWagon.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Structures/CannonWagon.png
+
+#begin Players/CannonBottomA.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/CannonBottomA.png
+
+#begin Players/CannonBottomB.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/CannonBottomB.png
+
+#begin Players/CannonBottomC.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/CannonBottomC.png
+
+#begin Players/CannonBottomD.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/CannonBottomD.png
+
+#begin Players/CannonTopD.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/CannonTopD.png
+
+#begin Players/CannonTopA.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/CannonTopA.png
+
+#begin Players/CannonTopB.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/CannonTopB.png
+
+#begin Players/CannonTopC.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/CannonTopC.png
+
+#begin Decorations/Snow_Covered_Pine_2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Decorations/Snow_Covered_Pine_2.png
+
