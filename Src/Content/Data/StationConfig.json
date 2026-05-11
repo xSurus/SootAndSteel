@@ -16,7 +16,7 @@
     "description": "Place ingredients with A.\nHold Interact (X) to craft. Automatically crafts by itself",
     "itemType": "Utility",
     "appearsInShop": true,
-    "shopPrice": 0
+    "shopPrice": 45
   },
   "SpeedLever": {
     "name": "Speed Lever",
@@ -43,20 +43,20 @@
     "description": "Moves items around",
     "itemType": "Utility",
     "appearsInShop": true,
-    "shopPrice": 0
+    "shopPrice": 20
   },
   "BulletConveyor": {
     "name": "Bullet Conveyor",
     "description": "Moves only fully crafted Bullets around",
     "itemType": "Utility",
     "appearsInShop": true,
-    "shopPrice": 0
+    "shopPrice": 30
   },
   "UpgradedComponentConveyor": {
     "name": "Component Conveyor",
     "description": "Moves only upgraded components around",
     "itemType": "Utility",
     "appearsInShop": true,
-    "shopPrice": 0
+    "shopPrice": 30
   }
 }
