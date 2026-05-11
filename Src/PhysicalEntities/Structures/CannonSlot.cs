@@ -19,7 +19,7 @@ using nkast.Aether.Physics2D.Dynamics;
 
 namespace Gamelab.PhysicalEntities.Structures;
 
-public class CannonSlot : ICannonSeat, IBulletEmitter, IHighlightable, IPickable, IGrabbable
+public class CannonSlot : ICannonSeat, IBulletEmitter, IHighlightable, IGrabbable
 {
     private readonly ISoundService soundService;
     private readonly IBulletService bulletService;
@@ -76,12 +76,6 @@ public class CannonSlot : ICannonSeat, IBulletEmitter, IHighlightable, IPickable
     public void OnHighlightRemoved(Player player)
     {
         highlighterCount = Math.Max(0, highlighterCount - 1);
-    }
-
-    public void OnPickup(Player player)
-    {
-        if (player.HeldItem is BulletItem bullet && TryLoadAmmo(bullet))
-            player.HeldItem = null;
     }
 
     public CannonSlot(Vector2 seatPositionPixels, float arcMin, float arcMax, float defaultAngle, string textureName = null, Vector2 exitOffsetPixels = default)
