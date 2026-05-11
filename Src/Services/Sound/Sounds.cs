@@ -24,4 +24,5 @@ public static class Sounds
     
     // Music
     public const string AmbientSong = "event:/Music/Ambient";
+    public const string BattleTheme = "event:/Music/Battle Theme";
 }

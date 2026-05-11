@@ -60,7 +60,7 @@ public class GameplayScreen : GamelabGameScreen
     private PauseMenuController pauseMenu;
     private ISoundService soundService;
     private EventInstance trainSound;
-    private EventInstance ambientMusic;
+    private EventInstance battleTheme;
 
     private FootprintSystem footprintSystem;
 
@@ -165,8 +165,8 @@ public class GameplayScreen : GamelabGameScreen
         worldScroller?.Dispose();
         trainSound?.Stop();
         trainSound?.Dispose();
-        ambientMusic?.Stop();
-        ambientMusic?.Dispose();
+        battleTheme?.Stop();
+        battleTheme?.Dispose();
         pauseMenu?.Dispose();
 
         base.UnloadContent();
@@ -230,11 +230,12 @@ public class GameplayScreen : GamelabGameScreen
         soundService.LoadSound(Sounds.MenuSelect);
 
         trainSound = soundService.GetSoundInstance(Sounds.Train);
-        ambientMusic = soundService.GetSoundInstance(Sounds.AmbientSong);
+        battleTheme = soundService.GetSoundInstance(Sounds.BattleTheme);
 
         soundService.RegisterParameter(trainSound, "Train Velocity", () => gameplayContext.State.actualSpeed);
+        soundService.RegisterParameter(battleTheme, "Intensity", () => enemyManager.intensity);
         trainSound?.Start();
-        ambientMusic?.Start();
+        battleTheme?.Start();
     }
 
     private void InitializeUi()

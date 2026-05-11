@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using FmodForFoxes.Studio;
 using Gamelab.Components;
 using Gamelab.Input;
 using Gamelab.Players;
@@ -34,6 +35,7 @@ public sealed class MainMenuScreen(GamelabGame game) : Screens.GamelabGameScreen
 
     private OptionsPanel optionsPanel;
     private ISoundService soundService;
+    private EventInstance battleTheme;
 
     private static GumService Gum => GumService.Default;
 
@@ -52,8 +54,9 @@ public sealed class MainMenuScreen(GamelabGame game) : Screens.GamelabGameScreen
 
         soundService = Services.GetService<ISoundService>();
         soundService.LoadSound(Sounds.MenuSelect);
-        soundService.LoadSound(Sounds.AmbientSong);
-        soundService.GetSoundInstance(Sounds.AmbientSong)?.Start();
+        soundService.LoadSound(Sounds.BattleTheme);
+        battleTheme = soundService.GetSoundInstance(Sounds.BattleTheme);
+        battleTheme?.Start();
         Services.GetService<IVfxService>().AddContinuous(ParticleFactory.CreateSnowstorm());
 
         optionsPanel = new OptionsPanel(Game);
@@ -69,6 +72,8 @@ public sealed class MainMenuScreen(GamelabGame game) : Screens.GamelabGameScreen
         menuUi = null;
         buttons = null;
         actions = null;
+        battleTheme?.Stop();
+        battleTheme?.Dispose();
         base.UnloadContent();
     }
 
