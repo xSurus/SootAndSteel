@@ -63,7 +63,7 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
     private float hubElapsedSeconds;
     private bool isTransitioningToNextLevel;
 
-    private EventInstance ambientMusic;
+    private EventInstance ambientSong;
     private EventInstance leverSound;
     private const float LeverHintDelaySeconds = 5f;
     private const float HintVisibleSeconds = 8f;
@@ -123,8 +123,8 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         var soundService = Services.GetService<ISoundService>();
         soundService.LoadSound(Sounds.AmbientSong);
         soundService.LoadSound(Sounds.SpeedChange);
-        ambientMusic = soundService.GetSoundInstance(Sounds.AmbientSong);
-        ambientMusic?.Start();
+        ambientSong = soundService.GetSoundInstance(Sounds.AmbientSong);
+        ambientSong?.Start();
         leverSound = soundService.GetSoundInstance(Sounds.SpeedChange);
         soundService.RegisterParameter(leverSound, "New Speed Setting", () => readyPlayers.Count - 1);
     }
@@ -431,8 +431,8 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         hubMap?.Dispose();
         hubMap = null;
         prepTrainMap = null;
-        ambientMusic?.Stop();
-        ambientMusic?.Dispose();
+        ambientSong?.Stop();
+        ambientSong?.Dispose();
         if (_playerHeadSprites != null)
         {
             var animService = GamelabGame.Instance.Services.GetService<IAnimationService>();

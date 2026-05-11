@@ -19,18 +19,6 @@ public class SoundService : ISoundService,
     private readonly Dictionary<string, EventDescription> eventDescriptions = new();
     private readonly Dictionary<string, EventInstance> playOnceInstances = [];
 
-    private static readonly Dictionary<string, SoundCategory> eventCategories = new()
-    {
-        [Sounds.MenuSelect] = SoundCategory.Sfx,
-        [Sounds.Train] = SoundCategory.Sfx,
-        [Sounds.PickupItem] = SoundCategory.Sfx,
-        [Sounds.DropItem] = SoundCategory.Sfx,
-        [Sounds.Craft] = SoundCategory.Sfx,
-        [Sounds.AmbientSong] = SoundCategory.Music,
-    };
-
-    private readonly List<TrackedInstance> liveInstances = [];
-
     public SoundSettings Settings { get; private set; } = new();
 
     private class ParameterBinding(EventInstance eventInstance, string parameterName, Func<float> valueGetter)
@@ -38,12 +26,6 @@ public class SoundService : ISoundService,
         public EventInstance EventInstance { get; } = eventInstance;
         public string ParameterName { get; } = parameterName;
         public Func<float> ValueGetter { get; } = valueGetter;
-    }
-
-    private readonly struct TrackedInstance(EventInstance instance, SoundCategory category)
-    {
-        public EventInstance Instance { get; } = instance;
-        public SoundCategory Category { get; } = category;
     }
 
     public void LoadSound(string id)
@@ -74,7 +56,6 @@ public class SoundService : ISoundService,
         LoadSound(id);
         var sound = playOnceInstances[id];
         sound.Stop();
-        sound.Volume = ComputeCategoryVolume(GetCategoryFor(id));
         sound.Start();
     }
 
@@ -82,9 +63,6 @@ public class SoundService : ISoundService,
     {
         LoadSound(id);
         var instance = eventDescriptions[id].CreateInstance();
-        SoundCategory category = GetCategoryFor(id);
-        instance.Volume = ComputeCategoryVolume(category);
-        liveInstances.Add(new TrackedInstance(instance, category));
         return instance;
     }
 
@@ -96,22 +74,22 @@ public class SoundService : ISoundService,
     public void SetMasterVolume(float volume)
     {
         Settings.MasterVolume = Math.Clamp(volume, 0f, 1f);
-        ApplyVolumeToLiveInstances();
         Settings.Save();
+        StudioSystem.GetBus("bus:/").Volume = Settings.MasterVolume;
     }
 
     public void SetMusicVolume(float volume)
     {
         Settings.MusicVolume = Math.Clamp(volume, 0f, 1f);
-        ApplyVolumeToLiveInstances();
         Settings.Save();
+        StudioSystem.GetBus("bus:/Music").Volume = Settings.MusicVolume;
     }
 
     public void SetSfxVolume(float volume)
     {
         Settings.SfxVolume = Math.Clamp(volume, 0f, 1f);
-        ApplyVolumeToLiveInstances();
         Settings.Save();
+        StudioSystem.GetBus("bus:/Sounds").Volume = Settings.SfxVolume;
     }
 
     public void Initialize(GamelabGame game)
@@ -124,6 +102,9 @@ public class SoundService : ISoundService,
         banks.Add(StudioSystem.LoadBank("music.bank"));
 
         Settings = SoundSettings.Load();
+        SetMasterVolume(Settings.MasterVolume);
+        SetMusicVolume(Settings.MusicVolume);
+        SetSfxVolume(Settings.SfxVolume);
     }
 
     public void Update(GameTime gameTime)
@@ -171,51 +152,6 @@ public class SoundService : ISoundService,
         banks.Clear();
         parameterUpdates.Clear();
         eventDescriptions.Clear();
-        liveInstances.Clear();
         FmodManager.Unload();
-    }
-
-    private static SoundCategory GetCategoryFor(string id) =>
-        eventCategories.TryGetValue(id, out var category) ? category : SoundCategory.Master;
-
-    private float ComputeCategoryVolume(SoundCategory category)
-    {
-        float volume = Settings.MasterVolume;
-        volume *= category switch
-        {
-            SoundCategory.Music => Settings.MusicVolume,
-            SoundCategory.Sfx => Settings.SfxVolume,
-            _ => 1f,
-        };
-        return volume;
-    }
-
-    private void ApplyVolumeToLiveInstances()
-    {
-        liveInstances.RemoveAll(IsReleased);
-
-        foreach (var tracked in liveInstances)
-        {
-            try
-            {
-                tracked.Instance.Volume = ComputeCategoryVolume(tracked.Category);
-            }
-            catch
-            {
-                // A disposed native handle would surface here; the next RemoveAll pass clears it.
-            }
-        }
-    }
-
-    private static bool IsReleased(TrackedInstance tracked)
-    {
-        try
-        {
-            return !tracked.Instance.Native.isValid();
-        }
-        catch
-        {
-            return true;
-        }
     }
 }
