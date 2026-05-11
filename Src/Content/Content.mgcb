@@ -2075,3 +2075,18 @@
 /processor:TextureProcessor
 /build:GumProject/npc_bubble_tail.png
 
+#begin Structures/CannonSeatingTop.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Structures/CannonSeatingTop.png
+
+#begin Structures/CannonStairs.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Structures/CannonStairs.png
+
+#begin GumProject/FMOD Logo White - Transparent Background.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FMOD Logo White - Transparent Background.png
+

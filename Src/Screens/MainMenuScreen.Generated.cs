@@ -42,6 +42,7 @@ if(element == null) throw new System.InvalidOperationException("Could not find a
     public MainMenuButton OptionsButton { get; protected set; }
     public MainMenuButton QuitButton { get; protected set; }
     public SpriteRuntime Background { get; protected set; }
+    public SpriteRuntime FMOD_LOGO { get; protected set; }
     public ContainerRuntime MenuItemContainer { get; protected set; }
 
     public MainMenuScreen(InteractiveGue visual) : base(visual)
@@ -61,6 +62,7 @@ if(element == null) throw new System.InvalidOperationException("Could not find a
         OptionsButton = global::Gum.Forms.GraphicalUiElementFormsExtensions.TryGetFrameworkElementByName<MainMenuButton>(this.Visual,"OptionsButton");
         QuitButton = global::Gum.Forms.GraphicalUiElementFormsExtensions.TryGetFrameworkElementByName<MainMenuButton>(this.Visual,"QuitButton");
         Background = this.Visual?.GetGraphicalUiElementByName("Background") as global::MonoGameGum.GueDeriving.SpriteRuntime;
+        FMOD_LOGO = this.Visual?.GetGraphicalUiElementByName("FMOD LOGO") as global::MonoGameGum.GueDeriving.SpriteRuntime;
         MenuItemContainer = this.Visual?.GetGraphicalUiElementByName("MenuItemContainer") as global::MonoGameGum.GueDeriving.ContainerRuntime;
         CustomInitialize();
     }

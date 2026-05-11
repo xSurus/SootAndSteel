@@ -123,7 +123,7 @@ public class CannonWagon : AbstractPhysicalEntity, IPickable, IUpdatable
         float scaleY = heightPixels / wagonTexture.Height;
         spriteBatch.Draw(wagonTexture, rightBottom, null, Color.White, 0f,
             new Vector2(wagonTexture.Width, wagonTexture.Height), new Vector2(scaleX, scaleY),
-            SpriteEffects.None, RenderUtility.FloorLayer - 2 * RenderUtility.Eps);
+            SpriteEffects.None, RenderUtility.FloorLayer + RenderUtility.Eps);
 
         Vector2 topSeatPos = topSlot.PhysicsBody.Position.ToPixels();
         Vector2 bottomSeatPos = bottomSlot.PhysicsBody.Position.ToPixels();

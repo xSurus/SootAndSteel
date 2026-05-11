@@ -2,20 +2,6 @@
   "UserEvents": {
     "35298781dc6efb3dbe57241319cda4e5e1ea4236e0692bc1fa26f9ddd9b359ac": [
       {
-        "NewName": "ToolTip (Container).ItemFunction",
-        "OldName": "ToolTip (Container).ItemRarity",
-        "ElementType": "Components",
-        "EventType": 7,
-        "TimestampUtc": "2026-04-26T17:23:07.3882815Z"
-      },
-      {
-        "NewName": "canAfford",
-        "OldName": "Affordable",
-        "ElementType": "Components",
-        "EventType": 3,
-        "TimestampUtc": "2026-04-26T17:35:11.6133774Z"
-      },
-      {
         "NewName": "CraftingHelp",
         "OldName": null,
         "ElementType": "Components",
@@ -2072,6 +2058,27 @@
         "ElementType": "Components",
         "EventType": 6,
         "TimestampUtc": "2026-05-10T19:37:03.4140645Z"
+      },
+      {
+        "NewName": "MainMenuScreen.SpriteInstance",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-11T08:10:52.8374414Z"
+      },
+      {
+        "NewName": "MainMenuScreen.FMOD LOGO",
+        "OldName": "MainMenuScreen.SpriteInstance",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-11T08:15:59.3704545Z"
+      },
+      {
+        "NewName": "JoinScreen.FMOD LOGO",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-11T08:16:02.1211669Z"
       }
     ]
   }
