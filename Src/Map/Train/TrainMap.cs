@@ -108,6 +108,20 @@ public class TrainMap
                 continue;
             }
 
+            // Structural racks are spawned by AddDefaultStructures and should not be serialized
+            // into the train layout, otherwise they duplicate after load.
+            if (station.StationId == StationIds.BulletRack)
+            {
+                continue;
+            }
+
+            // Only persist stations that ended up on the train (incl. cannon wagon). Anything
+            // a player dragged outside is considered "left behind".
+            if (!IsOnTrain(station.Position))
+            {
+                continue;
+            }
+
             string kindId = station.StationId;
             Point t = GetTileIndexFromPixels(station.Position);
             GridDirection direction = GridDirection.Right;
@@ -133,6 +147,12 @@ public class TrainMap
 
         foreach (StationSaveData e in layout)
         {
+            // Structural racks are reconstructed by AddDefaultStructures.
+            if (e.KindId == StationIds.BulletRack)
+            {
+                continue;
+            }
+
             Vector2 center = GetTileCenterPixels(e.TileX, e.TileY);
             AbstractStation station = StationFactory.CreateStation(e.KindId, center, e.FacingDirection);
             MapObjects.Add(station);
@@ -224,22 +244,43 @@ public class TrainMap
         SnapToNearestValidCell(station);
     }
 
+    // Cannon wagon interior in tile coords relative to the train origin. These cells avoid the
+    // wagon's left/right/top/bottom walls (which would otherwise push physics on snap/load).
+    private const int WagonInteriorMinX = -3;
+    private const int WagonInteriorMaxX = -2;
+    private const int WagonInteriorMinY = -1;
+    private const int WagonInteriorMaxY = 3;
+
     public void SnapToNearestValidCell(AbstractStation station)
     {
         Point gridPos = GetTileIndexFromPixels(station.Position);
+        bool insideMainGrid = gridPos.X >= 0 && gridPos.X < Width
+                                              && gridPos.Y >= 0 && gridPos.Y < Height;
 
-        if (gridPos.X >= 0 && gridPos.X < Width && gridPos.Y >= 0 && gridPos.Y < Height)
+        // If the station was dropped on the cannon wagon area, snap to the nearest *safe* wagon
+        // interior cell so it doesn't end up overlapping a wagon wall (which would visibly shift
+        // it once the next level loads and the walls are re-created).
+        bool insideWagon = !insideMainGrid
+                           && GetCannonWagonBounds().Contains((int)station.Position.X, (int)station.Position.Y);
+        if (insideWagon)
         {
-            Vector2 targetCenterMeters = GetTileCenterMeters(gridPos.X, gridPos.Y);
-            station.PhysicsBody.Position = targetCenterMeters;
-            var existingPair = stationGrid.FirstOrDefault(x => x.Value == station);
-            if (existingPair.Value != null)
-            {
-                stationGrid.Remove(existingPair.Key);
-            }
-
-            stationGrid[gridPos] = station;
+            gridPos.X = Math.Clamp(gridPos.X, WagonInteriorMinX, WagonInteriorMaxX);
+            gridPos.Y = Math.Clamp(gridPos.Y, WagonInteriorMinY, WagonInteriorMaxY);
         }
+        else if (!insideMainGrid)
+        {
+            return;
+        }
+
+        Vector2 targetCenterMeters = GetTileCenterMeters(gridPos.X, gridPos.Y);
+        station.PhysicsBody.Position = targetCenterMeters;
+        var existingPair = stationGrid.FirstOrDefault(x => x.Value == station);
+        if (existingPair.Value != null)
+        {
+            stationGrid.Remove(existingPair.Key);
+        }
+
+        stationGrid[gridPos] = station;
     }
 
     public void Draw(SpriteBatch spriteBatch)
@@ -316,6 +357,25 @@ public class TrainMap
     public Rectangle GetBounds()
     {
         return new Rectangle((int)Position.X, (int)Position.Y, Width * TileSize, Height * TileSize);
+    }
+
+    public Rectangle GetCannonWagonBounds()
+    {
+        int cannonWagonWidth = CannonWagon.WidthTiles * TileSize;
+        int cannonWagonHeight = CannonWagon.HeightTiles * TileSize;
+        int centerX = (int)Position.X - cannonWagonWidth / 2;
+        int centerY = (int)Position.Y + Height * TileSize - cannonWagonHeight / 2 + TileSize / 2;
+        return new Rectangle(
+            centerX - cannonWagonWidth / 2,
+            centerY - cannonWagonHeight / 2,
+            cannonWagonWidth,
+            cannonWagonHeight);
+    }
+
+    public bool IsOnTrain(Vector2 position)
+    {
+        Point p = new((int)position.X, (int)position.Y);
+        return GetBounds().Contains(p) || GetCannonWagonBounds().Contains(p);
     }
 
     public void Dispose()
