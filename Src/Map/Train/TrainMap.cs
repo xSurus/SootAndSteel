@@ -20,7 +20,7 @@ namespace Gamelab.Map.Train;
 
 public readonly record struct DoorSpec(bool OnBottom, int Column);
 
-public class TrainMap
+public class TrainMap : IDisposable
 {
     public int Width => GamelabGame.Instance.GameplayConfig.TrainWidth;
     public int Height => GamelabGame.Instance.GameplayConfig.TrainHeight;
@@ -370,5 +370,9 @@ public class TrainMap
 
     public void Dispose()
     {
+        foreach (IDisposable disposable in MapObjects.OfType<IDisposable>())
+        {
+            disposable.Dispose();
+        }
     }
 }

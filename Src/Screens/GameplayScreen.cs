@@ -404,8 +404,6 @@ public class GameplayScreen : GamelabGameScreen
     {
         spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
         hud.Draw(spriteBatch, virtualScreenSize);
-        director?.DrawHud(spriteBatch, virtualScreenSize);
-
         float w = endLevelWhiteFilter.Opacity;
         if (w > 0.001f)
         {
