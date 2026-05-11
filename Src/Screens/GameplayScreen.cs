@@ -207,11 +207,8 @@ public class GameplayScreen : GamelabGameScreen
             players.Add(new Player(trainMap.GetTileCenterPixels(playerConfig.PlayerIndex, 1), playerConfig));
         }
 
-<<<<<<< HEAD
-        director?.Initialize(trainMap, gameplayContext);
-=======
         footprintSystem = new FootprintSystem(Services.GetService<IVfxService>(), players.Count);
->>>>>>> 3982e7c (footprint system for hub and gameplay screens and feet position fix)
+        director?.Initialize(trainMap, gameplayContext);
     }
 
     private void InitializeCameraAndVfx()
