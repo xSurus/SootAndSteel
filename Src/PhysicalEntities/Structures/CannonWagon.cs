@@ -155,4 +155,12 @@ public class CannonWagon : AbstractPhysicalEntity, IPickable, IUpdatable
         Vector2 origin = new Vector2(tex.Width / 2f, tex.Height / 2f);
         spriteBatch.Draw(tex, barrelPos + new Vector2(0, -48f), null, Color.White, 0f, origin, scale, SpriteEffects.None, depth);
     }
+
+    public Rectangle GetBounds()
+    {
+        int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
+        float drawLeft = Position.X - widthPixels / 2f + tileSize / 2f;
+        Vector2 topLeft = new Vector2(drawLeft, Position.Y - heightPixels / 2f);
+        return new Rectangle((int)topLeft.X, (int)topLeft.Y, (int)widthPixels, (int)heightPixels);
+    }
 }

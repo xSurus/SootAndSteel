@@ -7,6 +7,7 @@ using Gamelab.Items.Bullets;
 using Gamelab.PhysicalEntities;
 using Gamelab.PhysicalEntities.Bullets;
 using Gamelab.PhysicalEntities.Interfaces;
+using Gamelab.PhysicalEntities.Structures;
 using Gamelab.Services.Animation;
 using Gamelab.Services.Sound;
 using Gamelab.Utils;
@@ -72,7 +73,12 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable, IItemP
         soundService.RegisterParameter(walkSound, "Walk Speed",
             () => PhysicsBody.LinearVelocity.Length() / MaxVelocity);
         soundService.RegisterParameter(walkSound, "Material",
-            () => PlayerIsInTrain() ? (int)WalkMaterial.Wood : (int)WalkMaterial.Snow);
+            () =>
+            {
+                if (PlayerIsInTrain()) return (int)WalkMaterial.Wood;
+                if (PlayerIsInCannonWagon()) return (int)WalkMaterial.Metal;
+                return (int)WalkMaterial.Snow;
+            });
         walkSound?.Start();
 
         animationService = GamelabGame.Instance.Services.GetService<IAnimationService>();
@@ -568,6 +574,11 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable, IItemP
     protected bool PlayerIsInTrain()
     {
         return gameplayContext.Map.GetBounds().Contains(Position);
+    }
+
+    protected bool PlayerIsInCannonWagon()
+    {
+        return ((CannonWagon)gameplayContext.Map.MapObjects.Find(p => p is CannonWagon)).GetBounds().Contains(Position);
     }
     
     public void Dispose()
