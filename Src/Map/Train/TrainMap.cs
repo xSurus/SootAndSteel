@@ -31,6 +31,7 @@ public class TrainMap
 
     public List<IPhysicalEntity> MapObjects { get; } = new();
     private readonly Dictionary<Point, AbstractStation> stationGrid = new();
+    private CannonWagon cannonWagon;
 
     public float originalSize => AssetManager.TileTexture[0].Width;
     public float scale => TileSize / originalSize;
@@ -203,7 +204,7 @@ public class TrainMap
         Vector2 cannonWagonCenter = new Vector2(
             Position.X - cannonWagonWidth / 2f,
             Position.Y + Height * TileSize - CannonWagon.HeightTiles * TileSize / 2f + TileSize / 2f);
-        var cannonWagon = new CannonWagon(cannonWagonCenter);
+        cannonWagon = new CannonWagon(cannonWagonCenter);
         MapObjects.Add(cannonWagon);
         MapObjects.Add(cannonWagon.TopSlot);
         MapObjects.Add(cannonWagon.BottomSlot);
@@ -261,7 +262,8 @@ public class TrainMap
         // interior cell so it doesn't end up overlapping a wagon wall (which would visibly shift
         // it once the next level loads and the walls are re-created).
         bool insideWagon = !insideMainGrid
-                           && GetCannonWagonBounds().Contains((int)station.Position.X, (int)station.Position.Y);
+                           && cannonWagon != null
+                           && cannonWagon.GetBounds().Contains((int)station.Position.X, (int)station.Position.Y);
         if (insideWagon)
         {
             gridPos.X = Math.Clamp(gridPos.X, WagonInteriorMinX, WagonInteriorMaxX);
@@ -359,23 +361,11 @@ public class TrainMap
         return new Rectangle((int)Position.X, (int)Position.Y, Width * TileSize, Height * TileSize);
     }
 
-    public Rectangle GetCannonWagonBounds()
-    {
-        int cannonWagonWidth = CannonWagon.WidthTiles * TileSize;
-        int cannonWagonHeight = CannonWagon.HeightTiles * TileSize;
-        int centerX = (int)Position.X - cannonWagonWidth / 2;
-        int centerY = (int)Position.Y + Height * TileSize - cannonWagonHeight / 2 + TileSize / 2;
-        return new Rectangle(
-            centerX - cannonWagonWidth / 2,
-            centerY - cannonWagonHeight / 2,
-            cannonWagonWidth,
-            cannonWagonHeight);
-    }
-
     public bool IsOnTrain(Vector2 position)
     {
         Point p = new((int)position.X, (int)position.Y);
-        return GetBounds().Contains(p) || GetCannonWagonBounds().Contains(p);
+        if (GetBounds().Contains(p)) return true;
+        return cannonWagon != null && cannonWagon.GetBounds().Contains(p);
     }
 
     public void Dispose()
