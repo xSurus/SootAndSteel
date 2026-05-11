@@ -2085,3 +2085,8 @@
 /processor:TextureProcessor
 /build:Structures/CannonStairs.png
 
+#begin GumProject/FMOD Logo White - Transparent Background.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/FMOD Logo White - Transparent Background.png
+
