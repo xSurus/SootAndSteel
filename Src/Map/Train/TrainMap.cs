@@ -110,16 +110,13 @@ public class TrainMap
 
             string kindId = station.StationId;
             Point t = GetTileIndexFromPixels(station.Position);
-            if (t.X >= 0 && t.X < Width && t.Y >= 0 && t.Y < Height)
+            GridDirection direction = GridDirection.Right;
+            if (station is Conveyor conveyor)
             {
-                GridDirection direction = GridDirection.Right;
-                if (station is Conveyor conveyor)
-                {
-                    direction = conveyor.FacingDirection;
-                }
-
-                list.Add(new StationSaveData(kindId, t.X, t.Y, direction));
+                direction = conveyor.FacingDirection;
             }
+
+            list.Add(new StationSaveData(kindId, t.X, t.Y, direction));
         }
 
         return list;
