@@ -137,7 +137,7 @@ public class BulletEntity : AbstractPhysicalEntity
         IsActive = false;
         foreach (var effect in Effects) effect.OnCleanup(this);
         Effects.Clear();
-        PhysicsBody?.World.Remove(PhysicsBody);
+        PhysicsBody?.World?.Remove(PhysicsBody);
         PhysicsBody = null;
     }
 
