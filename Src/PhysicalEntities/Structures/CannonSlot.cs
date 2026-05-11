@@ -19,7 +19,7 @@ using nkast.Aether.Physics2D.Dynamics;
 
 namespace Gamelab.PhysicalEntities.Structures;
 
-public class CannonSlot : ICannonSeat, IBulletEmitter, IHighlightable, IPickable, IGrabbable, ITooltipable
+public class CannonSlot : ICannonSeat, IBulletEmitter, IHighlightable, IPickable, IGrabbable
 {
     private readonly ISoundService soundService;
     private readonly IBulletService bulletService;
@@ -122,10 +122,6 @@ public class CannonSlot : ICannonSeat, IBulletEmitter, IHighlightable, IPickable
             player.PhysicsBody.Position += exitOffsetMeters;
         SeatedPlayer = null;
     }
-
-    public string GetTitle() => "Cannon";
-    public string GetDescription() => "Aim with movement, fire with interact.";
-    public bool IsVisible => IsHighlighted;
 
     public void OnInteract(Player player)
     {

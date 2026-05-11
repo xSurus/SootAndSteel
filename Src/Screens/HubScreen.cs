@@ -340,7 +340,7 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         {
             Game.CurrentRun.TrainLayout = prepTrainMap.CaptureLayout();
             departWhiteFilter ??= new WhiteFilterTransition();
-            departWhiteFilter.FadeIn(0.8f);
+            departWhiteFilter.FadeIn(1.2f);
             isTransitioningToNextLevel = true;
         }
 
@@ -355,7 +355,8 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         SnowstormTransition.ApplyBlizzardIntensity(hubSnowEmitter, hubSnowBaseline, blizzardT);
         if (departWhiteFilter is { IsDone: true })
         {
-            Game.SwitchToScreen(new NextLevelIntroScreen(Game));
+            Game.CurrentRun.CurrentLevel++;
+            Game.SwitchToScreen(new GameplayScreen(Game));
         }
     }
 
