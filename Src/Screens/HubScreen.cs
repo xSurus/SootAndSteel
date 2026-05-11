@@ -19,10 +19,8 @@ using Gamelab.Services.Bullet;
 using Gamelab.Services.Sound;
 using Gamelab.Services.Vfx;
 using Gamelab.UI;
-using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Gamelab.Services.Animation;
 using MonoGame.Extended;
 using MonoGame.Extended.Graphics;
 using MonoGameGum;
@@ -54,8 +52,6 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
 
     private FootprintSystem footprintSystem;
     private SpeedLever _speedLever;
-    private AnimatedSprite[] _playerHeadSprites;
-    private readonly List<int> _leverReadyOrder = [];
 
     private int worldWidth, worldHeight;
     private float accumulator;
@@ -187,7 +183,6 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         Services.GetService<IVfxService>().Render(spriteBatch);
         Services.GetService<IBulletService>().Render(spriteBatch);
         foreach (var player in players) player.Draw(spriteBatch);
-        DrawLeverHeads(spriteBatch);
         spriteBatch.End();
         GumService.Default.Draw();
         spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
@@ -249,16 +244,6 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         }
 
         footprintSystem = new FootprintSystem(Services.GetService<IVfxService>(), players.Count);
-
-        var animService = GamelabGame.Instance.Services.GetService<IAnimationService>();
-        _playerHeadSprites = new AnimatedSprite[Game.playerManager.Configs.Count];
-        foreach (var config in Game.playerManager.Configs)
-        {
-            var sprite = new AnimatedSprite(AssetManager.PlayerSpriteSheet);
-            sprite.SetAnimation($"Player{config.PlayerIndex}_Idle");
-            animService.Register(sprite);
-            _playerHeadSprites[config.PlayerIndex] = sprite;
-        }
     }
 
     private void InitializeSpeedLever()
@@ -278,15 +263,11 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
                     if (justBecameReady)
                     {
                         readyPlayers.Add(playerIndex);
-                        _leverReadyOrder.Remove(playerIndex);
-                        _leverReadyOrder.Add(playerIndex);
                         lastReadyPlayerIndex = playerIndex;
                     }
-                    else
+                    else if (lastReadyPlayerIndex == playerIndex)
                     {
-                        _leverReadyOrder.Remove(playerIndex);
-                        if (lastReadyPlayerIndex == playerIndex)
-                            lastReadyPlayerIndex = null;
+                        lastReadyPlayerIndex = null;
                     }
 
                     allowDepartWithPendingItems = false;
@@ -335,7 +316,6 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
             .ToList();
 
         readyPlayers.RemoveWhere(index => !joinedPlayerIndices.Contains(index));
-        _leverReadyOrder.RemoveAll(index => !joinedPlayerIndices.Contains(index) || !readyPlayers.Contains(index));
 
         bool allReady = joinedPlayerIndices.Count > 0 &&
                         joinedPlayerIndices.All(index => readyPlayers.Contains(index));
@@ -360,43 +340,11 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         {
             Game.CurrentRun.TrainLayout = prepTrainMap.CaptureLayout();
             departWhiteFilter ??= new WhiteFilterTransition();
-            departWhiteFilter.FadeIn(0.8f);
+            departWhiteFilter.FadeIn(1.2f);
             isTransitioningToNextLevel = true;
         }
 
         previousPendingShopCount = pendingShopCount;
-    }
-
-    private void DrawLeverHeads(SpriteBatch spriteBatch)
-    {
-        if (_speedLever == null || _leverReadyOrder.Count == 0 || _playerHeadSprites == null) return;
-
-        const float gap = 2f;
-        int tileSize = Game.GameplayConfig.TrainTileSize;
-
-        AnimatedSprite sample = _playerHeadSprites[_leverReadyOrder[0]];
-        float cellWidth = tileSize * 0.55f;
-        float headScale = cellWidth / sample.TextureRegion.Width;
-        float cellHeight = sample.TextureRegion.Height * headScale;
-
-        // 2x2 grid, slots fill left-to-right then upward; insertion order preserved
-        float gridLeft = _speedLever.Position.X - tileSize / 2f + 1f;
-        float gridBottom = _speedLever.Position.Y + tileSize / 2f;
-
-        for (int i = 0; i < _leverReadyOrder.Count; i++)
-        {
-            int col = i % 2;
-            int row = i / 2;
-
-            int idx = _leverReadyOrder[i];
-            AnimatedSprite sprite = _playerHeadSprites[idx];
-            sprite.Origin = new Vector2(sprite.TextureRegion.Width / 2f, sprite.TextureRegion.Height);
-            sprite.Depth = RenderUtility.OverlayTopLayer;
-
-            float x = gridLeft + col * (cellWidth + gap) + cellWidth / 2f;
-            float y = gridBottom - row * (cellHeight + gap);
-            spriteBatch.Draw(sprite, new Vector2(x, y), 0f, new Vector2(headScale));
-        }
     }
 
     private void HandleLevelTransition(float dt)
@@ -407,7 +355,8 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         SnowstormTransition.ApplyBlizzardIntensity(hubSnowEmitter, hubSnowBaseline, blizzardT);
         if (departWhiteFilter is { IsDone: true })
         {
-            Game.SwitchToScreen(new NextLevelIntroScreen(Game));
+            Game.CurrentRun.CurrentLevel++;
+            Game.SwitchToScreen(new GameplayScreen(Game));
         }
     }
 
@@ -433,15 +382,6 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         prepTrainMap = null;
         ambientSong?.Stop();
         ambientSong?.Dispose();
-        if (_playerHeadSprites != null)
-        {
-            var animService = GamelabGame.Instance.Services.GetService<IAnimationService>();
-            foreach (var sprite in _playerHeadSprites)
-            {
-                if (sprite != null) animService?.Unregister(sprite);
-            }
-            _playerHeadSprites = null;
-        }
 
         if (players != null)
         {
@@ -514,9 +454,9 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
 
     private int CountPendingShopItemsOffBoard()
     {
-        Rectangle trainBounds = prepTrainMap.GetBounds();
         return prepTrainMap.MapObjects.Count(entity =>
-            entity is AbstractStation && !trainBounds.Contains(entity.Position));
+            entity is AbstractStation station &&
+            !prepTrainMap.IsOnTrain(station.Position));
     }
 
     private void TryOpenDepartDecisionForLastReady(int playerIndex)
