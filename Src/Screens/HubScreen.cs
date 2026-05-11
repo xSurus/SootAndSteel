@@ -379,7 +379,7 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         Services.GetService<IVfxService>().ClearAll();
         hubMap?.Dispose();
         hubMap = null;
-        prepTrainMap = null;
+        prepTrainMap.Dispose();
         ambientSong?.Stop();
         ambientSong?.Dispose();
 

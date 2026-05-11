@@ -11,7 +11,6 @@ public interface ITutorialDirector
     void Initialize(TrainMap trainMap, GameplayContext ctx);
     void Update(float dt, GameplayContext ctx, EnemyManager enemies);
     void DrawWorld(SpriteBatch spriteBatch);
-    void DrawHud(SpriteBatch spriteBatch, Point virtualScreenSize);
     void OnTrainFrozen();
     void OnAllPlayersKnockedOut();
     void OnLevelCompleted();

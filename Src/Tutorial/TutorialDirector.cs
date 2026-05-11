@@ -92,18 +92,6 @@ public class TutorialDirector : ITutorialDirector
             pendingWallToBreach = null;
         }
 
-        bool startHeld = GamelabGame.Instance.playerManager.Configs.Any(c => c.Input.IsStartHeld());
-        if (startHeld)
-        {
-            skipHoldTimer += dt;
-            if (skipHoldTimer >= SkipHoldSeconds)
-                SkipTutorial();
-        }
-        else
-        {
-            skipHoldTimer = 0f;
-        }
-
         if (pendingHubTransition)
         {
             celebrationTimer -= dt;
@@ -179,12 +167,6 @@ public class TutorialDirector : ITutorialDirector
         dialogue.SetTutorialGuidance(line);
     }
 
-    private void SkipTutorial()
-    {
-        pendingHubTransition = false;
-        pendingHubOutroRequest = true;
-    }
-
     public bool ConsumePendingHubOutroRequest()
     {
         if (!pendingHubOutroRequest)
@@ -257,16 +239,6 @@ public class TutorialDirector : ITutorialDirector
         if (!stepBulletDone)
             return TutorialBeat.Bullet;
         return TutorialBeat.Shoot;
-    }
-
-    public void DrawHud(SpriteBatch spriteBatch, Point virtualScreenSize)
-    {
-        var skipFont = GamelabGame.Instance.fontSystem.GetFont(22);
-        string skipLabel = skipHoldTimer > 0f
-            ? $"Skipping... {(int)(skipHoldTimer / SkipHoldSeconds * 100)}%"
-            : "Hold [Start] to skip tutorial";
-        skipFont.DrawText(spriteBatch, skipLabel,
-            new Vector2(virtualScreenSize.X - 360f, 20f), Color.Gray * 0.7f);
     }
 
     private static DialogueLine BeatToDialogueLine(TutorialBeat beat) => beat switch

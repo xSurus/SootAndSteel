@@ -44,7 +44,7 @@ public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
 
         PhysicsBody = gameplayContext.PhysicsWorld.CreateRectangle(widthPixels.ToMeters(), heightPixels.ToMeters(), 1f,
             position.ToMeters());
-        smokeEmitter = ParticleFactory.CreateOvenSmoke(position);
+        smokeEmitter = ParticleFactory.CreateOvenSmoke(position + new Vector2(40, 0));
         GamelabGame.Instance.Services.GetService<IVfxService>()?.AddContinuous(smokeEmitter);
 
         chimneyEmitter = ParticleFactory.CreateChimneySmoke();
@@ -165,10 +165,11 @@ public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
 
         float barDepth = depth + RenderUtility.Eps;
         int barMaxWidth = (int)(widthPixels * 0.8f);
-        int barHeight = 12;
+        int barHeight = 8;
         // Keep fuel UI near the top of the car so it is not confused with wheels / tracks.
-        float barTopY = Position.Y - heightPixels / 2f + tileSize * 0.35f;
-        Vector2 barPos = new Vector2(Position.X - barMaxWidth / 2f, barTopY);
+        float barTopY = Position.Y + (heightPixels / 2f) - 60;
+        float barLeftX = (Position.X - barMaxWidth / 2f) + 60;
+        Vector2 barPos = new Vector2(barLeftX, barTopY);
 
         float fuelRatio = Math.Max(0f, currentFuel / maxFuel);
         int currentBarWidth = (int)(barMaxWidth * fuelRatio);

@@ -16,7 +16,7 @@ using EventInstance = FmodForFoxes.Studio.EventInstance;
 
 namespace Gamelab.PhysicalEntities.Stations;
 
-public class Workbench : AbstractStation, IInteractable
+public class Workbench : AbstractStation, IInteractable, IDisposable
 {
     private static readonly Logger Logger = new(StationIds.Workbench);
     protected List<BulletItem> PlacedItems { get; } = new();
@@ -122,6 +122,12 @@ public class Workbench : AbstractStation, IInteractable
         sparkCooldown = 0f;
     }
 
+    public override void OnHighlightRemoved(Player player)
+    {
+        base.OnHighlightRemoved(player);
+        isCrafting = IsHighlighted;
+    }
+
     public override void Draw(SpriteBatch spriteBatch)
     {
         base.Draw(spriteBatch);
@@ -220,5 +226,11 @@ public class Workbench : AbstractStation, IInteractable
             return true;
 
         return false;
+    }
+
+    public void Dispose()
+    {
+        craftSound?.Stop();
+        craftSound?.Dispose();
     }
 }

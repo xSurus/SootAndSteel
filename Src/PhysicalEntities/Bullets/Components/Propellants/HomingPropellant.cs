@@ -14,7 +14,7 @@ namespace Gamelab.PhysicalEntities.Bullets.Components.Propellants;
 public class HomingPropellant : AbstractComponent
 {
     private Random random = Random.Shared;
-    private float initialLockOnDelay = 0.5f;
+    private float initialLockOnDelay = 0.2f;
     private float lockOnInterval = 0.3f;
     private float timer;
     private Body lockedOnEnemy;
