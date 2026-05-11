@@ -74,7 +74,7 @@
     <MonoGameContentReference Include="Content\Content.mgcb" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Content\GumProject\**\*.*">
+    <None Include="Content\GumProject\**\*.*" Exclude="Content\GumProject\EventExport\**\*.*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
