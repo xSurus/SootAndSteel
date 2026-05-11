@@ -65,8 +65,6 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
 
     public void OnPickup(Player interactingPlayer)
     {
-        // TODO Only for debugging until damage from enemies is implemented
-        TakeDamage(10);
     }
 
     public void OnInteractHeld(Player interactingPlayer, float dt)
