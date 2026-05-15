@@ -59,7 +59,9 @@ public class BulletRack(Vector2 position)
         Vector2 feetPosition = Position + new Vector2(0, tileSize / 2f);
         float depth = RenderUtility.CalculateDepth(feetPosition.Y);
         float bgScale = tileSize / (float)bgTex.Width * 1.2f;
-        spriteBatch.DrawWithHighlight(bgTex, feetPosition, null, Color.White, 0f,
+        Color idleLight = new(255, 255, 255, 20);
+        Color highlightLight = new(255, 255, 255, 44);
+        spriteBatch.DrawWithLightBoost(bgTex, feetPosition, null, Color.White, idleLight, highlightLight, 0f,
             new Vector2(bgTex.Width / 2f, bgTex.Height), bgScale, SpriteEffects.None, depth, IsHighlighted);
 
         if (storedBullets.Count > 0)

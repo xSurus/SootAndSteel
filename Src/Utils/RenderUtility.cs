@@ -35,6 +35,25 @@ public static class RenderUtility
         return 0.1f + (normalizedY * 0.8f);
     }
 
+    public static void DrawWithLightBoost(this SpriteBatch spriteBatch, Texture2D texture, Vector2 position,
+        Rectangle? sourceRectangle, Color baseColor, Color idleLightColor, Color highlightLightColor, float rotation,
+        Vector2 origin, float scale, SpriteEffects effects, float layerDepth, bool isHighlighted)
+    {
+        spriteBatch.Draw(texture, position, sourceRectangle, baseColor, rotation, origin, scale, effects, layerDepth);
+
+        if (idleLightColor.A > 0)
+        {
+            spriteBatch.Draw(texture, position, sourceRectangle, idleLightColor, rotation, origin, scale, effects,
+                layerDepth + HighlightEps);
+        }
+
+        if (isHighlighted && highlightLightColor.A > 0)
+        {
+            spriteBatch.Draw(texture, position, sourceRectangle, highlightLightColor, rotation, origin, scale,
+                effects, layerDepth + 2 * HighlightEps);
+        }
+    }
+
     public static void DrawWithHighlight(this SpriteBatch spriteBatch, Texture2D texture, Vector2 position,
         Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effects,
         float layerDepth, bool isHighlighted)

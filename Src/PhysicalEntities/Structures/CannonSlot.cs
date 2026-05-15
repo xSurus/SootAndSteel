@@ -54,19 +54,15 @@ public class CannonSlot : ICannonSeat, IBulletEmitter, IHighlightable, IGrabbabl
         Vector2 center = PhysicsBody.Position.ToPixels();
         float depth = RenderUtility.CalculateDepth(center.Y);
 
-        if (textureName != null)
-        {
-            Texture2D tex = AssetManager.GetStationTexture(textureName);
-            float scale = tileSize / (float)tex.Width * 2f;
-            Vector2 origin = new Vector2(tex.Width / 2f, tex.Height / 2f);
-            spriteBatch.DrawWithHighlight(tex, center + new Vector2(0, tileSize * 0.3f), null, Color.White, 0f, origin, scale, SpriteEffects.None, depth, IsHighlighted);
-            return;
-        }
+        if (textureName == null) return;
 
-        if (!IsHighlighted) return;
-        int size = (int)(tileSize * 0.55f);
-        Rectangle rect = new Rectangle((int)(center.X - size / 2f), (int)(center.Y - size / 2f), size, size);
-        spriteBatch.Draw(AssetManager.BlankTexture, rect, null, RenderUtility.HighlightColor, 0f, Vector2.Zero, SpriteEffects.None, depth);
+        Texture2D tex = AssetManager.GetStationTexture(textureName);
+        float scale = tileSize / (float)tex.Width * 2f;
+        Vector2 origin = new Vector2(tex.Width / 2f, tex.Height / 2f);
+        Color idleLight = new(255, 255, 255, 20);
+        Color highlightLight = new(255, 255, 255, 44);
+        spriteBatch.DrawWithLightBoost(tex, center + new Vector2(0, tileSize * 0.3f), null, Color.White, idleLight,
+            highlightLight, 0f, origin, scale, SpriteEffects.None, depth, IsHighlighted);
     }
 
     public bool IsHighlighted => highlighterCount > 0;
