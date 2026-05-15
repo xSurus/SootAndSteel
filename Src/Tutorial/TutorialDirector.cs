@@ -252,7 +252,7 @@ public class TutorialDirector : ITutorialDirector
         TutorialBeat.Bullet => new DialogueLine("Load out",
             "Head to the workbench. Pick up [A] a projectile, a casing, and a propellant and place them on the bench. Hold interact [X] to craft. Then carry the round and drop it [A] on the rack beside the cannon."),
         TutorialBeat.Shoot => new DialogueLine("Return fire",
-            "Pick up [A] a bullet from the rack and load it into the cannon. Aim with the stick and press interact [X] to fire. Clear that rifleman."),
+            "Mount the cannon [Y], aim with the stick and then press interact [X] to load a bullet from the rack and fire. Clear that rifleman."),
         TutorialBeat.RideClear => new DialogueLine("Ambush broken",
             "That's the last of them. Hold your speed until this stretch of line is behind you."),
         _ => throw new ArgumentOutOfRangeException(nameof(beat), beat, "Unexpected tutorial beat."),

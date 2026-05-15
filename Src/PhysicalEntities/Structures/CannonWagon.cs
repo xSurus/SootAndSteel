@@ -139,21 +139,25 @@ public class CannonWagon : AbstractPhysicalEntity, IPickable, IUpdatable
         DrawRotatingCannon(spriteBatch, "CannonTop", bottomSlot, bottomBarrelPos, bottomDepth + 0.01f, MathF.PI / 2f, bottom: true);
         DrawRotatingCannon(spriteBatch, "CannonBottom", topSlot, topBarrelPos, RenderUtility.FloorLayer - 3 * RenderUtility.Eps, -MathF.PI / 2f, bottom: false);
 
-        DrawFrontWall(spriteBatch, bottomBarrelPos, bottomDepth + 0.02f);
+        DrawFrontWall(spriteBatch, bottomBarrelPos, bottomDepth + 0.02f, bottomSlot.IsHighlighted);
     }
 
     private void DrawRotatingCannon(SpriteBatch spriteBatch, string texName, CannonSlot slot, Vector2 barrelPos, float depth, float angleOffset, bool bottom)
     {
         Texture2D tex = AssetManager.GetStructureTexture(texName);
         Vector2 origin = new Vector2(tex.Width / 2f, bottom ? tex.Height : 0f);
-        spriteBatch.DrawWithHighlight(tex, barrelPos, null, Color.White, slot.AimAngle + angleOffset, origin, scale * BarrelScaleFactor, SpriteEffects.None, depth, slot.IsHighlighted);
+        spriteBatch.DrawWithHighlight(tex, barrelPos, null, Color.White, slot.AimAngle + angleOffset, origin,
+            scale * BarrelScaleFactor, SpriteEffects.None, depth, slot.IsHighlighted);
     }
 
-    private void DrawFrontWall(SpriteBatch spriteBatch, Vector2 barrelPos, float depth)
+    private void DrawFrontWall(SpriteBatch spriteBatch, Vector2 barrelPos, float depth, bool isHighlighted)
     {
         Texture2D tex = AssetManager.GetStructureTexture("CannonWagonFrontWall");
         Vector2 origin = new Vector2(tex.Width / 2f, tex.Height / 2f);
-        spriteBatch.Draw(tex, barrelPos + new Vector2(0, -48f), null, Color.White, 0f, origin, scale, SpriteEffects.None, depth);
+        Color idleLight = new(255, 255, 255, 20);
+        Color highlightLight = new(255, 255, 255, 44);
+        spriteBatch.DrawWithLightBoost(tex, barrelPos + new Vector2(0, -48f), null, Color.White,
+            idleLight, highlightLight, 0f, origin, scale, SpriteEffects.None, depth, isHighlighted);
     }
 
     public Rectangle GetBounds()
