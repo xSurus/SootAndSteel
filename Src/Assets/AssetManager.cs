@@ -27,6 +27,9 @@ public static class AssetManager
     public static Texture2D SnowPatchTexture { get; private set; }
     public static Texture2D IcePatchTexture { get; private set; }
     public static Texture2D BulletEntityTexture { get; private set; }
+    public static Texture2D FrostScreenTexture1 { get; private set; }
+    public static Texture2D FrostScreenTexture2 { get; private set; }
+    public static Texture2D FrostScreenTexture3 { get; private set; }
 
     public static Dictionary<string, Texture2D> CharacterTextures { get; private set; } = new();
     public static Dictionary<string, Texture2D> StationTextures { get; private set; } = new();
@@ -55,7 +58,9 @@ public static class AssetManager
         SnowPatchTexture = content.Load<Texture2D>("Snow_Tile");
         IcePatchTexture = content.Load<Texture2D>("Ice_Tile");
         BulletEntityTexture = content.Load<Texture2D>("Bullet_Entity");
-
+        FrostScreenTexture1 = content.Load<Texture2D>("FrostScreen1");
+        FrostScreenTexture2 = content.Load<Texture2D>("FrostScreen2");
+        FrostScreenTexture3 = content.Load<Texture2D>("FrostScreen3");
         LoadDictionary(content, CharacterTextures, "Characters");
         LoadDictionary(content, StationTextures, "Stations");
         LoadDictionary(content, HubDecorationTextures, "Hub");
@@ -146,22 +151,22 @@ public static class AssetManager
         // 16x16 pixel-art dollar sign
         byte[] dollarPattern =
         {
-            0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-            0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,
-            0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,
-            0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,
-            0,0,1,1,0,0,1,1,0,0,1,1,0,0,0,0,
-            0,0,1,1,0,0,1,1,0,0,0,0,0,0,0,0,
-            0,0,1,1,0,0,1,1,0,0,0,0,0,0,0,0,
-            0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,
-            0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,
-            0,0,0,0,0,0,1,1,0,0,1,1,0,0,0,0,
-            0,0,0,0,0,0,1,1,0,0,1,1,0,0,0,0,
-            0,0,1,1,0,0,1,1,0,0,1,1,0,0,0,0,
-            0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,
-            0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,
-            0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,
-            0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0,
+            0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0,
+            0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0,
+            0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0,
+            0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         };
         DollarTexture = new Texture2D(graphicsDevice, 16, 16);
         Color[] dollarData = new Color[256];
