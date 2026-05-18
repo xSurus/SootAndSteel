@@ -29,6 +29,15 @@ namespace Gamelab.Screens;
 
 public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
 {
+    
+    private enum HubPhase
+    {
+        Intro,
+        Running,
+        Departing
+    }
+
+    private HubPhase phase = HubPhase.Intro;
     private List<Player> players;
     private GameplayContext gameplayContext;
 
@@ -43,7 +52,7 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
     private WorldUiManager worldUiManager;
     private ParticleEmitter hubSnowEmitter;
     private SnowstormTransition.Baseline hubSnowBaseline;
-    private WhiteFilterTransition departWhiteFilter;
+    private WhiteFilterTransition screenTransitionFilter;
     private PauseMenuController pauseMenu;
     private CraftingHelp craftingHelp;
     private bool craftingHelpVisible = true;
@@ -57,7 +66,6 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
     private float accumulator;
     private float departHoldTimer;
     private float hubElapsedSeconds;
-    private bool isTransitioningToNextLevel;
 
     private EventInstance ambientSong;
     private EventInstance leverSound;
@@ -92,7 +100,7 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
             allowOffWorldOverflow: true);
         hubSnowEmitter = ParticleFactory.CreateSnowstorm();
         hubSnowEmitter.Modifiers.Add(new BlizzardGustModifier(() =>
-            isTransitioningToNextLevel && departWhiteFilter != null ? departWhiteFilter.Opacity : 0f));
+            phase == HubPhase.Departing && screenTransitionFilter != null ? screenTransitionFilter.EffectIntensity : 0f));
         hubSnowBaseline = SnowstormTransition.Capture(hubSnowEmitter);
         Services.GetService<IVfxService>().AddContinuous(hubSnowEmitter);
 
@@ -123,6 +131,10 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         ambientSong?.Start();
         leverSound = soundService.GetSoundInstance(Sounds.SpeedChange);
         soundService.RegisterParameter(leverSound, "New Speed Setting", () => readyPlayers.Count - 1);
+
+        screenTransitionFilter = new WhiteFilterTransition();
+        screenTransitionFilter.SnapTo(1f);
+        screenTransitionFilter.FadeOut(1f);
     }
 
     public override void Update(GameTime gameTime)
@@ -148,10 +160,13 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
             if (craftingHelp != null) craftingHelp.IsVisible = craftingHelpVisible;
         }
 
-        if (isTransitioningToNextLevel)
+        if (phase == HubPhase.Intro)
         {
-            HandleLevelTransition(dt);
-            return;
+            HandleIntroTransition(dt);
+        }
+        else if (phase == HubPhase.Departing)
+        {
+            HandleOutroTransition(dt);
         }
 
         UpdatePhysics(dt);
@@ -160,11 +175,13 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         cameraDirector.Update(camera, dt, players, prepTrainMap.GetBounds(), worldWidth, worldHeight,
             allowOffWorldOverflow: true);
         hubSnowEmitter.Position = camera.Position + camera.Origin;
-        worldUiManager.Update(prepTrainMap.MapObjects, camera.GetViewMatrix());
-        departureHintOverlay?.SyncFollowCamera(camera.GetViewMatrix());
-        departureHintOverlay?.Update(gameTime);
-
-        UpdateDepartureLogic(dt);
+        if (phase != HubPhase.Departing)
+        {
+            worldUiManager.Update(prepTrainMap.MapObjects, camera.GetViewMatrix());
+            departureHintOverlay?.SyncFollowCamera(camera.GetViewMatrix());
+            departureHintOverlay?.Update(gameTime);
+            UpdateDepartureLogic(dt);
+        }
     }
 
     public override void Draw(GameTime gameTime)
@@ -186,10 +203,10 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         spriteBatch.End();
         GumService.Default.Draw();
         spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
-        if (departWhiteFilter != null && departWhiteFilter.Opacity > 0.001f)
+        if (screenTransitionFilter != null && screenTransitionFilter.Opacity > 0.001f)
         {
             spriteBatch.Draw(AssetManager.BlankTexture, new Rectangle(0, 0, virtualScreenSize.X, virtualScreenSize.Y),
-                Color.White * departWhiteFilter.Opacity);
+                Color.White * screenTransitionFilter.Opacity);
         }
 
         spriteBatch.End();
@@ -339,21 +356,32 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         if (departHoldTimer >= Game.GameplayConfig.DepartHoldSeconds)
         {
             Game.CurrentRun.TrainLayout = prepTrainMap.CaptureLayout();
-            departWhiteFilter ??= new WhiteFilterTransition();
-            departWhiteFilter.FadeIn(1.2f);
-            isTransitioningToNextLevel = true;
+            screenTransitionFilter ??= new WhiteFilterTransition();
+            screenTransitionFilter.FadeIn(2f, 1.5f);
+            worldUiManager.ClearAll(); 
+            departureHintOverlay?.Hide();
+            phase = HubPhase.Departing;
         }
 
         previousPendingShopCount = pendingShopCount;
     }
+    
+    private void HandleIntroTransition(float dt)
+    {
+        screenTransitionFilter?.Update(dt);
+        if (screenTransitionFilter.IsDone)
+        {
+            phase = HubPhase.Running;
+        }
+    }
 
-    private void HandleLevelTransition(float dt)
+    private void HandleOutroTransition(float dt)
     {
         worldUiManager.ClearAll();
-        departWhiteFilter?.Update(dt);
-        float blizzardT = isTransitioningToNextLevel && departWhiteFilter != null ? departWhiteFilter.Opacity : 0f;
+        screenTransitionFilter?.Update(dt);
+        float blizzardT = phase == HubPhase.Departing && screenTransitionFilter != null ? screenTransitionFilter.EffectIntensity : 0f;
         SnowstormTransition.ApplyBlizzardIntensity(hubSnowEmitter, hubSnowBaseline, blizzardT);
-        if (departWhiteFilter is { IsDone: true })
+        if (screenTransitionFilter.IsDone)
         {
             Game.CurrentRun.CurrentLevel++;
             Game.SwitchToScreen(new GameplayScreen(Game));

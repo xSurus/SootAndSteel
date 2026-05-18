@@ -17,7 +17,7 @@ public static class ParticleFactory
             Position = new Vector2(area.X / 2f, area.Y / 2f),
             AutoTrigger = true,
             AutoTriggerFrequency = 0.05f,
-            Profile = new BoxProfile(area.X * 1.5f, area.Y, Vector2.UnitY),
+            Profile = new BoxProfile(area.X * 1.5f, area.Y * 1.5f, Vector2.UnitY),
 
             Parameters = new ParticleReleaseParameters
             {

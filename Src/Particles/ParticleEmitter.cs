@@ -37,7 +37,20 @@ public class ParticleEmitter
     public ParticleReleaseParameters Parameters { get; set; } = new();
     public List<IParticleModifier> Modifiers { get; } = new();
 
-    private readonly Particle[] particles;
+    private Particle[] particles;
+
+    public int Capacity
+    {
+        get => particles.Length;
+        set
+        {
+            if (value > particles.Length)
+            {
+                Array.Resize(ref particles, value);
+            }
+        }
+    }
+
     public int activeParticles = 0;
     private readonly Random random = Random.Shared;
     private Vector2 origin;
