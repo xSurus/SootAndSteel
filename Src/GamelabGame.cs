@@ -147,7 +147,7 @@ public class GamelabGame : Game
             var displayMode = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode;
             graphics.PreferredBackBufferWidth = displayMode.Width;
             graphics.PreferredBackBufferHeight = displayMode.Height;
-            graphics.IsFullScreen = false;
+            graphics.IsFullScreen = true;
         }
 
         graphics.ApplyChanges();
