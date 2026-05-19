@@ -56,38 +56,17 @@ public class CannonWagon : AbstractPhysicalEntity, IPickable, IUpdatable
             1f,
             new Vector2(centerPixels.X - widthPixels / 2f + tileSize, centerPixels.Y).ToMeters());
 
-        // Right wall (two segments with a door-height gap like TrainMap side wall / DoorSpec rows)
-        float doorHalfHeight = tileSize;
-        float rightWallThickness = tileSize * 0.5f;
-        float rightWallOuterX = centerPixels.X + widthPixels / 2f - tileSize / 2f;
-        float rightWallX = rightWallOuterX - rightWallThickness / 2f;
-        float segmentHeight = heightPixels / 2f - doorHalfHeight;
-        gameplayContext.PhysicsWorld.CreateRectangle(
-            rightWallThickness.ToMeters(),
-            segmentHeight.ToMeters(),
-            1f,
-            new Vector2(rightWallX, centerPixels.Y - heightPixels / 4f - doorHalfHeight / 2f).ToMeters());
-        gameplayContext.PhysicsWorld.CreateRectangle(
-            rightWallThickness.ToMeters(),
-            segmentHeight.ToMeters(),
-            1f,
-            new Vector2(rightWallX, centerPixels.Y + heightPixels / 4f + doorHalfHeight / 2f).ToMeters());
-
-        // Top wall
+        // top and bottom wall
         gameplayContext.PhysicsWorld.CreateRectangle(
             widthPixels.ToMeters(),
             (tileSize / 2f).ToMeters(),
             1f,
-            new Vector2(centerPixels.X + tileSize / 2f, centerPixels.Y - heightPixels / 2f + 3 * tileSize / 4f)
-                .ToMeters());
-
-        // Bottom wall
+            new Vector2(centerPixels.X, centerPixels.Y - (trainHeight * tileSize) / 2f).ToMeters());
         gameplayContext.PhysicsWorld.CreateRectangle(
             widthPixels.ToMeters(),
             (tileSize / 2f).ToMeters(),
             1f,
-            new Vector2(centerPixels.X + tileSize / 2f, centerPixels.Y + heightPixels / 2f - 5 * tileSize / 4f)
-                .ToMeters());
+            new Vector2(centerPixels.X, centerPixels.Y + (trainHeight * tileSize) / 2f).ToMeters());
 
         float visualOffset = tileSize / 2f;
         float topSeatOffsetY = -heightPixels * 0.3f; // less negative = lower
@@ -95,16 +74,17 @@ public class CannonWagon : AbstractPhysicalEntity, IPickable, IUpdatable
 
         var topSeatPos = centerPixels + new Vector2(visualOffset, topSeatOffsetY);
         topSlot = new CannonSlot(topSeatPos, arcMin: -MathF.PI, arcMax: 0f, defaultAngle: -MathF.PI / 2f,
-            SeatPosition.Top, textureName: "CannonSeatingTop", exitOffsetPixels: new Vector2(0, tileSize));
+            textureName: "CannonSeatingTop", exitOffsetPixels: new Vector2(0, tileSize),
+            seatPosition: SeatPosition.Top);
         topRack = new BulletRack(centerPixels +
                                  new Vector2(visualOffset + 1.1f * tileSize, topSeatOffsetY + 1.5f * tileSize));
         topSlot.SetPairedRack(topRack);
 
         var bottomSeatPos = centerPixels + new Vector2(visualOffset, bottomSeatOffsetY);
         bottomSlot = new CannonSlot(bottomSeatPos, arcMin: 0f, arcMax: MathF.PI, defaultAngle: MathF.PI / 2f,
-            SeatPosition.Bottom, exitOffsetPixels: new Vector2(0, -tileSize));
+            exitOffsetPixels: new Vector2(0, -tileSize), seatPosition: SeatPosition.Bottom);
         bottomRack = new BulletRack(centerPixels +
-                                    new Vector2(visualOffset + 1.1f * tileSize, bottomSeatOffsetY - 0.3f * tileSize));
+                                    new Vector2(visualOffset + 1.1f * tileSize, bottomSeatOffsetY - 0.6f * tileSize));
         bottomSlot.SetPairedRack(bottomRack);
 
         float cannonTexHeight = AssetManager.GetStructureTexture("CannonBottom").Height;
@@ -138,13 +118,17 @@ public class CannonWagon : AbstractPhysicalEntity, IPickable, IUpdatable
         Vector2 topBarrelPos = topSeatPos + new Vector2(0, -BarrelDistance);
         Vector2 bottomBarrelPos = bottomSeatPos + new Vector2(0, BarrelDistance);
 
+        spriteBatch.Draw(AssetManager.GetStructureTexture("CannonWagonTop"), rightBottom, null, Color.White, 0f,
+            new Vector2(wagonTexture.Width, wagonTexture.Height), new Vector2(scaleX, scaleY),
+            SpriteEffects.None, (topDepth - 0.005f));
+
         topSlot.Draw(spriteBatch);
         bottomSlot.Draw(spriteBatch);
 
         DrawRotatingCannon(spriteBatch, "CannonTop", bottomSlot, bottomBarrelPos, bottomDepth + 0.01f, MathF.PI / 2f,
             bottom: true);
-        DrawRotatingCannon(spriteBatch, "CannonBottom", topSlot, topBarrelPos,
-            RenderUtility.FloorLayer - 3 * RenderUtility.Eps, -MathF.PI / 2f, bottom: false);
+        DrawRotatingCannon(spriteBatch, "CannonBottom", topSlot, topBarrelPos, topDepth - 0.01f, -MathF.PI / 2f,
+            bottom: false);
 
         DrawFrontWall(spriteBatch, bottomBarrelPos, bottomDepth + 0.02f, bottomSlot.IsHighlighted);
     }

@@ -30,10 +30,8 @@ public class WorldScroller
     private const float TreeScaleVariance = 0.08f;
     private const float TreeHorizontalSpacingBase = 360f;
     private const float TreeHorizontalSpacingVariance = 180f;
-    private const float MinTrunkBaseClearanceAboveTracks = 60f;
+    private const float MinTrunkBaseClearanceAboveTracks = 100f;
     private const float TrunkBaseOffsetBelowRailStrip = 300f;
-    private const float UpperTrunkBasePlacementBandHeight = 220f;
-    private const float LowerTrunkBasePlacementBandHeight = 220f;
 
     public WorldScroller()
     {
@@ -58,8 +56,13 @@ public class WorldScroller
     private float MaxVisibleWidth => gameplayContext.ScreenWidth / GamelabGame.Instance.GameplayConfig.CameraMinZoom;
 
     // How far the camera can see past the world edges at the gameplay zoom cap.
-    private float LeftVisibleOverflow => (gameplayContext.ScreenWidth / GamelabGame.Instance.GameplayConfig.CameraMaxZoom - gameplayContext.ScreenWidth) / 2f;
-    private float VerticalVisibleOverflow => (gameplayContext.ScreenHeight / GamelabGame.Instance.GameplayConfig.CameraMaxZoom - gameplayContext.ScreenHeight) / 2f;
+    private float LeftVisibleOverflow =>
+        (gameplayContext.ScreenWidth / GamelabGame.Instance.GameplayConfig.CameraMaxZoom -
+         gameplayContext.ScreenWidth) / 2f;
+
+    private float VerticalVisibleOverflow =>
+        (gameplayContext.ScreenHeight / GamelabGame.Instance.GameplayConfig.CameraMaxZoom -
+         gameplayContext.ScreenHeight) / 2f;
 
     private void SpawnInitialTrees()
     {
@@ -192,7 +195,7 @@ public class WorldScroller
 
         foreach (ScrollerTree t in trees)
         {
-            float treeLayerDepth = RenderUtility.CalculateWorldObjectDepth(t.TrunkBase.Y);
+            float treeLayerDepth = RenderUtility.CalculateDepth(t.TrunkBase.Y);
             spriteBatch.Draw(treeTex, t.TrunkBase, null, Color.White, 0f, origin, t.Scale,
                 SpriteEffects.None, treeLayerDepth);
         }
