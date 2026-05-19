@@ -59,7 +59,7 @@ public class CannonSlot : ICannonSeat, IBulletEmitter, IHighlightable, IGrabbabl
         Texture2D tex = AssetManager.GetStationTexture(textureName);
         float scale = tileSize / (float)tex.Width * 2f;
         Vector2 origin = new Vector2(tex.Width / 2f, tex.Height / 2f);
-        Color idleLight = new(255, 255, 255, 20);
+        Color idleLight = new(190, 190, 190, 44);
         Color highlightLight = new(255, 255, 255, 44);
         spriteBatch.DrawWithLightBoost(tex, center + new Vector2(0, tileSize * 0.3f), null, Color.White, idleLight,
             highlightLight, 0f, origin, scale, SpriteEffects.None, depth, IsHighlighted);

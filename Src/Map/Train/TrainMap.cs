@@ -304,7 +304,7 @@ public class TrainMap : IDisposable
         Vector2 upperLeftCornerOrigin = new Vector2(upperLeftCornerTex.Width / 2f, upperLeftCornerTex.Height);
 
         Vector2 ulTL = GetTileTopLeftPixels(0, 0) + offset + new Vector2(0, -tileSize * 2f);
-        Vector2 ulFeet = ulTL + new Vector2(upperLeftCornerTex.Width / 2f * scale, upperLeftCornerTex.Height * scale);
+        Vector2 ulFeet = ulTL + new Vector2(upperLeftCornerTex.Width / 2f * scale - 4f, upperLeftCornerTex.Height * scale);
         float ulDepth = RenderUtility.CalculateDepth(ulFeet.Y);
 
         spriteBatch.Draw(upperLeftCornerTex, ulFeet, null, Color.White,

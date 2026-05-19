@@ -23,8 +23,8 @@ public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
     private ParticleEmitter smokeEmitter;
     private ParticleEmitter chimneyEmitter;
     private const float ChimneyOffsetX = 650f;
-    private const float ChimneyOffsetY = -520f;
-    private const float NoseDrawOffsetX = -10f;
+    private const float ChimneyOffsetY = -500f;
+    private const float NoseDrawOffsetX = -2f;
     private const float NoseDrawOffsetY = 15f;
     private float heightPixels;
     private float widthPixels;
@@ -144,7 +144,7 @@ public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
         TrainMap map = gameplayContext.Map;
         Vector2 feetAnchor = map != null
             ? map.GetTileTopLeftPixels(map.Width, map.Height - 1) + new Vector2(0, map.TileSize)
-            : Position + new Vector2(0, heightPixels / 2f);
+            : Position + new Vector2(0, heightPixels);
 
         float depth = RenderUtility.CalculateDepth(feetAnchor.Y);
 

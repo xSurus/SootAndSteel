@@ -159,7 +159,7 @@ public static class ParticleFactory
 
     public static ParticleEmitter CreateChimneySmoke()
     {
-        var emitter = new ParticleEmitter(1000, AssetManager.GetItemTexture("Coal"))
+        var emitter = new ParticleEmitter(1000, AssetManager.GetItemTexture("Smoke"))
         {
             Position = Vector2.Zero,
             AutoTrigger = false,

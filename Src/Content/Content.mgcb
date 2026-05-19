@@ -2387,3 +2387,113 @@
 /processorParam:TextureFormat=Color
 /build:Walls/WallTileUpperSide.png
 
+#begin Players/Walk1A.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Walk1A.png
+
+#begin Players/Walk4D.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Walk4D.png
+
+#begin Players/Walk5A.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Walk5A.png
+
+#begin Players/Walk5C.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Walk5C.png
+
+#begin Players/Walk5B.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Walk5B.png
+
+#begin Players/Walk4B.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Walk4B.png
+
+#begin Players/Walk4C.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Walk4C.png
+
+#begin Players/Walk4A.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Walk4A.png
+
+#begin Players/Walk5D.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Walk5D.png
+
+#begin Players/Walk3C.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Walk3C.png
+
+#begin Players/Walk3B.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Walk3B.png
+
+#begin Players/Walk2D.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Walk2D.png
+
+#begin Players/Walk3A.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Walk3A.png
+
+#begin Players/Walk2A.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Walk2A.png
+
+#begin Players/Walk3D.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Walk3D.png
+
+#begin Players/Walk2B.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Walk2B.png
+
+#begin Players/Walk2C.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Walk2C.png
+
+#begin Players/Walk1B.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Walk1B.png
+
+#begin Players/Walk1C.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Walk1C.png
+
+#begin Players/Walk1D.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Walk1D.png
+
+#begin Walls/WallTileTopDoor.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Walls/WallTileTopDoor.png
+
+#begin Items/Smoke.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Items/Smoke.png
+

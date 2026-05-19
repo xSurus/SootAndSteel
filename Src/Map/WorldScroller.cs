@@ -170,7 +170,7 @@ public class WorldScroller
         for (int i = 0; i < tilePositions.Count; i++)
         {
             spriteBatch.Draw(AssetManager.TrainTrackTexture[tileTypes[i]], tilePositions[i], null, Color.White, 0f,
-                Vector2.Zero, 1f, SpriteEffects.None, RenderUtility.BackgroundLayer);
+                Vector2.Zero, 1.3f, SpriteEffects.None, RenderUtility.BackgroundLayer);
         }
 
         DrawTrees(spriteBatch);

@@ -286,7 +286,10 @@ public class Enemy : AbstractEnemy
             riderHeadSprite.Effect = (attackAngle > MathF.PI / 2f || attackAngle < -MathF.PI / 2f)
                 ? SpriteEffects.FlipHorizontally
                 : SpriteEffects.None;
-            spriteBatch.Draw(riderHeadSprite, drawPosition + rifleBob, 0f, new Vector2(HorseSpriteScale));
+            Vector2 offset = (attackAngle > MathF.PI / 2f || attackAngle < -MathF.PI / 2f) 
+                ? new Vector2(6f, 0f) 
+                : Vector2.Zero;
+            spriteBatch.Draw(riderHeadSprite, drawPosition + rifleBob + offset, 0f, new Vector2(HorseSpriteScale));
         }
     }
 

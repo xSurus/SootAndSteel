@@ -58,6 +58,8 @@ public class DoorWall : AbstractPhysicalEntity, IInteractable
         Vector2 bottomCenter = Position + new Vector2(0, dimensionsPixels.Y / 2f);
         float depth = RenderUtility.CalculateDepth(bottomCenter.Y);
 
+        spriteBatch.DrawWithHighlight(AssetManager.GetWallTexture("WallTileTopDoor"), bottomCenter, null, Color.White, 0f, origin, scale, SpriteEffects.None,
+            depth, IsHighlighted);
         spriteBatch.DrawWithHighlight(tex, bottomCenter, null, Color.White, 0f, origin, scale, SpriteEffects.None,
             depth, IsHighlighted);
     }
