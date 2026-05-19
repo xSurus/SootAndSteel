@@ -7,7 +7,6 @@ using Gamelab.Items.Bullets;
 using Gamelab.Map.Train.State;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.PhysicalEntities.Stations;
-using Gamelab.PhysicalEntities.Stations.Cannon;
 using Gamelab.PhysicalEntities.Stations.Conveyors;
 using Gamelab.PhysicalEntities.Stations.Resources;
 using Gamelab.PhysicalEntities.Structures;
@@ -210,19 +209,11 @@ public class TrainMap : IDisposable
         MapObjects.Add(cannonWagon.BottomSlot);
         MapObjects.Add(cannonWagon.TopRack);
         MapObjects.Add(cannonWagon.BottomRack);
-
         Vector2 coalWagonPos = new Vector2(
             Position.X - cannonWagonWidth - 1.5f * TileSize,
             Position.Y + (Height * TileSize) / 2f);
         MapObjects.Add(new CoalWagon(coalWagonPos));
-
         MapObjects.Add(new TrainNose(GetTileCenterPixels(8, 2)));
-        gameplayContext.PhysicsWorld.CreateRectangle(
-            TileSize.ToMeters(),
-            (Height * TileSize).ToMeters(),
-            1f,
-            new Vector2(Position.X + Width * TileSize + TileSize / 2f,
-                        Position.Y + Height * TileSize / 2f).ToMeters());
     }
 
     public void AddDefaultStationLoadout()
@@ -256,7 +247,7 @@ public class TrainMap : IDisposable
     {
         Point gridPos = GetTileIndexFromPixels(station.Position);
         bool insideMainGrid = gridPos.X >= 0 && gridPos.X < Width
-                                              && gridPos.Y >= 0 && gridPos.Y < Height;
+                                             && gridPos.Y >= 0 && gridPos.Y < Height;
 
         // If the station was dropped on the cannon wagon area, snap to the nearest *safe* wagon
         // interior cell so it doesn't end up overlapping a wagon wall (which would visibly shift

@@ -48,7 +48,7 @@ public class Stake : AbstractPhysicalEntity
         Texture2D tex = AssetManager.GetHubDecorationTexture("Stake");
         Vector2 origin = new Vector2(visibleSource.Width / 2f, visibleSource.Height);
         Vector2 feet = Position + new Vector2(0, CollisionHeightPixels / 2f);
-        float depth = RenderUtility.CalculateWorldObjectDepth(feet.Y);
+        float depth = RenderUtility.CalculateDepth(feet.Y);
 
         spriteBatch.Draw(
             texture: tex,
