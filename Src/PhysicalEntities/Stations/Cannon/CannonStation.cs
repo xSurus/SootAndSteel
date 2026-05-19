@@ -3,6 +3,7 @@ using Gamelab.Assets;
 using Gamelab.Config;
 using Gamelab.Items;
 using Gamelab.Items.Bullets;
+using Gamelab.Map.Train;
 using Gamelab.Particles;
 using Gamelab.PhysicalEntities.Bullets.Components;
 using Gamelab.PhysicalEntities.Interfaces;
@@ -21,6 +22,8 @@ public class CannonStation : AbstractStation, IBulletEmitter, IInteractable, ICa
     private readonly GameplayConfig config;
     private float cooldownTimer;
     public Player SeatedPlayer { get; private set; }
+    public SeatPosition SeatPosition => SeatPosition.Bottom;
+    public Vector2 DrawOffset => new(0, 0);
 
     public CannonStation(Vector2 position)
         : base(StationIds.Cannon, position)
@@ -88,7 +91,7 @@ public class CannonStation : AbstractStation, IBulletEmitter, IInteractable, ICa
         return Position;
     }
 
-    private bool IsTileFree(Vector2 pixelPosition, Gamelab.Map.Train.TrainMap map)
+    private bool IsTileFree(Vector2 pixelPosition, TrainMap map)
     {
         Point candidateTile = map.GetTileIndexFromPixels(pixelPosition);
 

@@ -36,11 +36,12 @@ public class CannonSlot : ICannonSeat, IBulletEmitter, IHighlightable, IGrabbabl
     private readonly string textureName;
     private readonly Vector2 exitOffsetMeters;
 
-    public Vector2 DrawOffset { get; set; } = Vector2.Zero;
     public Player SeatedPlayer { get; private set; }
     public float AimAngle { get; private set; }
     public IReadOnlyList<BulletItem> AmmoRack => ammoRack;
     public Body PhysicsBody { get; }
+    public SeatPosition SeatPosition { get; }
+    public Vector2 DrawOffset => new(0, SeatPosition == SeatPosition.Top ? 20 : -20);
 
     public Vector2 Position
     {
@@ -67,16 +68,21 @@ public class CannonSlot : ICannonSeat, IBulletEmitter, IHighlightable, IGrabbabl
 
     public bool IsHighlighted => highlighterCount > 0;
 
-    public void OnHighlight(Player player) { highlighterCount++; }
+    public void OnHighlight(Player player)
+    {
+        highlighterCount++;
+    }
 
     public void OnHighlightRemoved(Player player)
     {
         highlighterCount = Math.Max(0, highlighterCount - 1);
     }
 
-    public CannonSlot(Vector2 seatPositionPixels, float arcMin, float arcMax, float defaultAngle, string textureName = null, Vector2 exitOffsetPixels = default)
+    public CannonSlot(Vector2 seatPositionPixels, float arcMin, float arcMax, float defaultAngle,
+        SeatPosition seatPosition, string textureName = null, Vector2 exitOffsetPixels = default)
     {
         this.textureName = textureName;
+        SeatPosition = seatPosition;
         exitOffsetMeters = exitOffsetPixels.ToMeters();
         soundService = GamelabGame.Instance.Services.GetService<ISoundService>();
         bulletService = GamelabGame.Instance.Services.GetService<IBulletService>();
@@ -115,7 +121,8 @@ public class CannonSlot : ICannonSeat, IBulletEmitter, IHighlightable, IGrabbabl
 
     public void OnInteract(Player player)
     {
-        if (ammoRack.Count == 0 && pairedRack != null && pairedRack.TryProvideItem(out Item item) && item is BulletItem bullet)
+        if (ammoRack.Count == 0 && pairedRack != null && pairedRack.TryProvideItem(out Item item) &&
+            item is BulletItem bullet)
             ammoRack.Add(bullet);
         if (cooldownTimer > 0f || ammoRack.Count == 0) return;
         FireCannon();

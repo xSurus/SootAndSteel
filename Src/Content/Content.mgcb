@@ -5,7 +5,7 @@
 /intermediateDir:obj/$(Platform)
 /platform:DesktopGL
 /config:
-/profile:Reach
+/profile:HiDef
 /compress:False
 
 #-------------------------------- References --------------------------------#
@@ -1654,6 +1654,18 @@
 /processorParam:TextureFormat=Color
 /build:Items/Coal.png
 
+#begin Items/Smoke.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Items/Smoke.png
+
 #begin Items/Upgrade.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -1714,7 +1726,7 @@
 /processorParam:TextureFormat=Color
 /build:placeholder_main_menu_background.png
 
-#begin Players/AllPlayersAtlas-texture.png
+#begin Players/PlayerAtlas-texture.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1724,108 +1736,12 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Players/AllPlayersAtlas-texture.png
+/build:Players/PlayerAtlas-texture.png
 
-#begin Players/AllPlayersAtlas.json
+#begin Players/PlayerAtlas.json
 /importer:TexturePackerJsonImporter
 /processor:TexturePackerProcessor
-/build:Players/AllPlayersAtlas.json
-
-#begin Players/CannonBottomA.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Players/CannonBottomA.png
-
-#begin Players/CannonBottomB.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Players/CannonBottomB.png
-
-#begin Players/CannonBottomC.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Players/CannonBottomC.png
-
-#begin Players/CannonBottomD.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Players/CannonBottomD.png
-
-#begin Players/CannonTopA.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Players/CannonTopA.png
-
-#begin Players/CannonTopB.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Players/CannonTopB.png
-
-#begin Players/CannonTopC.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Players/CannonTopC.png
-
-#begin Players/CannonTopD.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Players/CannonTopD.png
+/build:Players/PlayerAtlas.json
 
 #begin promptfont.ttf
 /copy:promptfont.ttf
@@ -2339,6 +2255,18 @@
 /processorParam:TextureFormat=Color
 /build:Walls/WallTileTop.png
 
+#begin Walls/WallTileTopDoor.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Walls/WallTileTopDoor.png
+
 #begin Walls/WallTileTopDoorClosed.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -2386,114 +2314,4 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Walls/WallTileUpperSide.png
-
-#begin Players/Walk1A.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Players/Walk1A.png
-
-#begin Players/Walk4D.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Players/Walk4D.png
-
-#begin Players/Walk5A.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Players/Walk5A.png
-
-#begin Players/Walk5C.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Players/Walk5C.png
-
-#begin Players/Walk5B.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Players/Walk5B.png
-
-#begin Players/Walk4B.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Players/Walk4B.png
-
-#begin Players/Walk4C.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Players/Walk4C.png
-
-#begin Players/Walk4A.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Players/Walk4A.png
-
-#begin Players/Walk5D.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Players/Walk5D.png
-
-#begin Players/Walk3C.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Players/Walk3C.png
-
-#begin Players/Walk3B.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Players/Walk3B.png
-
-#begin Players/Walk2D.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Players/Walk2D.png
-
-#begin Players/Walk3A.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Players/Walk3A.png
-
-#begin Players/Walk2A.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Players/Walk2A.png
-
-#begin Players/Walk3D.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Players/Walk3D.png
-
-#begin Players/Walk2B.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Players/Walk2B.png
-
-#begin Players/Walk2C.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Players/Walk2C.png
-
-#begin Players/Walk1B.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Players/Walk1B.png
-
-#begin Players/Walk1C.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Players/Walk1C.png
-
-#begin Players/Walk1D.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Players/Walk1D.png
-
-#begin Walls/WallTileTopDoor.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Walls/WallTileTopDoor.png
-
-#begin Items/Smoke.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Items/Smoke.png
 

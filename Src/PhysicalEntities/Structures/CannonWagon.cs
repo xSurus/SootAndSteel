@@ -1,7 +1,7 @@
 using System;
 using Gamelab.Assets;
-using Gamelab.PhysicalEntities.Stations.Cannon;
 using Gamelab.PhysicalEntities.Interfaces;
+using Gamelab.PhysicalEntities.Stations.Cannon;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -78,28 +78,33 @@ public class CannonWagon : AbstractPhysicalEntity, IPickable, IUpdatable
             widthPixels.ToMeters(),
             (tileSize / 2f).ToMeters(),
             1f,
-            new Vector2(centerPixels.X + tileSize / 2f, centerPixels.Y - heightPixels / 2f + 3 * tileSize / 4f).ToMeters());
+            new Vector2(centerPixels.X + tileSize / 2f, centerPixels.Y - heightPixels / 2f + 3 * tileSize / 4f)
+                .ToMeters());
 
         // Bottom wall
         gameplayContext.PhysicsWorld.CreateRectangle(
             widthPixels.ToMeters(),
             (tileSize / 2f).ToMeters(),
             1f,
-            new Vector2(centerPixels.X + tileSize / 2f, centerPixels.Y + heightPixels / 2f - 5 * tileSize / 4f).ToMeters());
+            new Vector2(centerPixels.X + tileSize / 2f, centerPixels.Y + heightPixels / 2f - 5 * tileSize / 4f)
+                .ToMeters());
 
         float visualOffset = tileSize / 2f;
-        float topSeatOffsetY = -heightPixels * 0.3f;    // less negative = lower
-        float bottomSeatOffsetY = heightPixels * 0.3f;  // less positive = higher
+        float topSeatOffsetY = -heightPixels * 0.3f; // less negative = lower
+        float bottomSeatOffsetY = heightPixels * 0.3f; // less positive = higher
 
         var topSeatPos = centerPixels + new Vector2(visualOffset, topSeatOffsetY);
-        topSlot = new CannonSlot(topSeatPos, arcMin: -MathF.PI, arcMax: 0f, defaultAngle: -MathF.PI / 2f, textureName: "CannonSeatingTop", exitOffsetPixels: new Vector2(0, tileSize));
-        topRack = new BulletRack(centerPixels + new Vector2(visualOffset + 1.1f * tileSize, topSeatOffsetY + 1.5f * tileSize));
+        topSlot = new CannonSlot(topSeatPos, arcMin: -MathF.PI, arcMax: 0f, defaultAngle: -MathF.PI / 2f,
+            SeatPosition.Top, textureName: "CannonSeatingTop", exitOffsetPixels: new Vector2(0, tileSize));
+        topRack = new BulletRack(centerPixels +
+                                 new Vector2(visualOffset + 1.1f * tileSize, topSeatOffsetY + 1.5f * tileSize));
         topSlot.SetPairedRack(topRack);
 
         var bottomSeatPos = centerPixels + new Vector2(visualOffset, bottomSeatOffsetY);
-        bottomSlot = new CannonSlot(bottomSeatPos, arcMin: 0f, arcMax: MathF.PI, defaultAngle: MathF.PI / 2f, exitOffsetPixels: new Vector2(0, -tileSize));
-        bottomSlot.DrawOffset = new Vector2(0, -tileSize * 0.4f);
-        bottomRack = new BulletRack(centerPixels + new Vector2(visualOffset + 1.1f * tileSize, bottomSeatOffsetY - 0.3f * tileSize));
+        bottomSlot = new CannonSlot(bottomSeatPos, arcMin: 0f, arcMax: MathF.PI, defaultAngle: MathF.PI / 2f,
+            SeatPosition.Bottom, exitOffsetPixels: new Vector2(0, -tileSize));
+        bottomRack = new BulletRack(centerPixels +
+                                    new Vector2(visualOffset + 1.1f * tileSize, bottomSeatOffsetY - 0.3f * tileSize));
         bottomSlot.SetPairedRack(bottomRack);
 
         float cannonTexHeight = AssetManager.GetStructureTexture("CannonBottom").Height;
@@ -136,13 +141,16 @@ public class CannonWagon : AbstractPhysicalEntity, IPickable, IUpdatable
         topSlot.Draw(spriteBatch);
         bottomSlot.Draw(spriteBatch);
 
-        DrawRotatingCannon(spriteBatch, "CannonTop", bottomSlot, bottomBarrelPos, bottomDepth + 0.01f, MathF.PI / 2f, bottom: true);
-        DrawRotatingCannon(spriteBatch, "CannonBottom", topSlot, topBarrelPos, RenderUtility.FloorLayer - 3 * RenderUtility.Eps, -MathF.PI / 2f, bottom: false);
+        DrawRotatingCannon(spriteBatch, "CannonTop", bottomSlot, bottomBarrelPos, bottomDepth + 0.01f, MathF.PI / 2f,
+            bottom: true);
+        DrawRotatingCannon(spriteBatch, "CannonBottom", topSlot, topBarrelPos,
+            RenderUtility.FloorLayer - 3 * RenderUtility.Eps, -MathF.PI / 2f, bottom: false);
 
         DrawFrontWall(spriteBatch, bottomBarrelPos, bottomDepth + 0.02f, bottomSlot.IsHighlighted);
     }
 
-    private void DrawRotatingCannon(SpriteBatch spriteBatch, string texName, CannonSlot slot, Vector2 barrelPos, float depth, float angleOffset, bool bottom)
+    private void DrawRotatingCannon(SpriteBatch spriteBatch, string texName, CannonSlot slot, Vector2 barrelPos,
+        float depth, float angleOffset, bool bottom)
     {
         Texture2D tex = AssetManager.GetStructureTexture(texName);
         Vector2 origin = new Vector2(tex.Width / 2f, bottom ? tex.Height : 0f);

@@ -18,6 +18,15 @@ using nkast.Aether.Physics2D.Dynamics;
 
 namespace Gamelab.Players;
 
+public enum PlayerAnimationState
+{
+    None,
+    Idle,
+    Walk,
+    SeatedBottom,
+    SeatedTop
+}
+
 public class Player : AbstractPhysicalEntity, IInteractable, IDamageable, IItemProvider, IItemReceiver
 {
     public PlayerConfiguration PlayerConfiguration { get; private set; }
@@ -54,6 +63,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable, IItemP
     private bool revivedThisFrame;
 
     private AnimatedSprite playerSprite;
+    private PlayerAnimationState currentAnimationState = PlayerAnimationState.None;
     private IAnimationService animationService;
     private ISoundService soundService = GamelabGame.Instance.Services.GetService<ISoundService>();
 
@@ -83,12 +93,30 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable, IItemP
 
         animationService = GamelabGame.Instance.Services.GetService<IAnimationService>();
         playerSprite = new AnimatedSprite(AssetManager.PlayerSpriteSheet);
-        playerSprite.SetAnimation($"Player{PlayerConfiguration.PlayerIndex}_Idle");
+        SetAnimationState(PlayerAnimationState.Idle);
         animationService.Register(playerSprite);
+    }
+
+    private void SetAnimationState(PlayerAnimationState newState)
+    {
+        if (currentAnimationState == newState) return;
+
+        currentAnimationState = newState;
+        string animName = newState switch
+        {
+            PlayerAnimationState.Walk => $"Player{PlayerConfiguration.PlayerIndex}_Walk",
+            PlayerAnimationState.SeatedBottom => $"Player{PlayerConfiguration.PlayerIndex}_CannonBottom",
+            PlayerAnimationState.SeatedTop => $"Player{PlayerConfiguration.PlayerIndex}_CannonTop",
+            _ => $"Player{PlayerConfiguration.PlayerIndex}_Idle"
+        };
+
+        playerSprite.SetAnimation(animName);
     }
 
     public void Update(float dt)
     {
+        UpdateAnimationState();
+
         if (IsStunned)
         {
             UpdateStunned(dt);
@@ -165,6 +193,32 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable, IItemP
         if (TryInteract(dt)) return;
     }
 
+    private void UpdateAnimationState()
+    {
+        if (IsStunned)
+        {
+            SetAnimationState(PlayerAnimationState.Idle);
+            return;
+        }
+
+        if (SeatedAt != null)
+        {
+            SetAnimationState(SeatedAt.SeatPosition == SeatPosition.Bottom
+                ? PlayerAnimationState.SeatedBottom
+                : PlayerAnimationState.SeatedTop);
+            return;
+        }
+
+        if (PhysicsBody.LinearVelocity.Length() > 0.1f)
+        {
+            SetAnimationState(PlayerAnimationState.Walk);
+        }
+        else
+        {
+            SetAnimationState(PlayerAnimationState.Idle);
+        }
+    }
+
     public void Stun(float durationSeconds)
     {
         if (durationSeconds <= 0f)
@@ -197,7 +251,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable, IItemP
         SeatedAt?.OnRelease(this);
         SeatedAt = seat;
         PhysicsBody.LinearVelocity = Vector2.Zero;
-        PhysicsBody.Position = seat.PhysicsBody.Position;
+        PhysicsBody.Position = seat.PhysicsBody.Position + seat.DrawOffset.ToMeters();
         PhysicsBody.BodyType = BodyType.Static;
     }
 
@@ -212,7 +266,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable, IItemP
 
     private void UpdateSeated()
     {
-        PhysicsBody.Position = SeatedAt.PhysicsBody.Position;
+        PhysicsBody.Position = SeatedAt.PhysicsBody.Position + SeatedAt.DrawOffset.ToMeters();
         PhysicsBody.LinearVelocity = Vector2.Zero;
         PhysicsBody.Rotation = SeatedAt.PhysicsBody.Rotation;
 
@@ -448,29 +502,9 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable, IItemP
         HeldItem = item;
     }
 
-    private void DrawSeated(SpriteBatch spriteBatch)
-    {
-        int idx = PlayerConfiguration.PlayerIndex;
-        Texture2D topTex = AssetManager.PlayerCannonTopTextures[idx];
-        Texture2D bottomTex = AssetManager.PlayerCannonBottomTextures[idx];
-        Vector2 drawPos = Position + SeatedAt.DrawOffset;
-        float depth = RenderUtility.CalculateDepth(drawPos.Y);
-        const float scale = 0.3f;
-        Vector2 topOrigin = new Vector2(topTex.Width / 2f, topTex.Height / 2f);
-        Vector2 bottomOrigin = new Vector2(bottomTex.Width / 2f, bottomTex.Height / 2f);
-        spriteBatch.Draw(bottomTex, drawPos, null, Color.White, 0f, bottomOrigin, scale, SpriteEffects.None, depth - RenderUtility.Eps);
-        spriteBatch.Draw(topTex, drawPos, null, Color.White, 0f, topOrigin, scale, SpriteEffects.None, depth + RenderUtility.Eps);
-    }
-
     public override void Draw(SpriteBatch spriteBatch)
     {
         if (playerSprite == null) return;
-
-        if (SeatedAt != null)
-        {
-            DrawSeated(spriteBatch);
-            return;
-        }
 
         Vector2 feetPosition = Position + new Vector2(0, Radius);
         Color drawColor = IsStunned ? Color.Goldenrod : Color.White;
@@ -568,7 +602,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable, IItemP
 
     protected bool ItemIsGranular(Item item)
     {
-        return (item is BulletItem && ((BulletItem) item).Type == EComponentType.Propellant) || item.Id == "Coal";
+        return (item is BulletItem && ((BulletItem)item).Type == EComponentType.Propellant) || item.Id == "Coal";
     }
 
     protected bool PlayerIsInTrain()
@@ -580,7 +614,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable, IItemP
     {
         return ((CannonWagon)gameplayContext.Map.MapObjects.Find(p => p is CannonWagon)).GetBounds().Contains(Position);
     }
-    
+
     public void Dispose()
     {
         animationService?.Unregister(playerSprite);

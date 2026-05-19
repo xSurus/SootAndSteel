@@ -207,11 +207,12 @@ public static class AssetManager
 
     public static void LoadPlayerAnimations(ContentManager content)
     {
-        Texture2DAtlas totalAtlas = content.Load<Texture2DAtlas>("Players/AllPlayersAtlas");
+        Texture2DAtlas totalAtlas = content.Load<Texture2DAtlas>("Players/PlayerAtlas");
         PlayerSpriteSheet = new SpriteSheet("PlayerSheet", totalAtlas);
         TimeSpan frameDuration = TimeSpan.FromSeconds(0.2f);
         int totalPlayers = 4;
-        int framesPerPlayer = 4;
+        int idleFramesPerPlayer = 4;
+        int walkFramesPerPlayer = 5;
 
         for (int p = 0; p < totalPlayers; p++)
         {
@@ -219,10 +220,32 @@ public static class AssetManager
             {
                 builder.IsLooping(true);
 
-                for (int f = 1; f <= framesPerPlayer; f++)
+                for (int f = 1; f <= idleFramesPerPlayer; f++)
                 {
                     builder.AddFrame($"Player{p}_Idle{f}", frameDuration);
                 }
+            });
+
+            PlayerSpriteSheet.DefineAnimation($"Player{p}_Walk", builder =>
+            {
+                builder.IsLooping(true);
+
+                for (int f = 0; f < walkFramesPerPlayer; f++)
+                {
+                    builder.AddFrame($"Player{p}_Walk{f}", frameDuration);
+                }
+            });
+
+            PlayerSpriteSheet.DefineAnimation($"Player{p}_CannonTop", builder =>
+            {
+                builder.IsLooping(false);
+                builder.AddFrame($"Player{p}_CannonTop", TimeSpan.FromSeconds(1));
+            });
+
+            PlayerSpriteSheet.DefineAnimation($"Player{p}_CannonBottom", builder =>
+            {
+                builder.IsLooping(false);
+                builder.AddFrame($"Player{p}_CannonBottom", TimeSpan.FromSeconds(1));
             });
         }
     }
