@@ -4,11 +4,11 @@ using System.Linq;
 using FmodForFoxes.Studio;
 using Gamelab.Components;
 using Gamelab.Input;
+using Gamelab.Particles;
 using Gamelab.Players;
 using Gamelab.Screens;
 using Gamelab.Serialization;
 using Gamelab.Services.Sound;
-using Gamelab.Particles;
 using Gamelab.Services.Vfx;
 using Gamelab.Tutorial;
 using Gamelab.UI;
@@ -24,7 +24,7 @@ namespace Gamelab;
 /// stays in namespace <see cref="Gamelab"/> so it does not collide with Gum when you regenerate code, mirroring
 /// the pattern used by <see cref="JoinScreen"/>.
 /// </summary>
-public sealed class MainMenuScreen(GamelabGame game) : Screens.GamelabGameScreen(game)
+public sealed class MainMenuScreen(GamelabGame game) : GamelabGameScreen(game)
 {
     private readonly Logger logger = new("MainMenuScreen");
 
@@ -123,13 +123,10 @@ public sealed class MainMenuScreen(GamelabGame game) : Screens.GamelabGameScreen
 
     public override void Draw(GameTime gameTime)
     {
-        // Snow under Gum UI; title/background is the Gum "Background" sprite (Title.png).
+        Gum.Draw();
         spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
         Services.GetService<IVfxService>().Render(spriteBatch);
         spriteBatch.End();
-
-        Gum.Draw();
-
         base.Draw(gameTime);
     }
 
@@ -203,7 +200,6 @@ public sealed class MainMenuScreen(GamelabGame game) : Screens.GamelabGameScreen
             logger.Warning("Save file corrupted or missing. Defaulting to New Game.");
             StartNewGame();
         }
-
     }
 
     public override void Dispose()
