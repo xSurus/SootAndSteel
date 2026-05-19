@@ -70,13 +70,32 @@ public class GameplayHud
     {
         var blank = AssetManager.BlankTexture;
 
+        float frostMultiplier = 1f - temperatureRatio;
+        if (frostMultiplier > 0.3f)
+        {
+            float firstTextureOpacity = Math.Clamp((frostMultiplier - 0.3f) * (1f / 0.7f), 0, 1);
+            sb.Draw(AssetManager.FrostScreenTexture1, new Rectangle(0, 0, screen.X, screen.Y),
+                Color.White * firstTextureOpacity);
+        }
+
+        if (frostMultiplier > 0.7)
+        {
+            float secondTextureOpacity = Math.Clamp((frostMultiplier - 0.7f) * (1f / 0.3f), 0, 1);
+            sb.Draw(AssetManager.FrostScreenTexture2, new Rectangle(0, 0, screen.X, screen.Y),
+                Color.White * secondTextureOpacity);
+        }
+
+        if (frostMultiplier > 0.9)
+        {
+            float thirdTextureOpacity = Math.Clamp((frostMultiplier - 0.9f) * (1f / 0.1f), 0, 1);
+            sb.Draw(AssetManager.FrostScreenTexture3, new Rectangle(0, 0, screen.X, screen.Y),
+                Color.White * thirdTextureOpacity);
+        }
+
         DrawDistanceBar(sb, blank, screen.X);
 
         float leftGaugeCenterX = 24f + ArcRadius + 10f;
         float gaugeCenterY = screen.Y - 24f - ArcRadius - 40f;
-
-        DrawArcGauge(sb, blank, new Vector2(leftGaugeCenterX, gaugeCenterY),
-            temperatureRatio, tempText, GetTemperatureColor);
 
         float rightGaugeCenterX = leftGaugeCenterX + GaugeDiameter + GaugeSpacing;
         DrawArcGauge(sb, blank, new Vector2(rightGaugeCenterX, gaugeCenterY),
@@ -185,24 +204,6 @@ public class GameplayHud
             sb.DrawString(smallFont, unitText, new Vector2(unitX + 1, unitY + 1), Color.Black * 0.4f);
             sb.DrawString(smallFont, unitText, new Vector2(unitX, unitY), Color.White * 0.5f);
         }
-    }
-
-    private static Color GetTemperatureColor(float ratio)
-    {
-        if (ratio > 0.6f)
-        {
-            float t = (ratio - 0.6f) / 0.4f;
-            return Color.Lerp(new Color(255, 200, 60), new Color(255, 100, 40), t);
-        }
-
-        if (ratio > 0.3f)
-        {
-            float t = (ratio - 0.3f) / 0.3f;
-            return Color.Lerp(new Color(100, 200, 255), new Color(255, 200, 60), t);
-        }
-
-        float tCold = ratio / 0.3f;
-        return Color.Lerp(new Color(60, 140, 255), new Color(100, 200, 255), tCold);
     }
 
     private static Color GetSpeedColor(float ratio)
