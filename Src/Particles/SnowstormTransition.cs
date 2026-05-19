@@ -67,6 +67,7 @@ public static class SnowstormTransition
             emitter.Parameters.MaxSpeed = b.MaxSpeed;
             emitter.Parameters.MinSize = b.MinSize;
             emitter.Parameters.MaxSize = b.MaxSize;
+            emitter.Capacity = 1000; // Reset to baseline capacity
             if (grav != null)
             {
                 grav.Strength = b.DownwardForceStrength;
@@ -74,23 +75,20 @@ public static class SnowstormTransition
 
             return;
         }
-
-        float amp = 1f + 2.55f * t;
+        float amp = 1f + 8 * t;
         emitter.AutoTriggerFrequency = b.AutoTriggerFrequency / amp;
-        int minQ = (int)Math.Round(b.MinQuantity * amp);
-        int maxQ = (int)Math.Round(b.MaxQuantity * amp);
-        minQ = Math.Clamp(minQ, 1, 72);
-        maxQ = Math.Clamp(Math.Max(maxQ, minQ), minQ, 96);
-        emitter.Parameters.MinQuantity = minQ;
-        emitter.Parameters.MaxQuantity = maxQ;
+        emitter.Parameters.MinQuantity = (int)Math.Round(b.MinQuantity * amp);
+        emitter.Parameters.MaxQuantity = (int)Math.Round(b.MaxQuantity * amp);
         emitter.Parameters.MinSpeed = b.MinSpeed * (1f + 0.85f * t);
         emitter.Parameters.MaxSpeed = b.MaxSpeed * (1f + 1.1f * t);
         emitter.Parameters.MinSize = b.MinSize * (1f + 0.35f * t);
-        emitter.Parameters.MaxSize = b.MaxSize * (1f + 0.55f * t);
+        emitter.Parameters.MaxSize = b.MaxSize * (1f + 5 * t);
+        emitter.Capacity = 20000;
+
 
         if (grav != null)
         {
-            grav.Strength = b.DownwardForceStrength * (1f + 1.85f * t);
+            grav.Strength = b.DownwardForceStrength * (1f + 1.85f * t);        
         }
     }
 }

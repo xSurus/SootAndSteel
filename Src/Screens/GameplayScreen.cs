@@ -40,6 +40,7 @@ public class GameplayScreen : GamelabGameScreen
 
     private enum GameplayPhase
     {
+        Intro,
         Running,
         EndOfLevelOutro
     }
@@ -64,8 +65,8 @@ public class GameplayScreen : GamelabGameScreen
 
     private FootprintSystem footprintSystem;
 
-    private GameplayPhase phase = GameplayPhase.Running;
-    private readonly WhiteFilterTransition endLevelWhiteFilter = new();
+    private GameplayPhase phase = GameplayPhase.Intro;
+    private readonly WhiteFilterTransition screenTransitionFilter = new();
     private bool endOutroToHub;
     private ParticleEmitter snowstormEmitter;
     private SnowstormTransition.Baseline snowstormBaseline;
@@ -84,6 +85,20 @@ public class GameplayScreen : GamelabGameScreen
         InitializeCameraAndVfx();
         InitializeAudio();
         InitializeUi();
+        InitializeVfxIntro();
+    }
+
+    private void InitializeVfxIntro()
+    {
+        if (director != null)
+        {
+            phase = GameplayPhase.Running;
+            screenTransitionFilter.SnapTo(0f);
+            return;
+        }
+
+        screenTransitionFilter.SnapTo(1f);
+        screenTransitionFilter.FadeOut(1);
     }
 
     public override void Update(GameTime gameTime)
@@ -92,14 +107,20 @@ public class GameplayScreen : GamelabGameScreen
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
         if (UpdatePauseMenu()) return;
-
-        if (phase == GameplayPhase.EndOfLevelOutro)
+        if (phase == GameplayPhase.Intro)
         {
-            HandleLevelTransition(dt);
-            return;
+            HandleIntroTransition(dt);
+        }
+        else if (phase == GameplayPhase.EndOfLevelOutro)
+        {
+            HandleOutroTransition(dt);
         }
 
-        levelTimer += dt;
+        if (phase != GameplayPhase.EndOfLevelOutro)
+        {
+            levelTimer += dt;
+        }
+
         UpdatePhysics(dt);
         if (isFailureTriggered) return;
 
@@ -113,7 +134,7 @@ public class GameplayScreen : GamelabGameScreen
     {
         trainSound?.Stop();
         endOutroToHub = true;
-        endLevelWhiteFilter.FadeIn(4f);
+        screenTransitionFilter.FadeIn(2f, 1.5f);
         phase = GameplayPhase.EndOfLevelOutro;
     }
 
@@ -219,7 +240,7 @@ public class GameplayScreen : GamelabGameScreen
             allowOffWorldOverflow: true, maxZoom: Game.GameplayConfig.CameraMaxZoom);
         snowstormEmitter = ParticleFactory.CreateSnowstorm();
         snowstormEmitter.Modifiers.Add(new BlizzardGustModifier(() =>
-            phase == GameplayPhase.EndOfLevelOutro ? endLevelWhiteFilter.Opacity : 0f));
+            phase == GameplayPhase.EndOfLevelOutro ? screenTransitionFilter.EffectIntensity : 0f));
         snowstormBaseline = SnowstormTransition.Capture(snowstormEmitter);
         Services.GetService<IVfxService>().AddContinuous(snowstormEmitter);
     }
@@ -270,19 +291,21 @@ public class GameplayScreen : GamelabGameScreen
     {
         accumulator += Math.Min(dt, Game.GameplayConfig.MaxAccumulatedDeltaSeconds);
         float fixedDt = Game.GameplayConfig.FixedTimeStep;
+        bool levelNotCompleted = phase != GameplayPhase.EndOfLevelOutro;
 
         while (accumulator >= fixedDt)
         {
             foreach (Player player in players) player.Update(fixedDt);
-
+            if (levelNotCompleted)
+            {
+                gameplayContext.State.Update(fixedDt);
+                gameplayContext.PatchManager.Update(fixedDt, gameplayContext.State);
+            }
+            
+            if (isFailureTriggered) return;
             enemyManager.Update(fixedDt);
             footprintSystem.Update(fixedDt, players, _ => true);
             footprintSystem.UpdateHorses(fixedDt, enemyManager.ActiveEnemies);
-            gameplayContext.State.Update(fixedDt);
-            gameplayContext.PatchManager.Update(fixedDt, gameplayContext.State);
-
-            if (isFailureTriggered) return;
-
             trainMap.Update(fixedDt);
             try
             {
@@ -293,10 +316,13 @@ public class GameplayScreen : GamelabGameScreen
             {
                 gameplayContext.EndPhysicsStep();
             }
-
-            UpdateAllPlayersStunnedFailure(fixedDt);
+            if (levelNotCompleted)
+            {
+                UpdateAllPlayersStunnedFailure(fixedDt);
+            }
 
             if (isFailureTriggered) return;
+        
             accumulator -= fixedDt;
         }
     }
@@ -304,43 +330,35 @@ public class GameplayScreen : GamelabGameScreen
     private void UpdateSystems(GameTime gameTime, float dt)
     {
         worldScroller.Update(dt);
-        hud.Update(currentLevelDef);
-        levelWatcher.Update(enemyManager);
-        director?.Update(dt, gameplayContext, enemyManager);
-        if (director != null && Game.Services.GetService<IDialogueService>() is DialogueManager dm)
-            dm.Update(gameTime, Game.playerManager.Configs);
         cameraDirector.Update(camera, dt, players, trainMap.GetBounds(), virtualScreenSize.X, virtualScreenSize.Y,
             allowOffWorldOverflow: true, maxZoom: Game.GameplayConfig.CameraMaxZoom);
+        
+        if (phase != GameplayPhase.EndOfLevelOutro)
+        {
+            hud.Update(currentLevelDef);
+            levelWatcher.Update(enemyManager);
+            director?.Update(dt, gameplayContext, enemyManager);
+        
+            if (director != null && Game.Services.GetService<IDialogueService>() is DialogueManager dm)
+                dm.Update(gameTime, Game.playerManager.Configs);
+        }
+    }
+    
+    private void HandleIntroTransition(float dt)
+    {
+        screenTransitionFilter.Update(dt);
+        if (screenTransitionFilter.IsDone)
+        {
+            phase = GameplayPhase.Running;
+        }
     }
 
-    private void HandleLevelTransition(float dt)
+    private void HandleOutroTransition(float dt)
     {
-        worldScroller.Update(dt);
-        float fixedDt = Game.GameplayConfig.FixedTimeStep;
-        accumulator += Math.Min(dt, Game.GameplayConfig.MaxAccumulatedDeltaSeconds);
-        while (accumulator >= fixedDt)
-        {
-            foreach (Player player in players) player.Update(fixedDt);
-            trainMap.Update(fixedDt);
-            try
-            {
-                gameplayContext.BeginPhysicsStep();
-                gameplayContext.PhysicsWorld.Step(fixedDt);
-            }
-            finally
-            {
-                gameplayContext.EndPhysicsStep();
-            }
+        screenTransitionFilter.Update(dt);
+        SnowstormTransition.ApplyBlizzardIntensity(snowstormEmitter, snowstormBaseline, screenTransitionFilter.EffectIntensity);
 
-            accumulator -= fixedDt;
-        }
-
-        cameraDirector.Update(camera, dt, players, trainMap.GetBounds(), virtualScreenSize.X, virtualScreenSize.Y,
-            allowOffWorldOverflow: true, maxZoom: Game.GameplayConfig.CameraMaxZoom);
-        endLevelWhiteFilter.Update(dt);
-        SnowstormTransition.ApplyBlizzardIntensity(snowstormEmitter, snowstormBaseline, endLevelWhiteFilter.Opacity);
-
-        if (endLevelWhiteFilter.IsDone)
+        if (screenTransitionFilter.IsDone)
         {
             Game.CurrentRun.TrainLayout = trainMap.CaptureLayout();
             if (endOutroToHub)
@@ -404,7 +422,7 @@ public class GameplayScreen : GamelabGameScreen
     {
         spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
         hud.Draw(spriteBatch, virtualScreenSize);
-        float w = endLevelWhiteFilter.Opacity;
+        float w = screenTransitionFilter.Opacity;
         if (w > 0.001f)
         {
             spriteBatch.Draw(AssetManager.BlankTexture, new Rectangle(0, 0, virtualScreenSize.X, virtualScreenSize.Y),
@@ -470,12 +488,7 @@ public class GameplayScreen : GamelabGameScreen
         }
         trainSound?.Stop();
         gameplayContext.State.VictoryLapActive = true;
-        for (int i = 0; i < 5; i++)
-        {
-            snowstormEmitter?.Emit();
-        }
-
-        endLevelWhiteFilter.FadeIn(4f);
+        screenTransitionFilter.FadeIn(2f, 1.5f);
         phase = GameplayPhase.EndOfLevelOutro;
     }
 }
