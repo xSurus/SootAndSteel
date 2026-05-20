@@ -110,7 +110,7 @@ public static class AssetManager
     private static void GenerateProceduralTextures(GraphicsDevice graphicsDevice)
     {
         BlankTexture = new Texture2D(graphicsDevice, 1, 1);
-        BlankTexture.SetData([Color.White]);
+        BlankTexture.SetData(new[] { Color.White });
 
         int smokeSize = 64;
         SmokeTexture = new Texture2D(graphicsDevice, smokeSize, smokeSize);

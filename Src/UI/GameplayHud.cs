@@ -38,6 +38,11 @@ public class GameplayHud
     private const float GaugeDiameter = (ArcRadius + TickLength + 10f) * 2f;
     private const float GaugeSpacing = 16f;
 
+    private float twitchOffset;
+    private float twitchTimer;
+    private const float TwitchFrequency = 12f;
+    private const float TwitchAmplitude = 0.02f; 
+
     public GameplayHud()
     {
         var fs = GamelabGame.Instance.fontSystem;
@@ -46,7 +51,7 @@ public class GameplayHud
         gaugeFont = fs.GetFont(36);
     }
 
-    public void Update(LevelDefinition currentLevelDef)
+    public void Update(LevelDefinition currentLevelDef, float deltaTime)
     {
         var state = gameplayContext.State;
         var config = GamelabGame.Instance.GameplayConfig;
@@ -64,6 +69,11 @@ public class GameplayHud
         float maxSpeed = config.TrainSpeedFast;
         speedRatio = Math.Clamp(state.actualSpeed / Math.Max(maxSpeed, 1f), 0f, 1f);
         speedText = $"{state.actualSpeed:F0}";
+
+        twitchTimer += deltaTime;
+        twitchOffset = MathF.Sin(twitchTimer * TwitchFrequency * MathHelper.TwoPi) 
+                    * TwitchAmplitude 
+                    * (0.7f + 0.3f * MathF.Sin(twitchTimer * 3.7f));
     }
 
     public void Draw(SpriteBatch sb, Point screen)
@@ -154,56 +164,67 @@ public class GameplayHud
 
     private void DrawArcGauge(SpriteBatch sb, Texture2D blank, Vector2 center,
         float ratio, string valueText, Func<float, Color> colorFunc, string unitText = null)
-    {
+    {   
+        float drawRatio = 2* GaugeDiameter / AssetManager.GetDecorationTexture("Gauge").Width;
+        sb.Draw(AssetManager.GetDecorationTexture("Gauge"), center - new Vector2(GaugeDiameter, GaugeDiameter), null,
+             Color.White, 0f, Vector2.Zero, drawRatio,SpriteEffects.None, 0f);
         var origin = new Vector2(0f, 0.5f);
         int filledSegments = (int)(ArcSegments * ratio);
 
-        for (int i = 0; i < ArcSegments; i++)
-        {
-            float t = (float)i / ArcSegments;
-            float angle = ArcStartAngle + ArcSweep * t;
-            float segRatio = (float)i / ArcSegments;
+        // for (int i = 0; i < ArcSegments; i++)
+        // {
+        //     float t = (float)i / ArcSegments;
+        //     float angle = ArcStartAngle + ArcSweep * t;
+        //     float segRatio = (float)i / ArcSegments;
 
-            Color segColor = i < filledSegments
-                ? colorFunc(segRatio)
-                : new Color(30, 30, 35, 200);
+        //     Color segColor = i < filledSegments
+        //         ? colorFunc(segRatio)
+        //         : new Color(30, 30, 35, 200);
 
-            var pos = center + new Vector2(MathF.Cos(angle), MathF.Sin(angle)) * ArcRadius;
-            sb.Draw(blank, pos, null, segColor, angle,
-                origin, new Vector2(ArcThickness, 3f), SpriteEffects.None, 0f);
-        }
+        //     var pos = center + new Vector2(MathF.Cos(angle), MathF.Sin(angle)) * ArcRadius;
+        //     sb.Draw(blank, pos, null, segColor, angle,
+        //         origin, new Vector2(ArcThickness, 3f), SpriteEffects.None, 0f);
+        // }
 
-        const int tickCount = 10;
-        for (int i = 0; i <= tickCount; i++)
-        {
-            float t = (float)i / tickCount;
-            float angle = ArcStartAngle + ArcSweep * t;
-            float outerR = ArcRadius + 6f;
-            bool isMajor = i % 5 == 0;
-            float len = isMajor ? TickLength + 3f : TickLength;
-            Color tickColor = isMajor ? Color.White * 0.6f : Color.White * 0.3f;
-            float thickness = isMajor ? 2f : 1.5f;
+        // const int tickCount = 10;
+        // for (int i = 0; i <= tickCount; i++)
+        // {
+        //     float t = (float)i / tickCount;
+        //     float angle = ArcStartAngle + ArcSweep * t;
+        //     float outerR = ArcRadius + 6f;
+        //     bool isMajor = i % 5 == 0;
+        //     float len = isMajor ? TickLength + 3f : TickLength;
+        //     Color tickColor = isMajor ? Color.White * 0.6f : Color.White * 0.3f;
+        //     float thickness = isMajor ? 2f : 1.5f;
 
-            var tickStart = center + new Vector2(MathF.Cos(angle), MathF.Sin(angle)) * outerR;
-            sb.Draw(blank, tickStart, null, tickColor, angle,
-                origin, new Vector2(len, thickness), SpriteEffects.None, 0f);
-        }
+        //     var tickStart = center + new Vector2(MathF.Cos(angle), MathF.Sin(angle)) * outerR;
+        //     sb.Draw(blank, tickStart, null, tickColor, angle,
+        //         origin, new Vector2(len, thickness), SpriteEffects.None, 0f);
+        // }
 
-        Color readoutColor = colorFunc(ratio);
-        Vector2 valSize = gaugeFont.MeasureString(valueText);
-        float valX = center.X - valSize.X / 2f;
-        float valY = center.Y + 6;
-        sb.DrawString(gaugeFont, valueText, new Vector2(valX + 1, valY + 1), Color.Black * 0.6f);
-        sb.DrawString(gaugeFont, valueText, new Vector2(valX, valY), readoutColor);
+        // Color readoutColor = colorFunc(ratio);
+        // Vector2 valSize = gaugeFont.MeasureString(valueText);
+        // float valX = center.X - valSize.X / 2f;
+        // float valY = center.Y + 6;
+        // sb.DrawString(gaugeFont, valueText, new Vector2(valX + 1, valY + 1), Color.Black * 0.6f);
+        // sb.DrawString(gaugeFont, valueText, new Vector2(valX, valY), readoutColor);
 
-        if (unitText != null)
-        {
-            Vector2 unitSize = smallFont.MeasureString(unitText);
-            float unitX = center.X - unitSize.X / 2f;
-            float unitY = valY + valSize.Y - 2;
-            sb.DrawString(smallFont, unitText, new Vector2(unitX + 1, unitY + 1), Color.Black * 0.4f);
-            sb.DrawString(smallFont, unitText, new Vector2(unitX, unitY), Color.White * 0.5f);
-        }
+        // if (unitText != null)
+        // {
+        //     Vector2 unitSize = smallFont.MeasureString(unitText);
+        //     float unitX = center.X - unitSize.X / 2f;
+        //     float unitY = valY + valSize.Y - 2;
+        //     sb.DrawString(smallFont, unitText, new Vector2(unitX + 1, unitY + 1), Color.Black * 0.4f);
+        //     sb.DrawString(smallFont, unitText, new Vector2(unitX, unitY), Color.White * 0.5f);
+        // }
+
+
+        Texture2D handTex = AssetManager.GetDecorationTexture("GaugeHand");
+        float handAngle = ArcStartAngle + ArcSweep * ratio + MathHelper.PiOver2 + twitchOffset;
+        Vector2 handOrigin = new Vector2(handTex.Width / 2f, handTex.Height / 2f);
+
+        sb.Draw(handTex, center, null, Color.White, handAngle,
+            handOrigin, drawRatio, SpriteEffects.None, 0f);
     }
 
     private static Color GetSpeedColor(float ratio)

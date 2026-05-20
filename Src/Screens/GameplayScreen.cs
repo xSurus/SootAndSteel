@@ -350,7 +350,7 @@ public class GameplayScreen : GamelabGameScreen
         
         if (phase != GameplayPhase.EndOfLevelOutro)
         {
-            hud.Update(currentLevelDef);
+            hud.Update(currentLevelDef, dt);
             levelWatcher.Update(enemyManager);
             director?.Update(dt, gameplayContext, enemyManager);
         

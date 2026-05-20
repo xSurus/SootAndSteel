@@ -2507,3 +2507,33 @@
 /processor:TextureProcessor
 /build:Decorations/FurnaceLight.png
 
+#begin Walls/WallTileTopBroken4B.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Walls/WallTileTopBroken4B.png
+
+#begin Walls/WallTileTopBroken4C.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Walls/WallTileTopBroken4C.png
+
+#begin Walls/WallTileTopBroken4A.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Walls/WallTileTopBroken4A.png
+
+#begin Walls/WallTileTopDoorBroken4.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Walls/WallTileTopDoorBroken4.png
+
+#begin Decorations/GaugeHand.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Decorations/GaugeHand.png
+
+#begin Decorations/Gauge.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Decorations/Gauge.png
+
