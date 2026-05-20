@@ -47,10 +47,6 @@ public class TrainMap : IDisposable
     private const int WheelFrameCount = 3;
     private const float WheelAnimSpeed = 0.25f;
     private int WheelFrame => (int)(wheelAnimTimer / WheelAnimSpeed) % WheelFrameCount;
-    private float glowTimer;
-    private const float GlowFrequency = 0.5f;
-    private const float GlowMin = 0.3f;
-    private const float GlowMax = 1.0f;
 
     public TrainMap() : this(ComputeDefaultTopLeftPixels())
     {
@@ -311,44 +307,7 @@ public class TrainMap : IDisposable
     public void DrawLightBatch(SpriteBatch spriteBatch)
     {
         TrainNose trainNose = MapObjects.OfType<TrainNose>().FirstOrDefault();
-        spriteBatch.Draw(
-            AssetManager.GetDecorationTexture("FurnaceLight"),
-            trainNose!.Position - new Vector2(340, 390),
-            null,
-            Color.White,
-            0f,
-            Vector2.Zero,
-            0.4f,
-            SpriteEffects.None,
-            0f
-        );
-
-        spriteBatch.Draw(
-            AssetManager.GetDecorationTexture("FurnaceLight"),
-            trainNose!.Position,
-            null,
-            Color.White,
-            0f,
-            new Vector2(1024, 1024),
-            0.7f,
-            SpriteEffects.None,
-            0f
-        );
-
-        float glow = MathHelper.Lerp(GlowMin, GlowMax,
-            (MathF.Sin(glowTimer * GlowFrequency * MathHelper.TwoPi) + 1f) / 2f);
-
-        spriteBatch.Draw(
-            AssetManager.GetDecorationTexture("FurnaceLight"),
-            trainNose!.Position,
-            null,
-            Color.White * glow,
-            0f,
-            new Vector2(1024, 1024),
-            0.7f,
-            SpriteEffects.None,
-            0f
-        );
+        trainNose!.DrawLightBatch(spriteBatch);
     }
 
     public void DrawShadows(SpriteBatch spriteBatch)
@@ -472,8 +431,6 @@ public class TrainMap : IDisposable
                 station.Update(dt);
             }
         }
-
-        glowTimer += dt;
     }
 
     public Rectangle GetBounds()
