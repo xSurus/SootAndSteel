@@ -10,9 +10,6 @@ using Gamelab.PhysicalEntities.Stations.Resources;
 using Gamelab.PhysicalEntities.Structures;
 using Gamelab.Screens;
 using Gamelab.Serialization;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using MonoGame.Extended;
 
 namespace Gamelab.Tutorial;
 
@@ -101,6 +98,7 @@ public class TutorialDirector : ITutorialDirector
                 pendingHubTransition = false;
                 pendingHubOutroRequest = true;
             }
+
             return;
         }
 
@@ -198,26 +196,6 @@ public class TutorialDirector : ITutorialDirector
         lastGuidanceSignature = "";
     }
 
-    public void DrawWorld(SpriteBatch spriteBatch)
-    {
-        TutorialBeat beat = GetBeat();
-        if (!TryGetHighlightForBeat(beat, out Vector2? pos)) return;
-        DrawHighlight(spriteBatch, pos);
-    }
-
-    private bool TryGetHighlightForBeat(TutorialBeat beat, out Vector2? position)
-    {
-        position = beat switch
-        {
-            TutorialBeat.Coal => trainNose?.Position ?? coalStation?.Position,
-            TutorialBeat.Bullet => workbench?.Position,
-            TutorialBeat.Wall => trainMap.MapObjects.OfType<ShootHoleWall>().FirstOrDefault(w => w.IsBroken)?.Position,
-            TutorialBeat.Shoot => cannon?.Position,
-            _ => null
-        };
-        return position != null;
-    }
-
     private TutorialBeat GetBeat()
     {
         if (stepWallRepairVisible && !stepWallDone)
@@ -257,20 +235,6 @@ public class TutorialDirector : ITutorialDirector
             "That's the last of them. Hold your speed until this stretch of line is behind you."),
         _ => throw new ArgumentOutOfRangeException(nameof(beat), beat, "Unexpected tutorial beat."),
     };
-
-    private void DrawHighlight(SpriteBatch spriteBatch, Vector2? position)
-    {
-        if (position == null) return;
-        int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
-        float pulse = 0.6f + 0.4f * MathF.Sin(time * 4f);
-        var color = Color.Yellow * pulse;
-        var rect = new RectangleF(
-            position.Value.X - tileSize / 2f,
-            position.Value.Y - tileSize / 2f,
-            tileSize,
-            tileSize);
-        spriteBatch.DrawRectangle(rect, color, 3f);
-    }
 
     private enum TutorialBeat
     {

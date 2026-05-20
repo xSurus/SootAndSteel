@@ -22,6 +22,7 @@ public enum PlayerAnimationState
 {
     None,
     Idle,
+    Stunned,
     Walk,
     SeatedBottom,
     SeatedTop
@@ -107,6 +108,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable, IItemP
             PlayerAnimationState.Walk => $"Player{PlayerConfiguration.PlayerIndex}_Walk",
             PlayerAnimationState.SeatedBottom => $"Player{PlayerConfiguration.PlayerIndex}_CannonBottom",
             PlayerAnimationState.SeatedTop => $"Player{PlayerConfiguration.PlayerIndex}_CannonTop",
+            PlayerAnimationState.Stunned => $"Player{PlayerConfiguration.PlayerIndex}_Fall",
             _ => $"Player{PlayerConfiguration.PlayerIndex}_Idle"
         };
 
@@ -197,7 +199,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable, IItemP
     {
         if (IsStunned)
         {
-            SetAnimationState(PlayerAnimationState.Idle);
+            SetAnimationState(PlayerAnimationState.Stunned);
             return;
         }
 
@@ -507,32 +509,19 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable, IItemP
         if (playerSprite == null) return;
 
         Vector2 feetPosition = Position + new Vector2(0, Radius);
-        Color drawColor = IsStunned ? Color.Goldenrod : Color.White;
         bool isFacingRight = LookDirection.X > 0;
         SpriteEffects flipEffect = isFacingRight ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
         float renderDepth = RenderUtility.CalculateDepth(feetPosition.Y);
 
-        playerSprite.Color = drawColor;
+        playerSprite.Color = Color.White;
         playerSprite.Depth = renderDepth;
         playerSprite.Effect = flipEffect;
-
-        if (IsStunned)
-        {
-            playerSprite.Origin =
-                new Vector2(playerSprite.TextureRegion.Width / 2f, playerSprite.TextureRegion.Height / 2f);
-            spriteBatch.Draw(playerSprite, Position, MathHelper.PiOver2, new Vector2(0.3f));
-        }
-        else
-        {
-            playerSprite.Origin = new Vector2(playerSprite.TextureRegion.Width / 2f, playerSprite.TextureRegion.Height);
-            spriteBatch.Draw(playerSprite, feetPosition, 0f, new Vector2(0.3f));
-        }
+        playerSprite.Origin = new Vector2(playerSprite.TextureRegion.Width / 2f, playerSprite.TextureRegion.Height);
+        spriteBatch.DrawWithHighlight(playerSprite, feetPosition, 0f, new Vector2(0.3f), IsHighlighted && IsStunned);
 
         DrawHeldItem(spriteBatch, renderDepth + RenderUtility.Eps);
 
-        float playerVisualHeight = playerSprite.TextureRegion.Height * 0.3f;
-        DrawConcussionStars(spriteBatch, playerVisualHeight);
-        DrawStunProgress(spriteBatch, playerVisualHeight);
+        DrawConcussionStars(spriteBatch);
     }
 
     private void DrawHeldItem(SpriteBatch spriteBatch, float renderDepth)
@@ -546,7 +535,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable, IItemP
         }
     }
 
-    private void DrawConcussionStars(SpriteBatch spriteBatch, float playerVisualHeight)
+    private void DrawConcussionStars(SpriteBatch spriteBatch)
     {
         if (!IsStunned) return;
 
@@ -555,7 +544,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable, IItemP
         const float starScale = 7f;
 
         // Orbit center sits just above the player's head
-        Vector2 center = Position + new Vector2(0, -(playerVisualHeight + orbitRadius + 4f));
+        Vector2 center = Position + new Vector2(0, -(playerSprite.TextureRegion.Height * 0.1f + orbitRadius + 4f));
         float baseAngle = stunAnimTimer * 3f;
 
         for (int i = 0; i < starCount; i++)
@@ -578,26 +567,6 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable, IItemP
                 RenderUtility.OverlayTopLayer
             );
         }
-    }
-
-    private void DrawStunProgress(SpriteBatch spriteBatch, float playerVisualHeight)
-    {
-        if (!IsStunned)
-        {
-            return;
-        }
-
-        int barWidth = 42;
-        int barHeight = 6;
-        Vector2 feetPosition = Position + new Vector2(0, Radius);
-        Vector2 anchor = feetPosition + new Vector2(-barWidth / 2f, -playerVisualHeight - 15f);
-
-        var bg = new Rectangle((int)anchor.X, (int)anchor.Y, barWidth, barHeight);
-        var fill = new Rectangle(bg.X, bg.Y, (int)(barWidth * Math.Clamp(ReviveProgress, 0f, 1f)), barHeight);
-        spriteBatch.Draw(AssetManager.BlankTexture, bg, null, Color.Black, 0f, Vector2.Zero, SpriteEffects.None,
-            RenderUtility.OverlayBackLayer);
-        spriteBatch.Draw(AssetManager.BlankTexture, fill, null, Color.LimeGreen, 0f, Vector2.Zero, SpriteEffects.None,
-            RenderUtility.OverlayTopLayer);
     }
 
     protected bool ItemIsGranular(Item item)

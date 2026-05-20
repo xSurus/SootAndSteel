@@ -210,6 +210,7 @@ public static class AssetManager
         int totalPlayers = 4;
         int idleFramesPerPlayer = 4;
         int walkFramesPerPlayer = 5;
+        int fallFramesPerPlayer = 4;
 
         for (int p = 0; p < totalPlayers; p++)
         {
@@ -243,6 +244,15 @@ public static class AssetManager
             {
                 builder.IsLooping(false);
                 builder.AddFrame($"Player{p}_CannonBottom", TimeSpan.FromSeconds(1));
+            });
+
+            PlayerSpriteSheet.DefineAnimation($"Player{p}_Fall", builder =>
+            {
+                builder.IsLooping(false);
+                for (int f = 1; f <= fallFramesPerPlayer; f++)
+                {
+                    builder.AddFrame($"Player{p}_Fall{f}", frameDuration);
+                }
             });
         }
     }

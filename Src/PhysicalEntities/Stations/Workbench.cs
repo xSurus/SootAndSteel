@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Gamelab.Assets;
 using Gamelab.Items;
 using Gamelab.Items.Bullets;
 using Gamelab.Particles;
@@ -140,8 +139,6 @@ public class Workbench : AbstractStation, IInteractable, IDisposable
         {
             int drawItemSize = (int)(tileSize * 0.4f);
             float yOffset = tileSize * 0.1f;
-            float triOffset = tileSize * 0.15f;
-
             float spacing = tileSize * 0.25f;
             float totalWidth = (PlacedItems.Count - 1) * spacing;
             float startX = -totalWidth / 2f;
@@ -151,23 +148,6 @@ public class Workbench : AbstractStation, IInteractable, IDisposable
                 Vector2 itemPos = tableTopCenter + new Vector2(startX + i * spacing, -yOffset);
                 PlacedItems[i].Draw(spriteBatch, itemPos, drawItemSize, depth + RenderUtility.Eps);
             }
-        }
-
-        if (craftProgress > 0f)
-        {
-            int barWidth = tileSize - 4;
-            int barHeight = 6;
-            float progressPercentage = craftProgress / 2f; // TODO add dynamic craft time
-
-            Vector2 barPos = feetPosition + new Vector2(-barWidth / 2f, -tileSize - 10f);
-
-            Rectangle bgBar = new Rectangle((int)barPos.X, (int)barPos.Y, barWidth, barHeight);
-            Rectangle fillBar = new Rectangle(bgBar.X, bgBar.Y, (int)(barWidth * progressPercentage), barHeight);
-
-            spriteBatch.Draw(AssetManager.BlankTexture, bgBar, null, Color.Black, 0f, Vector2.Zero, SpriteEffects.None,
-                depth + 2 * RenderUtility.Eps);
-            spriteBatch.Draw(AssetManager.BlankTexture, fillBar, null, Color.Yellow, 0f, Vector2.Zero,
-                SpriteEffects.None, depth + 3 * RenderUtility.Eps);
         }
     }
 

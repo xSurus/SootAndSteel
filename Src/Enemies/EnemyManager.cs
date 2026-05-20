@@ -5,7 +5,6 @@ using Gamelab.Enemies.Core;
 using Gamelab.Enemies.Slots;
 using Gamelab.Levels;
 using Gamelab.Map.Train.State;
-using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -22,7 +21,6 @@ public class EnemyManager(LevelDefinition levelDef)
     private float EnemySize => GamelabGame.Instance.GameplayConfig.EnemySize;
     private float RiflePreferredDistance => GamelabGame.Instance.GameplayConfig.RiflePreferredDistance;
     public bool HasActiveThreats => enemies.Count > 0;
-    public bool HasAnyEnemyTakenDamage => enemies.Exists(e => e.Health < GamelabGame.Instance.GameplayConfig.EnemyHealth);
     public float intensity;
     public IReadOnlyList<AbstractEnemy> ActiveEnemies => enemies;
 
@@ -64,9 +62,11 @@ public class EnemyManager(LevelDefinition levelDef)
         float distanceFactor = 0.0f;
         if (nextSpawnIndex < levelDef.SpawnEvents.Count)
         {
-            float distanceToNextEnemy = levelDef.SpawnEvents[nextSpawnIndex].Distance - gameplayContext.State.DistanceTraveled;
+            float distanceToNextEnemy =
+                levelDef.SpawnEvents[nextSpawnIndex].Distance - gameplayContext.State.DistanceTraveled;
             distanceFactor = Math.Clamp((2000f - distanceToNextEnemy) / 1000f, 0.0f, 1.0f);
         }
+
         float enemyThreatFactor = enemies.Count(e => e.IsAlive) * 2;
         intensity = Math.Clamp(distanceFactor + enemyThreatFactor, 0.0f, 4.0f);
         // new Logger("Enemy Manager").Info("New intensity: " + Intensity);

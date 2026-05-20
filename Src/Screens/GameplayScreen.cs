@@ -418,7 +418,6 @@ public class GameplayScreen : GamelabGameScreen
 
         Services.GetService<IVfxService>().Render(spriteBatch);
         Services.GetService<IBulletService>().Render(spriteBatch);
-        director?.DrawWorld(spriteBatch);
         spriteBatch.End();
 
         spriteBatch.Begin(

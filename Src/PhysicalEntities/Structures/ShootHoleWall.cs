@@ -22,6 +22,7 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
     private bool isBreached;
     private readonly Vector2 dimensionsPixels;
     private bool isTop;
+    private int variation;
 
     private ISoundService soundService;
 
@@ -34,6 +35,8 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
             positionPixels.ToMeters(), 0f, BodyType.Static);
         PhysicsBody.Tag = this;
         this.isTop = isTop;
+
+        variation = Random.Shared.Next(1, 4);
 
         soundService = GamelabGame.Instance.Services.GetService<ISoundService>();
         soundService.LoadSound(Sounds.WallHit);
@@ -76,6 +79,7 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
         if (CurrentHealth >= MaxHealth && isBreached)
         {
             isBreached = false;
+            variation = Random.Shared.Next(1, 4);
             gameplayContext.Events.FireWallRepaired();
         }
     }
@@ -83,10 +87,55 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
     public override void Draw(SpriteBatch spriteBatch)
     {
         int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
-        Texture2D wallTex =
-            isTop ? AssetManager.GetWallTexture("WallTileTop") : AssetManager.GetWallTexture("WallTileBottom");
+        float damagePercent = (1f - CurrentHealth / MaxHealth) * 100f;
+        string textureName;
 
-        float scale = tileSize / (float)AssetManager.GetWallTexture("WallTileTop").Width;
+        if (isTop)
+        {
+            if (isBreached)
+            {
+                textureName = $"WallTileTopBroken4_Variation{variation}";
+            }
+            else if (damagePercent >= 75f)
+            {
+                textureName = $"WallTileTopBroken3_Variation{variation}";
+            }
+            else if (damagePercent >= 50f)
+            {
+                textureName = $"WallTileTopBroken2_Variation{variation}";
+            }
+            else if (damagePercent >= 25f)
+            {
+                textureName = $"WallTileTopBroken1_Variation{variation}";
+            }
+            else
+            {
+                textureName = "WallTileTop";
+            }
+        }
+        else
+        {
+            if (isBreached)
+            {
+                textureName = "WallTileBottomBroken3";
+            }
+            else if (damagePercent >= 66f)
+            {
+                textureName = "WallTileBottomBroken2";
+            }
+            else if (damagePercent >= 33f)
+            {
+                textureName = "WallTileBottomBroken1";
+            }
+            else
+            {
+                textureName = "WallTileBottom";
+            }
+        }
+
+        Texture2D wallTex = AssetManager.GetWallTexture(textureName);
+
+        float scale = tileSize / (float)AssetManager.GetWallTexture(textureName).Width;
         Vector2 origin = new Vector2(wallTex.Width / 2f, wallTex.Height);
 
         Vector2 feetPosition;
@@ -96,7 +145,6 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
         }
         else
         {
-            float visualHeight = wallTex.Height * scale;
             feetPosition = Position + new Vector2(0, -dimensionsPixels.Y / 2f);
         }
 
@@ -104,24 +152,5 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
 
         spriteBatch.DrawWithHighlight(wallTex, feetPosition, null, Color.White, 0f, origin, scale, SpriteEffects.None,
             depth + RenderUtility.Eps, isHighlighted: IsHighlighted);
-
-        if (CurrentHealth < MaxHealth)
-        {
-            int barWidth = (int)dimensionsPixels.X - 10;
-            int barHeight = 6;
-            float healthPercentage = CurrentHealth / MaxHealth;
-
-            Vector2 barPos = Position + new Vector2(-barWidth / 2f, -dimensionsPixels.Y / 2f - 15f);
-
-            Rectangle bgBar = new Rectangle((int)barPos.X, (int)barPos.Y, barWidth, barHeight);
-            Rectangle fillBar =
-                new Rectangle(bgBar.X, bgBar.Y, (int)MathF.Round(barWidth * healthPercentage), barHeight);
-            Color healthBarColor = IsBroken ? Color.Red : Color.LimeGreen;
-
-            spriteBatch.Draw(AssetManager.BlankTexture, bgBar, null, Color.Black, 0f, Vector2.Zero, SpriteEffects.None,
-                depth + 2 * RenderUtility.Eps);
-            spriteBatch.Draw(AssetManager.BlankTexture, fillBar, null, healthBarColor, 0f, Vector2.Zero,
-                SpriteEffects.None, depth + 3 * RenderUtility.Eps);
-        }
     }
 }
