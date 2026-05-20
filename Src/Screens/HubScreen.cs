@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FmodForFoxes.Studio;
 using Gamelab.Assets;
+using Gamelab.Components;
 using Gamelab.Dialogue;
 using Gamelab.Map;
 using Gamelab.Map.Train;
@@ -11,7 +12,6 @@ using Gamelab.Particles;
 using Gamelab.Particles.Modifiers;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.PhysicalEntities.Stations;
-using Gamelab.Components;
 using Gamelab.Players;
 using Gamelab.Screens.Camera;
 using Gamelab.Serialization;
@@ -19,17 +19,16 @@ using Gamelab.Services.Bullet;
 using Gamelab.Services.Sound;
 using Gamelab.Services.Vfx;
 using Gamelab.UI;
+using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
-using MonoGame.Extended.Graphics;
 using MonoGameGum;
 
 namespace Gamelab.Screens;
 
 public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
 {
-    
     private enum HubPhase
     {
         Intro,
@@ -60,7 +59,6 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
     private string currentDepartureHintKey;
 
     private FootprintSystem footprintSystem;
-    private SpeedLever _speedLever;
 
     private int worldWidth, worldHeight;
     private float accumulator;
@@ -100,7 +98,9 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
             allowOffWorldOverflow: true);
         hubSnowEmitter = ParticleFactory.CreateSnowstorm();
         hubSnowEmitter.Modifiers.Add(new BlizzardGustModifier(() =>
-            phase == HubPhase.Departing && screenTransitionFilter != null ? screenTransitionFilter.EffectIntensity : 0f));
+            phase == HubPhase.Departing && screenTransitionFilter != null
+                ? screenTransitionFilter.EffectIntensity
+                : 0f));
         hubSnowBaseline = SnowstormTransition.Capture(hubSnowEmitter);
         Services.GetService<IVfxService>().AddContinuous(hubSnowEmitter);
 
@@ -196,7 +196,7 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         );
 
         hubMap.Draw(spriteBatch);
-        prepTrainMap.Draw(spriteBatch, view);
+        prepTrainMap.Draw(spriteBatch);
         Services.GetService<IVfxService>().Render(spriteBatch);
         Services.GetService<IBulletService>().Render(spriteBatch);
         foreach (var player in players) player.Draw(spriteBatch);
@@ -209,6 +209,16 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
                 Color.White * screenTransitionFilter.Opacity);
         }
 
+        spriteBatch.End();
+
+        spriteBatch.Begin(
+            sortMode: SpriteSortMode.Immediate,
+            blendState: RenderUtility.AdditiveBlend,
+            samplerState: SamplerState.PointClamp,
+            transformMatrix: view
+        );
+
+        prepTrainMap.DrawLightBatch(spriteBatch);
         spriteBatch.End();
 
         base.Draw(gameTime);
@@ -269,7 +279,6 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         {
             if (entity is SpeedLever lever)
             {
-                _speedLever = lever;
                 lever.OnInteractOverride = player =>
                 {
                     if (isDepartDecisionOpen)
@@ -358,14 +367,14 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
             Game.CurrentRun.TrainLayout = prepTrainMap.CaptureLayout();
             screenTransitionFilter ??= new WhiteFilterTransition();
             screenTransitionFilter.FadeIn(2f, 1.5f);
-            worldUiManager.ClearAll(); 
+            worldUiManager.ClearAll();
             departureHintOverlay?.Hide();
             phase = HubPhase.Departing;
         }
 
         previousPendingShopCount = pendingShopCount;
     }
-    
+
     private void HandleIntroTransition(float dt)
     {
         screenTransitionFilter?.Update(dt);
@@ -379,7 +388,9 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
     {
         worldUiManager.ClearAll();
         screenTransitionFilter?.Update(dt);
-        float blizzardT = phase == HubPhase.Departing && screenTransitionFilter != null ? screenTransitionFilter.EffectIntensity : 0f;
+        float blizzardT = phase == HubPhase.Departing && screenTransitionFilter != null
+            ? screenTransitionFilter.EffectIntensity
+            : 0f;
         SnowstormTransition.ApplyBlizzardIntensity(hubSnowEmitter, hubSnowBaseline, blizzardT);
         if (screenTransitionFilter.IsDone)
         {
@@ -544,7 +555,9 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
             return;
 
         int fallbackPlayer = lastReadyPlayerIndex
-                             ?? (joinedPlayerIndices.Count > 0 ? joinedPlayerIndices[joinedPlayerIndices.Count - 1] : -1);
+                             ?? (joinedPlayerIndices.Count > 0
+                                 ? joinedPlayerIndices[joinedPlayerIndices.Count - 1]
+                                 : -1);
         if (fallbackPlayer >= 0)
             OpenDepartDecision(fallbackPlayer);
     }

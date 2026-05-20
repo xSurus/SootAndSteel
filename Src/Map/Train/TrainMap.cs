@@ -39,22 +39,18 @@ public class TrainMap : IDisposable
 
     private float bobTimer;
     private float bobOffset;
-    private const float BobFrequency = 3.5f;   
-    private const float BobAmplitude = 0.5f;   
+    private const float BobFrequency = 3.5f;
+    private const float BobAmplitude = 0.5f;
     private Vector2 BobOffsetVec => new Vector2(0, bobOffset);
 
     private float wheelAnimTimer;
     private const int WheelFrameCount = 3;
     private const float WheelAnimSpeed = 0.25f;
     private int WheelFrame => (int)(wheelAnimTimer / WheelAnimSpeed) % WheelFrameCount;
-
-    private static readonly BlendState MultiplyBlend = new BlendState
-    {
-        ColorSourceBlend = Blend.DestinationColor,
-        ColorDestinationBlend = Blend.Zero,
-        AlphaSourceBlend = Blend.DestinationColor,
-        AlphaDestinationBlend = Blend.Zero
-    };
+    private float glowTimer;
+    private const float GlowFrequency = 0.5f;
+    private const float GlowMin = 0.3f;
+    private const float GlowMax = 1.0f;
 
     public TrainMap() : this(ComputeDefaultTopLeftPixels())
     {
@@ -295,44 +291,76 @@ public class TrainMap : IDisposable
         stationGrid[gridPos] = station;
     }
 
-    public void Draw(SpriteBatch spriteBatch, Matrix view)
+    public void Draw(SpriteBatch spriteBatch)
     {
-        spriteBatch.End();
-
-        spriteBatch.Begin(
-            sortMode: SpriteSortMode.FrontToBack,
-            blendState: MultiplyBlend,
-            samplerState: SamplerState.PointClamp,
-            transformMatrix: view
-        );
-
-        
-        spriteBatch.Draw(AssetManager.BlankTexture, 
-            new Rectangle((int)Position.X - 750, (int)Position.Y + 50, 2140,410), 
-            new Color(170, 170, 170));
-
-        spriteBatch.End();
-        spriteBatch.Begin(
-            sortMode: SpriteSortMode.FrontToBack,
-            blendState: BlendState.AlphaBlend,
-            samplerState: SamplerState.PointClamp,
-            transformMatrix: view
-        );
-
         DrawTrainWheels(spriteBatch);
-        
         Position += BobOffsetVec;
+        DrawShadows(spriteBatch);
         DrawTrainTiles(spriteBatch);
         DrawSideWalls(spriteBatch);
-        Vector2 bobMeters = BobOffsetVec.ToMeters();
         foreach (var mapObject in MapObjects)
         {
-            mapObject.PhysicsBody.Position += bobMeters;
+            mapObject.Position += BobOffsetVec;
             mapObject.Draw(spriteBatch);
-            mapObject.PhysicsBody.Position -= bobMeters;
+            mapObject.Position -= BobOffsetVec;
         }
-        Position -= BobOffsetVec;
 
+        Position -= BobOffsetVec;
+    }
+
+    public void DrawLightBatch(SpriteBatch spriteBatch)
+    {
+        TrainNose trainNose = MapObjects.OfType<TrainNose>().FirstOrDefault();
+        spriteBatch.Draw(
+            AssetManager.GetDecorationTexture("FurnaceLight"),
+            trainNose!.Position - new Vector2(340, 390),
+            null,
+            Color.White,
+            0f,
+            Vector2.Zero,
+            0.4f,
+            SpriteEffects.None,
+            0f
+        );
+
+        spriteBatch.Draw(
+            AssetManager.GetDecorationTexture("FurnaceLight"),
+            trainNose!.Position,
+            null,
+            Color.White,
+            0f,
+            new Vector2(1024, 1024),
+            0.7f,
+            SpriteEffects.None,
+            0f
+        );
+
+        float glow = MathHelper.Lerp(GlowMin, GlowMax,
+            (MathF.Sin(glowTimer * GlowFrequency * MathHelper.TwoPi) + 1f) / 2f);
+
+        spriteBatch.Draw(
+            AssetManager.GetDecorationTexture("FurnaceLight"),
+            trainNose!.Position,
+            null,
+            Color.White * glow,
+            0f,
+            new Vector2(1024, 1024),
+            0.7f,
+            SpriteEffects.None,
+            0f
+        );
+    }
+
+    public void DrawShadows(SpriteBatch spriteBatch)
+    {
+        spriteBatch.Draw(AssetManager.BlankTexture,
+            new Rectangle((int)Position.X - 750, (int)Position.Y + 50, 2140, 410),
+            null,
+            new Color(0, 0, 0, 70),
+            0f,
+            Vector2.Zero,
+            SpriteEffects.None,
+            RenderUtility.BackgroundLayer + RenderUtility.Eps);
     }
 
     public void DrawSideWalls(SpriteBatch spriteBatch)
@@ -344,7 +372,8 @@ public class TrainMap : IDisposable
         Vector2 upperLeftCornerOrigin = new Vector2(upperLeftCornerTex.Width / 2f, upperLeftCornerTex.Height);
 
         Vector2 ulTL = GetTileTopLeftPixels(0, 0) + offset + new Vector2(0, -tileSize * 2f);
-        Vector2 ulFeet = ulTL + new Vector2(upperLeftCornerTex.Width / 2f * scale - 4f, upperLeftCornerTex.Height * scale);
+        Vector2 ulFeet =
+            ulTL + new Vector2(upperLeftCornerTex.Width / 2f * scale - 4f, upperLeftCornerTex.Height * scale);
         float ulDepth = RenderUtility.CalculateDepth(ulFeet.Y);
 
         spriteBatch.Draw(upperLeftCornerTex, ulFeet, null, Color.White,
@@ -377,7 +406,7 @@ public class TrainMap : IDisposable
             {
                 Texture2D tileTex = AssetManager.TileTexture[tileTypes[x * Height + y]];
                 Vector2 origin = new Vector2(tileTex.Width / 2f, tileTex.Height);
-                Vector2 feetPosition = GetTileCenterPixels(x, y) + new Vector2(0, TileSize / 2f);
+                Vector2 feetPosition = GetTileCenterPixels(x, y) + new Vector2(0, TileSize / 2f + 0.01f);
 
                 spriteBatch.Draw(tileTex, feetPosition, null, Color.White,
                     0f, origin, scale, SpriteEffects.None, RenderUtility.FloorLayer);
@@ -388,44 +417,46 @@ public class TrainMap : IDisposable
     private void DrawTrainWheels(SpriteBatch spriteBatch)
     {
         string[] wheelTexNames = { "Wheels1", "Wheels2", "Wheels3" };
-        Texture2D wheelTex = AssetManager.GetDecorationTexture(wheelTexNames[WheelFrame]);  
+        Texture2D wheelTex = AssetManager.GetDecorationTexture(wheelTexNames[WheelFrame]);
         Vector2 origin = new Vector2(wheelTex.Width / 2f, wheelTex.Height);
         Vector2 feetPosition = GetTileCenterPixels(0, 5) + new Vector2(45, 3);
 
         spriteBatch.Draw(wheelTex, feetPosition, null, Color.White,
-                    0f, origin, scale, SpriteEffects.None, RenderUtility.FloorLayer);
-        
+            0f, origin, scale, SpriteEffects.None, RenderUtility.BackgroundLayer + RenderUtility.FloorLayer / 2f);
+
         feetPosition = GetTileCenterPixels(8, 5) + new Vector2(-130, 3);
         spriteBatch.Draw(wheelTex, feetPosition, null, Color.White,
-                    0f, origin, scale, SpriteEffects.None, RenderUtility.FloorLayer);
+            0f, origin, scale, SpriteEffects.None, RenderUtility.BackgroundLayer + RenderUtility.FloorLayer / 2f);
 
         feetPosition = GetTileCenterPixels(8, 5) + new Vector2(65, 3);
         spriteBatch.Draw(wheelTex, feetPosition, null, Color.White,
-                    0f, origin, scale, SpriteEffects.None, RenderUtility.FloorLayer);
+            0f, origin, scale, SpriteEffects.None, RenderUtility.BackgroundLayer + RenderUtility.FloorLayer / 2f);
 
         feetPosition = GetTileCenterPixels(0, 5) + new Vector2(-240, 3);
         spriteBatch.Draw(wheelTex, feetPosition, null, Color.White,
-                    0f, origin, scale, SpriteEffects.None, RenderUtility.FloorLayer);
+            0f, origin, scale, SpriteEffects.None, RenderUtility.BackgroundLayer + RenderUtility.FloorLayer / 2f);
 
         feetPosition = GetTileCenterPixels(0, 5) + new Vector2(-440, 3);
         spriteBatch.Draw(wheelTex, feetPosition, null, Color.White,
-                    0f, origin, scale, SpriteEffects.None, RenderUtility.FloorLayer);
-        
+            0f, origin, scale, SpriteEffects.None, RenderUtility.BackgroundLayer + RenderUtility.FloorLayer / 2f);
+
         feetPosition = GetTileCenterPixels(0, 5) + new Vector2(-680, 3);
         spriteBatch.Draw(wheelTex, feetPosition, null, Color.White,
-                    0f, origin, scale, SpriteEffects.None, RenderUtility.FloorLayer);
+            0f, origin, scale, SpriteEffects.None, RenderUtility.BackgroundLayer + RenderUtility.FloorLayer / 2f);
 
         feetPosition = GetTileCenterPixels(8, 5) + new Vector2(380, 3);
         spriteBatch.Draw(wheelTex, feetPosition, null, Color.White,
-                    0f, origin, 1.5f * scale, SpriteEffects.None, RenderUtility.FloorLayer);
-        
+            0f, origin, 1.5f * scale, SpriteEffects.None,
+            RenderUtility.BackgroundLayer + RenderUtility.FloorLayer / 2f);
+
         feetPosition = GetTileCenterPixels(8, 5) + new Vector2(600, 3);
         spriteBatch.Draw(wheelTex, feetPosition, null, Color.White,
-                    0f, origin, 1.2f * scale, SpriteEffects.None, RenderUtility.FloorLayer);
+            0f, origin, 1.2f * scale, SpriteEffects.None,
+            RenderUtility.BackgroundLayer + RenderUtility.FloorLayer / 2f);
     }
 
     public void Update(float dt)
-    {   
+    {
         float speed = gameplayContext.State.actualSpeed;
         if (speed > 0.0f)
         {
@@ -441,6 +472,8 @@ public class TrainMap : IDisposable
                 station.Update(dt);
             }
         }
+
+        glowTimer += dt;
     }
 
     public Rectangle GetBounds()

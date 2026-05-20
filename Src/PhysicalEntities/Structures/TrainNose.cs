@@ -24,13 +24,13 @@ public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
     private ParticleEmitter chimneyEmitter;
     private const float ChimneyOffsetX = 650f;
     private const float ChimneyOffsetY = -500f;
-    private const float NoseDrawOffsetX = -2f;
+    private const float NoseDrawOffsetX = -5f;
     private const float NoseDrawOffsetY = 15f;
     private float heightPixels;
     private float widthPixels;
-    
+
     private ISoundService soundService;
-    
+
     public TrainNose(Vector2 position)
     {
         maxFuel = GamelabGame.Instance.GameplayConfig.CoalOvenMaxFuel;
@@ -59,8 +59,8 @@ public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
         TrainMap map = gameplayContext.Map;
         if (map != null)
             chimneyEmitter.Position = map.GetTileTopLeftPixels(map.Width, map.Height - 1)
-                + new Vector2(0, map.TileSize)
-                + new Vector2(ChimneyOffsetX, ChimneyOffsetY);
+                                      + new Vector2(0, map.TileSize)
+                                      + new Vector2(ChimneyOffsetX, ChimneyOffsetY);
 
         if (!gameplayContext.State.FuelBurningEnabled)
         {
@@ -153,7 +153,8 @@ public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
         {
             // Pivot at bottom-left of the texture so the back of the nose lines up with the cab seam (column Width).
             Vector2 origin = new Vector2(0f, tex.Height);
-            spriteBatch.Draw(tex, feetAnchor + new Vector2(NoseDrawOffsetX, NoseDrawOffsetY), null, Color.White, 0f, origin, tileScale, SpriteEffects.None, depth);
+            spriteBatch.Draw(tex, feetAnchor + new Vector2(NoseDrawOffsetX, NoseDrawOffsetY), null, Color.White, 0f,
+                origin, tileScale, SpriteEffects.None, depth);
         }
         else
         {

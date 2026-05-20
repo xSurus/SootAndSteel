@@ -47,7 +47,7 @@ public class HubMap : IDisposable
             worldWidth - hubPad * 2,
             worldHeight / 2 - hubPad - 160);
 
-        
+
         float hubBgScale = worldWidth * 1.0f / AssetManager.HubTexture.Width;
         int villageBottom = (int)MathF.Min(AssetManager.HubTexture.Height * hubBgScale, worldHeight / 2f);
         villageRect = new Rectangle(
@@ -144,8 +144,7 @@ public class HubMap : IDisposable
 
     private void BuildHubTreeLayout()
     {
-        
-        float leftMarginX = villageRect.Left * 0.5f;         
+        float leftMarginX = villageRect.Left * 0.5f;
         float rightMarginX = (villageRect.Right + worldWidth) / 2f;
         float topY = villageRect.Top + villageRect.Height * 0.15f;
         float midY = villageRect.Top + villageRect.Height * 0.5f;
@@ -153,7 +152,7 @@ public class HubMap : IDisposable
 
         Vector2[] handPlaced =
         {
-            new Vector2(leftMarginX,  topY),
+            new Vector2(leftMarginX, topY),
             new Vector2(leftMarginX - 40f, midY),
             new Vector2(leftMarginX + 30f, lowerY),
             new Vector2(rightMarginX, topY),
@@ -192,8 +191,7 @@ public class HubMap : IDisposable
         float minZoom = GamelabGame.Instance.GameplayConfig.CameraMinZoom;
         int pad = (int)MathF.Ceiling(MathF.Max(worldWidth, worldHeight) / minZoom);
         Rectangle area = new Rectangle(-pad, -pad, worldWidth + pad * 2, worldHeight + pad * 2);
-        spriteBatch.Draw(AssetManager.BlankTexture, area, null, RenderUtility.SnowBackgroundColor,
-            0f, Vector2.Zero, SpriteEffects.None, 0f);
+        spriteBatch.Draw(AssetManager.BlankTexture, area, RenderUtility.SnowBackgroundColor);
     }
 
     private void DrawFence(SpriteBatch spriteBatch)
@@ -249,7 +247,7 @@ public class HubMap : IDisposable
                 origin: Vector2.Zero,
                 scale: TrackScale,
                 effects: SpriteEffects.None,
-                layerDepth: (RenderUtility.BackgroundLayer + RenderUtility.FloorLayer) / 2f);
+                layerDepth: RenderUtility.BackgroundLayer);
         }
     }
 

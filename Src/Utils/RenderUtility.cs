@@ -21,6 +21,14 @@ public static class RenderUtility
     public static readonly Color SnowBackgroundColor = new(208, 232, 242);
     public static readonly Color HighlightColor = new(80, 80, 80, 0);
 
+    public static readonly BlendState AdditiveBlend = new BlendState
+    {
+        ColorSourceBlend = Blend.SourceAlpha,
+        ColorDestinationBlend = Blend.One,
+        AlphaSourceBlend = Blend.SourceAlpha,
+        AlphaDestinationBlend = Blend.One
+    };
+
     public static float CalculateDepth(float yPosition)
     {
         int worldHeight = GamelabGame.Instance.Services.GetService<GameplayContext>().WorldHeight;

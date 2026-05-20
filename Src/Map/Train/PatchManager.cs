@@ -29,9 +29,6 @@ public class PatchManager
     private static readonly Color PatchTint = Color.White * 0.7f;
     private const float DrawDepth = RenderUtility.FloorLayer + 2 * RenderUtility.Eps;
 
-    public IReadOnlySet<Point> SnowTiles => snowTiles;
-    public IReadOnlySet<Point> IceTiles => iceTiles;
-
     public PatchManager(TrainMap map)
     {
         this.map = map;
@@ -134,7 +131,15 @@ public class PatchManager
         int idx = random.Next(tiles.Count);
         Point toRemove = default;
         int i = 0;
-        foreach (Point tile in tiles) { if (i++ == idx) { toRemove = tile; break; } }
+        foreach (Point tile in tiles)
+        {
+            if (i++ == idx)
+            {
+                toRemove = tile;
+                break;
+            }
+        }
+
         tiles.Remove(toRemove);
     }
 

@@ -18,6 +18,7 @@ using Gamelab.Services.Sound;
 using Gamelab.Services.Vfx;
 using Gamelab.Tutorial;
 using Gamelab.UI;
+using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
@@ -76,19 +77,6 @@ public class GameplayScreen : GamelabGameScreen
     private float levelTimer;
     private float completionTime;
 
-    private float glowTimer;
-    private const float GlowFrequency = 0.5f; 
-    private const float GlowMin = 0.3f;
-    private const float GlowMax = 1.0f;
-
-    private static readonly BlendState AdditiveBlend = new BlendState
-    {
-        ColorSourceBlend = Blend.SourceAlpha,
-        ColorDestinationBlend = Blend.One,
-        AlphaSourceBlend = Blend.SourceAlpha,
-        AlphaDestinationBlend = Blend.One
-    };
-
     public override void LoadContent()
     {
         base.LoadContent();
@@ -141,8 +129,6 @@ public class GameplayScreen : GamelabGameScreen
 
         if (director != null && director.ConsumePendingHubOutroRequest())
             BeginTutorialHubOutro();
-
-        glowTimer += dt;
     }
 
     private void BeginTutorialHubOutro()
@@ -316,7 +302,7 @@ public class GameplayScreen : GamelabGameScreen
                 gameplayContext.State.Update(fixedDt);
                 gameplayContext.PatchManager.Update(fixedDt, gameplayContext.State);
             }
-            
+
             if (isFailureTriggered) return;
             enemyManager.Update(fixedDt);
             footprintSystem.Update(fixedDt, players, _ => true);
@@ -331,13 +317,14 @@ public class GameplayScreen : GamelabGameScreen
             {
                 gameplayContext.EndPhysicsStep();
             }
+
             if (levelNotCompleted)
             {
                 UpdateAllPlayersStunnedFailure(fixedDt);
             }
 
             if (isFailureTriggered) return;
-        
+
             accumulator -= fixedDt;
         }
     }
@@ -347,18 +334,18 @@ public class GameplayScreen : GamelabGameScreen
         worldScroller.Update(dt);
         cameraDirector.Update(camera, dt, players, trainMap.GetBounds(), virtualScreenSize.X, virtualScreenSize.Y,
             allowOffWorldOverflow: true, maxZoom: Game.GameplayConfig.CameraMaxZoom);
-        
+
         if (phase != GameplayPhase.EndOfLevelOutro)
         {
             hud.Update(currentLevelDef, dt);
             levelWatcher.Update(enemyManager);
             director?.Update(dt, gameplayContext, enemyManager);
-        
+
             if (director != null && Game.Services.GetService<IDialogueService>() is DialogueManager dm)
                 dm.Update(gameTime, Game.playerManager.Configs);
         }
     }
-    
+
     private void HandleIntroTransition(float dt)
     {
         screenTransitionFilter.Update(dt);
@@ -371,7 +358,8 @@ public class GameplayScreen : GamelabGameScreen
     private void HandleOutroTransition(float dt)
     {
         screenTransitionFilter.Update(dt);
-        SnowstormTransition.ApplyBlizzardIntensity(snowstormEmitter, snowstormBaseline, screenTransitionFilter.EffectIntensity);
+        SnowstormTransition.ApplyBlizzardIntensity(snowstormEmitter, snowstormBaseline,
+            screenTransitionFilter.EffectIntensity);
 
         if (screenTransitionFilter.IsDone)
         {
@@ -422,7 +410,7 @@ public class GameplayScreen : GamelabGameScreen
             transformMatrix: view
         );
         worldScroller.Draw(spriteBatch);
-        trainMap.Draw(spriteBatch, view);
+        trainMap.Draw(spriteBatch);
         gameplayContext.PatchManager.Draw(spriteBatch, trainMap);
         enemyManager.Draw(spriteBatch);
 
@@ -434,53 +422,14 @@ public class GameplayScreen : GamelabGameScreen
         spriteBatch.End();
 
         spriteBatch.Begin(
-            sortMode: SpriteSortMode.FrontToBack,
-            blendState: AdditiveBlend,
+            sortMode: SpriteSortMode.Immediate,
+            blendState: RenderUtility.AdditiveBlend,
             samplerState: SamplerState.PointClamp,
             transformMatrix: view
         );
 
-        spriteBatch.Draw(
-            AssetManager.GetDecorationTexture("FurnaceLight"),
-            new Vector2(980, 150),
-            null,          
-            Color.White,
-            0f,             
-            Vector2.Zero,  
-            0.4f,           
-            SpriteEffects.None,
-            0f            
-        );
-
-        spriteBatch.Draw(
-            AssetManager.GetDecorationTexture("FurnaceLight"),
-            new Vector2(1389.6f, 559.6f),
-            null,
-            Color.White,
-            0f,
-            new Vector2(1024, 1024),  
-            0.7f,
-            SpriteEffects.None,
-            0f
-        );
-
-        float glow = MathHelper.Lerp(GlowMin, GlowMax,
-            (MathF.Sin(glowTimer * GlowFrequency * MathHelper.TwoPi) + 1f) / 2f);
-
-        spriteBatch.Draw(
-            AssetManager.GetDecorationTexture("FurnaceLight"),
-            new Vector2(1389.6f, 559.6f),
-            null,
-            Color.White * glow,
-            0f,
-            new Vector2(1024, 1024),
-            0.7f,
-            SpriteEffects.None,
-            0f
-        );
-
+        trainMap.DrawLightBatch(spriteBatch);
         spriteBatch.End();
-
     }
 
     private void DrawUi()
@@ -514,6 +463,7 @@ public class GameplayScreen : GamelabGameScreen
             director.OnTrainFrozen();
             return;
         }
+
         TriggerFailure(ResolveTrainFreezeFailureReason(gameplayContext.State));
     }
 
@@ -537,6 +487,7 @@ public class GameplayScreen : GamelabGameScreen
             director.OnAllPlayersKnockedOut();
             return;
         }
+
         isFailureTriggered = true;
         SaveManager.DeleteSave();
         Game.SwitchToScreen(new FailScreen(Game, reason));
@@ -551,6 +502,7 @@ public class GameplayScreen : GamelabGameScreen
             director.OnLevelCompleted();
             return;
         }
+
         trainSound?.Stop();
         gameplayContext.State.VictoryLapActive = true;
         screenTransitionFilter.FadeIn(2f, 1.5f);

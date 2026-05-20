@@ -30,7 +30,7 @@ public abstract class AbstractPhysicalEntity : IPhysicalEntity, IHighlightable
     public bool IsHighlighted => highlighterCount > 0;
     private int highlighterCount;
 
-    public Vector2 Position
+    public virtual Vector2 Position
     {
         get => PhysicsBody.Position.ToPixels();
         set => PhysicsBody.Position = value.ToMeters();
