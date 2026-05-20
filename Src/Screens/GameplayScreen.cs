@@ -76,6 +76,19 @@ public class GameplayScreen : GamelabGameScreen
     private float levelTimer;
     private float completionTime;
 
+    private float glowTimer;
+    private const float GlowFrequency = 0.5f; 
+    private const float GlowMin = 0.3f;
+    private const float GlowMax = 1.0f;
+
+    private static readonly BlendState AdditiveBlend = new BlendState
+    {
+        ColorSourceBlend = Blend.SourceAlpha,
+        ColorDestinationBlend = Blend.One,
+        AlphaSourceBlend = Blend.SourceAlpha,
+        AlphaDestinationBlend = Blend.One
+    };
+
     public override void LoadContent()
     {
         base.LoadContent();
@@ -128,6 +141,8 @@ public class GameplayScreen : GamelabGameScreen
 
         if (director != null && director.ConsumePendingHubOutroRequest())
             BeginTutorialHubOutro();
+
+        glowTimer += dt;
     }
 
     private void BeginTutorialHubOutro()
@@ -399,14 +414,15 @@ public class GameplayScreen : GamelabGameScreen
 
     private void DrawWorld()
     {
+        Matrix view = camera.GetViewMatrix();
         spriteBatch.Begin(
             sortMode: SpriteSortMode.FrontToBack,
             blendState: BlendState.AlphaBlend,
             samplerState: SamplerState.PointClamp,
-            transformMatrix: camera.GetViewMatrix()
+            transformMatrix: view
         );
         worldScroller.Draw(spriteBatch);
-        trainMap.Draw(spriteBatch);
+        trainMap.Draw(spriteBatch, view);
         gameplayContext.PatchManager.Draw(spriteBatch, trainMap);
         enemyManager.Draw(spriteBatch);
 
@@ -416,6 +432,55 @@ public class GameplayScreen : GamelabGameScreen
         Services.GetService<IBulletService>().Render(spriteBatch);
         director?.DrawWorld(spriteBatch);
         spriteBatch.End();
+
+        spriteBatch.Begin(
+            sortMode: SpriteSortMode.FrontToBack,
+            blendState: AdditiveBlend,
+            samplerState: SamplerState.PointClamp,
+            transformMatrix: view
+        );
+
+        spriteBatch.Draw(
+            AssetManager.GetDecorationTexture("FurnaceLight"),
+            new Vector2(980, 150),
+            null,          
+            Color.White,
+            0f,             
+            Vector2.Zero,  
+            0.4f,           
+            SpriteEffects.None,
+            0f            
+        );
+
+        spriteBatch.Draw(
+            AssetManager.GetDecorationTexture("FurnaceLight"),
+            new Vector2(1389.6f, 559.6f),
+            null,
+            Color.White,
+            0f,
+            new Vector2(1024, 1024),  
+            0.7f,
+            SpriteEffects.None,
+            0f
+        );
+
+        float glow = MathHelper.Lerp(GlowMin, GlowMax,
+            (MathF.Sin(glowTimer * GlowFrequency * MathHelper.TwoPi) + 1f) / 2f);
+
+        spriteBatch.Draw(
+            AssetManager.GetDecorationTexture("FurnaceLight"),
+            new Vector2(1389.6f, 559.6f),
+            null,
+            Color.White * glow,
+            0f,
+            new Vector2(1024, 1024),
+            0.7f,
+            SpriteEffects.None,
+            0f
+        );
+
+        spriteBatch.End();
+
     }
 
     private void DrawUi()

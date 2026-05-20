@@ -2327,3 +2327,183 @@
 /processorParam:TextureFormat=Color
 /build:Walls/WallTileUpperSide.png
 
+#begin Walls/WallTileTopBroken2A.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Walls/WallTileTopBroken2A.png
+
+#begin Walls/WallTileBottomBroken1A.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Walls/WallTileBottomBroken1A.png
+
+#begin Walls/WallTileTopBroken2B.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Walls/WallTileTopBroken2B.png
+
+#begin Walls/WallTileTopBroken2C.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Walls/WallTileTopBroken2C.png
+
+#begin Walls/WallTileTopBroken3C.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Walls/WallTileTopBroken3C.png
+
+#begin Walls/WallTileTopBroken3B.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Walls/WallTileTopBroken3B.png
+
+#begin Walls/WallTileTopBroken3A.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Walls/WallTileTopBroken3A.png
+
+#begin Walls/WallTileTopDoorBroken1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Walls/WallTileTopDoorBroken1.png
+
+#begin Walls/WallTileTopDoorBroken3.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Walls/WallTileTopDoorBroken3.png
+
+#begin Walls/WallTileTopDoorBroken2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Walls/WallTileTopDoorBroken2.png
+
+#begin Walls/WallTileBottomBroken3A.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Walls/WallTileBottomBroken3A.png
+
+#begin Walls/WallTileTopBroken1B.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Walls/WallTileTopBroken1B.png
+
+#begin Walls/WallTileTopBroken1C.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Walls/WallTileTopBroken1C.png
+
+#begin Walls/WallTileTopBroken1A.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Walls/WallTileTopBroken1A.png
+
+#begin Walls/WallTileBottomBroken2A.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Walls/WallTileBottomBroken2A.png
+
+#begin Structures/TrainNoseOff.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Structures/TrainNoseOff.png
+
+#begin Decorations/Wheels1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Decorations/Wheels1.png
+
+#begin Decorations/Wheels2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Decorations/Wheels2.png
+
+#begin Decorations/Wheels3.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Decorations/Wheels3.png
+
+#begin Players/Fall1C.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Fall1C.png
+
+#begin Players/Fall1B.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Fall1B.png
+
+#begin Players/Fall1A.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Fall1A.png
+
+#begin Players/Fall1D.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Fall1D.png
+
+#begin Players/Fall4D.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Fall4D.png
+
+#begin Players/Fall4C.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Fall4C.png
+
+#begin Players/Fall4B.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Fall4B.png
+
+#begin Players/Fall4A.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Fall4A.png
+
+#begin Players/Fall3B.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Fall3B.png
+
+#begin Players/Fall3C.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Fall3C.png
+
+#begin Players/Fall3A.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Fall3A.png
+
+#begin Players/Fall2D.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Fall2D.png
+
+#begin Players/Fall3D.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Fall3D.png
+
+#begin Players/Fall2A.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Fall2A.png
+
+#begin Players/Fall2C.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Fall2C.png
+
+#begin Players/Fall2B.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Fall2B.png
+
+#begin Decorations/FurnaceLight.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Decorations/FurnaceLight.png
+

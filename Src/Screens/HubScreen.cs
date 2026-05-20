@@ -187,16 +187,16 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
     public override void Draw(GameTime gameTime)
     {
         GraphicsDevice.Clear(new Color(15, 15, 20));
-
+        Matrix view = camera.GetViewMatrix();
         spriteBatch.Begin(
             sortMode: SpriteSortMode.FrontToBack,
             blendState: BlendState.AlphaBlend,
             samplerState: SamplerState.PointClamp,
-            transformMatrix: camera.GetViewMatrix()
+            transformMatrix: view
         );
 
         hubMap.Draw(spriteBatch);
-        prepTrainMap.Draw(spriteBatch);
+        prepTrainMap.Draw(spriteBatch, view);
         Services.GetService<IVfxService>().Render(spriteBatch);
         Services.GetService<IBulletService>().Render(spriteBatch);
         foreach (var player in players) player.Draw(spriteBatch);

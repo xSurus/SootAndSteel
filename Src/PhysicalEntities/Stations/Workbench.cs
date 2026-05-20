@@ -139,19 +139,16 @@ public class Workbench : AbstractStation, IInteractable, IDisposable
         if (PlacedItems.Count > 0)
         {
             int drawItemSize = (int)(tileSize * 0.4f);
-            float quadOffset = tileSize * 0.2f;
-            Vector2 tableTopCenter = feetPosition + new Vector2(0, -tileSize * 0.8f);
-            Vector2[] gridOffsets =
-            {
-                new Vector2(-quadOffset, -quadOffset),
-                new Vector2(quadOffset, -quadOffset),
-                new Vector2(-quadOffset, quadOffset),
-                new Vector2(quadOffset, quadOffset)
-            };
+            float yOffset = tileSize * 0.1f;
+            float triOffset = tileSize * 0.15f;
 
+            float spacing = tileSize * 0.25f;
+            float totalWidth = (PlacedItems.Count - 1) * spacing;
+            float startX = -totalWidth / 2f;
+            Vector2 tableTopCenter = feetPosition + new Vector2(0, -tileSize * 0.8f);
             for (int i = 0; i < PlacedItems.Count; i++)
             {
-                Vector2 itemPos = tableTopCenter + gridOffsets[i];
+                Vector2 itemPos = tableTopCenter + new Vector2(startX + i * spacing, -yOffset);
                 PlacedItems[i].Draw(spriteBatch, itemPos, drawItemSize, depth + RenderUtility.Eps);
             }
         }

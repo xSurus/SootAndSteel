@@ -33,6 +33,9 @@ public class HubMap : IDisposable
 
     private readonly record struct HubTree(Vector2 Feet, float Scale);
 
+    private const float TrackScale = 1.4f;
+    private int TileWidth => (int)(AssetManager.TrainTrackTexture[0].Width * TrackScale);
+
     public HubMap(int worldWidth, int worldHeight)
     {
         int hubPad = 120;
@@ -229,15 +232,14 @@ public class HubMap : IDisposable
     private void DrawRails(SpriteBatch spriteBatch)
     {
         Texture2D railTex = AssetManager.TrainTrackTexture[0];
-        int railTileWidth = railTex.Width;
         float centerY = ((worldHeight / 4f) * 3) - AssetManager.TrainTrackTexture[0].Height + 40;
         float minZoom = GamelabGame.Instance.GameplayConfig.CameraMinZoom;
         int pad = (int)MathF.Ceiling(MathF.Max(worldWidth, worldHeight) / minZoom);
-        int startCol = (int)MathF.Floor(-pad / (float)railTileWidth);
-        int railCols = (worldWidth + pad * 2) / railTileWidth + 3;
+        int startCol = (int)MathF.Floor(-pad / (float)TileWidth);
+        int railCols = (worldWidth + pad * 2) / TileWidth + 3;
         for (int col = startCol; col < startCol + railCols; col++)
         {
-            Vector2 railDrawPos = new Vector2(col * railTileWidth, centerY);
+            Vector2 railDrawPos = new Vector2(col * TileWidth, centerY - 30);
             spriteBatch.Draw(
                 texture: railTex,
                 position: railDrawPos,
@@ -245,7 +247,7 @@ public class HubMap : IDisposable
                 color: Color.White,
                 rotation: 0f,
                 origin: Vector2.Zero,
-                scale: 1,
+                scale: TrackScale,
                 effects: SpriteEffects.None,
                 layerDepth: (RenderUtility.BackgroundLayer + RenderUtility.FloorLayer) / 2f);
         }

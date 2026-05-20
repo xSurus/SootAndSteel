@@ -234,7 +234,7 @@ public static class ParticleFactory
     {
         var emitter = new ParticleEmitter(32, AssetManager.SparkTexture)
         {
-            Position = position,
+            Position = position + new Vector2(0, -10),
             AutoTrigger = false,
             Profile = new CircleProfile(radius: 4f, onlyRing: false, radiateOutward: true),
 
