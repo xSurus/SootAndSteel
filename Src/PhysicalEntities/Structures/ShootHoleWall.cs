@@ -157,7 +157,6 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
 
     public void DrawLightBatch(SpriteBatch spriteBatch)
     {
-        int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
         float damagePercent = (1f - CurrentHealth / MaxHealth) * 100f;
         if (damagePercent <= 0f) return;
 
@@ -177,40 +176,5 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
             spriteBatch.Draw(lightTex, lightPos, null, Color.White * (bigIntensity * 0.5f),
                 0f, lightOrigin, 1.5f * lightScale, SpriteEffects.None, 0f);
         }
-
-        // if (isTop)
-        // {
-        //     Vector2 lightPos = Position + new Vector2(0, -dimensionsPixels.Y);
-        //     if (isBreached){
-        //     }
-            
-        //     if (damagePercent >= 66f)
-        //     {
-        //         spriteBatch.Draw(lightTex, lightPos, null, Color.White * 0.5f,
-        //             0f, lightOrigin, 1.5f * lightScale, SpriteEffects.None, 0f);
-        //     }
-            
-        //     if (damagePercent >= 33f)
-        //     {
-        //         spriteBatch.Draw(lightTex, lightPos, null, Color.White * 0.5f,
-        //             0f, lightOrigin, lightScale, SpriteEffects.None, 0f);
-        //     }
-        // } else {
-        //     Vector2 lightPos = Position + new Vector2(0, -dimensionsPixels.Y);
-        //     if (isBreached){
-        //     }
-            
-        //     if (damagePercent >= 66f)
-        //     {
-        //         spriteBatch.Draw(lightTex, lightPos, null, Color.White * 0.5f,
-        //             0f, lightOrigin, 1.5f * lightScale, SpriteEffects.None, 0f);
-        //     }
-            
-        //     if (damagePercent >= 33f)
-        //     {
-        //         spriteBatch.Draw(lightTex, lightPos, null, Color.White * 0.5f,
-        //             0f, lightOrigin, lightScale, SpriteEffects.None, 0f);
-        //     }
-        // }
     }
 }
