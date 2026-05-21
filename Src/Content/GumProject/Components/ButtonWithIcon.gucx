@@ -47,18 +47,21 @@
     <Variable Type="State" Name="State" Category="States and Visibility" SetsValue="false">
       <Value xsi:type="xsd:string">Default</Value>
     </Variable>
+    <Variable Type="int" Name="TextInstance.Blue" ExposedAsName="TextInstanceBlue" SetsValue="false" />
     <Variable IsFont="true" Type="string" Name="TextInstance.Font" SetsValue="true">
       <Value xsi:type="xsd:string">Bodoni MT</Value>
     </Variable>
     <Variable Type="int" Name="TextInstance.FontSize" SetsValue="true">
       <Value xsi:type="xsd:int">20</Value>
     </Variable>
+    <Variable Type="int" Name="TextInstance.Green" ExposedAsName="TextInstanceGreen" SetsValue="false" />
     <Variable Type="HorizontalAlignment" Name="TextInstance.HorizontalAlignment" SetsValue="true">
       <Value xsi:type="xsd:int">0</Value>
     </Variable>
     <Variable Type="string" Name="TextInstance.Parent" SetsValue="true">
       <Value xsi:type="xsd:string">ContainerInstance</Value>
     </Variable>
+    <Variable Type="int" Name="TextInstance.Red" ExposedAsName="TextInstanceRed" SetsValue="false" />
     <Variable Type="string" Name="TextInstance.Text" ExposedAsName="ButtonText" SetsValue="true">
       <Value xsi:type="xsd:string">Credits</Value>
     </Variable>
@@ -88,26 +91,26 @@
     <Name>Affordability</Name>
     <State>
       <Name>canAfford</Name>
-      <Variable Type="int" Name="TextInstance.Red" Category="Rendering" SetsValue="true">
+      <Variable Type="int" Name="TextInstance.Blue" Category="Rendering" SetsValue="true">
         <Value xsi:type="xsd:int">255</Value>
       </Variable>
       <Variable Type="int" Name="TextInstance.Green" Category="Rendering" SetsValue="true">
         <Value xsi:type="xsd:int">255</Value>
       </Variable>
-      <Variable Type="int" Name="TextInstance.Blue" Category="Rendering" SetsValue="true">
+      <Variable Type="int" Name="TextInstance.Red" Category="Rendering" SetsValue="true">
         <Value xsi:type="xsd:int">255</Value>
       </Variable>
     </State>
     <State>
       <Name>cantAfford</Name>
-      <Variable Type="int" Name="TextInstance.Red" SetsValue="true">
-        <Value xsi:type="xsd:int">253</Value>
+      <Variable Type="int" Name="TextInstance.Blue" SetsValue="true">
+        <Value xsi:type="xsd:int">82</Value>
       </Variable>
       <Variable Type="int" Name="TextInstance.Green" SetsValue="true">
         <Value xsi:type="xsd:int">82</Value>
       </Variable>
-      <Variable Type="int" Name="TextInstance.Blue" SetsValue="true">
-        <Value xsi:type="xsd:int">82</Value>
+      <Variable Type="int" Name="TextInstance.Red" SetsValue="true">
+        <Value xsi:type="xsd:int">253</Value>
       </Variable>
     </State>
   </Category>

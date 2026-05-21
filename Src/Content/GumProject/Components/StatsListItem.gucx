@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ComponentSave xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>StatsListItem</Name>
+  <BaseType>Container</BaseType>
+  <State>
+    <Name>Default</Name>
+    <Variable Type="int" Name="Amount.Blue" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable IsFont="true" Type="string" Name="Amount.Font" SetsValue="true">
+      <Value xsi:type="xsd:string">Ubuntu Mono</Value>
+    </Variable>
+    <Variable Type="int" Name="Amount.Green" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="Amount.HorizontalAlignment" SetsValue="true">
+      <Value xsi:type="xsd:int">2</Value>
+    </Variable>
+    <Variable Type="int" Name="Amount.Red" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="string" Name="Amount.Text" ExposedAsName="AmountText" SetsValue="true">
+      <Value xsi:type="xsd:string">+45</Value>
+    </Variable>
+    <Variable Type="VerticalAlignment" Name="Amount.VerticalAlignment" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="float" Name="Amount.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">50</Value>
+    </Variable>
+    <Variable Type="float" Name="Amount.X" SetsValue="true">
+      <Value xsi:type="xsd:float">-50</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="Amount.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="float" Name="Amount.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="float" Name="Height" SetsValue="true">
+      <Value xsi:type="xsd:float">50</Value>
+    </Variable>
+    <Variable Type="int" Name="Index.Blue" SetsValue="true">
+      <Value xsi:type="xsd:int">32</Value>
+    </Variable>
+    <Variable IsFont="true" Type="string" Name="Index.Font" SetsValue="true">
+      <Value xsi:type="xsd:string">Ubuntu Mono</Value>
+    </Variable>
+    <Variable Type="int" Name="Index.FontSize" SetsValue="true">
+      <Value xsi:type="xsd:int">17</Value>
+    </Variable>
+    <Variable Type="int" Name="Index.Green" SetsValue="true">
+      <Value xsi:type="xsd:int">62</Value>
+    </Variable>
+    <Variable Type="int" Name="Index.Red" SetsValue="true">
+      <Value xsi:type="xsd:int">90</Value>
+    </Variable>
+    <Variable Type="string" Name="Index.Text" ExposedAsName="IndexText" SetsValue="true">
+      <Value xsi:type="xsd:string">01</Value>
+    </Variable>
+    <Variable Type="VerticalAlignment" Name="Index.VerticalAlignment" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="float" Name="Index.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">40</Value>
+    </Variable>
+    <Variable Type="int" Name="ItemDescription.Blue" SetsValue="true">
+      <Value xsi:type="xsd:int">32</Value>
+    </Variable>
+    <Variable Type="int" Name="ItemDescription.Green" SetsValue="true">
+      <Value xsi:type="xsd:int">62</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="ItemDescription.HorizontalAlignment" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="string" Name="ItemDescription.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">ItemLable</Value>
+    </Variable>
+    <Variable Type="int" Name="ItemDescription.Red" SetsValue="true">
+      <Value xsi:type="xsd:int">90</Value>
+    </Variable>
+    <Variable Type="string" Name="ItemDescription.Text" ExposedAsName="ItemDescriptionText" SetsValue="true">
+      <Value xsi:type="xsd:string">- Coal &amp; Bonds</Value>
+    </Variable>
+    <Variable Type="VerticalAlignment" Name="ItemDescription.VerticalAlignment" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="float" Name="ItemDescription.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="ItemDescription.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="float" Name="ItemDescription.X" SetsValue="true">
+      <Value xsi:type="xsd:float">7</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="ItemDescription.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="float" Name="ItemDescription.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="int" Name="ItemLable.Blue" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable IsFont="true" Type="string" Name="ItemLable.Font" SetsValue="true">
+      <Value xsi:type="xsd:string">Bodoni MT</Value>
+    </Variable>
+    <Variable Type="int" Name="ItemLable.FontSize" SetsValue="true">
+      <Value xsi:type="xsd:int">22</Value>
+    </Variable>
+    <Variable Type="int" Name="ItemLable.Green" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="float" Name="ItemLable.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">50</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="ItemLable.HorizontalAlignment" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="string" Name="ItemLable.Parent" SetsValue="true" />
+    <Variable Type="int" Name="ItemLable.Red" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="string" Name="ItemLable.Text" ExposedAsName="ItemLableText" SetsValue="true">
+      <Value xsi:type="xsd:string">Cargo Delivered</Value>
+    </Variable>
+    <Variable Type="VerticalAlignment" Name="ItemLable.VerticalAlignment" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="float" Name="ItemLable.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="ItemLable.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="float" Name="ItemLable.X" SetsValue="true">
+      <Value xsi:type="xsd:float">50</Value>
+    </Variable>
+    <Variable Type="float" Name="ItemLable.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">2</Value>
+    </Variable>
+    <Variable Type="State" Name="State" Category="States and Visibility" SetsValue="false">
+      <Value xsi:type="xsd:string">Default</Value>
+    </Variable>
+    <Variable Type="float" Name="Width" SetsValue="true">
+      <Value xsi:type="xsd:float">500</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+  </State>
+  <Instance Name="Index" BaseType="Text" />
+  <Instance Name="Amount" BaseType="Text" />
+  <Instance Name="ItemLable" BaseType="Text" />
+  <Instance Name="ItemDescription" BaseType="Text" />
+  <Behaviors />
+</ComponentSave>

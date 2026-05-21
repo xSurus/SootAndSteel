@@ -29,6 +29,11 @@ namespace Gamelab.Screens;
 
 public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
 {
+    // Temporary test toggles:
+    // - If both are true, death screen takes priority.
+    // - Set both false to restore normal flow into GameplayScreen.
+    private static bool ForcePostStatsScreenForTesting = false;
+    private static bool ForcePostDeathScreenForTesting = false;
     private enum HubPhase
     {
         Intro,
@@ -396,7 +401,25 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         if (screenTransitionFilter.IsDone)
         {
             Game.CurrentRun.CurrentLevel++;
-            Game.SwitchToScreen(new GameplayScreen(Game));
+            if (ForcePostDeathScreenForTesting)
+            {
+                var testStats = new PostDeathStatsSnapshot(
+                    EnemiesDefeated: 200,
+                    DistanceTravelledMeters: 20000f,
+                    StagesDefeated: Math.Max(0, Game.CurrentRun.CurrentLevel - 1),
+                    UpgradesBought: Game.CurrentRun.TotalUpgradesBought);
+                Game.SwitchToScreen(new FailScreen(Game, FailureReason.AllPlayersKnockedOut, testStats));
+            }
+            else if (ForcePostStatsScreenForTesting)
+            {
+                const float testActualTime = 35f;
+                const float testReferenceTime = 45f;
+                Game.SwitchToScreen(new PostLevelStatsScreen(Game, testActualTime, testReferenceTime));
+            }
+            else
+            {
+                Game.SwitchToScreen(new GameplayScreen(Game));
+            }
         }
     }
 

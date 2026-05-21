@@ -2,6 +2,8 @@ namespace Gamelab.Services.Sound;
 
 public static class Sounds
 {
+    //TODO STAMP SOUNDS
+    //TODO DEATH SCREEN SOUND
     // SFX
     public const string MenuSelect = "event:/UI/Menu Select";
     public const string Train = "event:/Gameplay/Train";
