@@ -569,6 +569,17 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable, IItemP
         }
     }
 
+    public void DrawLightBatch(SpriteBatch spriteBatch)
+    {
+        Texture2D lightTex = AssetManager.GetDecorationTexture("Light");
+        Vector2 lightOrigin = new Vector2(lightTex.Width / 2f, lightTex.Height / 2f);
+        float lightScale = Radius * 15f / lightTex.Width;
+        Vector2 lightPos = Position + new Vector2(0, -Radius);
+
+        spriteBatch.Draw(lightTex, lightPos, null, Color.White * 0.3f,
+            0f, lightOrigin, lightScale, SpriteEffects.None, 0f);
+    }
+
     protected bool ItemIsGranular(Item item)
     {
         return (item is BulletItem && ((BulletItem)item).Type == EComponentType.Propellant) || item.Id == "Coal";

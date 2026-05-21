@@ -308,6 +308,17 @@ public class TrainMap : IDisposable
     {
         TrainNose trainNose = MapObjects.OfType<TrainNose>().FirstOrDefault();
         trainNose!.DrawLightBatch(spriteBatch);
+
+        foreach (var mapObject in MapObjects.OfType<Workbench>())
+        {
+            mapObject.DrawLightBatch(spriteBatch);
+        }
+
+        foreach (var mapObject in MapObjects.OfType<ShootHoleWall>())
+        {
+            mapObject.DrawLightBatch(spriteBatch);
+        }
+
     }
 
     public void DrawShadows(SpriteBatch spriteBatch)

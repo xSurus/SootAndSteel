@@ -219,6 +219,7 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         );
 
         prepTrainMap.DrawLightBatch(spriteBatch);
+        foreach (var player in players) player.DrawLightBatch(spriteBatch);
         spriteBatch.End();
 
         base.Draw(gameTime);

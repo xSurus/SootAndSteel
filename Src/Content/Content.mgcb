@@ -2639,3 +2639,18 @@
 /processorParam:TextureFormat=Color
 /build:Walls/WallTileUpperSide.png
 
+#begin Decorations/Light.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Decorations/Light.png
+
+#begin Decorations/BlueLight.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Decorations/BlueLight.png
+
+#begin Decorations/IceFloor.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Decorations/IceFloor.png
+

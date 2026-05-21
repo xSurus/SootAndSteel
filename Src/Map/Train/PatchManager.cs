@@ -164,12 +164,30 @@ public class PatchManager
             DrawTile(spriteBatch, map, tile, AssetManager.IcePatchTexture);
     }
 
+    public void DrawLightBatch(SpriteBatch spriteBatch, TrainMap map)
+    {
+        foreach (Point tile in snowTiles)
+            DrawTile2(spriteBatch, map, tile, AssetManager.GetDecorationTexture("IceFloor"));
+        foreach (Point tile in iceTiles)
+            DrawTile2(spriteBatch, map, tile, AssetManager.GetDecorationTexture("IceFloor"));
+    }
+
     private static void DrawTile(SpriteBatch spriteBatch, TrainMap map, Point tile, Texture2D texture)
     {
         Vector2 topLeft = map.GetTileTopLeftPixels(tile.X, tile.Y);
         Rectangle rect = new((int)topLeft.X, (int)topLeft.Y, map.TileSize, map.TileSize);
         spriteBatch.Draw(texture, rect, null, PatchTint,
             0f, Vector2.Zero, SpriteEffects.None, DrawDepth);
+    }
+
+    private static void DrawTile2(SpriteBatch spriteBatch, TrainMap map, Point tile, Texture2D texture)
+    {
+        Vector2 origin = new Vector2(texture.Width / 2f, texture.Height / 2f);
+        Vector2 tileCenter = map.GetTileTopLeftPixels(tile.X, tile.Y) + new Vector2(map.TileSize / 2f);
+        float tileScale = map.TileSize / 1000f;
+
+        spriteBatch.Draw(texture, tileCenter, null, Color.White * 0.7f,
+            0f, origin, 1.5f *tileScale, SpriteEffects.None, DrawDepth);
     }
 
     public void FillIce()

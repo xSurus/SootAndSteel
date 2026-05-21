@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Gamelab.Assets;
 using Gamelab.Items;
 using Gamelab.Items.Bullets;
 using Gamelab.Particles;
@@ -148,6 +149,27 @@ public class Workbench : AbstractStation, IInteractable, IDisposable
                 Vector2 itemPos = tableTopCenter + new Vector2(startX + i * spacing, -yOffset);
                 PlacedItems[i].Draw(spriteBatch, itemPos, drawItemSize, depth + RenderUtility.Eps);
             }
+        }
+    }
+
+    public void DrawLightBatch(SpriteBatch spriteBatch)
+    {   
+
+        int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
+        Vector2 feetPosition = Position + new Vector2(0, tileSize / 2f);
+        if (isCrafting || craftProgress > 0f)
+        {
+            Texture2D lightTex = AssetManager.GetDecorationTexture("FurnaceLight");
+            float intensity = Math.Clamp(craftProgress / 2f, 0f, 1f);
+            float lightScale = tileSize * 6f / lightTex.Width;
+            Vector2 lightOrigin = new Vector2(lightTex.Width / 2f, lightTex.Height / 2f);
+            Vector2 lightPos = feetPosition + new Vector2(tileSize * 0.5f, -tileSize * 0.8f);
+            Color lightColor = new Color(255, 255, 0);
+
+            spriteBatch.Draw(lightTex, lightPos, null, lightColor * intensity,
+                0f, lightOrigin, lightScale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(lightTex, lightPos, null, Color.White * intensity,
+                0f, lightOrigin, 2 * lightScale, SpriteEffects.None, 0f);
         }
     }
 

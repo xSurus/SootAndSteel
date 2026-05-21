@@ -428,6 +428,8 @@ public class GameplayScreen : GamelabGameScreen
         );
 
         trainMap.DrawLightBatch(spriteBatch);
+        gameplayContext.PatchManager.DrawLightBatch(spriteBatch, trainMap);
+        foreach (Player player in players) player.DrawLightBatch(spriteBatch);
         spriteBatch.End();
     }
 
