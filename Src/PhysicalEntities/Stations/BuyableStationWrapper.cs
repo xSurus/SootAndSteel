@@ -56,6 +56,7 @@ public class BuyableStationWrapper : AbstractPhysicalEntity, IInteractable, IGra
     {
         if (GamelabGame.Instance.CurrentRun.TrySpendCredits(Cost))
         {
+            GamelabGame.Instance.CurrentRun.RegisterUpgradePurchased();
             GamelabGame.Instance.Services.GetService<IVfxService>()
                 .EmitBurst(ParticleFactory.CreateBuyParticles(Position));
             PhysicsBody.Tag = WrappedStation;

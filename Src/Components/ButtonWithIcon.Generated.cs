@@ -71,6 +71,24 @@ if(element == null) throw new System.InvalidOperationException("Could not find a
         set => SpriteInstance.SourceFileName = value;
     }
 
+    public int TextInstanceBlue
+    {
+        get => TextInstance.Blue;
+        set => TextInstance.Blue = value;
+    }
+
+    public int TextInstanceGreen
+    {
+        get => TextInstance.Green;
+        set => TextInstance.Green = value;
+    }
+
+    public int TextInstanceRed
+    {
+        get => TextInstance.Red;
+        set => TextInstance.Red = value;
+    }
+
     public string ButtonText
     {
         get => TextInstance.Text;

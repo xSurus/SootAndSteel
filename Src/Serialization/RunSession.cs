@@ -10,6 +10,9 @@ public class RunSession
     public List<StationSaveData> TrainLayout { get; set; } = new();
     public int RunSeed { get; set; } = Random.Shared.Next();
     public bool TutorialCompleted { get; set; } = false;
+    public int TotalEnemiesNeutralized { get; set; } = 0;
+    public int TotalDistanceTravelledMeters { get; set; } = 0;
+    public int TotalUpgradesBought { get; set; } = 0;
 
     public void AddCredits(int amount)
     {
@@ -23,4 +26,18 @@ public class RunSession
         Credits -= amount;
         return true;
     }
+
+    public void AddEnemiesNeutralized(int amount)
+    {
+        if (amount <= 0) return;
+        TotalEnemiesNeutralized += amount;
+    }
+
+    public void AddDistanceTravelled(float distanceMeters)
+    {
+        if (distanceMeters <= 0f) return;
+        TotalDistanceTravelledMeters += (int)Math.Round(distanceMeters);
+    }
+
+    public void RegisterUpgradePurchased() => TotalUpgradesBought++;
 }

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ComponentSave xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>PostDeathStatItem</Name>
+  <BaseType>Container</BaseType>
+  <State>
+    <Name>Default</Name>
+    <Variable Type="int" Name="Dots.Blue" SetsValue="true">
+      <Value xsi:type="xsd:int">16</Value>
+    </Variable>
+    <Variable Type="int" Name="Dots.FontSize" SetsValue="true">
+      <Value xsi:type="xsd:int">17</Value>
+    </Variable>
+    <Variable Type="int" Name="Dots.Green" SetsValue="true">
+      <Value xsi:type="xsd:int">20</Value>
+    </Variable>
+    <Variable Type="int" Name="Dots.Red" SetsValue="true">
+      <Value xsi:type="xsd:int">26</Value>
+    </Variable>
+    <Variable Type="string" Name="Dots.Text" SetsValue="true">
+      <Value xsi:type="xsd:string">.................</Value>
+    </Variable>
+    <Variable Type="float" Name="Dots.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="Dots.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="float" Name="Dots.X" SetsValue="true">
+      <Value xsi:type="xsd:float">1</Value>
+    </Variable>
+    <Variable Type="float" Name="Dots.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">4</Value>
+    </Variable>
+    <Variable Type="int" Name="Stat.Blue" SetsValue="true">
+      <Value xsi:type="xsd:int">16</Value>
+    </Variable>
+    <Variable IsFont="true" Type="string" Name="Stat.Font" SetsValue="true">
+      <Value xsi:type="xsd:string">Courier New</Value>
+    </Variable>
+    <Variable Type="int" Name="Stat.FontSize" SetsValue="true">
+      <Value xsi:type="xsd:int">14</Value>
+    </Variable>
+    <Variable Type="int" Name="Stat.Green" SetsValue="true">
+      <Value xsi:type="xsd:int">20</Value>
+    </Variable>
+    <Variable Type="float" Name="Stat.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="Stat.HeightUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="int" Name="Stat.Red" SetsValue="true">
+      <Value xsi:type="xsd:int">26</Value>
+    </Variable>
+    <Variable Type="string" Name="Stat.Text" ExposedAsName="StatText" SetsValue="true">
+      <Value xsi:type="xsd:string">200</Value>
+    </Variable>
+    <Variable Type="float" Name="Stat.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="Stat.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="State" Name="State" Category="States and Visibility" SetsValue="false">
+      <Value xsi:type="xsd:string">Default</Value>
+    </Variable>
+  </State>
+  <Instance Name="Stat" BaseType="Text" />
+  <Instance Name="Dots" BaseType="Text" />
+  <Behaviors />
+</ComponentSave>

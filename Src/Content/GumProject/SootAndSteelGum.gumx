@@ -67,8 +67,14 @@
   <ComponentReference Name="OptionsOverlay" />
   <ComponentReference Name="PauseOverlay" />
   <ComponentReference Name="PlayersReady" />
+  <ComponentReference Name="PostDeathDisplay" />
+  <ComponentReference Name="PostDeathOverlay" />
+  <ComponentReference Name="PostDeathStatItem" />
+  <ComponentReference Name="PostStatsDisplay" />
+  <ComponentReference Name="PostStatsScreenOverlay" />
   <ComponentReference Name="ShopItemType" />
   <ComponentReference Name="Slider" />
+  <ComponentReference Name="StatsListItem" />
   <ComponentReference Name="ToolTip" />
   <StandardElementReference Name="Circle" />
   <StandardElementReference Name="ColoredRectangle" />

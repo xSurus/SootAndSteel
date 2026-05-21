@@ -23,6 +23,7 @@ public class EnemyManager(LevelDefinition levelDef)
     public bool HasActiveThreats => enemies.Count > 0;
     public float intensity;
     public IReadOnlyList<AbstractEnemy> ActiveEnemies => enemies;
+    public int DefeatedEnemiesCount { get; private set; }
 
     public void Update(float deltaTime)
     {
@@ -50,6 +51,8 @@ public class EnemyManager(LevelDefinition levelDef)
 
             if (!enemy.IsAlive || enemy.ShouldRemove)
             {
+                if (!enemy.IsAlive)
+                    DefeatedEnemiesCount++;
                 ReleaseSlot(enemy);
                 enemy.RemovePhysicsBody();
                 enemies.RemoveAt(i);

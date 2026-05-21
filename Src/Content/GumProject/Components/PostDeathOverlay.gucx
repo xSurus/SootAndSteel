@@ -1,0 +1,805 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ComponentSave xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>PostDeathOverlay</Name>
+  <BaseType>Container</BaseType>
+  <State>
+    <Name>Default</Name>
+    <Variable Type="float" Name="Background.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">385</Value>
+    </Variable>
+    <Variable Type="bool" Name="Background.IsTilingMiddleSections" SetsValue="true">
+      <Value xsi:type="xsd:boolean">true</Value>
+    </Variable>
+    <Variable IsFile="true" Type="string" Name="Background.SourceFile" SetsValue="true">
+      <Value xsi:type="xsd:string">spr_incident_paper.png</Value>
+    </Variable>
+    <Variable Type="float" Name="Background.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">600</Value>
+    </Variable>
+    <Variable Type="float" Name="Background.X" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="Background.XOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="Background.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">6</Value>
+    </Variable>
+    <Variable Type="float" Name="Background.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="VerticalAlignment" Name="Background.YOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="Background.YUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">7</Value>
+    </Variable>
+    <Variable IsFile="true" Type="string" Name="ButtonWithIconInstance.ButtonIcon" ExposedAsName="ButtonWithIconInstanceButtonIcon" SetsValue="true">
+      <Value xsi:type="xsd:string">spr_xbtn_32.png</Value>
+    </Variable>
+    <Variable Type="string" Name="ButtonWithIconInstance.ButtonText" SetsValue="true">
+      <Value xsi:type="xsd:string">Return</Value>
+    </Variable>
+    <Variable Type="string" Name="ButtonWithIconInstance.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">Background</Value>
+    </Variable>
+    <Variable Type="int" Name="ButtonWithIconInstance.TextInstanceBlue" SetsValue="true">
+      <Value xsi:type="xsd:int">5</Value>
+    </Variable>
+    <Variable Type="int" Name="ButtonWithIconInstance.TextInstanceGreen" SetsValue="true">
+      <Value xsi:type="xsd:int">8</Value>
+    </Variable>
+    <Variable Type="int" Name="ButtonWithIconInstance.TextInstanceRed" SetsValue="true">
+      <Value xsi:type="xsd:int">10</Value>
+    </Variable>
+    <Variable Type="float" Name="ButtonWithIconInstance.X" SetsValue="true">
+      <Value xsi:type="xsd:float">445</Value>
+    </Variable>
+    <Variable Type="float" Name="ButtonWithIconInstance.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">334</Value>
+    </Variable>
+    <Variable Type="int" Name="CauseOfFailureDescription.Alpha" SetsValue="true">
+      <Value xsi:type="xsd:int">160</Value>
+    </Variable>
+    <Variable Type="int" Name="CauseOfFailureDescription.Blue" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable IsFont="true" Type="string" Name="CauseOfFailureDescription.Font" SetsValue="true">
+      <Value xsi:type="xsd:string">Courier New</Value>
+    </Variable>
+    <Variable Type="int" Name="CauseOfFailureDescription.FontSize" SetsValue="true">
+      <Value xsi:type="xsd:int">16</Value>
+    </Variable>
+    <Variable Type="int" Name="CauseOfFailureDescription.Green" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="float" Name="CauseOfFailureDescription.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="CauseOfFailureDescription.HeightUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="string" Name="CauseOfFailureDescription.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">Background</Value>
+    </Variable>
+    <Variable Type="int" Name="CauseOfFailureDescription.Red" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="string" Name="CauseOfFailureDescription.Text" ExposedAsName="CauseOfFailureDescriptionText" SetsValue="true">
+      <Value xsi:type="xsd:string">ALL HANDS INCAPACITATED. CREW UNABLE TO STOKE THE FURNACE. ENGINE HALTED 7 MILES SHORT OF MIRA JCT. CARGO ABANDONED TO WEATHER. NO CASUALTIES BEYOND THE WRIT.</Value>
+    </Variable>
+    <Variable Type="float" Name="CauseOfFailureDescription.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">500</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="CauseOfFailureDescription.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="CauseOfFailureDescription.XOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="CauseOfFailureDescription.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">6</Value>
+    </Variable>
+    <Variable Type="float" Name="CauseOfFailureDescription.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">56</Value>
+    </Variable>
+    <Variable Type="VerticalAlignment" Name="CauseOfFailureDescription.YOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="CauseOfFailureDescription.YUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">7</Value>
+    </Variable>
+    <Variable Type="int" Name="CauseOfFailureTitle.Blue" SetsValue="true">
+      <Value xsi:type="xsd:int">22</Value>
+    </Variable>
+    <Variable IsFont="true" Type="string" Name="CauseOfFailureTitle.Font" SetsValue="true">
+      <Value xsi:type="xsd:string">Courier New</Value>
+    </Variable>
+    <Variable Type="int" Name="CauseOfFailureTitle.FontSize" SetsValue="true">
+      <Value xsi:type="xsd:int">16</Value>
+    </Variable>
+    <Variable Type="int" Name="CauseOfFailureTitle.Green" SetsValue="true">
+      <Value xsi:type="xsd:int">22</Value>
+    </Variable>
+    <Variable Type="float" Name="CauseOfFailureTitle.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="CauseOfFailureTitle.HeightUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="string" Name="CauseOfFailureTitle.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">Background</Value>
+    </Variable>
+    <Variable Type="int" Name="CauseOfFailureTitle.Red" SetsValue="true">
+      <Value xsi:type="xsd:int">120</Value>
+    </Variable>
+    <Variable Type="string" Name="CauseOfFailureTitle.Text" SetsValue="true">
+      <Value xsi:type="xsd:string">CAUSE OF FAILURE:</Value>
+    </Variable>
+    <Variable Type="float" Name="CauseOfFailureTitle.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">500</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="CauseOfFailureTitle.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="CauseOfFailureTitle.XOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="CauseOfFailureTitle.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">6</Value>
+    </Variable>
+    <Variable Type="float" Name="CauseOfFailureTitle.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">10</Value>
+    </Variable>
+    <Variable Type="VerticalAlignment" Name="CauseOfFailureTitle.YOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="CauseOfFailureTitle.YUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">7</Value>
+    </Variable>
+    <Variable Type="int" Name="DistanceTravelled.Alpha" SetsValue="true">
+      <Value xsi:type="xsd:int">198</Value>
+    </Variable>
+    <Variable Type="int" Name="DistanceTravelled.Blue" SetsValue="true">
+      <Value xsi:type="xsd:int">32</Value>
+    </Variable>
+    <Variable IsFont="true" Type="string" Name="DistanceTravelled.Font" SetsValue="true">
+      <Value xsi:type="xsd:string">Courier New</Value>
+    </Variable>
+    <Variable Type="int" Name="DistanceTravelled.FontSize" SetsValue="true">
+      <Value xsi:type="xsd:int">13</Value>
+    </Variable>
+    <Variable Type="int" Name="DistanceTravelled.Green" SetsValue="true">
+      <Value xsi:type="xsd:int">62</Value>
+    </Variable>
+    <Variable Type="float" Name="DistanceTravelled.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="bool" Name="DistanceTravelled.IsBold" SetsValue="true">
+      <Value xsi:type="xsd:boolean">false</Value>
+    </Variable>
+    <Variable Type="string" Name="DistanceTravelled.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">Background</Value>
+    </Variable>
+    <Variable Type="int" Name="DistanceTravelled.Red" SetsValue="true">
+      <Value xsi:type="xsd:int">90</Value>
+    </Variable>
+    <Variable Type="string" Name="DistanceTravelled.Text" SetsValue="true">
+      <Value xsi:type="xsd:string">Distance Travelled</Value>
+    </Variable>
+    <Variable Type="float" Name="DistanceTravelled.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="DistanceTravelled.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="float" Name="DistanceTravelled.X" SetsValue="true">
+      <Value xsi:type="xsd:float">50</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="DistanceTravelled.XOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="DistanceTravelled.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="float" Name="DistanceTravelled.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">160</Value>
+    </Variable>
+    <Variable Type="string" Name="DistanceTravelledStat.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">DistanceTravelled</Value>
+    </Variable>
+    <Variable Type="string" Name="DistanceTravelledStat.StatText" ExposedAsName="DistanceTravelledStatStatText" SetsValue="true">
+      <Value xsi:type="xsd:string">21300 m</Value>
+    </Variable>
+    <Variable Type="float" Name="DistanceTravelledStat.X" SetsValue="true">
+      <Value xsi:type="xsd:float">17</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="DistanceTravelledStat.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="int" Name="EnemiesDefeated.Alpha" SetsValue="true">
+      <Value xsi:type="xsd:int">198</Value>
+    </Variable>
+    <Variable Type="int" Name="EnemiesDefeated.Blue" SetsValue="true">
+      <Value xsi:type="xsd:int">32</Value>
+    </Variable>
+    <Variable IsFont="true" Type="string" Name="EnemiesDefeated.Font" SetsValue="true">
+      <Value xsi:type="xsd:string">Courier New</Value>
+    </Variable>
+    <Variable Type="int" Name="EnemiesDefeated.FontSize" SetsValue="true">
+      <Value xsi:type="xsd:int">13</Value>
+    </Variable>
+    <Variable Type="int" Name="EnemiesDefeated.Green" SetsValue="true">
+      <Value xsi:type="xsd:int">62</Value>
+    </Variable>
+    <Variable Type="float" Name="EnemiesDefeated.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="bool" Name="EnemiesDefeated.IsBold" SetsValue="true">
+      <Value xsi:type="xsd:boolean">false</Value>
+    </Variable>
+    <Variable Type="string" Name="EnemiesDefeated.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">Background</Value>
+    </Variable>
+    <Variable Type="int" Name="EnemiesDefeated.Red" SetsValue="true">
+      <Value xsi:type="xsd:int">90</Value>
+    </Variable>
+    <Variable Type="string" Name="EnemiesDefeated.Text" SetsValue="true">
+      <Value xsi:type="xsd:string">Thieves neutralized</Value>
+    </Variable>
+    <Variable Type="float" Name="EnemiesDefeated.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="EnemiesDefeated.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="float" Name="EnemiesDefeated.X" SetsValue="true">
+      <Value xsi:type="xsd:float">50</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="EnemiesDefeated.XOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="EnemiesDefeated.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="float" Name="EnemiesDefeated.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">135</Value>
+    </Variable>
+    <Variable Type="float" Name="EnemiesDefeatedStat.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="EnemiesDefeatedStat.HeightUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="string" Name="EnemiesDefeatedStat.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">EnemiesDefeated</Value>
+    </Variable>
+    <Variable Type="string" Name="EnemiesDefeatedStat.StatText" ExposedAsName="EnemiesDefeatedStatStatText" SetsValue="true">
+      <Value xsi:type="xsd:string">3</Value>
+    </Variable>
+    <Variable Type="float" Name="EnemiesDefeatedStat.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="EnemiesDefeatedStat.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="float" Name="EnemiesDefeatedStat.X" SetsValue="true">
+      <Value xsi:type="xsd:float">10</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="EnemiesDefeatedStat.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="float" Name="FileClosedStamp.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">50</Value>
+    </Variable>
+    <Variable Type="string" Name="FileClosedStamp.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">Background</Value>
+    </Variable>
+    <Variable Type="float" Name="FileClosedStamp.Rotation" SetsValue="true">
+      <Value xsi:type="xsd:float">10</Value>
+    </Variable>
+    <Variable IsFile="true" Type="string" Name="FileClosedStamp.SourceFile" SetsValue="true">
+      <Value xsi:type="xsd:string">spr_filed_closed_stamp.png</Value>
+    </Variable>
+    <Variable Type="float" Name="FileClosedStamp.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">50</Value>
+    </Variable>
+    <Variable Type="float" Name="FileClosedStamp.X" SetsValue="true">
+      <Value xsi:type="xsd:float">407</Value>
+    </Variable>
+    <Variable Type="float" Name="FileClosedStamp.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">39</Value>
+    </Variable>
+    <Variable Type="int" Name="FinishStageText.Blue" SetsValue="true">
+      <Value xsi:type="xsd:int">9</Value>
+    </Variable>
+    <Variable IsFont="true" Type="string" Name="FinishStageText.Font" SetsValue="true">
+      <Value xsi:type="xsd:string">Special Elite</Value>
+    </Variable>
+    <Variable Type="int" Name="FinishStageText.FontSize" SetsValue="true">
+      <Value xsi:type="xsd:int">40</Value>
+    </Variable>
+    <Variable Type="int" Name="FinishStageText.Green" SetsValue="true">
+      <Value xsi:type="xsd:int">17</Value>
+    </Variable>
+    <Variable Type="float" Name="FinishStageText.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="FinishStageText.HeightUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="FinishStageText.HorizontalAlignment" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="string" Name="FinishStageText.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">Background</Value>
+    </Variable>
+    <Variable Type="int" Name="FinishStageText.Red" SetsValue="true">
+      <Value xsi:type="xsd:int">17</Value>
+    </Variable>
+    <Variable Type="string" Name="FinishStageText.Text" ExposedAsName="FinishStageTextText" SetsValue="true">
+      <Value xsi:type="xsd:string">Incident Report</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="FinishStageText.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="float" Name="FinishStageText.X" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="FinishStageText.XOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="FinishStageText.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">6</Value>
+    </Variable>
+    <Variable Type="float" Name="FinishStageText.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">56</Value>
+    </Variable>
+    <Variable Type="float" Name="Height" SetsValue="true">
+      <Value xsi:type="xsd:float">100</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="HeightUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="float" Name="hole1.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">50</Value>
+    </Variable>
+    <Variable Type="string" Name="hole1.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">Background</Value>
+    </Variable>
+    <Variable IsFile="true" Type="string" Name="hole1.SourceFile" SetsValue="true">
+      <Value xsi:type="xsd:string">spr_waybill_punch.png</Value>
+    </Variable>
+    <Variable Type="float" Name="hole1.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">50</Value>
+    </Variable>
+    <Variable Type="float" Name="hole1.X" SetsValue="true">
+      <Value xsi:type="xsd:float">200</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="hole1.XOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="hole1.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="float" Name="hole1.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">20</Value>
+    </Variable>
+    <Variable Type="float" Name="hole2.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">50</Value>
+    </Variable>
+    <Variable Type="string" Name="hole2.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">Background</Value>
+    </Variable>
+    <Variable IsFile="true" Type="string" Name="hole2.SourceFile" SetsValue="true">
+      <Value xsi:type="xsd:string">spr_waybill_punch.png</Value>
+    </Variable>
+    <Variable Type="float" Name="hole2.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">50</Value>
+    </Variable>
+    <Variable Type="float" Name="hole2.X" SetsValue="true">
+      <Value xsi:type="xsd:float">400</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="hole2.XOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="hole2.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="float" Name="hole2.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">20</Value>
+    </Variable>
+    <Variable Type="int" Name="IncidentTitleDetail.Alpha" SetsValue="true">
+      <Value xsi:type="xsd:int">198</Value>
+    </Variable>
+    <Variable Type="int" Name="IncidentTitleDetail.Blue" SetsValue="true">
+      <Value xsi:type="xsd:int">32</Value>
+    </Variable>
+    <Variable IsFont="true" Type="string" Name="IncidentTitleDetail.Font" SetsValue="true">
+      <Value xsi:type="xsd:string">Courier New</Value>
+    </Variable>
+    <Variable Type="int" Name="IncidentTitleDetail.FontSize" SetsValue="true">
+      <Value xsi:type="xsd:int">13</Value>
+    </Variable>
+    <Variable Type="int" Name="IncidentTitleDetail.Green" SetsValue="true">
+      <Value xsi:type="xsd:int">62</Value>
+    </Variable>
+    <Variable Type="float" Name="IncidentTitleDetail.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="bool" Name="IncidentTitleDetail.IsBold" SetsValue="true">
+      <Value xsi:type="xsd:boolean">false</Value>
+    </Variable>
+    <Variable Type="string" Name="IncidentTitleDetail.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">Background</Value>
+    </Variable>
+    <Variable Type="int" Name="IncidentTitleDetail.Red" SetsValue="true">
+      <Value xsi:type="xsd:int">90</Value>
+    </Variable>
+    <Variable Type="string" Name="IncidentTitleDetail.Text" SetsValue="true">
+      <Value xsi:type="xsd:string">N. 47 / F · FILED 17ᵀᴴ OF FROST · 04:53</Value>
+    </Variable>
+    <Variable Type="float" Name="IncidentTitleDetail.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="IncidentTitleDetail.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="float" Name="IncidentTitleDetail.X" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="IncidentTitleDetail.XOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="IncidentTitleDetail.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">6</Value>
+    </Variable>
+    <Variable Type="float" Name="IncidentTitleDetail.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">91</Value>
+    </Variable>
+    <Variable Type="int" Name="OfficeText.Blue" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable IsFont="true" Type="string" Name="OfficeText.Font" SetsValue="true">
+      <Value xsi:type="xsd:string">Courier New</Value>
+    </Variable>
+    <Variable Type="int" Name="OfficeText.FontSize" SetsValue="true">
+      <Value xsi:type="xsd:int">14</Value>
+    </Variable>
+    <Variable Type="int" Name="OfficeText.Green" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="float" Name="OfficeText.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="bool" Name="OfficeText.IsBold" SetsValue="true">
+      <Value xsi:type="xsd:boolean">false</Value>
+    </Variable>
+    <Variable Type="string" Name="OfficeText.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">Background</Value>
+    </Variable>
+    <Variable Type="int" Name="OfficeText.Red" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="string" Name="OfficeText.Text" SetsValue="true">
+      <Value xsi:type="xsd:string">· OFFICE OF THE STATIONMASTER ·</Value>
+    </Variable>
+    <Variable Type="float" Name="OfficeText.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="OfficeText.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="float" Name="OfficeText.X" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="OfficeText.XOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="OfficeText.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">6</Value>
+    </Variable>
+    <Variable Type="float" Name="OfficeText.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">40</Value>
+    </Variable>
+    <Variable Type="int" Name="SeperatorBottom.Blue" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable IsFont="true" Type="string" Name="SeperatorBottom.Font" SetsValue="true">
+      <Value xsi:type="xsd:string">Ubuntu Mono</Value>
+    </Variable>
+    <Variable Type="int" Name="SeperatorBottom.FontSize" SetsValue="true">
+      <Value xsi:type="xsd:int">13</Value>
+    </Variable>
+    <Variable Type="int" Name="SeperatorBottom.Green" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="SeperatorBottom.HorizontalAlignment" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="string" Name="SeperatorBottom.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">Background</Value>
+    </Variable>
+    <Variable Type="int" Name="SeperatorBottom.Red" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="string" Name="SeperatorBottom.Text" SetsValue="true">
+      <Value xsi:type="xsd:string">------------------------------------------------------------------------</Value>
+    </Variable>
+    <Variable Type="float" Name="SeperatorBottom.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">1</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="SeperatorBottom.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="float" Name="SeperatorBottom.X" SetsValue="true">
+      <Value xsi:type="xsd:float">1</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="SeperatorBottom.XOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="SeperatorBottom.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">6</Value>
+    </Variable>
+    <Variable Type="float" Name="SeperatorBottom.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">285</Value>
+    </Variable>
+    <Variable Type="int" Name="SeperatorTitle.Blue" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="int" Name="SeperatorTitle.Green" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="float" Name="SeperatorTitle.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">1</Value>
+    </Variable>
+    <Variable Type="string" Name="SeperatorTitle.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">Background</Value>
+    </Variable>
+    <Variable Type="int" Name="SeperatorTitle.Red" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="float" Name="SeperatorTitle.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">508</Value>
+    </Variable>
+    <Variable Type="float" Name="SeperatorTitle.X" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="SeperatorTitle.XOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="SeperatorTitle.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">6</Value>
+    </Variable>
+    <Variable Type="float" Name="SeperatorTitle.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">120</Value>
+    </Variable>
+    <Variable Type="VerticalAlignment" Name="SeperatorTitle.YOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="SeperatorTitle.YUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="int" Name="SeperatorTop.Blue" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable IsFont="true" Type="string" Name="SeperatorTop.Font" SetsValue="true">
+      <Value xsi:type="xsd:string">Ubuntu Mono</Value>
+    </Variable>
+    <Variable Type="int" Name="SeperatorTop.FontSize" SetsValue="true">
+      <Value xsi:type="xsd:int">13</Value>
+    </Variable>
+    <Variable Type="int" Name="SeperatorTop.Green" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="SeperatorTop.HorizontalAlignment" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="string" Name="SeperatorTop.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">Background</Value>
+    </Variable>
+    <Variable Type="int" Name="SeperatorTop.Red" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="string" Name="SeperatorTop.Text" SetsValue="true">
+      <Value xsi:type="xsd:string">------------------------------------------------------------------------</Value>
+    </Variable>
+    <Variable Type="float" Name="SeperatorTop.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">1</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="SeperatorTop.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="float" Name="SeperatorTop.X" SetsValue="true">
+      <Value xsi:type="xsd:float">1</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="SeperatorTop.XOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="SeperatorTop.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">6</Value>
+    </Variable>
+    <Variable Type="float" Name="SeperatorTop.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">180</Value>
+    </Variable>
+    <Variable Type="int" Name="StagesDefeated.Alpha" SetsValue="true">
+      <Value xsi:type="xsd:int">198</Value>
+    </Variable>
+    <Variable Type="int" Name="StagesDefeated.Blue" SetsValue="true">
+      <Value xsi:type="xsd:int">32</Value>
+    </Variable>
+    <Variable IsFont="true" Type="string" Name="StagesDefeated.Font" SetsValue="true">
+      <Value xsi:type="xsd:string">Courier New</Value>
+    </Variable>
+    <Variable Type="int" Name="StagesDefeated.FontSize" SetsValue="true">
+      <Value xsi:type="xsd:int">13</Value>
+    </Variable>
+    <Variable Type="int" Name="StagesDefeated.Green" SetsValue="true">
+      <Value xsi:type="xsd:int">62</Value>
+    </Variable>
+    <Variable Type="float" Name="StagesDefeated.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="bool" Name="StagesDefeated.IsBold" SetsValue="true">
+      <Value xsi:type="xsd:boolean">false</Value>
+    </Variable>
+    <Variable Type="string" Name="StagesDefeated.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">Background</Value>
+    </Variable>
+    <Variable Type="int" Name="StagesDefeated.Red" SetsValue="true">
+      <Value xsi:type="xsd:int">90</Value>
+    </Variable>
+    <Variable Type="string" Name="StagesDefeated.Text" SetsValue="true">
+      <Value xsi:type="xsd:string">Stages Defeated</Value>
+    </Variable>
+    <Variable Type="float" Name="StagesDefeated.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="StagesDefeated.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="float" Name="StagesDefeated.X" SetsValue="true">
+      <Value xsi:type="xsd:float">320</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="StagesDefeated.XOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="StagesDefeated.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="float" Name="StagesDefeated.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">135</Value>
+    </Variable>
+    <Variable Type="string" Name="StagesDefeatedStat.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">StagesDefeated</Value>
+    </Variable>
+    <Variable Type="string" Name="StagesDefeatedStat.StatText" ExposedAsName="StagesDefeatedStatStatText" SetsValue="false" />
+    <Variable Type="float" Name="StagesDefeatedStat.X" SetsValue="true">
+      <Value xsi:type="xsd:float">28</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="StagesDefeatedStat.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="float" Name="StagesDefeatedStat.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="State" Name="State" Category="States and Visibility" SetsValue="false">
+      <Value xsi:type="xsd:string">Default</Value>
+    </Variable>
+    <Variable Type="int" Name="Upgrades Bought.Alpha" SetsValue="true">
+      <Value xsi:type="xsd:int">198</Value>
+    </Variable>
+    <Variable Type="int" Name="Upgrades Bought.Blue" SetsValue="true">
+      <Value xsi:type="xsd:int">32</Value>
+    </Variable>
+    <Variable IsFont="true" Type="string" Name="Upgrades Bought.Font" SetsValue="true">
+      <Value xsi:type="xsd:string">Courier New</Value>
+    </Variable>
+    <Variable Type="int" Name="Upgrades Bought.FontSize" SetsValue="true">
+      <Value xsi:type="xsd:int">13</Value>
+    </Variable>
+    <Variable Type="int" Name="Upgrades Bought.Green" SetsValue="true">
+      <Value xsi:type="xsd:int">62</Value>
+    </Variable>
+    <Variable Type="float" Name="Upgrades Bought.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="bool" Name="Upgrades Bought.IsBold" SetsValue="true">
+      <Value xsi:type="xsd:boolean">false</Value>
+    </Variable>
+    <Variable Type="string" Name="Upgrades Bought.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">Background</Value>
+    </Variable>
+    <Variable Type="int" Name="Upgrades Bought.Red" SetsValue="true">
+      <Value xsi:type="xsd:int">90</Value>
+    </Variable>
+    <Variable Type="string" Name="Upgrades Bought.Text" SetsValue="true">
+      <Value xsi:type="xsd:string">Upgrades Bought</Value>
+    </Variable>
+    <Variable Type="float" Name="Upgrades Bought.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="Upgrades Bought.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="float" Name="Upgrades Bought.X" SetsValue="true">
+      <Value xsi:type="xsd:float">320</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="Upgrades Bought.XOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="Upgrades Bought.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="float" Name="Upgrades Bought.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">160</Value>
+    </Variable>
+    <Variable Type="string" Name="UpgradesBoughtStat.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">Upgrades Bought</Value>
+    </Variable>
+    <Variable Type="string" Name="UpgradesBoughtStat.StatText" ExposedAsName="UpgradesBoughtStatStatText" SetsValue="false" />
+    <Variable Type="float" Name="UpgradesBoughtStat.X" SetsValue="true">
+      <Value xsi:type="xsd:float">28</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="UpgradesBoughtStat.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="float" Name="UpgradesBoughtStat.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="int" Name="Vigniette.Alpha" SetsValue="true">
+      <Value xsi:type="xsd:int">199</Value>
+    </Variable>
+    <Variable Type="int" Name="Vigniette.Blue" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="int" Name="Vigniette.Green" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="float" Name="Vigniette.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">100</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="Vigniette.HeightUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="float?" Name="Vigniette.MaxWidth" SetsValue="true" />
+    <Variable Type="int" Name="Vigniette.Red" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="float" Name="Vigniette.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">100</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="Vigniette.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="float" Name="Width" SetsValue="true">
+      <Value xsi:type="xsd:float">100</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+  </State>
+  <Instance Name="EnemiesDefeatedStat" BaseType="PostDeathStatItem" />
+  <Instance Name="DistanceTravelledStat" BaseType="PostDeathStatItem" />
+  <Instance Name="StagesDefeatedStat" BaseType="PostDeathStatItem" />
+  <Instance Name="UpgradesBoughtStat" BaseType="PostDeathStatItem" />
+  <Instance Name="Vigniette" BaseType="ColoredRectangle" />
+  <Instance Name="Background" BaseType="NineSlice" />
+  <Instance Name="OfficeText" BaseType="Text" />
+  <Instance Name="IncidentTitleDetail" BaseType="Text" />
+  <Instance Name="EnemiesDefeated" BaseType="Text" />
+  <Instance Name="DistanceTravelled" BaseType="Text" />
+  <Instance Name="StagesDefeated" BaseType="Text" />
+  <Instance Name="Upgrades Bought" BaseType="Text" />
+  <Instance Name="FinishStageText" BaseType="Text" />
+  <Instance Name="SeperatorTitle" BaseType="Rectangle" />
+  <Instance Name="SeperatorTop" BaseType="Text" />
+  <Instance Name="CauseOfFailureTitle" BaseType="Text" />
+  <Instance Name="CauseOfFailureDescription" BaseType="Text" />
+  <Instance Name="SeperatorBottom" BaseType="Text" />
+  <Instance Name="FileClosedStamp" BaseType="Sprite" />
+  <Instance Name="hole1" BaseType="Sprite" />
+  <Instance Name="ButtonWithIconInstance" BaseType="ButtonWithIcon" />
+  <Instance Name="hole2" BaseType="Sprite" />
+  <Behaviors />
+</ComponentSave>

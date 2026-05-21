@@ -72,6 +72,7 @@ public class GameplayScreen : GamelabGameScreen
     private ParticleEmitter snowstormEmitter;
     private SnowstormTransition.Baseline snowstormBaseline;
     private bool isFailureTriggered;
+    private bool levelStatsCommitted;
     private float allPlayersStunnedTimer;
     private float accumulator;
     private float levelTimer;
@@ -189,6 +190,8 @@ public class GameplayScreen : GamelabGameScreen
         trainSound?.Dispose();
         battleTheme?.Stop();
         battleTheme?.Dispose();
+        if (hud is IDisposable disposableHud)
+            disposableHud.Dispose();
         pauseMenu?.Dispose();
 
         base.UnloadContent();
@@ -490,12 +493,15 @@ public class GameplayScreen : GamelabGameScreen
         }
 
         isFailureTriggered = true;
+        CommitLevelStatsToRunSession();
+        var snapshot = CreatePostDeathStatsSnapshot();
         SaveManager.DeleteSave();
-        Game.SwitchToScreen(new FailScreen(Game, reason));
+        Game.SwitchToScreen(new FailScreen(Game, reason, snapshot));
     }
 
     private void OnLevelCompleted()
     {
+        CommitLevelStatsToRunSession();
         completionTime = levelTimer;
         if (director != null)
         {
@@ -508,5 +514,24 @@ public class GameplayScreen : GamelabGameScreen
         gameplayContext.State.VictoryLapActive = true;
         screenTransitionFilter.FadeIn(2f, 1.5f);
         phase = GameplayPhase.EndOfLevelOutro;
+    }
+    private void CommitLevelStatsToRunSession()
+    {
+        if (levelStatsCommitted)
+            return;
+
+        levelStatsCommitted = true;
+        Game.CurrentRun.AddEnemiesNeutralized(enemyManager?.DefeatedEnemiesCount ?? 0);
+        Game.CurrentRun.AddDistanceTravelled(gameplayContext?.State?.DistanceTraveled ?? 0f);
+    }
+
+    private PostDeathStatsSnapshot CreatePostDeathStatsSnapshot()
+    {
+        int stagesDefeated = Math.Max(0, Game.CurrentRun.CurrentLevel - 1);
+        return new PostDeathStatsSnapshot(
+            enemyManager?.DefeatedEnemiesCount ?? 0,
+            gameplayContext?.State?.DistanceTraveled ?? 0f,
+            stagesDefeated,
+            Game.CurrentRun.TotalUpgradesBought);
     }
 }

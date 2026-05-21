@@ -1,193 +1,84 @@
 using System;
-using System.Linq;
 using Gamelab.Assets;
+using Gamelab.Components;
 using Gamelab.Particles;
 using Gamelab.Particles.Modifiers;
 using Gamelab.Services.Sound;
 using Gamelab.Services.Vfx;
+using Gamelab.UI;
+using Gamelab.Utils;
 using Microsoft.Xna.Framework;
-using Myra.Graphics2D;
-using Myra.Graphics2D.Brushes;
-using Myra.Graphics2D.UI;
+using MonoGameGum;
+using MonoGameGum.GueDeriving;
 
 namespace Gamelab.Screens;
 
-public class PostLevelStatsScreen : GamelabGameScreen
+public class PostLevelStatsScreen(GamelabGame game, float actualTime, float referenceTime) : GamelabGameScreen(game)
 {
+    public PostLevelStatsScreen(GamelabGame game) : this(game, 1f, 1f) { }
+
     private enum Phase
     {
         IntroReveal,
         WaitInput,
+        ContinueStamp,
         FadeOutToHub,
     }
 
-    private readonly float actualTime;
-    private readonly float referenceTime;
-
-    public PostLevelStatsScreen(GamelabGame game) : this(game, 1f, 1f) { }
-
-    public PostLevelStatsScreen(GamelabGame game, float actualTime, float referenceTime) : base(game)
+    private static class Timing
     {
-        this.actualTime = actualTime;
-        this.referenceTime = referenceTime;
+        public const float DimFade = 0.6f;
+        public const float LineGap = 0.45f;
+        public const float TimeLineGap = 0.38f;
+        public const float TotalGap = 0.28f;
+        public const float CountUp = 1.1f;
+        public const float CreditTick = 0.10f;
+        public const float StampReveal = 0.25f;
+        public const float ContinueAfterStamp = 0.90f;
+        public const float FadeOutToHub = 0.8f;
+        public const float DimOpacity = 100f / 255f;
     }
 
-    private const float DimFadeSeconds = 0.6f;
-    private const float CountUpSeconds = 1.1f;
-    private const float CreditTickInterval = 0.10f;
+    private PostStatsScreenOverlay overlay;
+    private PostStatsDisplay statsDisplay;
+    private StatsListItem deliveryLine;
+    private StatsListItem timeLine;
+    private StampRevealAnimator paidStampAnimator;
 
-    private Desktop desktop;
-    private Label titleLabel;
-    private Label deliveryLabel;
-    private Label timeLineLabel;
-    private Label dividerLabel;
-    private Label totalLabel;
-    private Label promptLabel;
+    private readonly WhiteFilterTransition fadeToHub = new();
+    private readonly LevelRewardBreakdown rewards =
+        LevelRewardBreakdown.FromCompletion(actualTime, referenceTime, game.GameplayConfig);
 
-    private readonly WhiteFilterTransition whiteToHub = new();
     private Phase phase;
+    private ISoundService soundService;
 
     private ParticleEmitter snowstormEmitter;
     private SnowstormTransition.Baseline snowstormBaseline;
 
-    private ISoundService soundService;
     private float introDim;
     private float revealClock;
+    private float continueStampTimer;
+    private bool didGrantCredits;
+
     private bool playedTitleCue;
     private bool playedDeliveryCue;
     private bool playedTimeCue;
     private bool playedDividerCue;
-    private int lastSoundAtTotal = -1;
-    private float creditTickCooldown;
-
-    private int deliveryReward;
-    private int timeAdjustment;
-    private int targetTotalCredits;
-    private bool hasTimeLine;
-    private Color timeLineColor;
-    private string timeLineText;
-
-    private int baseReward;
-    private int expectedBonus;
-    private int actualBonus;
 
     private bool countingTotal;
     private float countUpElapsed;
     private int displayedTotalCredits;
-    private float titleColorBlendT;
-    private float promptPulseTime;
-    private float totalLineCelebrateT;
+    private int lastSoundAtTotal = -1;
+    private float creditTickCooldown;
 
     public override void LoadContent()
     {
         base.LoadContent();
+        GumService.Default.Root.Children.Clear();
 
         soundService = Services.GetService<ISoundService>();
-
-        baseReward = Game.GameplayConfig.LevelBaseReward;
-        expectedBonus = Game.GameplayConfig.LevelReferenceBonus;
-        float rawBonus = expectedBonus * MathF.Sqrt(referenceTime / Math.Max(actualTime, 0.1f));
-        actualBonus = (int)MathF.Round(MathF.Max(0f, rawBonus));
-
-        deliveryReward = baseReward + expectedBonus;
-        timeAdjustment = actualBonus - expectedBonus;
-        targetTotalCredits = deliveryReward + timeAdjustment;
-        float timeDelta = actualTime - referenceTime;
-        hasTimeLine = timeAdjustment != 0;
-        bool faster = timeDelta < 0;
-        timeLineText = faster
-            ? $"{"Time Bonus:",-18}+{timeAdjustment}"
-            : $"{"Time Penalty:",-18}{timeAdjustment}";
-        timeLineColor = faster ? new Color(80, 200, 80) : new Color(220, 150, 50);
-
-        var rootPanel = new Panel
-        {
-            HorizontalAlignment = HorizontalAlignment.Stretch,
-            VerticalAlignment = VerticalAlignment.Stretch,
-        };
-
-        var stack = new VerticalStackPanel
-        {
-            HorizontalAlignment = HorizontalAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Center,
-            Spacing = 18,
-        };
-
-        titleLabel = new Label
-        {
-            Text = $"Stage Complete: {StageNaming.GetStageTitle(Game.CurrentRun.CurrentLevel)}",
-            Font = Game.fontSystem.GetFont(72),
-            TextColor = new Color(255, 210, 100),
-            HorizontalAlignment = HorizontalAlignment.Center,
-            Visible = false,
-        };
-
-        deliveryLabel = new Label
-        {
-            Text = $"Delivery Reward:   +{deliveryReward}",
-            Font = Game.fontSystem.GetFont(52),
-            TextColor = Color.White,
-            HorizontalAlignment = HorizontalAlignment.Center,
-            Visible = false,
-        };
-
-        timeLineLabel = new Label
-        {
-            Text = timeLineText,
-            Font = Game.fontSystem.GetFont(52),
-            TextColor = timeLineColor,
-            HorizontalAlignment = HorizontalAlignment.Center,
-            Visible = false,
-        };
-
-        dividerLabel = new Label
-        {
-            Text = "——————————————————",
-            Font = Game.fontSystem.GetFont(40),
-            TextColor = new Color(120, 120, 120),
-            HorizontalAlignment = HorizontalAlignment.Center,
-            Visible = false,
-        };
-
-        totalLabel = new Label
-        {
-            Text = "Total:            +0",
-            Font = Game.fontSystem.GetFont(60),
-            TextColor = new Color(230, 200, 120),
-            HorizontalAlignment = HorizontalAlignment.Center,
-            Visible = false,
-        };
-
-        promptLabel = new Label
-        {
-            Text = "Press Start / Continue",
-            Font = Game.fontSystem.GetFont(40),
-            TextColor = Color.LightBlue,
-            HorizontalAlignment = HorizontalAlignment.Center,
-            Visible = false,
-            Margin = new Thickness(0, 28, 0, 0),
-        };
-
-        stack.Widgets.Add(titleLabel);
-        stack.Widgets.Add(deliveryLabel);
-        if (hasTimeLine)
-        {
-            stack.Widgets.Add(timeLineLabel);
-        }
-
-        stack.Widgets.Add(dividerLabel);
-        stack.Widgets.Add(totalLabel);
-        stack.Widgets.Add(promptLabel);
-
-        rootPanel.Widgets.Add(stack);
-        desktop = new Desktop { Root = rootPanel };
-
-        var vfx = Services.GetService<IVfxService>();
-        snowstormEmitter = ParticleFactory.CreateSnowstorm();
-        snowstormEmitter.Modifiers.Add(new BlizzardGustModifier(() =>
-            phase == Phase.FadeOutToHub ? whiteToHub.Opacity : 0f));
-        snowstormBaseline = SnowstormTransition.Capture(snowstormEmitter);
-        vfx.AddContinuous(snowstormEmitter);
+        SetupOverlay();
+        SetupSnowstorm();
         phase = Phase.IntroReveal;
     }
 
@@ -195,9 +86,11 @@ public class PostLevelStatsScreen : GamelabGameScreen
     {
         base.Update(gameTime);
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-        whiteToHub.Update(dt);
-        float blizzardT = phase == Phase.FadeOutToHub ? whiteToHub.Opacity : 0f;
+
+        fadeToHub.Update(dt);
+        float blizzardT = phase == Phase.FadeOutToHub ? fadeToHub.Opacity : 0f;
         SnowstormTransition.ApplyBlizzardIntensity(snowstormEmitter, snowstormBaseline, blizzardT);
+        paidStampAnimator?.Update(dt);
 
         switch (phase)
         {
@@ -205,131 +98,21 @@ public class PostLevelStatsScreen : GamelabGameScreen
                 UpdateIntroReveal(dt);
                 break;
             case Phase.WaitInput:
-                UpdateWaitInput(dt);
-                if (Game.playerManager.Configs.Any(c =>
-                        c.Input.IsPickupJustPressed() || c.Input.IsStartJustPressed()))
+                if (Game.playerManager.Configs.AnyPressedMenuConfirm())
+                    BeginContinueSequence();
+                break;
+            case Phase.ContinueStamp:
+                continueStampTimer += dt;
+                if (continueStampTimer >= Timing.StampReveal + Timing.ContinueAfterStamp)
                 {
-                    soundService.PlayOnce(Sounds.MenuSelect);
-                    Game.CurrentRun.AddCredits(targetTotalCredits);
-                    whiteToHub.FadeIn(0.8f);
+                    fadeToHub.FadeIn(Timing.FadeOutToHub);
                     phase = Phase.FadeOutToHub;
                 }
-
                 break;
             case Phase.FadeOutToHub:
-                if (whiteToHub.IsDone)
-                {
+                if (fadeToHub.IsDone)
                     Game.SwitchToScreen(new HubScreen(Game));
-                }
-
                 break;
-        }
-    }
-
-    private void UpdateWaitInput(float dt)
-    {
-        promptPulseTime += dt;
-        float w = 0.55f + 0.45f * MathF.Sin(promptPulseTime * 4f);
-        promptLabel.TextColor = Color.LightBlue * w;
-        titleColorBlendT = Math.Min(1f, titleColorBlendT + dt * 2.5f);
-        titleLabel.TextColor = LerpColor(new Color(255, 210, 100), Color.White, SmoothStep(titleColorBlendT));
-
-        if (totalLineCelebrateT > 0f)
-        {
-            totalLineCelebrateT -= dt;
-            float punch = SmoothStep(Math.Clamp(totalLineCelebrateT / 0.22f, 0f, 1f));
-            int size = (int)Math.Round(60 + 10 * punch);
-            totalLabel.Font = Game.fontSystem.GetFont(size);
-            totalLabel.TextColor = LerpColor(Color.White, new Color(230, 200, 120), 1f - punch);
-        }
-    }
-
-    private void UpdateIntroReveal(float dt)
-    {
-        revealClock += dt;
-        introDim = SmoothStep(Math.Clamp(revealClock / DimFadeSeconds, 0f, 1f));
-
-        float t = revealClock;
-        float tTitle = DimFadeSeconds;
-        float tDelivery = tTitle + 0.45f;
-        float tTime = tDelivery + 0.45f;
-        float tDivider = hasTimeLine ? tTime + 0.38f : tDelivery + 0.45f;
-        float tTotal = tDivider + 0.28f;
-
-        if (t >= tTitle && !playedTitleCue)
-        {
-            playedTitleCue = true;
-            titleLabel.Visible = true;
-            soundService.PlayOnce(Sounds.Craft);
-        }
-
-        if (t >= tDelivery && !playedDeliveryCue)
-        {
-            playedDeliveryCue = true;
-            deliveryLabel.Visible = true;
-            soundService.PlayOnce(Sounds.PickupItem);
-        }
-
-        if (hasTimeLine && t >= tTime && !playedTimeCue)
-        {
-            playedTimeCue = true;
-            timeLineLabel.Visible = true;
-            soundService.PlayOnce(Sounds.PickupItem);
-        }
-
-        if (t >= tDivider && !playedDividerCue)
-        {
-            playedDividerCue = true;
-            dividerLabel.Visible = true;
-            soundService.PlayOnce(Sounds.PickupItem);
-        }
-
-        if (t >= tTotal && !countingTotal)
-        {
-            countingTotal = true;
-            countUpElapsed = 0f;
-            displayedTotalCredits = 0;
-            totalLabel.Visible = true;
-            lastSoundAtTotal = -1;
-            creditTickCooldown = 0f;
-        }
-
-        if (countingTotal)
-        {
-            creditTickCooldown -= dt;
-            countUpElapsed += dt;
-            float u = SmoothStep(Math.Clamp(countUpElapsed / CountUpSeconds, 0f, 1f));
-            int newShown = (int)Math.Round(targetTotalCredits * u);
-
-            if (newShown > lastSoundAtTotal && creditTickCooldown <= 0f)
-            {
-                lastSoundAtTotal = newShown;
-                creditTickCooldown = CreditTickInterval;
-                soundService.PlayOnce(Sounds.PickupItem);
-            }
-
-            displayedTotalCredits = newShown;
-            totalLabel.Text = $"Total:            +{displayedTotalCredits}";
-
-            if (countUpElapsed >= CountUpSeconds)
-            {
-                displayedTotalCredits = targetTotalCredits;
-                totalLabel.Text = $"Total:            +{displayedTotalCredits}";
-                soundService.PlayOnce(Sounds.Craft);
-                countingTotal = false;
-                totalLineCelebrateT = 0.22f;
-                totalLabel.Font = Game.fontSystem.GetFont(60);
-                phase = Phase.WaitInput;
-                promptLabel.Visible = true;
-                promptPulseTime = 0f;
-                titleColorBlendT = titleLabel.Visible ? 0.35f : 1f;
-            }
-        }
-
-        if (playedTitleCue)
-        {
-            titleColorBlendT = Math.Min(1f, titleColorBlendT + dt * 2.2f);
-            titleLabel.TextColor = LerpColor(new Color(255, 210, 100), Color.White, SmoothStep(titleColorBlendT));
         }
     }
 
@@ -337,30 +120,10 @@ public class PostLevelStatsScreen : GamelabGameScreen
     {
         GraphicsDevice.Clear(Color.Black);
 
-        spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
-        Services.GetService<IVfxService>().Render(spriteBatch);
-        spriteBatch.End();
-
-        spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
-        if (introDim > 0.001f)
-        {
-            spriteBatch.Draw(
-                AssetManager.BlankTexture,
-                new Rectangle(0, 0, virtualScreenSize.X, virtualScreenSize.Y),
-                Color.Black * (introDim * (100f / 255f)));
-        }
-
-        desktop.Render();
-        float w = whiteToHub.Opacity;
-        if (w > 0.001f)
-        {
-            spriteBatch.Draw(
-                AssetManager.BlankTexture,
-                new Rectangle(0, 0, virtualScreenSize.X, virtualScreenSize.Y),
-                Color.White * w);
-        }
-
-        spriteBatch.End();
+        DrawWorldLayer();
+        DrawIntroDim();
+        GumService.Default.Draw();
+        DrawFadeOverlay();
 
         base.Draw(gameTime);
     }
@@ -368,18 +131,197 @@ public class PostLevelStatsScreen : GamelabGameScreen
     public override void UnloadContent()
     {
         Services.GetService<IVfxService>().ClearAll();
+        if (overlay?.Visual != null && GumService.Default.Root.Children.Contains(overlay.Visual))
+            GumService.Default.Root.Children.Remove(overlay.Visual);
         base.UnloadContent();
     }
 
-    private static Color LerpColor(Color a, Color b, float t)
+    private void SetupOverlay()
     {
-        t = Math.Clamp(t, 0f, 1f);
-        return new Color(
-            (byte)Math.Round(a.R + (b.R - a.R) * t),
-            (byte)Math.Round(a.G + (b.G - a.G) * t),
-            (byte)Math.Round(a.B + (b.B - a.B) * t),
-            (byte)Math.Round(a.A + (b.A - a.A) * t));
+        overlay = new PostStatsScreenOverlay();
+        overlay.AddToRoot();
+
+        statsDisplay = overlay.PostStatsDisplayInstance;
+        deliveryLine = statsDisplay.StatsListItemInstance;
+        timeLine = statsDisplay.StatsListItemInstance1;
+
+        statsDisplay.ButtonWithIconInstance.ButtonText = "Continue";
+        XboxButtonGlyphs.ApplyFaceButton(statsDisplay.ButtonWithIconInstance, XboxButtonAtlas.Face.A);
+        statsDisplay.FinishStageText.Text = StageNaming.GetStageTitle(Game.CurrentRun.CurrentLevel);
+
+        ConfigureStatsLine(
+            deliveryLine,
+            index: "01",
+            label: "Delivery Reward",
+            description: "Coal shipment delivered",
+            amount: LevelRewardBreakdown.FormatSignedAmount(rewards.DeliveryReward));
+
+        ConfigureStatsLine(
+            timeLine,
+            index: "02",
+            label: rewards.TimeLineLabel,
+            description: rewards.TimeLineDescription,
+            amount: LevelRewardBreakdown.FormatSignedAmount(rewards.TimeAdjustment));
+
+        statsDisplay.SummaryDescription.Text = "Account Credited";
+        statsDisplay.SummaryText = "+0";
+        statsDisplay.SummaryMoney.Visible = false;
+
+        paidStampAnimator = statsDisplay.Paid_Stamp != null
+            ? new StampRevealAnimator(statsDisplay.Paid_Stamp, Timing.StampReveal)
+            : null;
     }
 
-    private static float SmoothStep(float t) => t * t * (3f - 2f * t);
+    private void SetupSnowstorm()
+    {
+        var vfx = Services.GetService<IVfxService>();
+        snowstormEmitter = ParticleFactory.CreateSnowstorm();
+        snowstormEmitter.Modifiers.Add(new BlizzardGustModifier(() =>
+            phase == Phase.FadeOutToHub ? fadeToHub.Opacity : 0f));
+        snowstormBaseline = SnowstormTransition.Capture(snowstormEmitter);
+        vfx.AddContinuous(snowstormEmitter);
+    }
+
+    private void BeginContinueSequence()
+    {
+        soundService.PlayOnce(Sounds.MenuSelect);
+
+        if (!didGrantCredits)
+        {
+            Game.CurrentRun.AddCredits(rewards.TotalCredits);
+            didGrantCredits = true;
+        }
+
+        paidStampAnimator?.Trigger();
+        continueStampTimer = 0f;
+        phase = Phase.ContinueStamp;
+    }
+
+    private void UpdateIntroReveal(float dt)
+    {
+        revealClock += dt;
+        introDim = Easing.SmoothStepClamped(revealClock, 0f, Timing.DimFade);
+
+        float tTitle = Timing.DimFade;
+        float tDelivery = tTitle + Timing.LineGap;
+        float tTime = tDelivery + Timing.LineGap;
+        float tDivider = tTime + Timing.TimeLineGap;
+        float tTotal = tDivider + Timing.TotalGap;
+
+        TryPlayCue(revealClock, tTitle, ref playedTitleCue, Sounds.Craft);
+        TryRevealLine(revealClock, tDelivery, ref playedDeliveryCue, deliveryLine, Sounds.PickupItem);
+        TryRevealLine(revealClock, tTime, ref playedTimeCue, timeLine, Sounds.PickupItem);
+        TryPlayCue(revealClock, tDivider, ref playedDividerCue, Sounds.PickupItem);
+
+        if (revealClock >= tTotal && !countingTotal)
+            BeginTotalCountUp();
+
+        if (countingTotal)
+            UpdateTotalCountUp(dt);
+    }
+
+    private void BeginTotalCountUp()
+    {
+        countingTotal = true;
+        countUpElapsed = 0f;
+        displayedTotalCredits = 0;
+        statsDisplay.SummaryMoney.Visible = true;
+        lastSoundAtTotal = -1;
+        creditTickCooldown = 0f;
+    }
+
+    private void UpdateTotalCountUp(float dt)
+    {
+        creditTickCooldown -= dt;
+        countUpElapsed += dt;
+
+        float progress = Easing.SmoothStepClamped(countUpElapsed, 0f, Timing.CountUp);
+        int newShown = (int)Math.Round(rewards.TotalCredits * progress);
+
+        if (newShown > lastSoundAtTotal && creditTickCooldown <= 0f)
+        {
+            lastSoundAtTotal = newShown;
+            creditTickCooldown = Timing.CreditTick;
+            soundService.PlayOnce(Sounds.PickupItem);
+        }
+
+        displayedTotalCredits = newShown;
+        statsDisplay.SummaryText = $"+{displayedTotalCredits}";
+
+        if (countUpElapsed < Timing.CountUp)
+            return;
+
+        displayedTotalCredits = rewards.TotalCredits;
+        statsDisplay.SummaryText = $"+{displayedTotalCredits}";
+        soundService.PlayOnce(Sounds.Craft);
+        countingTotal = false;
+        phase = Phase.WaitInput;
+    }
+
+    private void TryPlayCue(float clock, float at, ref bool played, string sound)
+    {
+        if (played || clock < at)
+            return;
+
+        played = true;
+        soundService.PlayOnce(sound);
+    }
+
+    private void TryRevealLine(float clock, float at, ref bool played, StatsListItem line, string sound)
+    {
+        if (played || clock < at)
+            return;
+
+        played = true;
+        line.Visual.Visible = true;
+        soundService.PlayOnce(sound);
+    }
+
+    private static void ConfigureStatsLine(
+        StatsListItem line,
+        string index,
+        string label,
+        string description,
+        string amount)
+    {
+        line.IndexText = index;
+        line.ItemLableText = label;
+        line.ItemDescriptionText = description;
+        line.AmountText = amount;
+        line.Visual.Visible = false;
+    }
+
+    private void DrawWorldLayer()
+    {
+        spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
+        Services.GetService<IVfxService>().Render(spriteBatch);
+        spriteBatch.End();
+    }
+
+    private void DrawIntroDim()
+    {
+        if (introDim <= 0.001f)
+            return;
+
+        spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
+        spriteBatch.Draw(
+            AssetManager.BlankTexture,
+            new Rectangle(0, 0, virtualScreenSize.X, virtualScreenSize.Y),
+            Color.Black * (introDim * Timing.DimOpacity));
+        spriteBatch.End();
+    }
+
+    private void DrawFadeOverlay()
+    {
+        float opacity = fadeToHub.Opacity;
+        if (opacity <= 0.001f)
+            return;
+
+        spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
+        spriteBatch.Draw(
+            AssetManager.BlankTexture,
+            new Rectangle(0, 0, virtualScreenSize.X, virtualScreenSize.Y),
+            Color.White * opacity);
+        spriteBatch.End();
+    }
 }
