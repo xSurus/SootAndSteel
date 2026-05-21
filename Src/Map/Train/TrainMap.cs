@@ -37,12 +37,6 @@ public class TrainMap : IDisposable
 
     private int[] tileTypes;
 
-    private float bobTimer;
-    private float bobOffset;
-    private const float BobFrequency = 3.5f;
-    private const float BobAmplitude = 0.5f;
-    private Vector2 BobOffsetVec => new Vector2(0, bobOffset);
-
     private float wheelAnimTimer;
     private const int WheelFrameCount = 3;
     private const float WheelAnimSpeed = 0.25f;
@@ -290,18 +284,13 @@ public class TrainMap : IDisposable
     public void Draw(SpriteBatch spriteBatch)
     {
         DrawTrainWheels(spriteBatch);
-        Position += BobOffsetVec;
         DrawShadows(spriteBatch);
         DrawTrainTiles(spriteBatch);
         DrawSideWalls(spriteBatch);
         foreach (var mapObject in MapObjects)
         {
-            mapObject.Position += BobOffsetVec;
             mapObject.Draw(spriteBatch);
-            mapObject.Position -= BobOffsetVec;
         }
-
-        Position -= BobOffsetVec;
     }
 
     public void DrawLightBatch(SpriteBatch spriteBatch)
@@ -430,8 +419,6 @@ public class TrainMap : IDisposable
         float speed = gameplayContext.State.actualSpeed;
         if (speed > 0.0f)
         {
-            bobTimer += dt;
-            bobOffset = MathF.Sin(bobTimer * BobFrequency * MathHelper.TwoPi) * BobAmplitude;
             wheelAnimTimer += dt * speed;
         }
 
