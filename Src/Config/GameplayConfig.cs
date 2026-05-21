@@ -41,10 +41,9 @@ public class GameplayConfig
     public float CoalOvenBurnRate { get; set; } = 1f;
     public float CoalOvenRefuelAmount { get; set; } = 10f;
     public float CoalOvenLowFuelThreshold { get; set; } = 0.25f;
-    public float WallMaxHealth { get; set; } = 100f;
-    public float WallHealthRestoredPerSecond { get; set; } = 40f;
+    public float WallMaxHealth { get; set; } = 50f;
+    public float WallHealthRestoredPerSecond { get; set; } = 20f;
     public float GrabbableLinearDamping { get; set; } = 100f;
-    public float GrabbableRotationalResistance { get; set; } = 40f;
     public float DepartHoldSeconds { get; set; } = 0.75f;
 
     // Enemy configuration (general)
@@ -55,7 +54,7 @@ public class GameplayConfig
     // Rifle enemy configuration
     public float RifleMaxSpeed { get; set; } = 700f;
     public float RiflePreferredDistance { get; set; } = 30f;
-    public float EnemyShootCooldown { get; set; } = 2f;
+    public float EnemyShootCooldown { get; set; } = 4f;
     public float TutorialEnemyShootCooldown { get; set; } = 6f;
     public float TutorialEnemyHealth { get; set; } = 1f;
     public float EnemyShootSpread { get; set; } = 0.2f;

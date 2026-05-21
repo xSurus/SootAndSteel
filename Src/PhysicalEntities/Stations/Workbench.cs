@@ -139,38 +139,37 @@ public class Workbench : AbstractStation, IInteractable, IDisposable
         if (PlacedItems.Count > 0)
         {
             int drawItemSize = (int)(tileSize * 0.4f);
-            float quadOffset = tileSize * 0.2f;
+            float yOffset = tileSize * 0.1f;
+            float spacing = tileSize * 0.25f;
+            float totalWidth = (PlacedItems.Count - 1) * spacing;
+            float startX = -totalWidth / 2f;
             Vector2 tableTopCenter = feetPosition + new Vector2(0, -tileSize * 0.8f);
-            Vector2[] gridOffsets =
-            {
-                new Vector2(-quadOffset, -quadOffset),
-                new Vector2(quadOffset, -quadOffset),
-                new Vector2(-quadOffset, quadOffset),
-                new Vector2(quadOffset, quadOffset)
-            };
-
             for (int i = 0; i < PlacedItems.Count; i++)
             {
-                Vector2 itemPos = tableTopCenter + gridOffsets[i];
+                Vector2 itemPos = tableTopCenter + new Vector2(startX + i * spacing, -yOffset);
                 PlacedItems[i].Draw(spriteBatch, itemPos, drawItemSize, depth + RenderUtility.Eps);
             }
         }
+    }
 
-        if (craftProgress > 0f)
+    public void DrawLightBatch(SpriteBatch spriteBatch)
+    {   
+
+        int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
+        Vector2 feetPosition = Position + new Vector2(0, tileSize / 2f);
+        if (isCrafting || craftProgress > 0f)
         {
-            int barWidth = tileSize - 4;
-            int barHeight = 6;
-            float progressPercentage = craftProgress / 2f; // TODO add dynamic craft time
+            Texture2D lightTex = AssetManager.GetDecorationTexture("FurnaceLight");
+            float intensity = Math.Clamp(craftProgress / 2f, 0f, 1f);
+            float lightScale = tileSize * 6f / lightTex.Width;
+            Vector2 lightOrigin = new Vector2(lightTex.Width / 2f, lightTex.Height / 2f);
+            Vector2 lightPos = feetPosition + new Vector2(tileSize * 0.5f, -tileSize * 0.8f);
+            Color lightColor = new Color(255, 255, 0);
 
-            Vector2 barPos = feetPosition + new Vector2(-barWidth / 2f, -tileSize - 10f);
-
-            Rectangle bgBar = new Rectangle((int)barPos.X, (int)barPos.Y, barWidth, barHeight);
-            Rectangle fillBar = new Rectangle(bgBar.X, bgBar.Y, (int)(barWidth * progressPercentage), barHeight);
-
-            spriteBatch.Draw(AssetManager.BlankTexture, bgBar, null, Color.Black, 0f, Vector2.Zero, SpriteEffects.None,
-                depth + 2 * RenderUtility.Eps);
-            spriteBatch.Draw(AssetManager.BlankTexture, fillBar, null, Color.Yellow, 0f, Vector2.Zero,
-                SpriteEffects.None, depth + 3 * RenderUtility.Eps);
+            spriteBatch.Draw(lightTex, lightPos, null, lightColor * intensity,
+                0f, lightOrigin, lightScale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(lightTex, lightPos, null, Color.White * intensity,
+                0f, lightOrigin, 2 * lightScale, SpriteEffects.None, 0f);
         }
     }
 

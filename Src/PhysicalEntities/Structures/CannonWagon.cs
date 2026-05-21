@@ -32,6 +32,23 @@ public class CannonWagon : AbstractPhysicalEntity, IPickable, IUpdatable
     private readonly float scale;
     private readonly Texture2D wagonTexture;
 
+    public override Vector2 Position
+    {
+        get => base.Position;
+        set
+        {
+            var oldPos = base.Position;
+            base.Position = value;
+            var delta = value - oldPos;
+            if (delta == Vector2.Zero) return;
+
+            topSlot.Position += delta;
+            bottomSlot.Position += delta;
+            topRack.Position += delta;
+            bottomRack.Position += delta;
+        }
+    }
+
     public CannonWagon(Vector2 centerPixels)
     {
         var config = GamelabGame.Instance.GameplayConfig;
@@ -108,7 +125,7 @@ public class CannonWagon : AbstractPhysicalEntity, IPickable, IUpdatable
         float scaleY = heightPixels / wagonTexture.Height;
         spriteBatch.Draw(wagonTexture, rightBottom, null, Color.White, 0f,
             new Vector2(wagonTexture.Width, wagonTexture.Height), new Vector2(scaleX, scaleY),
-            SpriteEffects.None, RenderUtility.FloorLayer + RenderUtility.Eps);
+            SpriteEffects.None, RenderUtility.FloorLayer + 3 * RenderUtility.Eps);
 
         Vector2 topSeatPos = topSlot.PhysicsBody.Position.ToPixels();
         Vector2 bottomSeatPos = bottomSlot.PhysicsBody.Position.ToPixels();
@@ -146,10 +163,8 @@ public class CannonWagon : AbstractPhysicalEntity, IPickable, IUpdatable
     {
         Texture2D tex = AssetManager.GetStructureTexture("CannonWagonFrontWall");
         Vector2 origin = new Vector2(tex.Width / 2f, tex.Height / 2f);
-        Color idleLight = new(255, 255, 255, 20);
-        Color highlightLight = new(255, 255, 255, 44);
-        spriteBatch.DrawWithLightBoost(tex, barrelPos + new Vector2(0, -48f), null, Color.White,
-            idleLight, highlightLight, 0f, origin, scale, SpriteEffects.None, depth, isHighlighted);
+        spriteBatch.DrawWithHighlight(tex, barrelPos + new Vector2(0, -48f), null, Color.White, 0f, origin, scale,
+            SpriteEffects.None, depth, isHighlighted);
     }
 
     public Rectangle GetBounds()

@@ -24,13 +24,18 @@ public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
     private ParticleEmitter chimneyEmitter;
     private const float ChimneyOffsetX = 650f;
     private const float ChimneyOffsetY = -500f;
-    private const float NoseDrawOffsetX = -2f;
+    private const float NoseDrawOffsetX = -5f;
     private const float NoseDrawOffsetY = 15f;
     private float heightPixels;
     private float widthPixels;
-    
+
+    private float glowTimer;
+    private const float GlowFrequency = 0.5f;
+    private const float GlowMin = 0.3f;
+    private const float GlowMax = 1.0f;
+
     private ISoundService soundService;
-    
+
     public TrainNose(Vector2 position)
     {
         maxFuel = GamelabGame.Instance.GameplayConfig.CoalOvenMaxFuel;
@@ -44,7 +49,7 @@ public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
 
         PhysicsBody = gameplayContext.PhysicsWorld.CreateRectangle(widthPixels.ToMeters(), heightPixels.ToMeters(), 1f,
             position.ToMeters());
-        smokeEmitter = ParticleFactory.CreateOvenSmoke(position + new Vector2(40, 0));
+        smokeEmitter = ParticleFactory.CreateOvenSmoke(position + new Vector2(60, 0));
         GamelabGame.Instance.Services.GetService<IVfxService>()?.AddContinuous(smokeEmitter);
 
         chimneyEmitter = ParticleFactory.CreateChimneySmoke();
@@ -59,15 +64,15 @@ public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
         TrainMap map = gameplayContext.Map;
         if (map != null)
             chimneyEmitter.Position = map.GetTileTopLeftPixels(map.Width, map.Height - 1)
-                + new Vector2(0, map.TileSize)
-                + new Vector2(ChimneyOffsetX, ChimneyOffsetY);
+                                      + new Vector2(0, map.TileSize)
+                                      + new Vector2(ChimneyOffsetX, ChimneyOffsetY);
 
         if (!gameplayContext.State.FuelBurningEnabled)
         {
+            currentFuel = maxFuel;
             gameplayContext.State.IsCoalOvenBurning = currentFuel > 0f;
-            smokeEmitter.AutoTrigger = false;
+            smokeEmitter.AutoTrigger = true;
             chimneyEmitter.AutoTrigger = false;
-            return;
         }
 
         if (currentFuel > 0)
@@ -76,6 +81,23 @@ public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
             float speedMultiplier = GetInterpolatedBurnMultiplier(gameplayContext.State.actualSpeed);
             currentFuel -= BurnRate * gameplayContext.State.MaintenanceScale * speedMultiplier * dt;
             smokeEmitter.AutoTrigger = true;
+            float fuelRatio = currentFuel / maxFuel;
+            if (fuelRatio > 0.25f)
+            {
+                // fire phase (100% -> 25%)
+                float t = (fuelRatio - 0.25f) / 0.75f + 0.25f;
+                smokeEmitter.Parameters.Color = Color.DarkOrange;
+                smokeEmitter.Parameters.MaxQuantity = (int)Math.Max(0, Math.Round(5 * t));
+                smokeEmitter.Parameters.MinQuantity = (int)Math.Max(0, smokeEmitter.Parameters.MaxQuantity - 1);
+            }
+            else
+            {
+                // smoke phase (25% -> 0%)
+                float t = fuelRatio / 0.25f;
+                smokeEmitter.Parameters.Color = new Color(50, 50, 50, 200);
+                smokeEmitter.Parameters.MaxQuantity = (int)Math.Max(0, Math.Round(3 * t));
+                smokeEmitter.Parameters.MinQuantity = (int)Math.Max(0, smokeEmitter.Parameters.MaxQuantity - 1);
+            }
 
             bool chimneyActive = gameplayContext.State.actualSpeed > 0f;
             chimneyEmitter.AutoTrigger = chimneyActive;
@@ -93,6 +115,8 @@ public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
             smokeEmitter.AutoTrigger = false;
             chimneyEmitter.AutoTrigger = false;
         }
+
+        glowTimer += dt;
     }
 
     private float GetInterpolatedBurnMultiplier(float actualSpeed)
@@ -148,38 +172,57 @@ public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
 
         float depth = RenderUtility.CalculateDepth(feetAnchor.Y);
 
-        Texture2D tex = AssetManager.GetStructureTexture("TrainNose");
-        if (tex != AssetManager.BlankTexture)
-        {
-            // Pivot at bottom-left of the texture so the back of the nose lines up with the cab seam (column Width).
-            Vector2 origin = new Vector2(0f, tex.Height);
-            spriteBatch.Draw(tex, feetAnchor + new Vector2(NoseDrawOffsetX, NoseDrawOffsetY), null, Color.White, 0f, origin, tileScale, SpriteEffects.None, depth);
-        }
-        else
-        {
-            Vector2 centerBottom = Position + new Vector2(0, heightPixels / 2f);
-            Vector2 placeholderOrigin = new Vector2(0.5f, 1f);
-            spriteBatch.Draw(AssetManager.BlankTexture, centerBottom, null, Color.DarkGray, 0f, placeholderOrigin,
-                new Vector2(widthPixels, heightPixels), SpriteEffects.None, depth);
-        }
+        float fuelFactor = Math.Min(Math.Max(0f, (currentFuel / maxFuel) * 2), 1);
+        Texture2D tex = AssetManager.GetStructureTexture("TrainNoseOff");
+        Texture2D texOn = AssetManager.GetStructureTexture("TrainNose");
+        Vector2 origin = new Vector2(0f, tex.Height);
+        spriteBatch.Draw(tex, feetAnchor + new Vector2(NoseDrawOffsetX, NoseDrawOffsetY), null, Color.White, 0f, origin,
+            tileScale, SpriteEffects.None, depth);
+        spriteBatch.Draw(texOn, feetAnchor + new Vector2(NoseDrawOffsetX, NoseDrawOffsetY), null,
+            Color.White * fuelFactor, 0f, origin, tileScale, SpriteEffects.None, depth + RenderUtility.Eps);
+    }
 
-        float barDepth = depth + RenderUtility.Eps;
-        int barMaxWidth = (int)(widthPixels * 0.8f);
-        int barHeight = 8;
-        // Keep fuel UI near the top of the car so it is not confused with wheels / tracks.
-        float barTopY = Position.Y + (heightPixels / 2f) - 60;
-        float barLeftX = (Position.X - barMaxWidth / 2f) + 60;
-        Vector2 barPos = new Vector2(barLeftX, barTopY);
+    public void DrawLightBatch(SpriteBatch spriteBatch)
+    {
+        float fuelFactor = Math.Min(Math.Max(0f, (currentFuel / maxFuel) * 2), 1);
+        spriteBatch.Draw(
+            AssetManager.GetDecorationTexture("FurnaceLight"),
+            Position - new Vector2(340, 390),
+            null,
+            Color.White * fuelFactor,
+            0f,
+            Vector2.Zero,
+            0.4f,
+            SpriteEffects.None,
+            0f
+        );
 
-        float fuelRatio = Math.Max(0f, currentFuel / maxFuel);
-        int currentBarWidth = (int)(barMaxWidth * fuelRatio);
+        spriteBatch.Draw(
+            AssetManager.GetDecorationTexture("FurnaceLight"),
+            Position,
+            null,
+            Color.White * fuelFactor,
+            0f,
+            new Vector2(1024, 1024),
+            0.7f,
+            SpriteEffects.None,
+            0f
+        );
 
-        spriteBatch.Draw(AssetManager.BlankTexture, new Rectangle((int)barPos.X, (int)barPos.Y, barMaxWidth, barHeight),
-            null, Color.Black, 0f, Vector2.Zero, SpriteEffects.None, barDepth);
+        float glow = MathHelper.Lerp(GlowMin, GlowMax,
+            (MathF.Sin(glowTimer * GlowFrequency * MathHelper.TwoPi) + 1f) / 2f);
 
-        Color barColor = currentFuel <= LowFuelThreshold ? Color.Red : Color.DarkOrange;
-        spriteBatch.Draw(AssetManager.BlankTexture,
-            new Rectangle((int)barPos.X, (int)barPos.Y, currentBarWidth, barHeight), null, barColor, 0f, Vector2.Zero,
-            SpriteEffects.None, barDepth + RenderUtility.Eps);
+        glow *= fuelFactor;
+        spriteBatch.Draw(
+            AssetManager.GetDecorationTexture("FurnaceLight"),
+            Position,
+            null,
+            Color.White * glow,
+            0f,
+            new Vector2(1024, 1024),
+            0.7f,
+            SpriteEffects.None,
+            0f
+        );
     }
 }

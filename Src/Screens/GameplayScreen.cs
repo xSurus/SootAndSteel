@@ -18,6 +18,7 @@ using Gamelab.Services.Sound;
 using Gamelab.Services.Vfx;
 using Gamelab.Tutorial;
 using Gamelab.UI;
+using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
@@ -301,7 +302,7 @@ public class GameplayScreen : GamelabGameScreen
                 gameplayContext.State.Update(fixedDt);
                 gameplayContext.PatchManager.Update(fixedDt, gameplayContext.State);
             }
-            
+
             if (isFailureTriggered) return;
             enemyManager.Update(fixedDt);
             footprintSystem.Update(fixedDt, players, _ => true);
@@ -316,13 +317,14 @@ public class GameplayScreen : GamelabGameScreen
             {
                 gameplayContext.EndPhysicsStep();
             }
+
             if (levelNotCompleted)
             {
                 UpdateAllPlayersStunnedFailure(fixedDt);
             }
 
             if (isFailureTriggered) return;
-        
+
             accumulator -= fixedDt;
         }
     }
@@ -332,18 +334,18 @@ public class GameplayScreen : GamelabGameScreen
         worldScroller.Update(dt);
         cameraDirector.Update(camera, dt, players, trainMap.GetBounds(), virtualScreenSize.X, virtualScreenSize.Y,
             allowOffWorldOverflow: true, maxZoom: Game.GameplayConfig.CameraMaxZoom);
-        
+
         if (phase != GameplayPhase.EndOfLevelOutro)
         {
-            hud.Update(currentLevelDef);
+            hud.Update(currentLevelDef, dt);
             levelWatcher.Update(enemyManager);
             director?.Update(dt, gameplayContext, enemyManager);
-        
+
             if (director != null && Game.Services.GetService<IDialogueService>() is DialogueManager dm)
                 dm.Update(gameTime, Game.playerManager.Configs);
         }
     }
-    
+
     private void HandleIntroTransition(float dt)
     {
         screenTransitionFilter.Update(dt);
@@ -356,7 +358,8 @@ public class GameplayScreen : GamelabGameScreen
     private void HandleOutroTransition(float dt)
     {
         screenTransitionFilter.Update(dt);
-        SnowstormTransition.ApplyBlizzardIntensity(snowstormEmitter, snowstormBaseline, screenTransitionFilter.EffectIntensity);
+        SnowstormTransition.ApplyBlizzardIntensity(snowstormEmitter, snowstormBaseline,
+            screenTransitionFilter.EffectIntensity);
 
         if (screenTransitionFilter.IsDone)
         {
@@ -399,11 +402,12 @@ public class GameplayScreen : GamelabGameScreen
 
     private void DrawWorld()
     {
+        Matrix view = camera.GetViewMatrix();
         spriteBatch.Begin(
             sortMode: SpriteSortMode.FrontToBack,
             blendState: BlendState.AlphaBlend,
             samplerState: SamplerState.PointClamp,
-            transformMatrix: camera.GetViewMatrix()
+            transformMatrix: view
         );
         worldScroller.Draw(spriteBatch);
         trainMap.Draw(spriteBatch);
@@ -414,7 +418,18 @@ public class GameplayScreen : GamelabGameScreen
 
         Services.GetService<IVfxService>().Render(spriteBatch);
         Services.GetService<IBulletService>().Render(spriteBatch);
-        director?.DrawWorld(spriteBatch);
+        spriteBatch.End();
+
+        spriteBatch.Begin(
+            sortMode: SpriteSortMode.Immediate,
+            blendState: RenderUtility.AdditiveBlend,
+            samplerState: SamplerState.PointClamp,
+            transformMatrix: view
+        );
+
+        trainMap.DrawLightBatch(spriteBatch);
+        gameplayContext.PatchManager.DrawLightBatch(spriteBatch, trainMap);
+        foreach (Player player in players) player.DrawLightBatch(spriteBatch);
         spriteBatch.End();
     }
 
@@ -449,6 +464,7 @@ public class GameplayScreen : GamelabGameScreen
             director.OnTrainFrozen();
             return;
         }
+
         TriggerFailure(ResolveTrainFreezeFailureReason(gameplayContext.State));
     }
 
@@ -472,6 +488,7 @@ public class GameplayScreen : GamelabGameScreen
             director.OnAllPlayersKnockedOut();
             return;
         }
+
         isFailureTriggered = true;
         SaveManager.DeleteSave();
         Game.SwitchToScreen(new FailScreen(Game, reason));
@@ -486,6 +503,7 @@ public class GameplayScreen : GamelabGameScreen
             director.OnLevelCompleted();
             return;
         }
+
         trainSound?.Stop();
         gameplayContext.State.VictoryLapActive = true;
         screenTransitionFilter.FadeIn(2f, 1.5f);

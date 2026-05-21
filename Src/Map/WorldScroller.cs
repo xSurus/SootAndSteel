@@ -19,7 +19,8 @@ public class WorldScroller
     private int ScreenWidth => gameplayContext.ScreenWidth;
     private int ScreenHeight => gameplayContext.ScreenHeight;
 
-    private int TileWidth => AssetManager.TrainTrackTexture[0].Width;
+    private const float TrackScale = 1.4f;
+    private int TileWidth => (int)(AssetManager.TrainTrackTexture[0].Width * TrackScale);
     private float centerY;
 
     private readonly record struct ScrollerTree(Vector2 TrunkBase, float Scale);
@@ -122,7 +123,7 @@ public class WorldScroller
 
         for (int i = 0; i < tilePositions.Count; i++)
         {
-            tilePositions[i] = new Vector2(tilePositions[i].X - (speed * deltaTime), centerY + 20);
+            tilePositions[i] = new Vector2(tilePositions[i].X - (speed * deltaTime), centerY - 15);
         }
 
         if (tilePositions.Count > 0 && tilePositions[0].X + TileWidth < -LeftVisibleOverflow)
@@ -173,7 +174,7 @@ public class WorldScroller
         for (int i = 0; i < tilePositions.Count; i++)
         {
             spriteBatch.Draw(AssetManager.TrainTrackTexture[tileTypes[i]], tilePositions[i], null, Color.White, 0f,
-                Vector2.Zero, 1f, SpriteEffects.None, RenderUtility.BackgroundLayer);
+                Vector2.Zero, TrackScale, SpriteEffects.None, RenderUtility.BackgroundLayer);
         }
 
         DrawTrees(spriteBatch);

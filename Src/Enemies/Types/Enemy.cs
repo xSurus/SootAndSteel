@@ -4,12 +4,12 @@ using Gamelab.Enemies.Core;
 using Gamelab.Enemies.Movement;
 using Gamelab.Enemies.Slots;
 using Gamelab.Items.Bullets;
-using Gamelab.Services.Animation;
-using Gamelab.Services.Bullet;
 using Gamelab.Particles;
 using Gamelab.PhysicalEntities.Bullets;
 using Gamelab.PhysicalEntities.Stations.Cannon;
 using Gamelab.PhysicalEntities.Structures;
+using Gamelab.Services.Animation;
+using Gamelab.Services.Bullet;
 using Gamelab.Services.Vfx;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
@@ -38,7 +38,7 @@ public class Enemy : AbstractEnemy
     private const float HorseSpriteScale = 0.45f;
     private const float HorseFramesPerSecond = 12f;
     private const int HorseRunCycleFrames = 10;
-    private const float AimDurationSeconds = 0.75f;
+    private const float AimDurationSeconds = 1f;
     private const float RecoilDurationSeconds = 0.4f;
     private const int HorseFrameHeight = 500;
 
@@ -151,6 +151,7 @@ public class Enemy : AbstractEnemy
                     _fleeDirection = 1f;
                     currentState = HorseState.Fleeing;
                 }
+
                 if (_neckBleedEmitter != null)
                     _neckBleedEmitter.Position = GetNeckPosition();
                 break;
@@ -178,11 +179,14 @@ public class Enemy : AbstractEnemy
                 break;
 
             case HorseState.Fleeing:
-                PhysicsBody.LinearVelocity = new Vector2(_fleeDirection * GamelabGame.Instance.GameplayConfig.RifleMaxSpeed * 1.1f, 0f).ToMeters();
+                PhysicsBody.LinearVelocity =
+                    new Vector2(_fleeDirection * GamelabGame.Instance.GameplayConfig.RifleMaxSpeed * 1.1f, 0f)
+                        .ToMeters();
                 if (Position.X > gameplayContext.ScreenWidth + 600f || Position.X < -Size)
                 {
                     ShouldRemove = true;
                 }
+
                 break;
         }
     }
@@ -270,11 +274,11 @@ public class Enemy : AbstractEnemy
         int simulatedFrame = (int)(animationTimer * HorseFramesPerSecond) % HorseRunCycleFrames;
         Vector2 rifleBob = new Vector2(0f, simulatedFrame / 3f);
 
-        float horseDepth = RenderUtility.CalculateDepth(Position.Y + Size / 2f);
-        float riderDepth = horseDepth + 0.0001f;
-        float armDepth = horseDepth + 0.0002f;
+        float horseHoovesDepth = RenderUtility.CalculateDepth(FeetPosition.Y);
+        float riderDepth = horseHoovesDepth + 0.0001f;
+        float armDepth = horseHoovesDepth + 0.0002f;
 
-        horseSprite.Depth = horseDepth;
+        horseSprite.Depth = horseHoovesDepth;
         spriteBatch.Draw(horseSprite, drawPosition, 0f, new Vector2(HorseSpriteScale));
 
         riderTorsoSprite.Depth = riderDepth;
@@ -286,8 +290,8 @@ public class Enemy : AbstractEnemy
             riderHeadSprite.Effect = (attackAngle > MathF.PI / 2f || attackAngle < -MathF.PI / 2f)
                 ? SpriteEffects.FlipHorizontally
                 : SpriteEffects.None;
-            Vector2 offset = (attackAngle > MathF.PI / 2f || attackAngle < -MathF.PI / 2f) 
-                ? new Vector2(6f, 0f) 
+            Vector2 offset = (attackAngle > MathF.PI / 2f || attackAngle < -MathF.PI / 2f)
+                ? new Vector2(6f, 0f)
                 : Vector2.Zero;
             spriteBatch.Draw(riderHeadSprite, drawPosition + rifleBob + offset, 0f, new Vector2(HorseSpriteScale));
         }
