@@ -1,178 +1,203 @@
 using System;
-using FontStashSharp;
-using Gamelab.Assets;
+using System.Collections.Generic;
+using Gamelab.Components.IngameHUD;
 using Gamelab.Levels;
 using Gamelab.Map.Train.State;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+using MonoGameGum;
+using MonoGameGum.GueDeriving;
+using RenderingLibrary.Graphics;
 
 namespace Gamelab.UI;
 
-public class GameplayHud
+public class GameplayHud : IDisposable
 {
     private readonly GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
-    private readonly SpriteFontBase labelFont;
-    private readonly SpriteFontBase smallFont;
-    private readonly SpriteFontBase gaugeFont;
+    private readonly IngameHudOverlay overlay;
+    private readonly DistanceTravelledDisplay distanceDisplay;
+    private readonly Speedometer speedometer;
+    private readonly List<EnemyDotMarker> enemyDots = [];
+    private bool disposed;
+    private LevelDefinition dotsLevelDef;
 
-    private float distanceRatio;
-    private float temperatureRatio;
-    private float speedRatio;
-    private string distanceText = "";
-    private string speedText = "";
-    private string tempText = "";
-
-    private LevelDefinition currentLevelDef;
-    private float distanceInLevel;
-
-    private const int SpawnMarkerSize = 6;
-    private static readonly Color SpawnMarkerUpcoming = new(230, 60, 60);
-    private static readonly Color SpawnMarkerPassed = new(120, 40, 40, 180);
-
-    private const int ArcSegments = 40;
-    private const float ArcRadius = 58f;
-    private const float ArcThickness = 8f;
-    private const float TickLength = 6f;
-    private const float ArcStartAngle = MathF.PI;
-    private const float ArcSweep = MathF.PI;
-    private const float GaugeDiameter = (ArcRadius + TickLength + 10f) * 2f;
-    private const float GaugeSpacing = 16f;
-
-    private float twitchOffset;
-    private float twitchTimer;
-    private const float TwitchFrequency = 12f;
-    private const float TwitchAmplitude = 0.02f; 
+    // Speedometer calibration from Gum-authored marks:
+    // 0 km/h -> 115.7099 deg, 600 km/h -> -119.0546 deg.
+    private const float MinDisplaySpeed = 0f;
+    private const float MaxDisplaySpeed = 600f;
+    private const float AngleAtMinDisplaySpeed = 115.7099f;
+    private const float AngleAtMaxDisplaySpeed = -119.0546f;
+    private const float NeedleSmoothing = 0.15f;
+    private const float MinimumTrackWidthPixels = 1f;
+    private const float TrainMarkerPaddingPixels = 24f;
+    private const float DefaultMovingDistanceBoxYOffset = 35f;
+    private const float EnemyDotYOffset = 9f;
+    private float smoothedSpeedRatio;
+    private bool needlePivotConfigured;
 
     public GameplayHud()
     {
-        var fs = GamelabGame.Instance.fontSystem;
-        labelFont = fs.GetFont(26);
-        smallFont = fs.GetFont(22);
-        gaugeFont = fs.GetFont(36);
+        overlay = new IngameHudOverlay();
+        overlay.AddToRoot();
+        distanceDisplay = overlay.DistanceTravelledDisplayInstance;
+        speedometer = overlay.SpeedometerInstance;
+        smoothedSpeedRatio = 0f;
+        needlePivotConfigured = false;
     }
 
     public void Update(LevelDefinition currentLevelDef, float deltaTime)
     {
+        _ = deltaTime;
+        if (disposed || distanceDisplay == null || speedometer == null || gameplayContext?.State == null)
+            return;
+
         var state = gameplayContext.State;
         var config = GamelabGame.Instance.GameplayConfig;
+        EnsureNeedlePivotConfigured();
+        float levelDistance = GetSanitizedLevelDistance(currentLevelDef);
+        float distanceInLevel = Math.Max(0f, state.DistanceTraveled);
+        float distanceRatio = Math.Clamp(distanceInLevel / levelDistance, 0f, 1f);
+        EnsureEnemyDots(currentLevelDef, levelDistance);
 
-        this.currentLevelDef = currentLevelDef;
-        distanceInLevel = Math.Max(0f, state.DistanceTraveled);
-        float levelDistance = currentLevelDef?.LevelDistance ?? 1f;
-        distanceRatio = Math.Clamp(distanceInLevel / Math.Max(levelDistance, 1f), 0f, 1f);
-        distanceText = $"{distanceInLevel:F0} / {levelDistance:F0} m";
+        distanceDisplay.DistanceVSMaxText = $"{FormatMeters(distanceInLevel)} / {FormatMeters(levelDistance)}";
+        distanceDisplay.FinalDistanceText = FormatMeters(levelDistance);
+        UpdateTrainMarkerPosition(distanceRatio);
+        UpdateEnemyDotPositions();
 
-        float maxTemp = config.TrainMaxTemperature;
-        temperatureRatio = Math.Clamp(state.Temperature / Math.Max(maxTemp, 1f), 0f, 1f);
-        tempText = $"{state.Temperature:F0}\u00b0";
-
-        float maxSpeed = config.TrainSpeedFast;
-        speedRatio = Math.Clamp(state.actualSpeed / Math.Max(maxSpeed, 1f), 0f, 1f);
-        speedText = $"{state.actualSpeed:F0}";
-
-        twitchTimer += deltaTime;
-        twitchOffset = MathF.Sin(twitchTimer * TwitchFrequency * MathHelper.TwoPi) 
-                    * TwitchAmplitude 
-                    * (0.7f + 0.3f * MathF.Sin(twitchTimer * 3.7f));
+        float maxSpeed = Math.Max(config.TrainSpeedFast, 1f);
+        float speedRatio = Math.Clamp(state.actualSpeed / maxSpeed, 0f, 1f);
+        smoothedSpeedRatio = MathHelper.Lerp(smoothedSpeedRatio, speedRatio, NeedleSmoothing);
+        float smoothedSpeed = smoothedSpeedRatio * maxSpeed;
+        speedometer.NeedleContainer.Rotation = GetNeedleContainerRotation(smoothedSpeed);
     }
 
-    public void Draw(SpriteBatch sb, Point screen)
+    private void UpdateTrainMarkerPosition(float distanceRatio)
     {
-        var blank = AssetManager.BlankTexture;
+        if (!TryGetTrackTravelRange(out float travelRange))
+            return;
 
-        float frostMultiplier = 1f - temperatureRatio;
-        if (frostMultiplier > 0.3f)
-        {
-            float firstTextureOpacity = Math.Clamp((frostMultiplier - 0.3f) * (1f / 0.7f), 0, 1);
-            sb.Draw(AssetManager.FrostScreenTexture1, new Rectangle(0, 0, screen.X, screen.Y),
-                Color.White * firstTextureOpacity);
-        }
-
-        if (frostMultiplier > 0.7)
-        {
-            float secondTextureOpacity = Math.Clamp((frostMultiplier - 0.7f) * (1f / 0.3f), 0, 1);
-            sb.Draw(AssetManager.FrostScreenTexture2, new Rectangle(0, 0, screen.X, screen.Y),
-                Color.White * secondTextureOpacity);
-        }
-
-        if (frostMultiplier > 0.9)
-        {
-            float thirdTextureOpacity = Math.Clamp((frostMultiplier - 0.9f) * (1f / 0.1f), 0, 1);
-            sb.Draw(AssetManager.FrostScreenTexture3, new Rectangle(0, 0, screen.X, screen.Y),
-                Color.White * thirdTextureOpacity);
-        }
-
-        DrawDistanceBar(sb, blank, screen.X);
-
-        float leftGaugeCenterX = 24f + ArcRadius + 10f;
-        float gaugeCenterY = screen.Y - 24f - ArcRadius - 40f;
-
-        float rightGaugeCenterX = leftGaugeCenterX + GaugeDiameter + GaugeSpacing;
-        DrawArcGauge(sb, new Vector2(rightGaugeCenterX, gaugeCenterY),
-            speedRatio);
+        distanceDisplay.MovingTrainX = distanceRatio * travelRange;
     }
 
-    private void DrawDistanceBar(SpriteBatch sb, Texture2D blank, int screenWidth)
+    private void EnsureEnemyDots(LevelDefinition currentLevelDef, float levelDistance)
     {
-        const int barHeight = 10;
-        const int barMargin = 24;
-        int barWidth = screenWidth - barMargin * 2;
-        int barX = barMargin;
-        int barY = 16;
-
-        sb.Draw(blank, new Rectangle(barX, barY, barWidth, barHeight), new Color(0, 0, 0, 140));
-
-        int fillWidth = (int)(barWidth * distanceRatio);
-        Color fillColor = Color.Lerp(new Color(140, 180, 220), new Color(220, 240, 255), distanceRatio);
-        if (fillWidth > 0)
-            sb.Draw(blank, new Rectangle(barX, barY, fillWidth, barHeight), fillColor);
-
-        sb.Draw(blank, new Rectangle(barX, barY, barWidth, 1), Color.White * 0.3f);
-        sb.Draw(blank, new Rectangle(barX, barY + barHeight - 1, barWidth, 1), Color.White * 0.3f);
-
-        DrawSpawnMarkers(sb, blank, barX, barY, barWidth, barHeight);
-
-        Vector2 textSize = smallFont.MeasureString(distanceText);
-        float textX = barX + (barWidth - textSize.X) / 2f;
-        float textY = barY + barHeight + 4;
-        sb.DrawString(smallFont, distanceText, new Vector2(textX + 1, textY + 1), Color.Black * 0.5f);
-        sb.DrawString(smallFont, distanceText, new Vector2(textX, textY), Color.White * 0.9f);
-    }
-
-    private void DrawSpawnMarkers(SpriteBatch sb, Texture2D blank, int barX, int barY, int barWidth, int barHeight)
-    {
-        if (currentLevelDef == null || currentLevelDef.SpawnEvents.Count == 0) return;
-
-        float levelDistance = Math.Max(currentLevelDef.LevelDistance, 1f);
-        int markerY = barY + (barHeight - SpawnMarkerSize) / 2;
-        int half = SpawnMarkerSize / 2;
-
-        foreach (SpawnEvent spawn in currentLevelDef.SpawnEvents)
+        if (currentLevelDef == null || distanceDisplay?.DistanceContainer == null)
         {
-            float ratio = Math.Clamp(spawn.Distance / levelDistance, 0f, 1f);
-            int centerX = barX + (int)(ratio * barWidth);
-            Color color = spawn.Distance <= distanceInLevel ? SpawnMarkerPassed : SpawnMarkerUpcoming;
+            ClearEnemyDots();
+            dotsLevelDef = null;
+            return;
+        }
 
-            sb.Draw(blank,
-                new Rectangle(centerX - half - 1, markerY - 1, SpawnMarkerSize + 2, SpawnMarkerSize + 2),
-                Color.Black * 0.6f);
-            sb.Draw(blank,
-                new Rectangle(centerX - half, markerY, SpawnMarkerSize, SpawnMarkerSize),
-                color);
+        if (ReferenceEquals(dotsLevelDef, currentLevelDef))
+            return;
+
+        ClearEnemyDots();
+        dotsLevelDef = currentLevelDef;
+        foreach (var spawn in currentLevelDef.SpawnEvents)
+        {
+            float ratio = Math.Clamp(spawn.Distance / Math.Max(levelDistance, 1f), 0f, 1f);
+            var dot = new EnemyDot();
+            distanceDisplay.DistanceContainer.Children.Add(dot.Visual);
+            dot.Visual.XOrigin = HorizontalAlignment.Center;
+            dot.Visual.YOrigin = VerticalAlignment.Center;
+            enemyDots.Add(new EnemyDotMarker(dot, ratio));
         }
     }
 
-    private void DrawArcGauge(SpriteBatch sb, Vector2 center, float ratio)
-    {   
-        float drawRatio = 2* GaugeDiameter / AssetManager.GetDecorationTexture("Gauge").Width;
-        sb.Draw(AssetManager.GetDecorationTexture("Gauge"), center - new Vector2(GaugeDiameter, GaugeDiameter), null,
-             Color.White, 0f, Vector2.Zero, drawRatio,SpriteEffects.None, 0f);
+    private void UpdateEnemyDotPositions()
+    {
+        if (enemyDots.Count == 0 || !TryGetTrackTravelRange(out float travelRange))
+            return;
 
-        Texture2D handTex = AssetManager.GetDecorationTexture("GaugeHand");
-        float handAngle = ArcStartAngle + ArcSweep * ratio + MathHelper.PiOver2 + twitchOffset;
-        Vector2 handOrigin = new Vector2(handTex.Width / 2f, handTex.Height / 2f);
-
-        sb.Draw(handTex, center, null, Color.White, handAngle,
-            handOrigin, drawRatio, SpriteEffects.None, 0f);
+        float markerY = (distanceDisplay.MovingTrain?.Y ?? 0f)
+            + (distanceDisplay.MovingDistanceBox?.Y ?? DefaultMovingDistanceBoxYOffset)
+            + EnemyDotYOffset;
+        foreach (var marker in enemyDots)
+        {
+            marker.Dot.Visual.X = marker.Ratio * travelRange;
+            marker.Dot.Visual.Y = markerY;
+            marker.Dot.Visual.Visible = true;
+        }
     }
+
+    private bool TryGetTrackTravelRange(out float travelRange)
+    {
+        travelRange = 0f;
+        var distanceContainer = distanceDisplay?.DistanceContainer;
+        if (distanceContainer == null)
+            return false;
+
+        float trackWidth = distanceContainer.GetAbsoluteWidth();
+        if (trackWidth <= 0f)
+            trackWidth = distanceContainer.Width;
+        if (trackWidth <= MinimumTrackWidthPixels)
+            return false;
+
+        travelRange = Math.Max(0f, trackWidth - (TrainMarkerPaddingPixels * 2f));
+        return true;
+    }
+
+    private void EnsureNeedlePivotConfigured()
+    {
+        if (needlePivotConfigured || speedometer?.Needle == null || speedometer?.NeedleContainer == null)
+            return;
+
+        var needle = speedometer.Needle;
+        needle.Visible = true;
+
+        // Keep the needle on top of the dial sprite.
+        var parent = needle.Parent;
+        if (parent != null)
+        {
+            parent.Children.Remove(needle);
+            parent.Children.Add(needle);
+        }
+
+        needlePivotConfigured = true;
+    }
+
+    private static float GetNeedleContainerRotation(float speed)
+    {
+        float clampedSpeed = Math.Clamp(speed, MinDisplaySpeed, MaxDisplaySpeed);
+        float t = (clampedSpeed - MinDisplaySpeed) / (MaxDisplaySpeed - MinDisplaySpeed);
+        float angle = MathHelper.Lerp(AngleAtMinDisplaySpeed, AngleAtMaxDisplaySpeed, t);
+        return NormalizeDegrees(angle);
+    }
+
+    private static float NormalizeDegrees(float degrees)
+    {
+        float normalized = degrees % 360f;
+        if (normalized < 0f)
+            normalized += 360f;
+        return normalized;
+    }
+
+    private static float GetSanitizedLevelDistance(LevelDefinition levelDefinition)
+        => Math.Max(levelDefinition?.LevelDistance ?? 1f, 1f);
+
+    private static string FormatMeters(float value)
+        => $"{value:F0} m";
+
+    public void Dispose()
+    {
+        if (disposed)
+            return;
+        disposed = true;
+        ClearEnemyDots();
+        if (overlay?.Visual != null && MonoGameGum.GumService.Default.Root.Children.Contains(overlay.Visual))
+            MonoGameGum.GumService.Default.Root.Children.Remove(overlay.Visual);
+    }
+
+    private void ClearEnemyDots()
+    {
+        foreach (var marker in enemyDots)
+        {
+            if (marker.Dot?.Visual?.Parent != null)
+                marker.Dot.Visual.Parent.Children.Remove(marker.Dot.Visual);
+            else if (marker.Dot?.Visual != null && MonoGameGum.GumService.Default.Root.Children.Contains(marker.Dot.Visual))
+                MonoGameGum.GumService.Default.Root.Children.Remove(marker.Dot.Visual);
+        }
+        enemyDots.Clear();
+    }
+
+    private readonly record struct EnemyDotMarker(EnemyDot Dot, float Ratio);
 }

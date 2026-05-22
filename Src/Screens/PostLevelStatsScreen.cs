@@ -9,7 +9,6 @@ using Gamelab.UI;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using MonoGameGum;
-using MonoGameGum.GueDeriving;
 
 namespace Gamelab.Screens;
 

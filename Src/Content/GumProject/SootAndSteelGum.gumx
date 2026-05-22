@@ -59,6 +59,10 @@
   <ComponentReference Name="CurrencyDisplay" />
   <ComponentReference Name="DialogBubble" />
   <ComponentReference Name="HubOverlay" />
+  <ComponentReference Name="IngameHUD/DistanceTravelledDisplay" />
+  <ComponentReference Name="IngameHUD/EnemyDot" />
+  <ComponentReference Name="IngameHUD/IngameHudOverlay" />
+  <ComponentReference Name="IngameHUD/Speedometer" />
   <ComponentReference Name="JoinPlayerComponent" />
   <ComponentReference Name="MainMenuButton" />
   <ComponentReference Name="MenuButtonWithIcon" />
