@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ComponentSave xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>IngameHUD/Speedometer</Name>
+  <BaseType>Container</BaseType>
+  <State>
+    <Name>Default</Name>
+    <Variable Type="float" Name="DialFace.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">100</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="DialFace.HeightUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable IsFile="true" Type="string" Name="DialFace.SourceFile" SetsValue="true">
+      <Value xsi:type="xsd:string">Gauge.png</Value>
+    </Variable>
+    <Variable Type="float" Name="DialFace.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">100</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="DialFace.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="float" Name="Height" SetsValue="true">
+      <Value xsi:type="xsd:float">300</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="HeightUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="bool" Name="Needle.FlipHorizontal" SetsValue="true">
+      <Value xsi:type="xsd:boolean">false</Value>
+    </Variable>
+    <Variable Type="bool" Name="Needle.FlipVertical" SetsValue="true">
+      <Value xsi:type="xsd:boolean">true</Value>
+    </Variable>
+    <Variable Type="float" Name="Needle.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">26</Value>
+    </Variable>
+    <Variable Type="string" Name="Needle.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">NeedleContainer</Value>
+    </Variable>
+    <Variable Type="float" Name="Needle.Rotation" SetsValue="true">
+      <Value xsi:type="xsd:float">-179.99998</Value>
+    </Variable>
+    <Variable IsFile="true" Type="string" Name="Needle.SourceFile" SetsValue="true">
+      <Value xsi:type="xsd:string">GaugeHand.png</Value>
+    </Variable>
+    <Variable Type="float" Name="Needle.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">26</Value>
+    </Variable>
+    <Variable Type="float" Name="Needle.X" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="Needle.XOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="Needle.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">6</Value>
+    </Variable>
+    <Variable Type="float" Name="Needle.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">123</Value>
+    </Variable>
+    <Variable Type="VerticalAlignment" Name="Needle.YOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="Needle.YUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">5</Value>
+    </Variable>
+    <Variable Type="float" Name="NeedleContainer.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">30</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="NeedleContainer.HeightUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="float" Name="NeedleContainer.Rotation" SetsValue="true">
+      <Value xsi:type="xsd:float">-105.70863</Value>
+    </Variable>
+    <Variable Type="float" Name="NeedleContainer.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">6.6666665</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="NeedleContainer.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="float" Name="NeedleContainer.X" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="NeedleContainer.XOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="NeedleContainer.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">6</Value>
+    </Variable>
+    <Variable Type="float" Name="NeedleContainer.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">50</Value>
+    </Variable>
+    <Variable Type="VerticalAlignment" Name="NeedleContainer.YOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">2</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="NeedleContainer.YUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">3</Value>
+    </Variable>
+    <Variable Type="State" Name="State" Category="States and Visibility" SetsValue="false">
+      <Value xsi:type="xsd:string">Default</Value>
+    </Variable>
+    <Variable Type="float" Name="Width" SetsValue="true">
+      <Value xsi:type="xsd:float">300</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+  </State>
+  <Instance Name="Needle" BaseType="Sprite" />
+  <Instance Name="DialFace" BaseType="Sprite" />
+  <Instance Name="NeedleContainer" BaseType="Container" />
+  <Behaviors />
+</ComponentSave>

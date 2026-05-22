@@ -76,11 +76,15 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
 
         CurrentHealth = Math.Min(MaxHealth, CurrentHealth + HealthRestoredPerSecond * dt);
 
-        if (CurrentHealth >= MaxHealth && isBreached)
+        if (isBreached && CurrentHealth > 0f)
         {
             isBreached = false;
-            variation = Random.Shared.Next(1, 4);
             gameplayContext.Events.FireWallRepaired();
+        }
+
+        if (CurrentHealth >= MaxHealth)
+        {
+            variation = Random.Shared.Next(1, 4);
         }
     }
 
@@ -93,7 +97,7 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
 
         if (isTop)
         {
-            if (isBreached)
+            if (IsBroken)
             {
                 textureName = $"WallTileTopBroken4_Variation{variation}";
             }
@@ -116,7 +120,7 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
         }
         else
         {
-            if (isBreached)
+            if (IsBroken)
             {
                 textureName = "WallTileBottomBroken3";
             }

@@ -190,8 +190,7 @@ public class GameplayScreen : GamelabGameScreen
         trainSound?.Dispose();
         battleTheme?.Stop();
         battleTheme?.Dispose();
-        if (hud is IDisposable disposableHud)
-            disposableHud.Dispose();
+        hud?.Dispose();
         pauseMenu?.Dispose();
 
         base.UnloadContent();
@@ -439,7 +438,6 @@ public class GameplayScreen : GamelabGameScreen
     private void DrawUi()
     {
         spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
-        hud.Draw(spriteBatch, virtualScreenSize);
         float w = screenTransitionFilter.Opacity;
         if (w > 0.001f)
         {
