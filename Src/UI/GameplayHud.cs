@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using Gamelab.Assets;
 using Gamelab.Components.IngameHUD;
 using Gamelab.Levels;
 using Gamelab.Map.Train.State;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using MonoGameGum;
 using MonoGameGum.GueDeriving;
 using RenderingLibrary.Graphics;
@@ -33,6 +35,8 @@ public class GameplayHud : IDisposable
     private const float EnemyDotYOffset = 9f;
     private float smoothedSpeedRatio;
     private bool needlePivotConfigured;
+    
+    private float temperatureRatio;
 
     public GameplayHud()
     {
@@ -68,6 +72,34 @@ public class GameplayHud : IDisposable
         smoothedSpeedRatio = MathHelper.Lerp(smoothedSpeedRatio, speedRatio, NeedleSmoothing);
         float smoothedSpeed = smoothedSpeedRatio * maxSpeed;
         speedometer.NeedleContainer.Rotation = GetNeedleContainerRotation(smoothedSpeed);
+        
+        float maxTemp = config.TrainMaxTemperature;
+        temperatureRatio = Math.Clamp(state.Temperature / Math.Max(maxTemp, 1f), 0f, 1f);
+    }
+    
+    public void Draw(SpriteBatch sb, Point screen)
+    {
+        float frostMultiplier = 1f - temperatureRatio;
+        if (frostMultiplier > 0.3f)
+        {
+            float firstTextureOpacity = Math.Clamp((frostMultiplier - 0.3f) * (1f / 0.7f), 0, 1);
+            sb.Draw(AssetManager.FrostScreenTexture1, new Rectangle(0, 0, screen.X, screen.Y),
+                Color.White * firstTextureOpacity);
+        }
+
+        if (frostMultiplier > 0.7)
+        {
+            float secondTextureOpacity = Math.Clamp((frostMultiplier - 0.7f) * (1f / 0.3f), 0, 1);
+            sb.Draw(AssetManager.FrostScreenTexture2, new Rectangle(0, 0, screen.X, screen.Y),
+                Color.White * secondTextureOpacity);
+        }
+
+        if (frostMultiplier > 0.9)
+        {
+            float thirdTextureOpacity = Math.Clamp((frostMultiplier - 0.9f) * (1f / 0.1f), 0, 1);
+            sb.Draw(AssetManager.FrostScreenTexture3, new Rectangle(0, 0, screen.X, screen.Y),
+                Color.White * thirdTextureOpacity);
+        }
     }
 
     private void UpdateTrainMarkerPosition(float distanceRatio)

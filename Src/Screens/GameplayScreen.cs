@@ -444,6 +444,8 @@ public class GameplayScreen : GamelabGameScreen
             spriteBatch.Draw(AssetManager.BlankTexture, new Rectangle(0, 0, virtualScreenSize.X, virtualScreenSize.Y),
                 Color.White * w);
         }
+        
+        hud?.Draw(spriteBatch, virtualScreenSize);
 
         spriteBatch.End();
         GumService.Default.Draw();
