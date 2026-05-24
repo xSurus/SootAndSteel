@@ -10,7 +10,7 @@ public class GameplayConfig
     public float FixedTimeStep { get; set; } = 1f / 60f;
     public float MaxAccumulatedDeltaSeconds { get; set; } = 0.25f;
     public int TrainTileSize { get; set; } = 80;
-    public int TrainWidth { get; set; } = 8;
+    public int TrainWidth { get; set; } = 10;
     public int TrainHeight { get; set; } = 6;
     public float TrainSpeedSlow { get; set; } = 150f;
     public float TrainSpeedDefault { get; set; } = 300f;

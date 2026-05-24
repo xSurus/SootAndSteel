@@ -3,7 +3,7 @@
   "fixedTimeStep": 0.016666667,
   "maxAccumulatedDeltaSeconds": 0.25,
   "trainTileSize": 80,
-  "trainWidth": 8,
+  "trainWidth": 10,
   "trainHeight": 5,
   "trainSpeedSlow": 150.0,
   "trainSpeedDefault": 300.0,

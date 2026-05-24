@@ -32,8 +32,7 @@ public class TrainMap : IDisposable
     private readonly Dictionary<Point, AbstractStation> stationGrid = new();
     private CannonWagon cannonWagon;
 
-    public float originalSize => AssetManager.TileTexture[0].Width;
-    public float scale => TileSize / originalSize;
+    public float scale => TileSize / ((float)AssetManager.TileTexture[0].Width);
 
     private int[] tileTypes;
 
@@ -175,7 +174,7 @@ public class TrainMap : IDisposable
         for (int x = 0; x < Width; x++)
         {
             // top walls
-            Vector2 topPos = GetTileCenterPixels(x, 0) - new Vector2(0, halfTile + halfTile / 2f);
+            Vector2 topPos = GetTileCenterPixels(x, 0) - new Vector2(0, halfTile + halfTile / 2f - 0.5f);
             if (Array.Exists(doors, d => !d.OnBottom && d.Column == x))
                 MapObjects.Add(new DoorWall(wallSize, topPos));
             else
@@ -218,16 +217,16 @@ public class TrainMap : IDisposable
             Position.X - cannonWagonWidth - 1.5f * TileSize,
             Position.Y + (Height * TileSize) / 2f);
         MapObjects.Add(new CoalWagon(coalWagonPos));
-        MapObjects.Add(new TrainNose(GetTileCenterPixels(8, 2)));
+        MapObjects.Add(new TrainNose(GetTileCenterPixels(Width, Height / 2)));
     }
 
     public void AddDefaultStationLoadout()
     {
-        AddStationAndSnap(new SpeedLever(GetTileCenterPixels(7, 3)));
+        AddStationAndSnap(new SpeedLever(GetTileCenterPixels(Width - 1, 3)));
         AddStationAndSnap(new ComponentResourceStation(GetTileCenterPixels(2, 0), ComponentIds.BasicCasing));
         AddStationAndSnap(new ComponentResourceStation(GetTileCenterPixels(2, 4), ComponentIds.BasicProjectile));
         AddStationAndSnap(new ComponentResourceStation(GetTileCenterPixels(3, 0), ComponentIds.BasicPropellant));
-        AddStationAndSnap(new CoalResourceStation(GetTileCenterPixels(7, 0)));
+        AddStationAndSnap(new CoalResourceStation(GetTileCenterPixels(Width - 1, 0)));
         AddStationAndSnap(new Workbench(GetTileCenterPixels(1, 0)));
         AddStationAndSnap(new Workbench(GetTileCenterPixels(1, 4)));
         AddStationAndSnap(new Counter(GetTileCenterPixels(0, 0)));
@@ -307,17 +306,17 @@ public class TrainMap : IDisposable
         {
             mapObject.DrawLightBatch(spriteBatch);
         }
-
     }
 
     public void DrawShadows(SpriteBatch spriteBatch)
     {
         spriteBatch.Draw(AssetManager.BlankTexture,
-            new Rectangle((int)Position.X - 750, (int)Position.Y + 50, 2140, 410),
+            Position + new Vector2(-750, 50),
             null,
             new Color(0, 0, 0, 70),
             0f,
             Vector2.Zero,
+            new Vector2(2140, 410),
             SpriteEffects.None,
             RenderUtility.BackgroundLayer + RenderUtility.Eps);
     }

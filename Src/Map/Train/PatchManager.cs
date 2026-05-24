@@ -27,7 +27,7 @@ public class PatchManager
     private float iceMeltTimer;
 
     private static readonly Color PatchTint = Color.White * 0.7f;
-    private const float DrawDepth = RenderUtility.FloorLayer + 2 * RenderUtility.Eps;
+    private const float DrawDepth = RenderUtility.FloorLayer + 1.5f * RenderUtility.Eps;
 
     public PatchManager(TrainMap map)
     {
@@ -175,9 +175,9 @@ public class PatchManager
     private static void DrawTile(SpriteBatch spriteBatch, TrainMap map, Point tile, Texture2D texture)
     {
         Vector2 topLeft = map.GetTileTopLeftPixels(tile.X, tile.Y);
-        Rectangle rect = new((int)topLeft.X, (int)topLeft.Y, map.TileSize, map.TileSize);
-        spriteBatch.Draw(texture, rect, null, PatchTint,
-            0f, Vector2.Zero, SpriteEffects.None, DrawDepth);
+        Vector2 scale = new Vector2(map.TileSize / (float)texture.Width, map.TileSize / (float)texture.Height);
+        spriteBatch.Draw(texture, topLeft, null, PatchTint,
+            0f, Vector2.Zero, scale, SpriteEffects.None, DrawDepth);
     }
 
     private static void DrawTile2(SpriteBatch spriteBatch, TrainMap map, Point tile, Texture2D texture)
@@ -187,20 +187,6 @@ public class PatchManager
         float tileScale = map.TileSize / 1000f;
 
         spriteBatch.Draw(texture, tileCenter, null, Color.White * 0.7f,
-            0f, origin, 1.5f *tileScale, SpriteEffects.None, DrawDepth);
-    }
-
-    public void FillIce()
-    {
-        float maxCoverage = GamelabGame.Instance.GameplayConfig.IceMaxCoverage;
-        int target = (int)(allTiles.Count * maxCoverage);
-        while (iceTiles.Count < target)
-            TrySpawnInto(iceTiles);
-    }
-
-    public void Clear()
-    {
-        snowTiles.Clear();
-        iceTiles.Clear();
+            0f, origin, 1.5f * tileScale, SpriteEffects.None, DrawDepth);
     }
 }
