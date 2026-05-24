@@ -2,412 +2,6 @@
   "UserEvents": {
     "35298781dc6efb3dbe57241319cda4e5e1ea4236e0692bc1fa26f9ddd9b359ac": [
       {
-        "NewName": "OptionsMenu (Container).TextInstance1",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T09:23:38.6362463Z"
-      },
-      {
-        "NewName": "MenuItemAdjustable",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 0,
-        "TimestampUtc": "2026-05-10T09:25:25.1367774Z"
-      },
-      {
-        "NewName": "MenuButtonWithIcon1",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 0,
-        "TimestampUtc": "2026-05-10T09:25:48.2760498Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "MenuButtonWithIcon1",
-        "ElementType": "Components",
-        "EventType": 1,
-        "TimestampUtc": "2026-05-10T09:28:10.3712741Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "OptionsMenu (Container).Text TextInstance1 in OptionsMenu (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-10T09:28:18.962346Z"
-      },
-      {
-        "NewName": "MenuButtonWithIcon (Container).Lable",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T09:28:29.6843465Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "MenuButtonWithIcon (Container).Text TextInstance in MenuButtonWithIcon (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-10T09:28:37.6796851Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "MenuButtonWithIcon (Container).Text Lable in MenuButtonWithIcon (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-10T09:28:37.6807129Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "MenuButtonWithIcon (Container).Sprite SpriteInstance in MenuButtonWithIcon (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-10T09:28:37.6870141Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "MenuButtonWithIcon (Container).Container ContainerInstance in MenuButtonWithIcon (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-10T09:28:37.6928036Z"
-      },
-      {
-        "NewName": "OptionsMenu (Container).TextInstance1",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T09:28:49.0957007Z"
-      },
-      {
-        "NewName": "MenuButtonWithIcon (Container).ButtonWithIconInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T09:29:35.6067698Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "OptionsMenu (Container).Text TextInstance in OptionsMenu (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-10T09:29:51.8128474Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "OptionsMenu (Container).Text TextInstance1 in OptionsMenu (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-10T09:30:00.3360859Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "MenuButtonWithIcon (Container).ButtonWithIcon ButtonWithIconInstance in MenuButtonWithIcon (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-10T09:30:16.8134606Z"
-      },
-      {
-        "NewName": "MenuButtonWithIcon (Container).TextInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T09:30:26.2098288Z"
-      },
-      {
-        "NewName": "MenuButtonWithIcon (Container).ContainerInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T09:30:26.2195035Z"
-      },
-      {
-        "NewName": "MenuButtonWithIcon (Container).SpriteInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T09:30:26.2241996Z"
-      },
-      {
-        "NewName": "MenuItemAdjustable (Container).ContainerInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T09:37:43.5889452Z"
-      },
-      {
-        "NewName": "MenuButtonWithIcon1",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 0,
-        "TimestampUtc": "2026-05-10T09:38:08.803161Z"
-      },
-      {
-        "NewName": "MenuItemAdjustable (Container).MenuButtonWithIconInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T09:38:23.888852Z"
-      },
-      {
-        "NewName": "MenuItemAdjustable (Container).TextInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T09:38:39.1042553Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "MenuItemAdjustable (Container).Text TextInstance in MenuItemAdjustable (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-10T09:39:10.9911452Z"
-      },
-      {
-        "NewName": "MenuItemAdjustable (Container).TextInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T09:39:15.5197448Z"
-      },
-      {
-        "NewName": "OptionsMenu (Container).MenuItemAdjustableInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T09:45:37.8894231Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "OptionsMenu (Container).MenuButtonWithIcon Master in OptionsMenu (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-10T09:45:43.5029716Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "OptionsMenu (Container).MenuButtonWithIcon Music in OptionsMenu (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-10T09:45:46.1301395Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "OptionsMenu (Container).MenuButtonWithIcon Ambience in OptionsMenu (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-10T09:45:48.0356167Z"
-      },
-      {
-        "NewName": "OptionsMenu (Container).MenuItemAdjustableInstance1",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T09:45:52.4774325Z"
-      },
-      {
-        "NewName": "OptionsMenu (Container).MenuItemAdjustableInstance2",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T09:45:54.6229845Z"
-      },
-      {
-        "NewName": "notSelected",
-        "OldName": "notSelectedf",
-        "ElementType": "Components",
-        "EventType": 3,
-        "TimestampUtc": "2026-05-10T09:48:39.2631284Z"
-      },
-      {
-        "NewName": "Slider",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 0,
-        "TimestampUtc": "2026-05-10T10:00:36.9402961Z"
-      },
-      {
-        "NewName": "Slider (Container).ColoredRectangleInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T10:00:41.2730113Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "Slider (Container).ColoredRectangle ColoredRectangleInstance in Slider (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-10T10:06:54.8109259Z"
-      },
-      {
-        "NewName": "Slider (Container).SpriteInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T10:07:02.984122Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "Slider (Container).Sprite SpriteInstance in Slider (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-10T10:12:26.8900174Z"
-      },
-      {
-        "NewName": "Slider (Container).ColoredRectangleInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T10:12:37.2422175Z"
-      },
-      {
-        "NewName": "Slider (Container).RectangleInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T10:13:42.4251424Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "Slider (Container).Rectangle RectangleInstance in Slider (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-10T10:13:49.6699944Z"
-      },
-      {
-        "NewName": "Slider (Container).ColoredRectangleInstance1",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T10:13:52.1275746Z"
-      },
-      {
-        "NewName": "MenuItemAdjustable (Container).SliderInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T10:23:33.6883018Z"
-      },
-      {
-        "NewName": "Slider (Container).RectangleInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T10:26:11.2648579Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "Slider (Container).Rectangle RectangleInstance in Slider (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-10T10:26:41.6832628Z"
-      },
-      {
-        "NewName": "Slider (Container).Rectangle",
-        "OldName": "Slider (Container).ColoredRectangleInstance",
-        "ElementType": "Components",
-        "EventType": 7,
-        "TimestampUtc": "2026-05-10T10:27:53.9022775Z"
-      },
-      {
-        "NewName": "OptionsMenu (Container).Master",
-        "OldName": "OptionsMenu (Container).MenuItemAdjustableInstance",
-        "ElementType": "Components",
-        "EventType": 7,
-        "TimestampUtc": "2026-05-10T10:30:16.4815514Z"
-      },
-      {
-        "NewName": "Se",
-        "OldName": "selected",
-        "ElementType": "Components",
-        "EventType": 4,
-        "TimestampUtc": "2026-05-10T10:30:34.2144591Z"
-      },
-      {
-        "NewName": "Selected",
-        "OldName": "Se",
-        "ElementType": "Components",
-        "EventType": 4,
-        "TimestampUtc": "2026-05-10T10:30:40.9577736Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "MenuButtonWithIcon1",
-        "ElementType": "Components",
-        "EventType": 1,
-        "TimestampUtc": "2026-05-10T10:31:29.2295607Z"
-      },
-      {
-        "NewName": "Selected",
-        "OldName": "selected",
-        "ElementType": "Components",
-        "EventType": 4,
-        "TimestampUtc": "2026-05-10T10:31:51.4121693Z"
-      },
-      {
-        "NewName": "OptionsMenu (Container).Ambient",
-        "OldName": "OptionsMenu (Container).MenuItemAdjustableInstance1",
-        "ElementType": "Components",
-        "EventType": 7,
-        "TimestampUtc": "2026-05-10T10:32:32.3048653Z"
-      },
-      {
-        "NewName": "OptionsMenu (Container).Sound Effects",
-        "OldName": "OptionsMenu (Container).MenuItemAdjustableInstance2",
-        "ElementType": "Components",
-        "EventType": 7,
-        "TimestampUtc": "2026-05-10T10:32:37.5334734Z"
-      },
-      {
-        "NewName": "OptionsOverlay",
-        "OldName": "OptionOverlay",
-        "ElementType": "Components",
-        "EventType": 2,
-        "TimestampUtc": "2026-05-10T10:36:38.0426961Z"
-      },
-      {
-        "NewName": "OptionsMenu (Container).ButtonWithIconInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T10:41:28.5539974Z"
-      },
-      {
-        "NewName": "OptionsMenu (Container).BackButton",
-        "OldName": "OptionsMenu (Container).ButtonWithIconInstance",
-        "ElementType": "Components",
-        "EventType": 7,
-        "TimestampUtc": "2026-05-10T10:43:42.8860477Z"
-      },
-      {
-        "NewName": "PauseOverlay (Container).BackButton",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T10:48:50.6579783Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "OptionsMenu (Container).ButtonWithIcon BackButton in OptionsMenu (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-10T10:56:17.1086363Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "PauseOverlay (Container).ButtonWithIcon BackButton in PauseOverlay (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-10T10:56:26.498228Z"
-      },
-      {
-        "NewName": "OptionsMenu (Container).TextInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T10:57:15.7166178Z"
-      },
-      {
         "NewName": "CharterMenu",
         "OldName": null,
         "ElementType": "Components",
@@ -3831,6 +3425,174 @@
         "ElementType": "Components",
         "EventType": 7,
         "TimestampUtc": "2026-05-23T15:15:18.6525554Z"
+      },
+      {
+        "NewName": "PauseOverlay1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 0,
+        "TimestampUtc": "2026-05-24T11:04:32.7808066Z"
+      },
+      {
+        "NewName": "ControlsOverlay",
+        "OldName": "PauseOverlay1",
+        "ElementType": "Components",
+        "EventType": 2,
+        "TimestampUtc": "2026-05-24T11:04:41.2292847Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "ControlsOverlay (Container).Text Pause in ControlsOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-24T11:05:45.7853798Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "ControlsOverlay (Container).Text TextInstance in ControlsOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-24T11:05:48.950687Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "ControlsOverlay (Container).Text ItemFunction in ControlsOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-24T11:05:51.496228Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "ControlsOverlay (Container).MenuButtonWithIcon Continue in ControlsOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-24T11:05:54.0312531Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "ControlsOverlay (Container).MenuButtonWithIcon Exit in ControlsOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-24T11:05:54.0368853Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "ControlsOverlay (Container).MenuButtonWithIcon Options in ControlsOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-24T11:05:54.0527122Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "ControlsOverlay (Container).Container MenuItemContainer in ControlsOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-24T11:05:54.0599317Z"
+      },
+      {
+        "NewName": "ControlsOverlay (Container).SpriteInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-24T11:06:31.1896282Z"
+      },
+      {
+        "NewName": "MenuButtonWithIcon1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 0,
+        "TimestampUtc": "2026-05-24T11:10:29.8434743Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "MenuButtonWithIcon1",
+        "ElementType": "Components",
+        "EventType": 1,
+        "TimestampUtc": "2026-05-24T11:10:37.4874335Z"
+      },
+      {
+        "NewName": "ControlsOverlay (Container).TextInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-24T11:10:51.8395547Z"
+      },
+      {
+        "NewName": "ControlsOverlay (Container).SpriteInstance1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-24T11:10:51.8454721Z"
+      },
+      {
+        "NewName": "ControlsOverlay (Container).ContainerInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-24T11:10:51.8730313Z"
+      },
+      {
+        "NewName": "PauseOverlay (Container).Options1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-24T11:13:45.2048058Z"
+      },
+      {
+        "NewName": "PauseOverlay (Container).Controls",
+        "OldName": "PauseOverlay (Container).Options1",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-24T11:14:34.3710946Z"
+      },
+      {
+        "NewName": "ControlsOverlay (Container).CloseButton",
+        "OldName": "ControlsOverlay (Container).ContainerInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-24T11:21:17.1832675Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "ControlsOverlay (Container).Sprite SpriteInstance1 in ControlsOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-24T11:22:12.9772386Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "ControlsOverlay (Container).Text TextInstance in ControlsOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-24T11:22:12.9829622Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "ControlsOverlay (Container).Container CloseButton in ControlsOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-24T11:22:12.9963545Z"
+      },
+      {
+        "NewName": "ControlsOverlay (Container).ContainerInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-24T11:22:16.6482269Z"
+      },
+      {
+        "NewName": "ControlsOverlay (Container).Close",
+        "OldName": "ControlsOverlay (Container).ContainerInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-24T11:22:20.4626658Z"
+      },
+      {
+        "NewName": "ControlsOverlay (Container).CloseButton",
+        "OldName": "ControlsOverlay (Container).Close",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-24T11:30:55.9957296Z"
       }
     ]
   }

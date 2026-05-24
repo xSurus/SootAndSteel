@@ -55,6 +55,7 @@
   <ScreenReference Name="JoinScreen" />
   <ScreenReference Name="MainMenuScreen" />
   <ComponentReference Name="ButtonWithIcon" />
+  <ComponentReference Name="ControlsOverlay" />
   <ComponentReference Name="CraftingHelp" />
   <ComponentReference Name="CurrencyDisplay" />
   <ComponentReference Name="DialogBubble" />

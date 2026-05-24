@@ -36,6 +36,7 @@ if(element == null) throw new System.InvalidOperationException("Could not find a
     public ColoredRectangleRuntime Vigniette { get; protected set; }
     public MenuButtonWithIcon Continue { get; protected set; }
     public MenuButtonWithIcon Options { get; protected set; }
+    public MenuButtonWithIcon Controls { get; protected set; }
     public MenuButtonWithIcon Exit { get; protected set; }
     public TextRuntime Pause { get; protected set; }
     public TextRuntime TextInstance { get; protected set; }
@@ -58,6 +59,7 @@ if(element == null) throw new System.InvalidOperationException("Could not find a
         Vigniette = this.Visual?.GetGraphicalUiElementByName("Vigniette") as global::MonoGameGum.GueDeriving.ColoredRectangleRuntime;
         Continue = global::Gum.Forms.GraphicalUiElementFormsExtensions.TryGetFrameworkElementByName<MenuButtonWithIcon>(this.Visual,"Continue");
         Options = global::Gum.Forms.GraphicalUiElementFormsExtensions.TryGetFrameworkElementByName<MenuButtonWithIcon>(this.Visual,"Options");
+        Controls = global::Gum.Forms.GraphicalUiElementFormsExtensions.TryGetFrameworkElementByName<MenuButtonWithIcon>(this.Visual,"Controls");
         Exit = global::Gum.Forms.GraphicalUiElementFormsExtensions.TryGetFrameworkElementByName<MenuButtonWithIcon>(this.Visual,"Exit");
         Pause = this.Visual?.GetGraphicalUiElementByName("Pause") as global::MonoGameGum.GueDeriving.TextRuntime;
         TextInstance = this.Visual?.GetGraphicalUiElementByName("TextInstance") as global::MonoGameGum.GueDeriving.TextRuntime;
