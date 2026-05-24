@@ -162,6 +162,7 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         if (IsCraftingHelpToggleRequested())
         {
             craftingHelpVisible = !craftingHelpVisible;
+            Game.CurrentRun.HubScreenCraftingHelpVisible = craftingHelpVisible;
             if (craftingHelp != null) craftingHelp.IsVisible = craftingHelpVisible;
         }
 
@@ -237,6 +238,7 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
     {
         SaveManager.SaveRun(Game.CurrentRun);
         gameplayContext = new GameplayContext(virtualScreenSize, Game.CurrentRun);
+        craftingHelpVisible = Game.CurrentRun.HubScreenCraftingHelpVisible;
         Services.AddService(gameplayContext);
         gameplayContext.WorldHeight = worldHeight;
         gameplayContext.State.CurrentSpeed = TrainSpeedSetting.Stopped;

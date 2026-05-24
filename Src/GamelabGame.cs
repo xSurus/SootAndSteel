@@ -131,7 +131,7 @@ public class GamelabGame : Game
         base.Initialize();
 
         //TODO: Replace with actual game name
-        Window.Title = "Gamelab Game";
+        Window.Title = "Soot & Steel";
         IsMouseVisible = true;
 
         if (IsDebug)

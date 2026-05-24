@@ -78,27 +78,6 @@
     <Variable Type="string" Name="Third Player.Parent" SetsValue="true">
       <Value xsi:type="xsd:string">PlayerFigureContainer</Value>
     </Variable>
-    <Variable Type="PositionUnitType" Name="FMOD LOGO.YUnits" SetsValue="true">
-      <Value xsi:type="xsd:int">3</Value>
-    </Variable>
-    <Variable Type="float" Name="FMOD LOGO.Y" SetsValue="true">
-      <Value xsi:type="xsd:float">90</Value>
-    </Variable>
-    <Variable Type="PositionUnitType" Name="FMOD LOGO.XUnits" SetsValue="true">
-      <Value xsi:type="xsd:int">2</Value>
-    </Variable>
-    <Variable Type="float" Name="FMOD LOGO.X" SetsValue="true">
-      <Value xsi:type="xsd:float">90</Value>
-    </Variable>
-    <Variable Type="float" Name="FMOD LOGO.Width" SetsValue="true">
-      <Value xsi:type="xsd:float">10</Value>
-    </Variable>
-    <Variable IsFile="true" Type="string" Name="FMOD LOGO.SourceFile" SetsValue="true">
-      <Value xsi:type="xsd:string">FMOD Logo White - Transparent Background.png</Value>
-    </Variable>
-    <Variable Type="float" Name="FMOD LOGO.Height" SetsValue="true">
-      <Value xsi:type="xsd:float">10</Value>
-    </Variable>
   </State>
   <Instance Name="First Player" BaseType="JoinPlayerComponent" />
   <Instance Name="Second Player" BaseType="JoinPlayerComponent" />
@@ -106,6 +85,5 @@
   <Instance Name="Fourth Player" BaseType="JoinPlayerComponent" />
   <Instance Name="PlayerFigureContainer" BaseType="Container" />
   <Instance Name="JoinScreenTitle" BaseType="Text" />
-  <Instance Name="FMOD LOGO" BaseType="Sprite" />
   <Behaviors />
 </ScreenSave>

@@ -8,6 +8,7 @@ public interface ITutorialDirector
 {
     void Initialize(TrainMap trainMap, GameplayContext ctx);
     void Update(float dt, GameplayContext ctx, EnemyManager enemies);
+    void UpdateSkipProgress(float dt, bool skipHeld);
     void OnTrainFrozen();
     void OnAllPlayersKnockedOut();
     void OnLevelCompleted();

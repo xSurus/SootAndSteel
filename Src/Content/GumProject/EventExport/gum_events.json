@@ -2,461 +2,6 @@
   "UserEvents": {
     "35298781dc6efb3dbe57241319cda4e5e1ea4236e0692bc1fa26f9ddd9b359ac": [
       {
-        "NewName": "PauseOverlay",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 0,
-        "TimestampUtc": "2026-05-07T20:09:16.6736644Z"
-      },
-      {
-        "NewName": "PauseOverlay (Container).ContinueButton",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-07T20:09:33.6043981Z"
-      },
-      {
-        "NewName": "PauseOverlay (Container).NewGameButton",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-07T20:09:33.613802Z"
-      },
-      {
-        "NewName": "PauseOverlay (Container).OptionsButton",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-07T20:09:33.61922Z"
-      },
-      {
-        "NewName": "PauseOverlay (Container).QuitButton",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-07T20:09:33.6465212Z"
-      },
-      {
-        "NewName": "PauseOverlay (Container).MenuItemContainer",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-07T20:09:33.6701584Z"
-      },
-      {
-        "NewName": "JoinPlayerComponent (Container).ButtonWithIconInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-07T20:14:42.0952259Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "JoinPlayerComponent (Container).Text Join in JoinPlayerComponent (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-07T20:14:45.4430069Z"
-      },
-      {
-        "NewName": "JoinPlayerComponent (Container).Join",
-        "OldName": "JoinPlayerComponent (Container).ButtonWithIconInstance",
-        "ElementType": "Components",
-        "EventType": 7,
-        "TimestampUtc": "2026-05-07T20:15:19.526565Z"
-      },
-      {
-        "NewName": "JoinPlayerComponent (Container).Join",
-        "OldName": "JoinPlayerComponent (Container).ButtonWithIconInstance",
-        "ElementType": "Components",
-        "EventType": 7,
-        "TimestampUtc": "2026-05-07T20:15:19.5276925Z"
-      },
-      {
-        "NewName": "JoinPlayerComponent (Container).Join",
-        "OldName": "JoinPlayerComponent (Container).ButtonWithIconInstance",
-        "ElementType": "Components",
-        "EventType": 7,
-        "TimestampUtc": "2026-05-07T20:15:19.5339076Z"
-      },
-      {
-        "NewName": "JoinPlayerComponent (Container).Join",
-        "OldName": "JoinPlayerComponent (Container).ButtonWithIconInstance",
-        "ElementType": "Components",
-        "EventType": 7,
-        "TimestampUtc": "2026-05-07T20:15:19.5396506Z"
-      },
-      {
-        "NewName": "JoinPlayerComponent (Container).Join",
-        "OldName": "JoinPlayerComponent (Container).ButtonWithIconInstance",
-        "ElementType": "Components",
-        "EventType": 7,
-        "TimestampUtc": "2026-05-07T20:15:19.5452429Z"
-      },
-      {
-        "NewName": "JoinPlayerComponent (Container).Join",
-        "OldName": "JoinPlayerComponent (Container).ButtonWithIconInstance",
-        "ElementType": "Components",
-        "EventType": 7,
-        "TimestampUtc": "2026-05-07T20:15:19.5505359Z"
-      },
-      {
-        "NewName": "JoinPlayerComponent (Container).Join",
-        "OldName": "JoinPlayerComponent (Container).ButtonWithIconInstance",
-        "ElementType": "Components",
-        "EventType": 7,
-        "TimestampUtc": "2026-05-07T20:15:19.5559746Z"
-      },
-      {
-        "NewName": "JoinPlayerComponent (Container).Join",
-        "OldName": "JoinPlayerComponent (Container).ButtonWithIconInstance",
-        "ElementType": "Components",
-        "EventType": 7,
-        "TimestampUtc": "2026-05-07T20:15:19.561516Z"
-      },
-      {
-        "NewName": "JoinPlayerComponent (Container).Join",
-        "OldName": "JoinPlayerComponent (Container).ButtonWithIconInstance",
-        "ElementType": "Components",
-        "EventType": 7,
-        "TimestampUtc": "2026-05-07T20:15:19.5669014Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "PauseOverlay (Container).MainMenuButton NewGameButton in PauseOverlay (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-07T20:25:11.6976609Z"
-      },
-      {
-        "NewName": "PauseOverlay (Container).Exit",
-        "OldName": "PauseOverlay (Container).QuitButton",
-        "ElementType": "Components",
-        "EventType": 7,
-        "TimestampUtc": "2026-05-07T20:25:19.3378896Z"
-      },
-      {
-        "NewName": "PauseOverlay (Container).TextInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-07T20:27:14.2201126Z"
-      },
-      {
-        "NewName": "PauseOverlay (Container).Paused",
-        "OldName": "PauseOverlay (Container).TextInstance",
-        "ElementType": "Components",
-        "EventType": 7,
-        "TimestampUtc": "2026-05-07T20:28:42.1162084Z"
-      },
-      {
-        "NewName": "PauseOverlay (Container).NineSliceInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-07T20:35:17.3059Z"
-      },
-      {
-        "NewName": "PauseOverlay (Container).SpriteInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-07T20:47:34.214027Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "PauseOverlay (Container).Text Paused in PauseOverlay (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-07T20:47:37.6408954Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "PauseOverlay (Container).Container MenuItemContainer in PauseOverlay (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-07T20:47:37.6498429Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "PauseOverlay (Container).Sprite SpriteInstance in PauseOverlay (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-07T20:47:37.6660722Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "PauseOverlay (Container).NineSlice NineSliceInstance in PauseOverlay (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-07T20:47:37.6704074Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "PauseOverlay (Container).MainMenuButton ContinueButton in PauseOverlay (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-07T20:47:37.7093187Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "PauseOverlay (Container).MainMenuButton OptionsButton in PauseOverlay (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-07T20:47:37.7120299Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "PauseOverlay (Container).MainMenuButton Exit in PauseOverlay (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-07T20:47:37.718382Z"
-      },
-      {
-        "NewName": "PauseOverlay (Container).NineSliceInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-07T20:47:40.9439382Z"
-      },
-      {
-        "NewName": "PauseOverlay (Container).ContinueButton",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-07T20:47:40.9485817Z"
-      },
-      {
-        "NewName": "PauseOverlay (Container).OptionsButton",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-07T20:47:40.9549649Z"
-      },
-      {
-        "NewName": "PauseOverlay (Container).Exit",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-07T20:47:40.9605064Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "PauseOverlay (Container).NineSlice NineSliceInstance in PauseOverlay (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-07T20:47:49.6476832Z"
-      },
-      {
-        "NewName": "PauseOverlay (Container).SpriteInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-07T20:47:52.4618521Z"
-      },
-      {
-        "NewName": "PauseOverlay (Container).ContinueButton1",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-07T20:48:43.6825671Z"
-      },
-      {
-        "NewName": "PauseOverlay (Container).NewGameButton",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-07T20:48:43.692462Z"
-      },
-      {
-        "NewName": "PauseOverlay (Container).OptionsButton1",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-07T20:48:43.6972433Z"
-      },
-      {
-        "NewName": "PauseOverlay (Container).QuitButton",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-07T20:48:43.7026904Z"
-      },
-      {
-        "NewName": "PauseOverlay (Container).MenuItemContainer",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-07T20:48:43.7107498Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "PauseOverlay (Container).MainMenuButton ContinueButton1 in PauseOverlay (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-07T20:49:04.4860486Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "PauseOverlay (Container).MainMenuButton NewGameButton in PauseOverlay (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-07T20:49:06.1230703Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "PauseOverlay (Container).MainMenuButton OptionsButton1 in PauseOverlay (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-07T20:49:07.8134283Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "PauseOverlay (Container).MainMenuButton QuitButton in PauseOverlay (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-07T20:49:10.5577377Z"
-      },
-      {
-        "NewName": "PauseOverlay (Container).TextInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-07T20:51:38.5968994Z"
-      },
-      {
-        "NewName": "PauseOverlay (Container).Pause",
-        "OldName": "PauseOverlay (Container).TextInstance",
-        "ElementType": "Components",
-        "EventType": 7,
-        "TimestampUtc": "2026-05-07T20:53:00.5443987Z"
-      },
-      {
-        "NewName": "PauseOverlay (Container).ItemFunction",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-07T20:56:01.8568883Z"
-      },
-      {
-        "NewName": "MenuButtonWithIcon",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 0,
-        "TimestampUtc": "2026-05-07T21:02:06.4646183Z"
-      },
-      {
-        "NewName": "MenuButtonWithIcon (Container).TextInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-07T21:02:12.4744577Z"
-      },
-      {
-        "NewName": "MenuButtonWithIcon (Container).ContainerInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-07T21:02:12.4845605Z"
-      },
-      {
-        "NewName": "MenuButtonWithIcon (Container).SpriteInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-07T21:02:12.4886608Z"
-      },
-      {
-        "NewName": "PauseOverlay (Container).MenuButtonWithIconInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-07T21:04:52.3268417Z"
-      },
-      {
-        "NewName": "PauseOverlay (Container).MenuButtonWithIconInstance1",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-07T21:05:10.3133832Z"
-      },
-      {
-        "NewName": "PauseOverlay (Container).MenuButtonWithIconInstance2",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-07T21:05:11.1741528Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "PauseOverlay (Container).MainMenuButton Exit in PauseOverlay (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-07T21:05:14.2282884Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "PauseOverlay (Container).MainMenuButton ContinueButton in PauseOverlay (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-07T21:05:16.935036Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "PauseOverlay (Container).MainMenuButton OptionsButton in PauseOverlay (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-07T21:05:19.1298986Z"
-      },
-      {
-        "NewName": "PauseOverlay (Container).Continue",
-        "OldName": "PauseOverlay (Container).MenuButtonWithIconInstance",
-        "ElementType": "Components",
-        "EventType": 7,
-        "TimestampUtc": "2026-05-07T21:05:26.7391614Z"
-      },
-      {
-        "NewName": "PauseOverlay (Container).Options",
-        "OldName": "PauseOverlay (Container).MenuButtonWithIconInstance1",
-        "ElementType": "Components",
-        "EventType": 7,
-        "TimestampUtc": "2026-05-07T21:06:59.7266815Z"
-      },
-      {
-        "NewName": "PauseOverlay (Container).Exit",
-        "OldName": "PauseOverlay (Container).MenuButtonWithIconInstance2",
-        "ElementType": "Components",
-        "EventType": 7,
-        "TimestampUtc": "2026-05-07T21:07:13.3380713Z"
-      },
-      {
-        "NewName": "PauseOverlay (Container).Background",
-        "OldName": "PauseOverlay (Container).SpriteInstance",
-        "ElementType": "Components",
-        "EventType": 7,
-        "TimestampUtc": "2026-05-07T21:13:31.8959805Z"
-      },
-      {
-        "NewName": "PauseOverlay (Container).ColoredRectangleInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-07T21:26:28.8655146Z"
-      },
-      {
-        "NewName": "PauseOverlay (Container).Vigniette",
-        "OldName": "PauseOverlay (Container).ColoredRectangleInstance",
-        "ElementType": "Components",
-        "EventType": 7,
-        "TimestampUtc": "2026-05-07T21:26:38.3082211Z"
-      },
-      {
-        "NewName": "PauseOverlay (Container).TextInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-07T21:33:13.1865829Z"
-      },
-      {
         "NewName": "OptionsMenu",
         "OldName": null,
         "ElementType": "Components",
@@ -2954,6 +2499,225 @@
         "ElementType": "Components",
         "EventType": 5,
         "TimestampUtc": "2026-05-20T21:46:57.9451432Z"
+      }
+    ],
+    "fa6598317163f260c9f3bb0959f80974868eb5ff3f6bf80a092f54e042071aa2": [
+      {
+        "NewName": null,
+        "OldName": "JoinScreen.Sprite FMOD LOGO in JoinScreen",
+        "ElementType": "Screens",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-22T20:45:03.8219523Z"
+      },
+      {
+        "NewName": "MenuButtonWithIcon1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 0,
+        "TimestampUtc": "2026-05-22T20:45:50.8199148Z"
+      },
+      {
+        "NewName": "SkipTutorial",
+        "OldName": "MenuButtonWithIcon1",
+        "ElementType": "Components",
+        "EventType": 2,
+        "TimestampUtc": "2026-05-22T20:46:06.7704114Z"
+      },
+      {
+        "NewName": "SkipTutorial (Container).CircleInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-22T20:49:35.8165415Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "SkipTutorial (Container).Circle CircleInstance in SkipTutorial (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-22T20:50:21.39295Z"
+      },
+      {
+        "NewName": "SkipTutorial (Container).CircleInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-22T20:50:28.5064692Z"
+      },
+      {
+        "NewName": "SkipTutorial (Container).PolygonInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-22T20:50:53.8363761Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "SkipTutorial (Container).Polygon PolygonInstance in SkipTutorial (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-22T20:51:03.4670654Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "SkipTutorial (Container).Circle CircleInstance in SkipTutorial (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-22T20:54:09.1872377Z"
+      },
+      {
+        "NewName": "SkipTutorial (Container).ContainerInstance1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-22T20:54:31.3393852Z"
+      },
+      {
+        "NewName": "SkipTutorial (Container).CircleAnchor",
+        "OldName": "SkipTutorial (Container).ContainerInstance1",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-22T20:54:53.2576109Z"
+      },
+      {
+        "NewName": "SkipTutorial (Container).CircleAnchor",
+        "OldName": "SkipTutorial (Container).ContainerInstance1",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-22T20:54:53.2591498Z"
+      },
+      {
+        "NewName": "SkipTutorial (Container).CircleAnchor",
+        "OldName": "SkipTutorial (Container).ContainerInstance1",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-22T20:54:53.2602411Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "SkipTutorial (Container).Container CircleAnchor in SkipTutorial (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-22T22:41:18.7669894Z"
+      },
+      {
+        "NewName": "SkipTutorial (Container).RectangleInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-22T22:43:10.0547846Z"
+      },
+      {
+        "NewName": "SkipTutorial (Container).ColoredRectangleInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-22T22:43:14.6613429Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "SkipTutorial (Container).Rectangle RectangleInstance in SkipTutorial (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-22T22:43:20.7686283Z"
+      },
+      {
+        "NewName": "SkipTutorial (Container).ColoredRectangleInstance1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-22T22:43:49.3841523Z"
+      },
+      {
+        "NewName": "SkipTutorial (Container).ProgressBarBackground",
+        "OldName": "SkipTutorial (Container).ColoredRectangleInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-22T22:44:22.5339285Z"
+      },
+      {
+        "NewName": "SkipTutorial (Container).ProgressBarBackground",
+        "OldName": "SkipTutorial (Container).ColoredRectangleInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-22T22:44:22.5353536Z"
+      },
+      {
+        "NewName": "SkipTutorial (Container).ProgressBarBackground",
+        "OldName": "SkipTutorial (Container).ColoredRectangleInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-22T22:44:22.5364972Z"
+      },
+      {
+        "NewName": "SkipTutorial (Container).ProgressBar",
+        "OldName": "SkipTutorial (Container).ColoredRectangleInstance1",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-22T22:44:27.8639903Z"
+      },
+      {
+        "NewName": "SkipTutorial (Container).ProgressBar",
+        "OldName": "SkipTutorial (Container).ColoredRectangleInstance1",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-22T22:44:27.8651927Z"
+      },
+      {
+        "NewName": "SkipTutorial (Container).ProgressBar",
+        "OldName": "SkipTutorial (Container).ColoredRectangleInstance1",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-22T22:44:27.8664356Z"
+      },
+      {
+        "NewName": "SkipTutorial (Container).ContainerInstance1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-22T22:44:46.9516983Z"
+      },
+      {
+        "NewName": "SkipTutorial (Container).ProgressBarProgress",
+        "OldName": "SkipTutorial (Container).ProgressBar",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-22T22:44:57.248272Z"
+      },
+      {
+        "NewName": "SkipTutorial (Container).ProgressBarProgress",
+        "OldName": "SkipTutorial (Container).ProgressBar",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-22T22:44:57.2494507Z"
+      },
+      {
+        "NewName": "SkipTutorial (Container).ProgressBarProgress",
+        "OldName": "SkipTutorial (Container).ProgressBar",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-22T22:44:57.2507043Z"
+      },
+      {
+        "NewName": "SkipTutorial (Container).ProgressBar",
+        "OldName": "SkipTutorial (Container).ContainerInstance1",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-22T22:45:04.4258986Z"
+      },
+      {
+        "NewName": "SkipTutorial (Container).ProgressBar",
+        "OldName": "SkipTutorial (Container).ContainerInstance1",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-22T22:45:04.427421Z"
+      },
+      {
+        "NewName": "SkipTutorial (Container).ProgressBar",
+        "OldName": "SkipTutorial (Container).ContainerInstance1",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-22T22:45:04.4289567Z"
       }
     ]
   }

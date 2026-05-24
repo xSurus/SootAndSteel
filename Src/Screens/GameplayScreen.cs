@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using FmodForFoxes.Studio;
 using Gamelab.Assets;
 using Gamelab.Dialogue;
@@ -128,8 +129,14 @@ public class GameplayScreen : GamelabGameScreen
 
         UpdateSystems(gameTime, dt);
 
-        if (director != null && director.ConsumePendingHubOutroRequest())
-            BeginTutorialHubOutro();
+        if (director != null)
+        {
+            if (phase != GameplayPhase.EndOfLevelOutro)
+                director.UpdateSkipProgress(dt, Game.playerManager.Configs.Any(c => c.Input.IsBackButtonHeld()));
+
+            if (director.ConsumePendingHubOutroRequest())
+                BeginTutorialHubOutro();
+        }
     }
 
     private void BeginTutorialHubOutro()

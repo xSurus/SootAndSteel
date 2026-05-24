@@ -13,31 +13,6 @@
     <Variable Type="State" Name="State" Category="States and Visibility" SetsValue="false">
       <Value xsi:type="xsd:string">Default</Value>
     </Variable>
-    <Variable Type="int" Name="Vigniette.Alpha" SetsValue="true">
-      <Value xsi:type="xsd:int">199</Value>
-    </Variable>
-    <Variable Type="int" Name="Vigniette.Blue" SetsValue="true">
-      <Value xsi:type="xsd:int">0</Value>
-    </Variable>
-    <Variable Type="int" Name="Vigniette.Green" SetsValue="true">
-      <Value xsi:type="xsd:int">0</Value>
-    </Variable>
-    <Variable Type="float" Name="Vigniette.Height" SetsValue="true">
-      <Value xsi:type="xsd:float">100</Value>
-    </Variable>
-    <Variable Type="DimensionUnitType" Name="Vigniette.HeightUnits" SetsValue="true">
-      <Value xsi:type="xsd:int">1</Value>
-    </Variable>
-    <Variable Type="float?" Name="Vigniette.MaxWidth" SetsValue="true" />
-    <Variable Type="int" Name="Vigniette.Red" SetsValue="true">
-      <Value xsi:type="xsd:int">0</Value>
-    </Variable>
-    <Variable Type="float" Name="Vigniette.Width" SetsValue="true">
-      <Value xsi:type="xsd:float">100</Value>
-    </Variable>
-    <Variable Type="DimensionUnitType" Name="Vigniette.WidthUnits" SetsValue="true">
-      <Value xsi:type="xsd:int">1</Value>
-    </Variable>
     <Variable Type="float" Name="Width" SetsValue="true">
       <Value xsi:type="xsd:float">100</Value>
     </Variable>
@@ -45,7 +20,6 @@
       <Value xsi:type="xsd:int">1</Value>
     </Variable>
   </State>
-  <Instance Name="Vigniette" BaseType="ColoredRectangle" />
   <Instance Name="PostStatsDisplayInstance" BaseType="PostStatsDisplay" />
   <Behaviors />
 </ComponentSave>
