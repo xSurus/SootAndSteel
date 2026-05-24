@@ -1,4 +1,5 @@
 //Code for CraftingHelp (Container)
+using Gamelab.Components;
 using Gum.Converters;
 using Gum.DataTypes;
 using Gum.Managers;

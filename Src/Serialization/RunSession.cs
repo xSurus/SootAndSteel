@@ -13,6 +13,7 @@ public class RunSession
     public int TotalEnemiesNeutralized { get; set; } = 0;
     public int TotalDistanceTravelledMeters { get; set; } = 0;
     public int TotalUpgradesBought { get; set; } = 0;
+    public bool HubScreenCraftingHelpVisible { get; set; } = true;
 
     public void AddCredits(int amount)
     {

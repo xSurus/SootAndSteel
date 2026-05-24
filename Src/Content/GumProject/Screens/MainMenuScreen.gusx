@@ -22,6 +22,34 @@
     <Variable Type="Selection" Name="ContinueButton.SelectionState" SetsValue="true">
       <Value xsi:type="xsd:string">Selected</Value>
     </Variable>
+    <Variable Type="float" Name="FMOD LOGO.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">30</Value>
+    </Variable>
+    <Variable Type="string" Name="FMOD LOGO.Parent" SetsValue="true" />
+    <Variable IsFile="true" Type="string" Name="FMOD LOGO.SourceFile" SetsValue="true">
+      <Value xsi:type="xsd:string">FMOD Logo White - Transparent Background.png</Value>
+    </Variable>
+    <Variable Type="float" Name="FMOD LOGO.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">30</Value>
+    </Variable>
+    <Variable Type="float" Name="FMOD LOGO.X" SetsValue="true">
+      <Value xsi:type="xsd:float">90</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="FMOD LOGO.XOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="FMOD LOGO.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="float" Name="FMOD LOGO.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">90</Value>
+    </Variable>
+    <Variable Type="VerticalAlignment" Name="FMOD LOGO.YOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">2</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="FMOD LOGO.YUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">3</Value>
+    </Variable>
     <Variable Type="ChildrenLayout" Name="MenuItemContainer.ChildrenLayout" SetsValue="true">
       <Value xsi:type="xsd:int">1</Value>
     </Variable>
@@ -75,28 +103,6 @@
     </Variable>
     <Variable Type="string" Name="QuitButton.Parent" SetsValue="true">
       <Value xsi:type="xsd:string">MenuItemContainer</Value>
-    </Variable>
-    <Variable Type="float" Name="FMOD LOGO.Height" SetsValue="true">
-      <Value xsi:type="xsd:float">10</Value>
-    </Variable>
-    <Variable Type="string" Name="FMOD LOGO.Parent" SetsValue="true" />
-    <Variable IsFile="true" Type="string" Name="FMOD LOGO.SourceFile" SetsValue="true">
-      <Value xsi:type="xsd:string">FMOD Logo White - Transparent Background.png</Value>
-    </Variable>
-    <Variable Type="float" Name="FMOD LOGO.Width" SetsValue="true">
-      <Value xsi:type="xsd:float">10</Value>
-    </Variable>
-    <Variable Type="float" Name="FMOD LOGO.X" SetsValue="true">
-      <Value xsi:type="xsd:float">90</Value>
-    </Variable>
-    <Variable Type="PositionUnitType" Name="FMOD LOGO.XUnits" SetsValue="true">
-      <Value xsi:type="xsd:int">2</Value>
-    </Variable>
-    <Variable Type="float" Name="FMOD LOGO.Y" SetsValue="true">
-      <Value xsi:type="xsd:float">90</Value>
-    </Variable>
-    <Variable Type="PositionUnitType" Name="FMOD LOGO.YUnits" SetsValue="true">
-      <Value xsi:type="xsd:int">3</Value>
     </Variable>
   </State>
   <Instance Name="ContinueButton" BaseType="MainMenuButton" />

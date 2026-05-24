@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Gamelab.Components;
 using Gamelab.Dialogue;
 using Gamelab.Enemies;
 using Gamelab.Map.Train;
@@ -10,6 +11,8 @@ using Gamelab.PhysicalEntities.Stations.Resources;
 using Gamelab.PhysicalEntities.Structures;
 using Gamelab.Screens;
 using Gamelab.Serialization;
+using Gamelab.Utils;
+using MonoGameGum;
 
 namespace Gamelab.Tutorial;
 
@@ -49,6 +52,9 @@ public class TutorialDirector : ITutorialDirector
 
     private const float CelebrationHoldSeconds = 8f;
     private const float SkipHoldSeconds = 1.5f;
+    private float skipProgress;
+    
+    private SkipTutorial skipTutorialComponent;
 
     public void Initialize(TrainMap map, GameplayContext context)
     {
@@ -64,6 +70,9 @@ public class TutorialDirector : ITutorialDirector
 
         pendingWallToBreach = trainMap.MapObjects.OfType<ShootHoleWall>().FirstOrDefault();
 
+        skipTutorialComponent = new SkipTutorial();
+        skipTutorialComponent.AddToRoot();
+        
         ApplyColdStart(context);
     }
 
@@ -123,6 +132,8 @@ public class TutorialDirector : ITutorialDirector
         if (showFreezeWarning && ctx.State.IsCoalOvenBurning)
             showFreezeWarning = false;
 
+        skipTutorialComponent?.SetProgress(skipProgress / SkipHoldSeconds);
+        
         SyncDialogueGuidance(ctx);
     }
 
@@ -194,6 +205,18 @@ public class TutorialDirector : ITutorialDirector
         pendingHubTransition = true;
         celebrationTimer = CelebrationHoldSeconds;
         lastGuidanceSignature = "";
+    }
+
+    public void UpdateSkipProgress(float dt, bool skipHeld)
+    {
+        skipProgress += (skipHeld ? 2.0f : -5.0f) * dt;
+
+        if (skipProgress >= SkipHoldSeconds)
+        {
+            pendingHubOutroRequest = true;
+        }
+        
+        skipProgress = Math.Clamp(skipProgress, 0f, SkipHoldSeconds);
     }
 
     private TutorialBeat GetBeat()

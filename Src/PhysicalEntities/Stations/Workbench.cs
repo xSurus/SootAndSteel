@@ -195,7 +195,7 @@ public class Workbench : AbstractStation, IInteractable, IDisposable
 
         // Check if item can be placed as upgrade
         if (!components.Any() ||
-            (components.Count() == 1 && components.Contains(bulletItem.Type)))
+            (components.Count() == 1 && PlacedItems.Count < 2 && components.Contains(bulletItem.Type)))
             return true;
 
         // Check if item can be placed for final bullet

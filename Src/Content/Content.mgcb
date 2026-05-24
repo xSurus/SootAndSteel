@@ -3058,3 +3058,8 @@
 /processor:TextureProcessor
 /build:Hub/House1.png
 
+#begin GumProject/spr_xbox_select_32.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/spr_xbox_select_32.png
+

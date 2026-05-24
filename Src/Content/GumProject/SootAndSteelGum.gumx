@@ -77,6 +77,7 @@
   <ComponentReference Name="PostStatsDisplay" />
   <ComponentReference Name="PostStatsScreenOverlay" />
   <ComponentReference Name="ShopItemType" />
+  <ComponentReference Name="SkipTutorial" />
   <ComponentReference Name="Slider" />
   <ComponentReference Name="StatsListItem" />
   <ComponentReference Name="ToolTip" />

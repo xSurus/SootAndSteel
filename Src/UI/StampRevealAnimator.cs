@@ -1,7 +1,7 @@
 using System;
+using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using MonoGameGum.GueDeriving;
-using Gamelab.Utils;
 
 namespace Gamelab.UI;
 
@@ -37,8 +37,6 @@ public sealed class StampRevealAnimator
         baseRotation = stamp.Rotation;
         stamp.Visible = false;
     }
-
-    public bool IsAnimating => active;
 
     public void Trigger()
     {
