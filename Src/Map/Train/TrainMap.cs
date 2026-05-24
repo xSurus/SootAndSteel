@@ -382,11 +382,11 @@ public class TrainMap : IDisposable
         spriteBatch.Draw(wheelTex, feetPosition, null, Color.White,
             0f, origin, scale, SpriteEffects.None, RenderUtility.BackgroundLayer + RenderUtility.FloorLayer / 2f);
 
-        feetPosition = GetTileCenterPixels(8, 5) + new Vector2(-130, 3);
+        feetPosition = GetTileCenterPixels(10, 5) + new Vector2(-130, 3);
         spriteBatch.Draw(wheelTex, feetPosition, null, Color.White,
             0f, origin, scale, SpriteEffects.None, RenderUtility.BackgroundLayer + RenderUtility.FloorLayer / 2f);
 
-        feetPosition = GetTileCenterPixels(8, 5) + new Vector2(65, 3);
+        feetPosition = GetTileCenterPixels(10, 5) + new Vector2(65, 3);
         spriteBatch.Draw(wheelTex, feetPosition, null, Color.White,
             0f, origin, scale, SpriteEffects.None, RenderUtility.BackgroundLayer + RenderUtility.FloorLayer / 2f);
 
@@ -402,12 +402,12 @@ public class TrainMap : IDisposable
         spriteBatch.Draw(wheelTex, feetPosition, null, Color.White,
             0f, origin, scale, SpriteEffects.None, RenderUtility.BackgroundLayer + RenderUtility.FloorLayer / 2f);
 
-        feetPosition = GetTileCenterPixels(8, 5) + new Vector2(380, 3);
+        feetPosition = GetTileCenterPixels(10, 5) + new Vector2(380, 3);
         spriteBatch.Draw(wheelTex, feetPosition, null, Color.White,
             0f, origin, 1.5f * scale, SpriteEffects.None,
             RenderUtility.BackgroundLayer + RenderUtility.FloorLayer / 2f);
 
-        feetPosition = GetTileCenterPixels(8, 5) + new Vector2(600, 3);
+        feetPosition = GetTileCenterPixels(10, 5) + new Vector2(600, 3);
         spriteBatch.Draw(wheelTex, feetPosition, null, Color.White,
             0f, origin, 1.2f * scale, SpriteEffects.None,
             RenderUtility.BackgroundLayer + RenderUtility.FloorLayer / 2f);
