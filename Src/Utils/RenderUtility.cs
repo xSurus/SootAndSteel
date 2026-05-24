@@ -11,8 +11,8 @@ public static class RenderUtility
     public const float BackgroundLayer = 0.01f;
     public const float FloorLayer = 0.05f;
 
+    public const float TopEntityLayer = 0.9f;
     public const float ParticlesLayer = 0.91f;
-    public const float TopEntityLayer = 0.92f;
     public const float OverlayBackLayer = 0.98f;
     public const float OverlayTopLayer = 0.99f;
     public const float HighlightEps = 0.000001f;

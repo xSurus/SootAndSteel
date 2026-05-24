@@ -87,17 +87,19 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
 
     public void OnInteractHeld(Player interactingPlayer, float dt)
     {
-        if (CurrentHealth >= MaxHealth) return;
-
         CurrentHealth = Math.Min(MaxHealth, CurrentHealth + HealthRestoredPerSecond * dt);
-
-        if (CurrentHealth >= MaxHealth && isBreached)
+        if (CurrentHealth >= MaxHealth)
         {
+            if (isBreached)
+            {
+                variation = Random.Shared.Next(1, 4);
+                gameplayContext.Events.FireWallRepaired();
+                soundService.PlayOnce(Sounds.WallFixed);
+            }
+
             isBreached = false;
             isFixing = false;
-            variation = Random.Shared.Next(1, 4);
-            gameplayContext.Events.FireWallRepaired();
-            soundService.PlayOnce(Sounds.WallFixed);
+            return;
         }
 
         smokeCooldown -= dt;

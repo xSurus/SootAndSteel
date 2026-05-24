@@ -170,16 +170,18 @@ public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
             ? map.GetTileTopLeftPixels(map.Width, map.Height - 1) + new Vector2(0, map.TileSize)
             : Position + new Vector2(0, heightPixels);
 
-        float depth = RenderUtility.CalculateDepth(feetAnchor.Y);
-
         float fuelFactor = Math.Min(Math.Max(0f, (currentFuel / maxFuel) * 2), 1);
         Texture2D tex = AssetManager.GetStructureTexture("TrainNoseOff");
         Texture2D texOn = AssetManager.GetStructureTexture("TrainNose");
+        Texture2D texTop = AssetManager.GetStructureTexture("TrainNoseTop");
         Vector2 origin = new Vector2(0f, tex.Height);
         spriteBatch.Draw(tex, feetAnchor + new Vector2(NoseDrawOffsetX, NoseDrawOffsetY), null, Color.White, 0f, origin,
-            tileScale, SpriteEffects.None, depth);
+            tileScale, SpriteEffects.None, RenderUtility.FloorLayer + RenderUtility.Eps);
         spriteBatch.Draw(texOn, feetAnchor + new Vector2(NoseDrawOffsetX, NoseDrawOffsetY), null,
-            Color.White * fuelFactor, 0f, origin, tileScale, SpriteEffects.None, depth + RenderUtility.Eps);
+            Color.White * fuelFactor, 0f, origin, tileScale, SpriteEffects.None,
+            RenderUtility.FloorLayer + 2 * RenderUtility.Eps);
+        spriteBatch.Draw(texTop, feetAnchor + new Vector2(NoseDrawOffsetX, NoseDrawOffsetY), null,
+            Color.White * fuelFactor, 0f, origin, tileScale, SpriteEffects.None, RenderUtility.TopEntityLayer);
     }
 
     public void DrawLightBatch(SpriteBatch spriteBatch)

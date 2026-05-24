@@ -59,6 +59,7 @@ public class HubMap : IDisposable
         CreateWorldBoundaryWalls();
         BuildVillageFence();
         BuildHubTreeLayout();
+        CreateHouseBoundaries();
     }
 
     public void RestockHubDragOffers(Random hubRandom, int offerCount)
@@ -97,6 +98,48 @@ public class HubMap : IDisposable
             new Vector2(-boundaryThickness / 2f, worldHeight / 2f));
         AddWorldWallSegment(boundaryThicknessMeters, worldHeight.ToMeters(),
             new Vector2(worldWidth + boundaryThickness / 2f, worldHeight / 2f));
+    }
+
+    private void CreateHouseBoundaries()
+    {
+        Texture2D house1Tex = AssetManager.GetHubDecorationTexture("House1");
+        Texture2D house2Tex = AssetManager.GetHubDecorationTexture("House2");
+        float houseScale = 0.3f;
+
+        Vector2 house1Pos = new Vector2(worldWidth / 4f, 150);
+        float house1WidthPixels = house1Tex.Width * houseScale;
+        float house1HeightPixels = house1Tex.Height * houseScale;
+        Vector2 house1CenterMeters = house1Pos.ToMeters();
+        float house1WidthMeters = house1WidthPixels.ToMeters();
+        float house1HeightMeters = (house1HeightPixels - 120).ToMeters();
+
+        Body house1Body = gameplayContext.PhysicsWorld.CreateRectangle(
+            house1WidthMeters,
+            house1HeightMeters,
+            1f,
+            house1CenterMeters,
+            0f,
+            BodyType.Static
+        );
+        worldBoundaryBodies.Add(house1Body);
+
+
+        Vector2 house2Pos = new Vector2(worldWidth / 4f * 3f, 150);
+        float house2WidthPixels = house2Tex.Width * houseScale;
+        float house2HeightPixels = house2Tex.Height * houseScale;
+        Vector2 house2CenterMeters = house2Pos.ToMeters();
+        float house2WidthMeters = house2WidthPixels.ToMeters();
+        float house2HeightMeters = (house2HeightPixels - 120).ToMeters();
+
+        Body house2Body = gameplayContext.PhysicsWorld.CreateRectangle(
+            house2WidthMeters,
+            house2HeightMeters,
+            1f,
+            house2CenterMeters,
+            0f,
+            BodyType.Static
+        );
+        worldBoundaryBodies.Add(house2Body);
     }
 
     private void AddWorldWallSegment(float widthMeters, float heightMeters, Vector2 centerPixels)
@@ -171,15 +214,10 @@ public class HubMap : IDisposable
     public void Draw(SpriteBatch spriteBatch)
     {
         DrawSnowBackdrop(spriteBatch);
-
-        float scale = worldWidth * 1.0f / AssetManager.HubTexture.Width;
-        spriteBatch.Draw(AssetManager.HubTexture, Vector2.Zero, null, Color.White, 0f, Vector2.Zero, scale,
-            SpriteEffects.None, RenderUtility.BackgroundLayer);
-
         DrawHubTrees(spriteBatch);
         DrawFence(spriteBatch);
-        DrawVillageSign(spriteBatch);
         DrawRails(spriteBatch);
+        DrawHouses(spriteBatch);
         DrawNpcs(spriteBatch);
     }
 
@@ -200,18 +238,6 @@ public class HubMap : IDisposable
         {
             stake.Draw(spriteBatch);
         }
-    }
-
-    private void DrawVillageSign(SpriteBatch spriteBatch)
-    {
-        Texture2D sign = AssetManager.GetHubDecorationTexture("Village_Enter");
-        Vector2 feet = new Vector2(worldWidth / 2f, villageRect.Bottom);
-        float scale = SignVisualWidth / sign.Width;
-        Vector2 origin = new Vector2(sign.Width / 2f, sign.Height);
-        float depth = RenderUtility.CalculateDepth(feet.Y);
-
-        spriteBatch.Draw(sign, feet, null, Color.White, 0f, origin, scale,
-            SpriteEffects.None, depth);
     }
 
     private void DrawHubTrees(SpriteBatch spriteBatch)
@@ -249,6 +275,41 @@ public class HubMap : IDisposable
                 effects: SpriteEffects.None,
                 layerDepth: RenderUtility.BackgroundLayer);
         }
+    }
+
+    private void DrawHouses(SpriteBatch spriteBatch)
+    {
+        Texture2D house1Tex = AssetManager.GetHubDecorationTexture("House1");
+        Texture2D house2Tex = AssetManager.GetHubDecorationTexture("House2");
+        Vector2 house1Pos = new Vector2(worldWidth / 4f, 150);
+        Vector2 house2Pos = new Vector2(worldWidth / 4f * 3f, 150);
+
+        float houseScale = 0.3f;
+        Vector2 origin = new Vector2(house1Tex.Width / 2f, house1Tex.Height / 2f);
+
+        spriteBatch.Draw(
+            texture: house1Tex,
+            position: house1Pos,
+            sourceRectangle: null,
+            color: Color.White,
+            rotation: 0f,
+            origin: origin,
+            scale: houseScale,
+            effects: SpriteEffects.None,
+            layerDepth: RenderUtility.FloorLayer
+        );
+
+        spriteBatch.Draw(
+            texture: house2Tex,
+            position: house2Pos,
+            sourceRectangle: null,
+            color: Color.White,
+            rotation: 0f,
+            origin: origin,
+            scale: houseScale,
+            effects: SpriteEffects.None,
+            layerDepth: RenderUtility.FloorLayer
+        );
     }
 
     private void DrawNpcs(SpriteBatch spriteBatch)
