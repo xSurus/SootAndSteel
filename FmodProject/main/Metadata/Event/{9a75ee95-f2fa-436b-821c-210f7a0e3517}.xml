@@ -57,7 +57,7 @@
 			<destination>{eafdaba0-dd61-4101-add2-3a4619d55900}</destination>
 		</relationship>
 		<relationship name="output">
-			<destination>{081c0caa-350e-4b7a-a8d2-447b27d60170}</destination>
+			<destination>{43e3053c-eb2e-4229-b6cf-78c0b69b09c0}</destination>
 		</relationship>
 	</object>
 	<object class="EventAutomatableProperties" id="{96b7488f-ac04-43a7-895c-38162996179c}" />
@@ -364,6 +364,9 @@
 		</property>
 		<property name="attackTime">
 			<value>0</value>
+		</property>
+		<property name="releaseTime">
+			<value>3000</value>
 		</property>
 		<property name="finalValue">
 			<value>-80</value>

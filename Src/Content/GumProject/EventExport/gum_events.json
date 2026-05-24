@@ -2,237 +2,6 @@
   "UserEvents": {
     "35298781dc6efb3dbe57241319cda4e5e1ea4236e0692bc1fa26f9ddd9b359ac": [
       {
-        "NewName": "OptionsMenu",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 0,
-        "TimestampUtc": "2026-05-09T12:03:46.679408Z"
-      },
-      {
-        "NewName": "OptionsMenu (Container).Vigniette",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-09T12:03:54.1591773Z"
-      },
-      {
-        "NewName": "OptionsMenu (Container).Continue",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-09T12:03:56.7202498Z"
-      },
-      {
-        "NewName": "OptionsMenu (Container).Options",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-09T12:03:56.7295243Z"
-      },
-      {
-        "NewName": "OptionsMenu (Container).Exit",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-09T12:03:56.7343935Z"
-      },
-      {
-        "NewName": "OptionsMenu (Container).Pause",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-09T12:03:56.7396615Z"
-      },
-      {
-        "NewName": "OptionsMenu (Container).TextInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-09T12:03:56.744855Z"
-      },
-      {
-        "NewName": "OptionsMenu (Container).ItemFunction",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-09T12:03:56.7598898Z"
-      },
-      {
-        "NewName": "OptionsMenu (Container).MenuItemContainer",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-09T12:03:56.7655722Z"
-      },
-      {
-        "NewName": "OptionsMenu (Container).Background",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-09T12:03:56.7716829Z"
-      },
-      {
-        "NewName": "OptionOverlay",
-        "OldName": "OptionsMenu",
-        "ElementType": "Components",
-        "EventType": 2,
-        "TimestampUtc": "2026-05-09T12:05:55.8280444Z"
-      },
-      {
-        "NewName": "OptionsMenu",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 0,
-        "TimestampUtc": "2026-05-09T12:06:07.7450607Z"
-      },
-      {
-        "NewName": "OptionsMenu (Container).Continue",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-09T12:06:13.5338901Z"
-      },
-      {
-        "NewName": "OptionsMenu (Container).Options",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-09T12:06:13.5437601Z"
-      },
-      {
-        "NewName": "OptionsMenu (Container).Exit",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-09T12:06:13.5489479Z"
-      },
-      {
-        "NewName": "OptionsMenu (Container).Pause",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-09T12:06:13.5547114Z"
-      },
-      {
-        "NewName": "OptionsMenu (Container).TextInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-09T12:06:13.5717956Z"
-      },
-      {
-        "NewName": "OptionsMenu (Container).ItemFunction",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-09T12:06:13.57689Z"
-      },
-      {
-        "NewName": "OptionsMenu (Container).MenuItemContainer",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-09T12:06:13.583288Z"
-      },
-      {
-        "NewName": "OptionsMenu (Container).Background",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-09T12:06:13.5889238Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "OptionOverlay (Container).MenuButtonWithIcon Continue in OptionOverlay (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-09T12:06:37.0660978Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "OptionOverlay (Container).MenuButtonWithIcon Options in OptionOverlay (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-09T12:06:37.0790074Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "OptionOverlay (Container).MenuButtonWithIcon Exit in OptionOverlay (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-09T12:06:37.0887967Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "OptionOverlay (Container).Text Pause in OptionOverlay (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-09T12:06:37.0989415Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "OptionOverlay (Container).Text TextInstance in OptionOverlay (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-09T12:06:37.1097859Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "OptionOverlay (Container).Text ItemFunction in OptionOverlay (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-09T12:06:37.1186312Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "OptionOverlay (Container).Container MenuItemContainer in OptionOverlay (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-09T12:06:37.1272744Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "OptionOverlay (Container).Sprite Background in OptionOverlay (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-09T12:06:37.1323051Z"
-      },
-      {
-        "NewName": "OptionOverlay (Container).OptionsMenuInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-09T12:06:42.5105127Z"
-      },
-      {
-        "NewName": "OptionsMenu (Container).master",
-        "OldName": "OptionsMenu (Container).Continue",
-        "ElementType": "Components",
-        "EventType": 7,
-        "TimestampUtc": "2026-05-09T12:08:22.0788163Z"
-      },
-      {
-        "NewName": "OptionsMenu (Container).Master",
-        "OldName": "OptionsMenu (Container).master",
-        "ElementType": "Components",
-        "EventType": 7,
-        "TimestampUtc": "2026-05-09T12:08:25.1368573Z"
-      },
-      {
-        "NewName": "OptionsMenu (Container).Music",
-        "OldName": "OptionsMenu (Container).Options",
-        "ElementType": "Components",
-        "EventType": 7,
-        "TimestampUtc": "2026-05-09T12:08:36.3780861Z"
-      },
-      {
-        "NewName": "OptionsMenu (Container).Ambience",
-        "OldName": "OptionsMenu (Container).Exit",
-        "ElementType": "Components",
-        "EventType": 7,
-        "TimestampUtc": "2026-05-09T12:08:46.3177203Z"
-      },
-      {
         "NewName": "OptionsMenu (Container).TextInstance1",
         "OldName": null,
         "ElementType": "Components",
@@ -2718,6 +2487,1350 @@
         "ElementType": "Components",
         "EventType": 7,
         "TimestampUtc": "2026-05-22T22:45:04.4289567Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).ContainerInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:20:40.8831615Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).Title",
+        "OldName": "PostDeathOverlay (Container).ContainerInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-23T14:20:45.9586564Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).ContainerInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:21:42.384947Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).MainBox",
+        "OldName": "PostDeathOverlay (Container).ContainerInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-23T14:21:56.1672274Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).ContainerInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:22:27.0258477Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).Stats",
+        "OldName": "PostDeathOverlay (Container).ContainerInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-23T14:22:35.1643373Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).ContainerInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:31:29.7272976Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).Paper",
+        "OldName": "PostDeathOverlay (Container).ContainerInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-23T14:31:36.0050493Z"
+      },
+      {
+        "NewName": "tmp",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 0,
+        "TimestampUtc": "2026-05-23T14:37:19.0184257Z"
+      },
+      {
+        "NewName": "tmp (Container).hole2",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:24.7968023Z"
+      },
+      {
+        "NewName": "tmp (Container).ButtonWithIconInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:24.860677Z"
+      },
+      {
+        "NewName": "tmp (Container).hole1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:24.8995852Z"
+      },
+      {
+        "NewName": "tmp (Container).FileClosedStamp",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:24.9471586Z"
+      },
+      {
+        "NewName": "tmp (Container).SeperatorBottom",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:24.9953814Z"
+      },
+      {
+        "NewName": "tmp (Container).CauseOfFailureDescription",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:25.0376232Z"
+      },
+      {
+        "NewName": "tmp (Container).CauseOfFailureTitle",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:25.0863013Z"
+      },
+      {
+        "NewName": "tmp (Container).SeperatorTop",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:25.131884Z"
+      },
+      {
+        "NewName": "tmp (Container).MainBox",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:25.179964Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).Rectangle SeperatorTitle in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:37:34.5588583Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).PostDeathStatItem DistanceTravelledStat in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:37:34.5720478Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).Text DistanceTravelled in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:37:34.5817217Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).PostDeathStatItem EnemiesDefeatedStat in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:37:34.593944Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).Text EnemiesDefeated in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:37:34.6052537Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).PostDeathStatItem StagesDefeatedStat in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:37:34.6122712Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).Text StagesDefeated in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:37:34.6257947Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).PostDeathStatItem UpgradesBoughtStat in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:37:34.634736Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).Text Upgrades Bought in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:37:34.6412291Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).Container Stats in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:37:34.6506403Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).MainBox",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:37.3346554Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).SeperatorTop",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:37.3464217Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).CauseOfFailureTitle",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:37.3612165Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).CauseOfFailureDescription",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:37.3732069Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).SeperatorBottom",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:37.3832772Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).FileClosedStamp",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:37.3914168Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).hole1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:37.4032489Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).ButtonWithIconInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:37.413394Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).hole2",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:37.4249695Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).EnemiesDefeated",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:37.4359949Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).DistanceTravelled",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:37.4439691Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).StagesDefeated",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:37.4555942Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).Upgrades Bought",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:37.4652446Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).SeperatorTitle",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:37.4755398Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).EnemiesDefeatedStat",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:37.485255Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).DistanceTravelledStat",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:37.4953308Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).StagesDefeatedStat",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:37.5051211Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).UpgradesBoughtStat",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:37.5145709Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).Stats",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:37.527295Z"
+      },
+      {
+        "NewName": "tmp (Container).MainBox",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:45.9267243Z"
+      },
+      {
+        "NewName": "tmp (Container).SeperatorTop",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:45.9348142Z"
+      },
+      {
+        "NewName": "tmp (Container).CauseOfFailureTitle",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:45.9437782Z"
+      },
+      {
+        "NewName": "tmp (Container).CauseOfFailureDescription",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:45.9525253Z"
+      },
+      {
+        "NewName": "tmp (Container).SeperatorBottom",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:45.9712141Z"
+      },
+      {
+        "NewName": "tmp (Container).FileClosedStamp",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:45.9785443Z"
+      },
+      {
+        "NewName": "tmp (Container).hole1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:45.9849818Z"
+      },
+      {
+        "NewName": "tmp (Container).ButtonWithIconInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:45.992397Z"
+      },
+      {
+        "NewName": "tmp (Container).hole2",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:45.999607Z"
+      },
+      {
+        "NewName": "tmp (Container).EnemiesDefeated",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:46.0091658Z"
+      },
+      {
+        "NewName": "tmp (Container).DistanceTravelled",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:46.0171868Z"
+      },
+      {
+        "NewName": "tmp (Container).StagesDefeated",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:46.0253249Z"
+      },
+      {
+        "NewName": "tmp (Container).Upgrades Bought",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:46.0341801Z"
+      },
+      {
+        "NewName": "tmp (Container).SeperatorTitle",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:46.0412328Z"
+      },
+      {
+        "NewName": "tmp (Container).EnemiesDefeatedStat",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:46.0501896Z"
+      },
+      {
+        "NewName": "tmp (Container).DistanceTravelledStat",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:46.0595297Z"
+      },
+      {
+        "NewName": "tmp (Container).StagesDefeatedStat",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:46.0676106Z"
+      },
+      {
+        "NewName": "tmp (Container).UpgradesBoughtStat",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:46.0775444Z"
+      },
+      {
+        "NewName": "tmp (Container).Stats",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:37:46.0905003Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).Rectangle SeperatorTitle in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:37:51.9305841Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).PostDeathStatItem DistanceTravelledStat in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:37:51.945244Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).Text DistanceTravelled in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:37:51.9595924Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).PostDeathStatItem EnemiesDefeatedStat in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:37:51.9716774Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).Text EnemiesDefeated in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:37:51.9853226Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).PostDeathStatItem StagesDefeatedStat in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:37:51.9948626Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).Text StagesDefeated in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:37:52.0059269Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).PostDeathStatItem UpgradesBoughtStat in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:37:52.0140898Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).Text Upgrades Bought in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:37:52.025402Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).Container Stats in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:37:52.0352354Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).ContainerInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:41:22.0540411Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).Content",
+        "OldName": "PostDeathOverlay (Container).ContainerInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-23T14:41:28.7901357Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).FileClosedStamp",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:44:46.5656451Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "tmp (Container).Container MainBox in tmp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:45:09.0345813Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "tmp (Container).Text EnemiesDefeated in tmp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:45:09.0713141Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "tmp (Container).Text DistanceTravelled in tmp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:45:09.089511Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "tmp (Container).Text StagesDefeated in tmp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:45:09.0965737Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "tmp (Container).Text Upgrades Bought in tmp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:45:09.1081041Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "tmp (Container).Rectangle SeperatorTitle in tmp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:45:09.1125583Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "tmp (Container).Container Stats in tmp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:45:09.117482Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "tmp (Container).PostDeathStatItem EnemiesDefeatedStat in tmp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:45:09.1246311Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "tmp (Container).PostDeathStatItem DistanceTravelledStat in tmp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:45:09.1293784Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "tmp (Container).PostDeathStatItem StagesDefeatedStat in tmp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:45:09.1343467Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "tmp (Container).PostDeathStatItem UpgradesBoughtStat in tmp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:45:09.1415182Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).MainBox",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:45:14.1914755Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).EnemiesDefeated",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:45:14.2001296Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).DistanceTravelled",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:45:14.2119005Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).StagesDefeated",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:45:14.2187379Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).Upgrades Bought",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:45:14.228865Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).SeperatorTitle",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:45:14.2380983Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).Stats",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:45:14.2457495Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).EnemiesDefeatedStat",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:45:14.3167473Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).DistanceTravelledStat",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:45:14.3434444Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).StagesDefeatedStat",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:45:14.3523178Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).UpgradesBoughtStat",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:45:14.3618737Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).ContainerInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:47:51.0137774Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).EnemiesDefeatedLine",
+        "OldName": "PostDeathOverlay (Container).ContainerInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-23T14:48:00.264122Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).Text DistanceTravelled in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:50:25.0535256Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).Text StagesDefeated in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:50:25.0755581Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).Text Upgrades Bought in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:50:25.0812819Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).PostDeathStatItem DistanceTravelledStat in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:50:25.0889367Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).PostDeathStatItem StagesDefeatedStat in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:50:25.0956639Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).PostDeathStatItem UpgradesBoughtStat in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:50:25.1005718Z"
+      },
+      {
+        "NewName": "tmp (Container).DistanceTravelled",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:50:26.7532015Z"
+      },
+      {
+        "NewName": "tmp (Container).StagesDefeated",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:50:26.7648738Z"
+      },
+      {
+        "NewName": "tmp (Container).Upgrades Bought",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:50:26.7781824Z"
+      },
+      {
+        "NewName": "tmp (Container).DistanceTravelledStat",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:50:26.7846776Z"
+      },
+      {
+        "NewName": "tmp (Container).StagesDefeatedStat",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:50:26.7968163Z"
+      },
+      {
+        "NewName": "tmp (Container).UpgradesBoughtStat",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:50:26.8035457Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).EnemiesDefeated1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:51:58.0270336Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).EnemiesDefeatedStat1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:51:58.0454671Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).EnemiesDefeatedLine1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:51:58.0549424Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).EnemiesDefeated2",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:51:59.7380264Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).EnemiesDefeatedStat2",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:51:59.7594963Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).EnemiesDefeatedLine2",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:51:59.7715672Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).EnemiesDefeated3",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:52:00.939681Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).EnemiesDefeatedStat3",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:52:00.9578274Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).EnemiesDefeatedLine3",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:52:00.9724779Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).ContainerInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:53:40.9172635Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).Column1",
+        "OldName": "PostDeathOverlay (Container).ContainerInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-23T14:53:45.7179383Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).Column2",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:53:47.6045873Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).Container Column2 in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:53:48.7237122Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).Column2",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:54:03.6661573Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).Text EnemiesDefeated1 in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:54:23.6776814Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).PostDeathStatItem EnemiesDefeatedStat1 in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:54:23.6875332Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).Container EnemiesDefeatedLine1 in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:54:23.7017314Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).Text EnemiesDefeated2 in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:54:26.9139183Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).PostDeathStatItem EnemiesDefeatedStat2 in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:54:26.9312573Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).Container EnemiesDefeatedLine2 in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:54:26.9434192Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).Text EnemiesDefeated3 in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:54:29.7398509Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).PostDeathStatItem EnemiesDefeatedStat3 in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:54:29.7503943Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).Container EnemiesDefeatedLine3 in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:54:29.761792Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).EnemiesDefeatedLine1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:54:54.1777529Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).EnemiesDefeated1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:54:54.1865137Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).EnemiesDefeatedStat1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:54:54.1945031Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).DistanceTravelledLine",
+        "OldName": "PostDeathOverlay (Container).EnemiesDefeatedLine1",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-23T14:55:25.994596Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).DistanceTravelled",
+        "OldName": "PostDeathOverlay (Container).EnemiesDefeated1",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-23T14:55:31.2543374Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).DistanceTravelledStat",
+        "OldName": "PostDeathOverlay (Container).EnemiesDefeatedStat1",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-23T14:55:46.7205359Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).DistanceTravelledLine1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:55:53.1578028Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).DistanceTravelled1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:55:53.1757331Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).DistanceTravelledStat1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:55:53.1885713Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).StagesDefeatedLine",
+        "OldName": "PostDeathOverlay (Container).DistanceTravelledLine1",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-23T14:57:47.4691884Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).StagesDefeated",
+        "OldName": "PostDeathOverlay (Container).DistanceTravelled1",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-23T14:57:51.3906593Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).StagesDefeatedStat",
+        "OldName": "PostDeathOverlay (Container).DistanceTravelledStat1",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-23T14:58:08.2539154Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).StagesDefeated1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:58:10.890084Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).StagesDefeatedStat1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:58:10.9134363Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).StagesDefeatedLine1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:58:10.9250957Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).UpgradesBoughtLine",
+        "OldName": "PostDeathOverlay (Container).StagesDefeatedLine1",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-23T14:58:17.4789508Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).UpgradesBought",
+        "OldName": "PostDeathOverlay (Container).StagesDefeated1",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-23T14:58:23.2356356Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).UpgradesBoughtStat",
+        "OldName": "PostDeathOverlay (Container).StagesDefeatedStat1",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-23T14:58:40.3554923Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "tmp (Container).PostDeathStatItem DistanceTravelledStat in tmp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:58:52.1268779Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "tmp (Container).PostDeathStatItem StagesDefeatedStat in tmp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:58:52.1562483Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "tmp (Container).PostDeathStatItem UpgradesBoughtStat in tmp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:58:52.1704461Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "tmp (Container).Sprite hole1 in tmp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:58:55.5568988Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "tmp (Container).Sprite hole2 in tmp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:58:55.5822345Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).hole1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:58:59.8495047Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).hole2",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:58:59.8689437Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).Sprite hole2 in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:59:52.7438836Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).hole2",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T14:59:56.1116318Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).Sprite hole2 in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T14:59:59.2399345Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).hole2",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T15:00:00.4297611Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).Sprite hole1 in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T15:00:02.8320103Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).hole1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T15:00:03.9570775Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "tmp (Container).Text SeperatorTop in tmp (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T15:00:25.4853412Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).SeperatorTop",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T15:00:27.9900255Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).ContainerInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T15:01:23.2580481Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).SeparatorTitle",
+        "OldName": "PostDeathOverlay (Container).ContainerInstance",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-23T15:01:59.3280019Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).SeparatorTitleLine",
+        "OldName": "PostDeathOverlay (Container).SeperatorTitle",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-23T15:02:08.240727Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).SeparatorTop",
+        "OldName": "PostDeathOverlay (Container).SeperatorTop",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-23T15:02:11.972302Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).CauseOfFailureTitle",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T15:03:02.5883255Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).CauseOfFailureDescription",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T15:03:02.6001144Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).ButtonWithIconInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T15:05:54.9453715Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).ButtonWithIcon ButtonWithIconInstance in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T15:07:14.5471184Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).ButtonWithIconInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T15:07:17.9046453Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).ButtonWithIcon ButtonWithIconInstance in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T15:07:24.163648Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).ButtonWithIconInstance",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T15:07:26.0564094Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).FileClosedStamp1",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T15:08:00.3800172Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "PostDeathOverlay (Container).Sprite FileClosedStamp1 in PostDeathOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-23T15:08:06.5256411Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).SeperatorBottom",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-23T15:08:10.6220825Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "tmp",
+        "ElementType": "Components",
+        "EventType": 1,
+        "TimestampUtc": "2026-05-23T15:12:42.7257908Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).UpgradesBoughtStatText",
+        "OldName": "PostDeathOverlay (Container).UpgradesBoughtStat",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-23T15:14:01.5074448Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).StagesDefeatedStatText",
+        "OldName": "PostDeathOverlay (Container).StagesDefeatedStat",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-23T15:14:03.7976966Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).DistanceTravelledStatText",
+        "OldName": "PostDeathOverlay (Container).DistanceTravelledStat",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-23T15:14:06.127604Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).EnemiesDefeatedStatText",
+        "OldName": "PostDeathOverlay (Container).EnemiesDefeatedStat",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-23T15:14:10.17202Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).SeparatorBottom",
+        "OldName": "PostDeathOverlay (Container).SeperatorBottom",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-23T15:15:00.8073225Z"
+      },
+      {
+        "NewName": "PostDeathOverlay (Container).Vignette",
+        "OldName": "PostDeathOverlay (Container).Vigniette",
+        "ElementType": "Components",
+        "EventType": 7,
+        "TimestampUtc": "2026-05-23T15:15:18.6525554Z"
       }
     ]
   }

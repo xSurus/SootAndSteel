@@ -85,7 +85,7 @@ public class ShootingRangeScreen(GamelabGame game) : GamelabGameScreen(game)
 
         foreach (var enemy in enemyInstances)
         {
-            if (enemy.ShouldRemove) enemy.RemovePhysicsBody();
+            if (enemy.ShouldRemove) enemy.Dispose();
         }
         enemyInstances = enemyInstances.FindAll(enemy => !enemy.ShouldRemove);
     }
@@ -179,7 +179,7 @@ public class ShootingRangeScreen(GamelabGame game) : GamelabGameScreen(game)
     {
         foreach (var enemy in enemyInstances)
         {
-            enemy.RemovePhysicsBody();
+            enemy.Dispose();
         }
         enemyInstances.Clear();
         

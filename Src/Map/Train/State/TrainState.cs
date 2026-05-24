@@ -1,9 +1,11 @@
 using System;
+using FmodForFoxes.Studio;
 using Gamelab.Serialization;
+using Gamelab.Services.Sound;
 
 namespace Gamelab.Map.Train.State;
 
-public class TrainState
+public class TrainState : IDisposable
 {
     public event Action<TrainSpeedSetting> OnSpeedChanged;
     public event Action OnTrainFrozen;
@@ -26,6 +28,7 @@ public class TrainState
     }
 
     public float Temperature { get; set; } = GamelabGame.Instance.GameplayConfig.TrainMaxTemperature;
+    private readonly float maxTemperature = GamelabGame.Instance.GameplayConfig.TrainMaxTemperature;
     public bool IsCoalOvenBurning { get; set; } = true;
     public bool FuelBurningEnabled { get; set; } = true;
     public bool VictoryLapActive { get; set; }
@@ -33,11 +36,19 @@ public class TrainState
     public float DistanceTraveled { get; private set; }
     public float MaintenanceScale { get; private set; } = 1f;
     public float TemperatureDecreaseScale { get; set; } = 1f;
+    
+    private ISoundService SoundService => GamelabGame.Instance.Services.GetService<ISoundService>();
+    private readonly ParameterBinding fmodTemperature;
+    public readonly EventInstance freezeSound;
 
     public TrainState(RunSession session)
     {
         actualSpeed = currentSpeed.TargetSpeed;
-        Temperature = GamelabGame.Instance.GameplayConfig.TrainMaxTemperature;
+        fmodTemperature = SoundService?.RegisterGlobalParameter("Temperature", () => Temperature / maxTemperature);
+        SoundService?.LoadSound(Sounds.Freeze);
+        freezeSound = SoundService?.GetSoundInstance(Sounds.Freeze);
+        SoundService?.RegisterParameter(freezeSound, "Temperature", () => Temperature / maxTemperature);
+        freezeSound?.Start();
     }
 
     public void Update(float deltaTime)
@@ -114,4 +125,11 @@ public class TrainState
         );
     }
 
+
+    public void Dispose()
+    {
+        fmodTemperature?.Deactivate();
+        freezeSound?.Stop();
+        freezeSound?.Dispose();
+    }
 }

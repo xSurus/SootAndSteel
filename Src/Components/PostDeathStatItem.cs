@@ -15,5 +15,10 @@ namespace Gamelab.Components
         {
         
         }
+
+        public void SetValue(string text)
+        {
+            StatText = text;
+        }
     }
 }

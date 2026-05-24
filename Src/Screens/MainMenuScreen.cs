@@ -53,6 +53,7 @@ public sealed class MainMenuScreen(GamelabGame game) : GamelabGameScreen(game)
         menuUi.AddToRoot();
 
         soundService = Services.GetService<ISoundService>();
+        soundService.ResetGlobalParameters();
         soundService.LoadSound(Sounds.MenuSelect);
         soundService.LoadSound(Sounds.BattleTheme);
         battleTheme = soundService.GetSoundInstance(Sounds.BattleTheme);

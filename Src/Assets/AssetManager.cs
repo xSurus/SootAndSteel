@@ -251,7 +251,7 @@ public static class AssetManager
                 builder.IsLooping(false);
                 for (int f = 1; f <= fallFramesPerPlayer; f++)
                 {
-                    builder.AddFrame($"Player{p}_Fall{f}", frameDuration);
+                    builder.AddFrame($"Player{p}_Fall{f}", frameDuration / 3.0f);
                 }
             });
         }

@@ -1,3 +1,4 @@
+using System;
 using Gamelab.Enemies.Movement;
 using Gamelab.Enemies.Slots;
 using Gamelab.Particles;
@@ -16,7 +17,7 @@ using nkast.Aether.Physics2D.Dynamics;
 
 namespace Gamelab.Enemies.Core;
 
-public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable, IBulletEmitter
+public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable, IBulletEmitter, IDisposable
 {
     public EnemyTrainSlot Slot { get; }
     public float Health { get; protected set; }
@@ -88,7 +89,7 @@ public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable, IBull
     {
     }
 
-    public void RemovePhysicsBody()
+    private void RemovePhysicsBody()
     {
         if (PhysicsBody == null)
         {
@@ -109,5 +110,10 @@ public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable, IBull
     protected bool IsOffScreenLeft()
     {
         return Position.X < -Size;
+    }
+
+    public virtual void Dispose()
+    {
+        RemovePhysicsBody();
     }
 }

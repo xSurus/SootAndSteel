@@ -56,7 +56,7 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
     private WorldUiManager worldUiManager;
     private ParticleEmitter hubSnowEmitter;
     private SnowstormTransition.Baseline hubSnowBaseline;
-    private WhiteFilterTransition screenTransitionFilter;
+    private FilterTransition screenTransitionFilter;
     private PauseMenuController pauseMenu;
     private CraftingHelp craftingHelp;
     private bool craftingHelpVisible = true;
@@ -130,6 +130,7 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         departDecisionInputBlockTimer = 0f;
 
         var soundService = Services.GetService<ISoundService>();
+        soundService.ResetGlobalParameters();
         soundService.LoadSound(Sounds.AmbientSong);
         soundService.LoadSound(Sounds.SpeedChange);
         ambientSong = soundService.GetSoundInstance(Sounds.AmbientSong);
@@ -137,7 +138,7 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         leverSound = soundService.GetSoundInstance(Sounds.SpeedChange);
         soundService.RegisterParameter(leverSound, "New Speed Setting", () => readyPlayers.Count - 1);
 
-        screenTransitionFilter = new WhiteFilterTransition();
+        screenTransitionFilter = new FilterTransition();
         screenTransitionFilter.SnapTo(1f);
         screenTransitionFilter.FadeOut(1f);
     }
@@ -373,7 +374,7 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         if (departHoldTimer >= Game.GameplayConfig.DepartHoldSeconds)
         {
             Game.CurrentRun.TrainLayout = prepTrainMap.CaptureLayout();
-            screenTransitionFilter ??= new WhiteFilterTransition();
+            screenTransitionFilter ??= new FilterTransition();
             screenTransitionFilter.FadeIn(2f, 1.5f);
             worldUiManager.ClearAll();
             departureHintOverlay?.Hide();
@@ -440,6 +441,7 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         departDecisionInputBlockTimer = 0f;
         pauseMenu?.Dispose();
         GumService.Default.Root.Children.Clear();
+        gameplayContext?.Dispose();
         Game.Services.RemoveService(typeof(GameplayContext));
         Services.GetService<IVfxService>().ClearAll();
         hubMap?.Dispose();
