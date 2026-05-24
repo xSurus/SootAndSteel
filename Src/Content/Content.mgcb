@@ -3589,3 +3589,8 @@
 /processor:TextureProcessor
 /build:Structures/TrainNoseTop.png
 
+#begin Enemies/EnemyAtlas-texture.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Enemies/EnemyAtlas-texture.png
+

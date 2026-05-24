@@ -200,6 +200,7 @@ public static class AssetManager
         EnemySpriteSheet.DefineAnimation("RifleWide", b => b.AddFrame("RifleWide", poseDuration));
         EnemySpriteSheet.DefineAnimation("RifleSemi", b => b.AddFrame("RifleSemi", poseDuration));
         EnemySpriteSheet.DefineAnimation("RifleMiddle", b => b.AddFrame("RifleMiddle", poseDuration));
+        EnemySpriteSheet.DefineAnimation("RifleBottom", b => b.AddFrame("RifleBottom", poseDuration));
     }
 
     public static void LoadPlayerAnimations(ContentManager content)
