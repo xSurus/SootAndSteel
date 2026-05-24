@@ -4,12 +4,18 @@
   <BaseType>Container</BaseType>
   <State>
     <Name>Default</Name>
+    <Variable Type="float" Name="Background.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">125.999985</Value>
+    </Variable>
     <Variable Type="string" Name="Background.Parent" SetsValue="true" />
     <Variable Type="float" Name="Background.Rotation" SetsValue="true">
       <Value xsi:type="xsd:float">1</Value>
     </Variable>
     <Variable IsFile="true" Type="string" Name="Background.SourceFile" SetsValue="true">
       <Value xsi:type="xsd:string">spr_pause_paper_burnt_380x280.png</Value>
+    </Variable>
+    <Variable Type="float" Name="Background.X" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
     </Variable>
     <Variable Type="HorizontalAlignment" Name="Background.XOrigin" SetsValue="true">
       <Value xsi:type="xsd:int">1</Value>
@@ -62,6 +68,40 @@
     <Variable Type="PositionUnitType" Name="Continue.XUnits" SetsValue="true">
       <Value xsi:type="xsd:int">6</Value>
     </Variable>
+    <Variable Type="float" Name="Controls.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="Controls.HeightUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="string" Name="Controls.MenuButtonLable" SetsValue="true">
+      <Value xsi:type="xsd:string">Options</Value>
+    </Variable>
+    <Variable Type="string" Name="Controls.Parent" SetsValue="true">
+      <Value xsi:type="xsd:string">MenuItemContainer</Value>
+    </Variable>
+    <Variable Type="Selected" Name="Controls.SelectedState" SetsValue="true">
+      <Value xsi:type="xsd:string">notSelected</Value>
+    </Variable>
+    <Variable Type="string" Name="Controls.TextInstanceText" SetsValue="true">
+      <Value xsi:type="xsd:string">Controls</Value>
+    </Variable>
+    <Variable Type="float" Name="Controls.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="Controls.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">4</Value>
+    </Variable>
+    <Variable Type="float" Name="Controls.X" SetsValue="true">
+      <Value xsi:type="xsd:float">6</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="Controls.XOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="Controls.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">6</Value>
+    </Variable>
+    <Variable Type="float" Name="Controls.Y" SetsValue="true" />
     <Variable Type="float" Name="Exit.Height" SetsValue="true">
       <Value xsi:type="xsd:float">0</Value>
     </Variable>
@@ -87,7 +127,7 @@
       <Value xsi:type="xsd:int">4</Value>
     </Variable>
     <Variable Type="float" Name="Exit.X" SetsValue="true">
-      <Value xsi:type="xsd:float">10</Value>
+      <Value xsi:type="xsd:float">0</Value>
     </Variable>
     <Variable Type="HorizontalAlignment" Name="Exit.XOrigin" SetsValue="true">
       <Value xsi:type="xsd:int">1</Value>
@@ -95,6 +135,7 @@
     <Variable Type="PositionUnitType" Name="Exit.XUnits" SetsValue="true">
       <Value xsi:type="xsd:int">6</Value>
     </Variable>
+    <Variable Type="float" Name="Exit.Y" SetsValue="true" />
     <Variable Type="float" Name="Height" SetsValue="true">
       <Value xsi:type="xsd:float">100</Value>
     </Variable>
@@ -177,7 +218,7 @@
       <Value xsi:type="xsd:int">4</Value>
     </Variable>
     <Variable Type="float" Name="MenuItemContainer.X" SetsValue="true">
-      <Value xsi:type="xsd:float">47.59024</Value>
+      <Value xsi:type="xsd:float">48.524075</Value>
     </Variable>
     <Variable Type="HorizontalAlignment" Name="MenuItemContainer.XOrigin" SetsValue="true">
       <Value xsi:type="xsd:int">1</Value>
@@ -186,7 +227,7 @@
       <Value xsi:type="xsd:int">2</Value>
     </Variable>
     <Variable Type="float" Name="MenuItemContainer.Y" SetsValue="true">
-      <Value xsi:type="xsd:float">71.020386</Value>
+      <Value xsi:type="xsd:float">65.36814</Value>
     </Variable>
     <Variable Type="VerticalAlignment" Name="MenuItemContainer.YOrigin" SetsValue="true">
       <Value xsi:type="xsd:int">1</Value>
@@ -346,6 +387,7 @@
   <Instance Name="Vigniette" BaseType="ColoredRectangle" />
   <Instance Name="Continue" BaseType="MenuButtonWithIcon" />
   <Instance Name="Options" BaseType="MenuButtonWithIcon" />
+  <Instance Name="Controls" BaseType="MenuButtonWithIcon" />
   <Instance Name="Exit" BaseType="MenuButtonWithIcon" />
   <Instance Name="Pause" BaseType="Text" />
   <Instance Name="TextInstance" BaseType="Text" />

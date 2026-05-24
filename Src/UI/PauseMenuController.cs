@@ -17,6 +17,7 @@ public class PauseMenuController
 
     public bool IsPaused { get; private set; }
     public OptionsPanel OptionsPanel { get; }
+    public ControlsOverlay ControlsPanel { get; }
 
     public event Action OnExitRequested;
 
@@ -25,9 +26,10 @@ public class PauseMenuController
         overlay = new PauseOverlay();
         overlay.AddToRoot();
         overlay.Visual.Visible = false;
-        selectableButtons = [overlay.Continue, overlay.Options, overlay.Exit];
+        selectableButtons = [overlay.Continue, overlay.Options, overlay.Controls, overlay.Exit];
         OptionsPanel = new OptionsPanel(GamelabGame.Instance);
         OptionsPanel.OnClosed += () => overlay.Visual.Visible = IsPaused;
+        ControlsPanel = new ControlsOverlay();
         UpdateSelectionVisuals();
     }
 
@@ -46,6 +48,12 @@ public class PauseMenuController
         {
             OptionsPanel.Close();
         }
+
+        if (!IsPaused && ControlsPanel.IsOpen)
+        {
+            ControlsPanel.ClosePanel();
+        }
+
         UpdateSelectionVisuals();
     }
 
@@ -58,6 +66,14 @@ public class PauseMenuController
             overlay.Visual.Visible = false;
             OptionsPanel.Update(playerConfigs);
             if (!OptionsPanel.IsOpen) overlay.Visual.Visible = IsPaused;
+            return;
+        }
+
+        if (ControlsPanel.IsOpen)
+        {
+            overlay.Visual.Visible = false;
+            ControlsPanel.Update(playerConfigs);
+            if (!ControlsPanel.IsOpen) overlay.Visual.Visible = IsPaused;
             return;
         }
 
@@ -99,6 +115,10 @@ public class PauseMenuController
                 overlay.Visual.Visible = false;
                 break;
             case 2:
+                ControlsPanel.OpenPanel();
+                overlay.Visual.Visible = false;
+                break;
+            case 3:
                 OnExitRequested?.Invoke();
                 break;
         }

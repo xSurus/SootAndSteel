@@ -58,7 +58,7 @@ public sealed class OptionsPanel : IDisposable
         {
             var input = player.Input;
 
-            if (input.IsPauseJustPressed())
+            if (input.IsPauseJustPressed() || input.IsPickupJustPressed())
             {
                 viewModel.Close();
                 return;
