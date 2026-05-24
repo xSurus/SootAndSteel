@@ -1,5 +1,7 @@
 using System;
 using Gamelab.Items.Bullets;
+using Gamelab.PhysicalEntities.Stations.Cannon;
+using Gamelab.PhysicalEntities.Structures;
 using Gamelab.Services.Bullet;
 using Gamelab.Services.Sound;
 
@@ -29,7 +31,7 @@ public class RapidFireCasing : AbstractComponent
     {
         if (!IsRootEffect)
         {
-            if (playSoundOnSpawn) soundService.PlayOnce(Sounds.CannonFire);
+            if (playSoundOnSpawn) soundService.PlayOnce((bulletEntity.InitialShooter is CannonStation or CannonSlot) ? Sounds.CannonFire : Sounds.EnemyFire);
             return;
         }
 

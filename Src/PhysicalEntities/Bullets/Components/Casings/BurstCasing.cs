@@ -1,4 +1,6 @@
 using Gamelab.Items.Bullets;
+using Gamelab.PhysicalEntities.Stations.Cannon;
+using Gamelab.PhysicalEntities.Structures;
 using Gamelab.Services.Bullet;
 using Gamelab.Services.Sound;
 
@@ -27,7 +29,7 @@ public class BurstCasing : AbstractComponent
     {
         if (!IsRootEffect)
         {
-            if(playSoundOnSpawn) soundService.PlayOnce(Sounds.CannonFire);
+            if(playSoundOnSpawn) soundService.PlayOnce((bulletEntity.InitialShooter is CannonStation or CannonSlot) ? Sounds.CannonFire : Sounds.EnemyFire);
             return;
         }
         for (int i = 0; i < 3; i++)
