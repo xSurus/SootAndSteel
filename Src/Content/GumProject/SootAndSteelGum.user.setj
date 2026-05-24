@@ -2,15 +2,11 @@
   "TreeViewState": {
     "ExpandedNodes": [
       "Screens",
-      "Screens/JoinScreen",
-      "Screens/MainMenuScreen",
-      "Screens/MainMenuScreen/MenuItemContainer",
       "Components",
-      "Components/IngameHUD",
-      "Components/IngameHUD/DistanceTravelledDisplay",
-      "Components/IngameHUD/Speedometer",
-      "Components/IngameHUD/Speedometer/NeedleContainer",
-      "Components/ButtonWithIcon",
+      "Components/HubOverlay",
+      "Components/SkipTutorial",
+      "Components/SkipTutorial/ContainerInstance",
+      "Components/SkipTutorial/ContainerInstance/ProgressBar",
       "Standard"
     ]
   }

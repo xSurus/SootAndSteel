@@ -79,6 +79,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable, IItemP
         PhysicsBody.FixedRotation = true;
         PhysicsBody.Tag = this;
 
+        soundService.LoadSound(Sounds.Fall);
         soundService.LoadSound(Sounds.Walk);
         walkSound = soundService.GetSoundInstance(Sounds.Walk);
         soundService.RegisterParameter(walkSound, "Walk Speed",
@@ -246,6 +247,8 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable, IItemP
         seat?.OnRelease(this);
 
         HeldItem = null;
+        
+        soundService.PlayOnce(Sounds.Fall);
     }
 
     public void SeatAt(ICannonSeat seat)

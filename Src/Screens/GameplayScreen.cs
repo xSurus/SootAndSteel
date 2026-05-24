@@ -44,7 +44,8 @@ public class GameplayScreen : GamelabGameScreen
     {
         Intro,
         Running,
-        EndOfLevelOutro
+        EndOfLevelOutro,
+        FailureOutro
     }
 
     private GameplayContext gameplayContext;
@@ -68,11 +69,12 @@ public class GameplayScreen : GamelabGameScreen
     private FootprintSystem footprintSystem;
 
     private GameplayPhase phase = GameplayPhase.Intro;
-    private readonly WhiteFilterTransition screenTransitionFilter = new();
+    private readonly FilterTransition screenTransitionFilter = new();
     private bool endOutroToHub;
     private ParticleEmitter snowstormEmitter;
     private SnowstormTransition.Baseline snowstormBaseline;
-    private bool isFailureTriggered;
+    private FailureReason? failureReason;
+    private bool IsFailureTriggered => failureReason != null;
     private bool levelStatsCommitted;
     private float allPlayersStunnedTimer;
     private float accumulator;
@@ -118,6 +120,10 @@ public class GameplayScreen : GamelabGameScreen
         {
             HandleOutroTransition(dt);
         }
+        else if (phase == GameplayPhase.FailureOutro)
+        {
+            HandleFailureTransition(dt);
+        }
 
         if (phase != GameplayPhase.EndOfLevelOutro)
         {
@@ -125,7 +131,7 @@ public class GameplayScreen : GamelabGameScreen
         }
 
         UpdatePhysics(dt);
-        if (isFailureTriggered) return;
+        if (IsFailureTriggered) return;
 
         UpdateSystems(gameTime, dt);
 
@@ -137,6 +143,25 @@ public class GameplayScreen : GamelabGameScreen
             if (director.ConsumePendingHubOutroRequest())
                 BeginTutorialHubOutro();
         }
+    }
+
+    private void BeginFailureOutro()
+    {
+        if (phase == GameplayPhase.FailureOutro) return;
+        
+        trainSound?.Stop();
+        battleTheme?.Stop();
+        gameplayContext?.State.freezeSound?.Stop();
+        soundService?.PlayOnce(Sounds.GameOver);
+
+        foreach (var player in players)
+        {
+            if (player.IsStunned) continue;
+            player.TakeDamage(0f); // Stun all players
+        }
+        
+        screenTransitionFilter.FadeIn(4f, 0f, Color.Black);
+        phase = GameplayPhase.FailureOutro;
     }
 
     private void BeginTutorialHubOutro()
@@ -171,6 +196,7 @@ public class GameplayScreen : GamelabGameScreen
         if (levelWatcher != null)
             levelWatcher.OnLevelCompleted -= OnLevelCompleted;
 
+        gameplayContext?.Dispose();
         Game.Services.RemoveService(typeof(GameplayContext));
         if (director != null)
         {
@@ -199,6 +225,8 @@ public class GameplayScreen : GamelabGameScreen
         battleTheme?.Dispose();
         hud?.Dispose();
         pauseMenu?.Dispose();
+        
+        enemyManager?.Dispose();
 
         base.UnloadContent();
     }
@@ -259,6 +287,7 @@ public class GameplayScreen : GamelabGameScreen
     {
         soundService = Services.GetService<ISoundService>();
         soundService.LoadSound(Sounds.MenuSelect);
+        soundService.LoadSound(Sounds.GameOver);
 
         trainSound = soundService.GetSoundInstance(Sounds.Train);
         battleTheme = soundService.GetSoundInstance(Sounds.BattleTheme);
@@ -311,8 +340,13 @@ public class GameplayScreen : GamelabGameScreen
                 gameplayContext.State.Update(fixedDt);
                 gameplayContext.PatchManager.Update(fixedDt, gameplayContext.State);
             }
+            
+            if (IsFailureTriggered)
+            {
+                BeginFailureOutro();
+                return;
+            }
 
-            if (isFailureTriggered) return;
             enemyManager.Update(fixedDt);
             footprintSystem.Update(fixedDt, players, _ => true);
             footprintSystem.UpdateHorses(fixedDt, enemyManager.ActiveEnemies);
@@ -331,8 +365,6 @@ public class GameplayScreen : GamelabGameScreen
             {
                 UpdateAllPlayersStunnedFailure(fixedDt);
             }
-
-            if (isFailureTriggered) return;
 
             accumulator -= fixedDt;
         }
@@ -383,6 +415,19 @@ public class GameplayScreen : GamelabGameScreen
         }
     }
 
+    private void HandleFailureTransition(float dt)
+    {
+        screenTransitionFilter.Update(dt);
+        SnowstormTransition.ApplyBlizzardIntensity(snowstormEmitter, snowstormBaseline,
+            screenTransitionFilter.EffectIntensity);
+
+        if (screenTransitionFilter.IsDone)
+        {
+            float referenceTime = currentLevelDef.LevelDistance / Game.GameplayConfig.TrainSpeedDefault;
+            TriggerFailure();
+        }
+    }
+
     private void UpdateAllPlayersStunnedFailure(float dt)
     {
         if (players.Count == 0) return;
@@ -401,7 +446,7 @@ public class GameplayScreen : GamelabGameScreen
         {
             allPlayersStunnedTimer += dt;
             if (allPlayersStunnedTimer >= Game.GameplayConfig.AllPlayersStunnedFailDelaySeconds)
-                TriggerFailure(FailureReason.AllPlayersKnockedOut);
+                failureReason = FailureReason.AllPlayersKnockedOut;
         }
         else
         {
@@ -445,17 +490,22 @@ public class GameplayScreen : GamelabGameScreen
     private void DrawUi()
     {
         spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
+        hud?.Draw(spriteBatch, virtualScreenSize);
+        spriteBatch.End();
+        
+        GumService.Default.Draw();
+        
         float w = screenTransitionFilter.Opacity;
         if (w > 0.001f)
         {
-            spriteBatch.Draw(AssetManager.BlankTexture, new Rectangle(0, 0, virtualScreenSize.X, virtualScreenSize.Y),
-                Color.White * w);
+            spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
+            spriteBatch.Draw(
+                AssetManager.BlankTexture, 
+                new Rectangle(0, 0, virtualScreenSize.X, virtualScreenSize.Y),
+                screenTransitionFilter.FilterColor * w
+            );
+            spriteBatch.End();
         }
-        
-        hud?.Draw(spriteBatch, virtualScreenSize);
-
-        spriteBatch.End();
-        GumService.Default.Draw();
     }
 
     private void OnWallBreached()
@@ -475,7 +525,7 @@ public class GameplayScreen : GamelabGameScreen
             return;
         }
 
-        TriggerFailure(ResolveTrainFreezeFailureReason(gameplayContext.State));
+        failureReason = ResolveTrainFreezeFailureReason(gameplayContext.State);
     }
 
 
@@ -489,21 +539,19 @@ public class GameplayScreen : GamelabGameScreen
         return FailureReason.TrainFrozenOther;
     }
 
-    private void TriggerFailure(FailureReason reason)
+    private void TriggerFailure()
     {
-        if (isFailureTriggered) return;
-        if (director != null && reason == FailureReason.AllPlayersKnockedOut)
+        if (failureReason == null) return;
+        if (director != null && failureReason == FailureReason.AllPlayersKnockedOut)
         {
-            isFailureTriggered = true;
             director.OnAllPlayersKnockedOut();
             return;
         }
-
-        isFailureTriggered = true;
+        
         CommitLevelStatsToRunSession();
         var snapshot = CreatePostDeathStatsSnapshot();
         SaveManager.DeleteSave();
-        Game.SwitchToScreen(new FailScreen(Game, reason, snapshot));
+        Game.SwitchToScreen(new FailScreen(Game, (FailureReason)failureReason, snapshot));
     }
 
     private void OnLevelCompleted()
@@ -534,11 +582,11 @@ public class GameplayScreen : GamelabGameScreen
 
     private PostDeathStatsSnapshot CreatePostDeathStatsSnapshot()
     {
-        int stagesDefeated = Math.Max(0, Game.CurrentRun.CurrentLevel - 1);
+        int stagesDefeated = Math.Max(0, Game.CurrentRun?.CurrentLevel - 1 ?? 0);
         return new PostDeathStatsSnapshot(
-            enemyManager?.DefeatedEnemiesCount ?? 0,
-            gameplayContext?.State?.DistanceTraveled ?? 0f,
+            Game.CurrentRun?.TotalEnemiesNeutralized ?? 0,
+            Game.CurrentRun?.TotalDistanceTravelledMeters ?? 0f,
             stagesDefeated,
-            Game.CurrentRun.TotalUpgradesBought);
+            Game.CurrentRun?.TotalUpgradesBought ?? 0);
     }
 }

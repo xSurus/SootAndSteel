@@ -42,8 +42,7 @@ public class PostLevelStatsScreen(GamelabGame game, float actualTime, float refe
     private StatsListItem timeLine;
     private StampRevealAnimator paidStampAnimator;
 
-    private readonly WhiteFilterTransition screenTransitionFilter = new();
-
+    private readonly FilterTransition screenTransitionFilter = new();
     private readonly LevelRewardBreakdown rewards =
         LevelRewardBreakdown.FromCompletion(actualTime, referenceTime, game.GameplayConfig);
 
@@ -72,6 +71,7 @@ public class PostLevelStatsScreen(GamelabGame game, float actualTime, float refe
         GumService.Default.Root.Children.Clear();
 
         soundService = Services.GetService<ISoundService>();
+        soundService.ResetGlobalParameters();
         SetupOverlay();
         Services.GetService<IVfxService>().AddContinuous(ParticleFactory.CreateSnowstorm());
         phase = Phase.IntroReveal;

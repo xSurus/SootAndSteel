@@ -21,13 +21,6 @@ public class SoundService : ISoundService,
 
     public SoundSettings Settings { get; private set; } = new();
 
-    private class ParameterBinding(EventInstance eventInstance, string parameterName, Func<float> valueGetter)
-    {
-        public EventInstance EventInstance { get; } = eventInstance;
-        public string ParameterName { get; } = parameterName;
-        public Func<float> ValueGetter { get; } = valueGetter;
-    }
-
     public void LoadSound(string id)
     {
         if (!eventDescriptions.ContainsKey(id))
@@ -66,9 +59,23 @@ public class SoundService : ISoundService,
         return instance;
     }
 
-    public void RegisterParameter(EventInstance eventInstance, string parameterName, Func<float> valueGetter)
+    public ParameterBinding RegisterParameter(EventInstance eventInstance, string parameterName, Func<float> valueGetter)
     {
-        parameterUpdates.Add(new ParameterBinding(eventInstance, parameterName, valueGetter));
+        ParameterBinding binding = ParameterBinding.Local(eventInstance, parameterName, valueGetter);
+        parameterUpdates.Add(binding);
+        return binding;
+    }
+
+    public ParameterBinding RegisterGlobalParameter(string parameterName, Func<float> valueGetter)
+    {
+        ParameterBinding binding = ParameterBinding.Global(parameterName, valueGetter);
+        parameterUpdates.Add(binding);
+        return binding;
+    }
+
+    public void SetGlobalParameter(string parameterName, float value)
+    {
+        StudioSystem.SetParameterValue(parameterName, value);
     }
 
     public void SetMasterVolume(float volume)
@@ -105,25 +112,36 @@ public class SoundService : ISoundService,
         SetMasterVolume(Settings.MasterVolume);
         SetMusicVolume(Settings.MusicVolume);
         SetSfxVolume(Settings.SfxVolume);
+        
+        ResetGlobalParameters();
+    }
+
+    public void ResetGlobalParameters()
+    {
+        foreach (var (parameter, value) in Sounds.DefaultGlobalParameterValues)
+        {
+            logger.Info($"Setting global parameter {parameter} to value {value}");
+            SetGlobalParameter(parameter, value);
+        }
     }
 
     public void Update(GameTime gameTime)
     {
         parameterUpdates.RemoveAll(binding =>
         {
+            if (!binding.active) return true;
             try
             {
-                return !binding.EventInstance.Native.isValid();
+                binding.Update();
+                return false;
             }
-            catch
+            catch (Exception ex)
             {
+                logger.Warning($"Failed to update parameter: {ex.Message}. Disposing binding.");
+                binding.Deactivate();
                 return true;
             }
         });
-        foreach (var binding in parameterUpdates)
-        {
-            binding.EventInstance.SetParameterValue(binding.ParameterName, binding.ValueGetter());
-        }
 
         FmodManager.Update();
     }

@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Gamelab.Enemies;
 
-public class EnemyManager(LevelDefinition levelDef)
+public class EnemyManager(LevelDefinition levelDef) : IDisposable
 {
     private readonly List<AbstractEnemy> enemies = [];
     private readonly Random random = new(levelDef.LevelSeed);
@@ -54,7 +54,7 @@ public class EnemyManager(LevelDefinition levelDef)
                 if (!enemy.IsAlive)
                     DefeatedEnemiesCount++;
                 ReleaseSlot(enemy);
-                enemy.RemovePhysicsBody();
+                enemy.Dispose();
                 enemies.RemoveAt(i);
             }
         }
@@ -117,20 +117,20 @@ public class EnemyManager(LevelDefinition levelDef)
         }
     }
 
-    public void Clear()
+    private void ReleaseSlot(AbstractEnemy enemy)
+    {
+        slotManager.ReleaseSlot(enemy.Slot);
+    }
+
+    public void Dispose()
     {
         foreach (AbstractEnemy enemy in enemies)
         {
             ReleaseSlot(enemy);
-            enemy.RemovePhysicsBody();
+            enemy.Dispose();
         }
 
         enemies.Clear();
         slotManager.Clear();
-    }
-
-    private void ReleaseSlot(AbstractEnemy enemy)
-    {
-        slotManager.ReleaseSlot(enemy.Slot);
     }
 }

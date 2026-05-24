@@ -1,4 +1,5 @@
 using System;
+using FmodForFoxes.Studio;
 using Gamelab.Assets;
 using Gamelab.Enemies.Core;
 using Gamelab.Particles;
@@ -14,7 +15,7 @@ using nkast.Aether.Physics2D.Dynamics;
 
 namespace Gamelab.PhysicalEntities.Structures;
 
-public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable, IPickable
+public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable, IPickable, IDisposable
 {
     public float MaxHealth => GamelabGame.Instance.GameplayConfig.WallMaxHealth;
 
@@ -26,7 +27,10 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
     private bool isTop;
     private int variation;
 
+    private bool isFixing;
+
     private ISoundService soundService;
+    private EventInstance fixSound;
     private float smokeCooldown = 0f;
 
     public ShootHoleWall(Vector2 dimensionsPixels, Vector2 positionPixels, bool isTop)
@@ -43,6 +47,12 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
 
         soundService = GamelabGame.Instance.Services.GetService<ISoundService>();
         soundService.LoadSound(Sounds.WallHit);
+        soundService.LoadSound(Sounds.WallBreak);
+        soundService.LoadSound(Sounds.WallFix);
+        soundService.LoadSound(Sounds.WallFixed);
+        fixSound = soundService.GetSoundInstance(Sounds.WallFix);
+        soundService.RegisterParameter(fixSound, "Is Fixing", () => isFixing ? 1f : 0f);
+        fixSound.Start();
     }
 
     public void TakeDamage(float damageAmount)
@@ -53,8 +63,10 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
         {
             isBreached = true;
             gameplayContext.Events.FireWallBreached();
+            soundService.PlayOnce(Sounds.WallBreak);
         }
 
+        GamelabGame.Instance.Services.GetService<IVfxService>().EmitBurst(ParticleFactory.CreateWallSmoke(Position));
         soundService.PlayOnce(Sounds.WallHit);
     }
 
@@ -82,8 +94,10 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
         if (CurrentHealth >= MaxHealth && isBreached)
         {
             isBreached = false;
+            isFixing = false;
             variation = Random.Shared.Next(1, 4);
             gameplayContext.Events.FireWallRepaired();
+            soundService.PlayOnce(Sounds.WallFixed);
         }
 
         smokeCooldown -= dt;
@@ -93,6 +107,13 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
                 .EmitBurst(ParticleFactory.CreateWallSmoke(Position));
             smokeCooldown = 0.35f;
         }
+
+        isFixing = true;
+    }
+
+    public void OnInteractReleased(Player interactingPlayer)
+    {
+        isFixing = false;
     }
 
     public override void Draw(SpriteBatch spriteBatch)
@@ -187,5 +208,17 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
             spriteBatch.Draw(lightTex, lightPos, null, Color.White * (bigIntensity * 0.5f),
                 0f, lightOrigin, 1.5f * lightScale, SpriteEffects.None, 0f);
         }
+    }
+
+    public override void OnHighlightRemoved(Player player)
+    {
+        base.OnHighlightRemoved(player);
+        isFixing = false;
+    }
+
+    public void Dispose()
+    {
+        fixSound?.Stop();
+        fixSound?.Dispose();
     }
 }

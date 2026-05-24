@@ -7,7 +7,7 @@ using nkast.Aether.Physics2D.Dynamics;
 
 namespace Gamelab.Map.Train.State;
 
-public class GameplayContext(Point virtualScreenSize, RunSession runSession)
+public class GameplayContext(Point virtualScreenSize, RunSession runSession) : IDisposable
 {
     private bool _physicsLocked;
     private readonly Queue<Action> _deferredPhysicsActions = new();
@@ -39,5 +39,10 @@ public class GameplayContext(Point virtualScreenSize, RunSession runSession)
             _deferredPhysicsActions.Enqueue(action);
         else
             action();
+    }
+
+    public void Dispose()
+    {
+        State?.Dispose();
     }
 }

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{5c4e2432-1072-49cc-8e83-03e3de77cbf6}">
+		<property name="assetPath">
+			<value>sfx/stamp.mp3</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>24</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>1.6559999999999999</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{c7be4079-4b34-4803-977f-2108dc223288}</destination>
+		</relationship>
+	</object>
+</objects>

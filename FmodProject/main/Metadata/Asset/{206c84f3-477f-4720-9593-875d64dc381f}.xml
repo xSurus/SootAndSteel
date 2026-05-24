@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="EncodableAsset" id="{206c84f3-477f-4720-9593-875d64dc381f}">
+		<property name="assetPath">
+			<value>sfx/fix wall/</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{c7be4079-4b34-4803-977f-2108dc223288}</destination>
+		</relationship>
+	</object>
+</objects>

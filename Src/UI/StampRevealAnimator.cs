@@ -1,4 +1,5 @@
 using System;
+using Gamelab.Services.Sound;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using MonoGameGum.GueDeriving;
@@ -20,6 +21,7 @@ public sealed class StampRevealAnimator
 
     private float timer;
     private bool active;
+    private bool soundPlayed;
 
     public StampRevealAnimator(
         SpriteRuntime stamp,
@@ -36,6 +38,7 @@ public sealed class StampRevealAnimator
         baseHeight = stamp.Height;
         baseRotation = stamp.Rotation;
         stamp.Visible = false;
+        GamelabGame.Instance.Services.GetService<ISoundService>().LoadSound(Sounds.Stamp);
     }
 
     public void Trigger()
@@ -57,6 +60,12 @@ public sealed class StampRevealAnimator
         float t = Math.Clamp(timer / durationSeconds, 0f, 1f);
         float eased = Easing.SmoothStep(t);
 
+        if (eased > 0.5 && !soundPlayed)
+        {
+            GamelabGame.Instance.Services.GetService<ISoundService>().PlayOnce(Sounds.Stamp);
+            soundPlayed = true;
+        }
+        
         stamp.Width = MathHelper.Lerp(baseWidth * popScale, baseWidth, eased);
         stamp.Height = MathHelper.Lerp(baseHeight * popScale, baseHeight, eased);
         stamp.Rotation = MathHelper.Lerp(baseRotation + popRotationOffset, baseRotation, eased);

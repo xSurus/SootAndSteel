@@ -1,8 +1,9 @@
 using System;
+using Microsoft.Xna.Framework;
 
 namespace Gamelab.Services.Vfx;
 
-public sealed class WhiteFilterTransition
+public sealed class FilterTransition
 {
     private float opacity;
     private float startOpacity;
@@ -14,7 +15,10 @@ public sealed class WhiteFilterTransition
     private bool fading;
     private bool smoothEasing;
 
+    private Color filterColor = Color.White;
+    
     public float Opacity => opacity;
+    public Color FilterColor => filterColor;
 
     public bool IsDone => !fading && (delayTimer >= delayDuration && fadeTimer >= fadeDuration);
 
@@ -40,15 +44,16 @@ public sealed class WhiteFilterTransition
         }
     }
 
-    public void FadeIn(float durationSeconds, float delaySeconds = 0f, bool smoothEasing = true) 
-        => FadeTo(1f, durationSeconds, delaySeconds, smoothEasing);
+    public void FadeIn(float durationSeconds, float delaySeconds = 0f, Color? color = null, bool smoothEasing = true) 
+        => FadeTo(1f, durationSeconds, delaySeconds, color, smoothEasing);
 
-    public void FadeOut(float durationSeconds, float delaySeconds = 0f, bool smoothEasing = true) 
-        => FadeTo(0f, durationSeconds, delaySeconds, smoothEasing);
+    public void FadeOut(float durationSeconds, float delaySeconds = 0f, Color? color = null, bool smoothEasing = true) 
+        => FadeTo(0f, durationSeconds, delaySeconds, color, smoothEasing);
 
-    public void FadeTo(float target, float durationSeconds, float delaySeconds = 0f, bool smoothEasing = true)
+    public void FadeTo(float target, float durationSeconds, float delaySeconds = 0f, Color? color = null, bool smoothEasing = true)
     {
         this.smoothEasing = smoothEasing;
+        if (color.HasValue) filterColor = color.Value;
         startOpacity = opacity;
         targetOpacity = Math.Clamp(target, 0f, 1f);
         fadeDuration = Math.Max(0.001f, durationSeconds);
@@ -58,8 +63,9 @@ public sealed class WhiteFilterTransition
         fading = true;
     }
 
-    public void SnapTo(float target)
+    public void SnapTo(float target, Color? color = null)
     {
+        if (color.HasValue) filterColor = color.Value;
         opacity = Math.Clamp(target, 0f, 1f);
         fading = false;
         delayTimer = delayDuration;

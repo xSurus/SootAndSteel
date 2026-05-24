@@ -15,17 +15,9 @@ public enum FailureReason
 {
     
     AllPlayersKnockedOut,
-
-    
     TrainFrozenHullBreached,
-
-   
     TrainFrozenFurnaceOut,
-
-    
     TrainFrozenBreachesAndFurnaceOut,
-
-    
     TrainFrozenOther,
 }
 
@@ -40,6 +32,7 @@ public class FailScreen(GamelabGame game, FailureReason reason, PostDeathStatsSn
 {
     public FailScreen(GamelabGame game) : this(game, FailureReason.TrainFrozenOther)
     {
+        soundService?.ResetGlobalParameters();
     }
 
     private enum Phase
@@ -60,6 +53,8 @@ public class FailScreen(GamelabGame game, FailureReason reason, PostDeathStatsSn
     private ISoundService soundService;
     private string fullCauseText = string.Empty;
     private float typedCharacters;
+    private float soundInterval = 0.1f;
+    private float soundTimer;
 
     private static string GetReasonText(FailureReason r) => r switch
     {
@@ -87,6 +82,7 @@ public class FailScreen(GamelabGame game, FailureReason reason, PostDeathStatsSn
         GumService.Default.Root.Children.Clear();
         soundService = Services.GetService<ISoundService>();
         soundService.LoadSound(Sounds.MenuSelect);
+        soundService.LoadSound(Sounds.PickupItem);
         Services.GetService<IVfxService>().AddContinuous(ParticleFactory.CreateSnowstorm());
 
         overlay = new PostDeathOverlay();
@@ -94,14 +90,14 @@ public class FailScreen(GamelabGame game, FailureReason reason, PostDeathStatsSn
         overlay.ButtonWithIconInstance.ButtonText = "Return";
         XboxButtonGlyphs.ApplyFaceButton(overlay.ButtonWithIconInstance, XboxButtonAtlas.Face.A);
 
-        overlay.EnemiesDefeatedStatStatText = stats.EnemiesDefeated.ToString();
-        overlay.DistanceTravelledStatStatText = $"{(int)Math.Round(stats.DistanceTravelledMeters)} m";
-        overlay.StagesDefeatedStatStatText = Math.Max(0, stats.StagesDefeated).ToString();
-        overlay.UpgradesBoughtStatStatText = Math.Max(0, stats.UpgradesBought).ToString();
+        overlay.EnemiesDefeatedStatText.SetValue(stats.EnemiesDefeated.ToString());
+        overlay.DistanceTravelledStatText.SetValue($"{(int)Math.Round(stats.DistanceTravelledMeters)} m");
+        overlay.StagesDefeatedStatText.SetValue(Math.Max(0, stats.StagesDefeated).ToString());
+        overlay.UpgradesBoughtStatText.SetValue(Math.Max(0, stats.UpgradesBought).ToString());
 
-        fullCauseText = WrapReportText(GetReasonText(reason), 62);
+        fullCauseText = GetReasonText(reason);
         typedCharacters = 0f;
-        overlay.CauseOfFailureDescriptionText = string.Empty;
+        overlay.SetCauseOfFailure(string.Empty);
         overlay.IncidentTitleDetail.Text = BuildIncidentLine();
 
         if (overlay.FileClosedStamp != null)
@@ -160,7 +156,7 @@ public class FailScreen(GamelabGame game, FailureReason reason, PostDeathStatsSn
         phase = Phase.Stamping;
         phaseTimer = 0f;
         typedCharacters = fullCauseText.Length;
-        overlay.CauseOfFailureDescriptionText = fullCauseText;
+        overlay.SetCauseOfFailure(fullCauseText);
         soundService.PlayOnce(Sounds.MenuSelect);
         fileClosedStampAnimator?.Trigger();
     }
@@ -173,38 +169,6 @@ public class FailScreen(GamelabGame game, FailureReason reason, PostDeathStatsSn
         return $"{levelTag} · {dateTag} · {timeTag}";
     }
 
-    private static string WrapReportText(string text, int maxLineLength)
-    {
-        if (string.IsNullOrWhiteSpace(text) || maxLineLength <= 0)
-            return string.Empty;
-
-        var words = text.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-        var builder = new StringBuilder(text.Length + 32);
-        int currentLength = 0;
-        foreach (string word in words)
-        {
-            int extra = currentLength == 0 ? word.Length : word.Length + 1;
-            if (currentLength > 0 && currentLength + extra > maxLineLength)
-            {
-                builder.Append('\n');
-                builder.Append(word);
-                currentLength = word.Length;
-            }
-            else
-            {
-                if (currentLength > 0)
-                {
-                    builder.Append(' ');
-                    currentLength++;
-                }
-                builder.Append(word);
-                currentLength += word.Length;
-            }
-        }
-
-        return builder.ToString();
-    }
-
     private void UpdateCauseTypewriter(float dt)
     {
         if (overlay == null || typedCharacters >= fullCauseText.Length)
@@ -212,7 +176,14 @@ public class FailScreen(GamelabGame game, FailureReason reason, PostDeathStatsSn
 
         typedCharacters = Math.Min(fullCauseText.Length, typedCharacters + dt * CauseTypewriterCharsPerSecond);
         int count = Math.Clamp((int)typedCharacters, 0, fullCauseText.Length);
-        overlay.CauseOfFailureDescriptionText = fullCauseText[..count];
+        overlay.SetCauseOfFailure(fullCauseText[..count]);
+
+        soundTimer += dt;
+        if (soundTimer >= soundInterval)
+        {
+            soundService.PlayOnce(Sounds.PickupItem);
+            soundTimer -= soundInterval;
+        }
     }
 
 }

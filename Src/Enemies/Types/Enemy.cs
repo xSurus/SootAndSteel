@@ -1,4 +1,5 @@
 using System;
+using FmodForFoxes.Studio;
 using Gamelab.Assets;
 using Gamelab.Enemies.Core;
 using Gamelab.Enemies.Movement;
@@ -10,6 +11,7 @@ using Gamelab.PhysicalEntities.Stations.Cannon;
 using Gamelab.PhysicalEntities.Structures;
 using Gamelab.Services.Animation;
 using Gamelab.Services.Bullet;
+using Gamelab.Services.Sound;
 using Gamelab.Services.Vfx;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
@@ -75,6 +77,8 @@ public class Enemy : AbstractEnemy
     private float animationTimer;
     private ParticleEmitter _neckBleedEmitter;
 
+    private readonly EventInstance horseRiding;
+
     public Enemy(Vector2 spawnPosition, EnemyTrainSlot slot)
         : base(spawnPosition, slot,
             EnemyMovementProfile.CreateDefault(GamelabGame.Instance.GameplayConfig.RifleMaxSpeed))
@@ -94,6 +98,14 @@ public class Enemy : AbstractEnemy
         animationService.Register(riderHeadSprite);
         animationService.Register(riderTorsoSprite);
         animationService.Register(horseSprite);
+        
+        soundService.LoadSound(Sounds.HorseRiding);
+        soundService.LoadSound(Sounds.HorseFlee);
+        soundService.LoadSound(Sounds.EnemyFire);
+        horseRiding = soundService.GetSoundInstance(Sounds.HorseRiding);
+        soundService.RegisterParameter(horseRiding, "Is Fleeing",
+            () => HorseState.Fleeing == currentState ? 1.0f : 0.0f);
+        horseRiding?.Start();
     }
 
     public override void Update(float deltaTime)
@@ -217,6 +229,7 @@ public class Enemy : AbstractEnemy
         BulletItem ammo = new BulletItem(ComponentIds.BasicProjectile, ComponentIds.BasicCasing,
             ComponentIds.BasicPropellant, ComponentIds.EnemyCasing);
         GamelabGame.Instance.Services.GetService<IBulletService>().EmitBullet(ammo, Position, finalDir, this);
+        soundService.PlayOnce(Sounds.EnemyFire);
     }
 
     public override bool OnHit(BulletEntity bullet)
@@ -245,6 +258,7 @@ public class Enemy : AbstractEnemy
 
         _neckBleedEmitter = ParticleFactory.CreateNeckBleed(GetNeckPosition());
         vfxService.AddContinuous(_neckBleedEmitter);
+        soundService.PlayOnce(Sounds.HorseFlee);
     }
 
     private Vector2 GetNeckPosition()
@@ -329,5 +343,12 @@ public class Enemy : AbstractEnemy
         return Slot.Side == EnemySlotSide.Top
             ? new Vector2(slotAnchor.X + horizontalOffset, slotAnchor.Y - verticalOffset)
             : new Vector2(slotAnchor.X + horizontalOffset, slotAnchor.Y + verticalOffset);
+    }
+
+    public override void Dispose()
+    {
+        base.Dispose();
+        horseRiding?.Stop();
+        horseRiding?.Dispose();
     }
 }
