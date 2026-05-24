@@ -78,6 +78,7 @@ public class Enemy : AbstractEnemy
     private ParticleEmitter _neckBleedEmitter;
 
     private readonly EventInstance horseRiding;
+    public override bool WasNeutralized => base.WasNeutralized || currentRiderState == RiderState.Dead;
 
     public Enemy(Vector2 spawnPosition, EnemyTrainSlot slot)
         : base(spawnPosition, slot,

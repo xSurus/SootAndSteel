@@ -22,6 +22,7 @@ public abstract class AbstractEnemy : AbstractPhysicalEntity, IDamageable, IBull
     public EnemyTrainSlot Slot { get; }
     public float Health { get; protected set; }
     public bool IsAlive => Health > 0;
+    public virtual bool WasNeutralized => !IsAlive;
     public bool ShouldRemove { get; protected set; }
 
     protected float Size => GamelabGame.Instance.GameplayConfig.EnemySize;

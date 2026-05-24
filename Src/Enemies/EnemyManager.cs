@@ -51,7 +51,7 @@ public class EnemyManager(LevelDefinition levelDef) : IDisposable
 
             if (!enemy.IsAlive || enemy.ShouldRemove)
             {
-                if (!enemy.IsAlive)
+                if (enemy.WasNeutralized)
                     DefeatedEnemiesCount++;
                 ReleaseSlot(enemy);
                 enemy.Dispose();
