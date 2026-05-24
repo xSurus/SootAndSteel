@@ -3584,3 +3584,8 @@
 /processor:TextureProcessor
 /build:GumProject/spr_controls.png
 
+#begin Structures/TrainNoseTop.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Structures/TrainNoseTop.png
+
