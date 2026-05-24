@@ -74,16 +74,18 @@ public class Enemy : AbstractEnemy
     private readonly AnimatedSprite riderTorsoSprite;
     private readonly AnimatedSprite riderHeadSprite;
     private readonly IAnimationService animationService;
+    private readonly EnemyAmmoDefinition ammoDefinition;
     private float animationTimer;
     private ParticleEmitter _neckBleedEmitter;
 
     private readonly EventInstance horseRiding;
     public override bool WasNeutralized => base.WasNeutralized || currentRiderState == RiderState.Dead;
 
-    public Enemy(Vector2 spawnPosition, EnemyTrainSlot slot)
+    public Enemy(Vector2 spawnPosition, EnemyTrainSlot slot, EnemyAmmoDefinition ammoDefinition)
         : base(spawnPosition, slot,
             EnemyMovementProfile.CreateDefault(GamelabGame.Instance.GameplayConfig.RifleMaxSpeed))
     {
+        this.ammoDefinition = ammoDefinition ?? throw new ArgumentNullException(nameof(ammoDefinition));
         timeSinceLastShot = random.NextSingle() * ShootCooldown;
 
         animationService = GamelabGame.Instance.Services.GetService<IAnimationService>();
@@ -227,8 +229,7 @@ public class Enemy : AbstractEnemy
         float finalAngle = (float)Math.Atan2(direction.Y, direction.X) + spread;
         Vector2 finalDir = new Vector2((float)Math.Cos(finalAngle), (float)Math.Sin(finalAngle));
 
-        BulletItem ammo = new BulletItem(ComponentIds.BasicProjectile, ComponentIds.BasicCasing,
-            ComponentIds.BasicPropellant, ComponentIds.EnemyCasing);
+        BulletItem ammo = ammoDefinition.BuildBullet();
         GamelabGame.Instance.Services.GetService<IBulletService>().EmitBullet(ammo, Position, finalDir, this);
         soundService.PlayOnce(Sounds.EnemyFire);
     }

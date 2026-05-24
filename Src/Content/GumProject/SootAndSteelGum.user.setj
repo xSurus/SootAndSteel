@@ -3,10 +3,14 @@
     "ExpandedNodes": [
       "Screens",
       "Components",
-      "Components/HubOverlay",
-      "Components/SkipTutorial",
-      "Components/SkipTutorial/ContainerInstance",
-      "Components/SkipTutorial/ContainerInstance/ProgressBar",
+      "Components/ControlsOverlay",
+      "Components/ControlsOverlay/Background",
+      "Components/JoinPlayerComponent",
+      "Components/JoinPlayerComponent/Player",
+      "Components/MenuButtonWithIcon",
+      "Components/PauseOverlay",
+      "Components/PauseOverlay/Background",
+      "Components/PauseOverlay/Background/MenuItemContainer",
       "Standard"
     ]
   }

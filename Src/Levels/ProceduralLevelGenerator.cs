@@ -42,7 +42,6 @@ public class ProceduralLevelGenerator(LevelGenerationConfig config)
             LevelSeed = levelSeed
         };
 
-        
         Random random = new Random(levelSeed);
         float levelEndBuffer = config.SafeZoneDistance;
         float maxSpawnDistance = MathF.Max(config.MinSpawnSpacing, currentLevelDistance - levelEndBuffer);
@@ -52,22 +51,27 @@ public class ProceduralLevelGenerator(LevelGenerationConfig config)
         while (budget >= minCost)
         {
             float spawnDistance = random.NextSingle() * (maxSpawnDistance - safeZoneDistance) + safeZoneDistance;
-            if (distances.Any(d => MathF.Abs(d - spawnDistance) < config.MinSpawnSpacing * spawnSpacingScale)) continue;
+            if (distances.Any(d => MathF.Abs(d - spawnDistance) < config.MinSpawnSpacing * spawnSpacingScale))
+            {
+                continue;
+            }
+
             distances.Add(spawnDistance);
 
-            EnemyType? selectedType = SelectEnemyType(random, currentLevel, budget);
-            if (selectedType == null)
+            EnemySpawnOption? selectedOption = SelectSpawnOption(random, currentLevel, budget);
+            if (selectedOption == null)
             {
                 break;
             }
 
-            EnemyType enemyType = selectedType.Value;
-            budget -= EnemyCatalog.GetCost(config, enemyType);
+            EnemySpawnOption option = selectedOption.Value;
+            budget -= EnemyCatalog.GetCost(config, option.Type, option.AmmoDefinition.Id);
 
             definition.SpawnEvents.Add(new SpawnEvent
             {
                 Distance = spawnDistance,
-                Type = new EnemyDefinition(enemyType).Id,
+                Type = new EnemyDefinition(option.Type).Id,
+                AmmoId = option.AmmoDefinition.Id,
                 Side = random.NextSingle() < 0.5f ? "Top" : "Bottom"
             });
         }
@@ -76,54 +80,54 @@ public class ProceduralLevelGenerator(LevelGenerationConfig config)
         return definition;
     }
 
-    private EnemyType? SelectEnemyType(Random random, int levelNumber, int budget)
+    private EnemySpawnOption? SelectSpawnOption(Random random, int levelNumber, int budget)
     {
-        IReadOnlyList<EnemyType> candidateTypes = EnemyCatalog.GetProceduralTypesForLevel(levelNumber);
-        List<EnemyType> affordableTypes = [];
+        IReadOnlyList<EnemySpawnOption> candidateOptions = EnemyCatalog.GetProceduralSpawnOptions(levelNumber);
+        List<EnemySpawnOption> affordableOptions = [];
         float totalWeight = 0f;
 
-        foreach (EnemyType type in candidateTypes)
+        foreach (EnemySpawnOption option in candidateOptions)
         {
-            int cost = EnemyCatalog.GetCost(config, type);
+            int cost = EnemyCatalog.GetCost(config, option.Type, option.AmmoDefinition.Id);
             if (budget < cost)
             {
                 continue;
             }
 
-            float weight = EnemyCatalog.GetProceduralWeight(type, levelNumber);
+            float weight = EnemyCatalog.GetProceduralWeight(option, levelNumber);
             if (weight <= 0f)
             {
                 continue;
             }
 
-            affordableTypes.Add(type);
+            affordableOptions.Add(option);
             totalWeight += weight;
         }
 
-        if (affordableTypes.Count == 0 || totalWeight <= 0f)
+        if (affordableOptions.Count == 0 || totalWeight <= 0f)
         {
             return null;
         }
 
         float roll = random.NextSingle() * totalWeight;
-        foreach (EnemyType type in affordableTypes)
+        foreach (EnemySpawnOption option in affordableOptions)
         {
-            roll -= EnemyCatalog.GetProceduralWeight(type, levelNumber);
+            roll -= EnemyCatalog.GetProceduralWeight(option, levelNumber);
             if (roll <= 0f)
             {
-                return type;
+                return option;
             }
         }
 
-        return affordableTypes[^1];
+        return affordableOptions[^1];
     }
 
     private int GetMinProceduralCost(int levelNumber)
     {
         int minCost = int.MaxValue;
-        foreach (EnemyType type in EnemyCatalog.GetProceduralTypesForLevel(levelNumber))
+        foreach (EnemySpawnOption option in EnemyCatalog.GetProceduralSpawnOptions(levelNumber))
         {
-            minCost = Math.Min(minCost, EnemyCatalog.GetCost(config, type));
+            minCost = Math.Min(minCost, EnemyCatalog.GetCost(config, option.Type, option.AmmoDefinition.Id));
         }
 
         return minCost == int.MaxValue ? 0 : minCost;

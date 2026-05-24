@@ -6,10 +6,14 @@ namespace Gamelab.Enemies.Core;
 
 public static class EnemyFactory
 {
-    public static AbstractEnemy Create(Vector2 spawnPosition, EnemyTrainSlot slot, EnemyType type = EnemyType.Rifle)
+    public static AbstractEnemy Create(
+        Vector2 spawnPosition,
+        EnemyTrainSlot slot,
+        EnemyAmmoDefinition ammoDefinition,
+        EnemyType type = EnemyType.Rifle)
     {
         return type == EnemyType.TutorialRifle
-            ? new TutorialEnemy(spawnPosition, slot)
-            : new Enemy(spawnPosition, slot);
+            ? new TutorialEnemy(spawnPosition, slot, ammoDefinition)
+            : new Enemy(spawnPosition, slot, ammoDefinition);
     }
 }

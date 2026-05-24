@@ -7,7 +7,7 @@ namespace Gamelab.Levels;
 /// Level distance scales linearly: <c>BaseDistance + DistanceGrowthPerLevel * (level - 1)</c>.
 /// Enemy budget scales exponentially with a linear component:
 /// <c>BaseEnemyBudget * BudgetMultiplierPerLevel ^ (level - 1) + BudgetGrowthPerLevel * (level - 1)</c>.
-/// Procedural levels currently spawn rifle enemies only.
+/// Procedural levels currently spawn rifle enemies with curated ammo upgrades unlocked by level.
 /// </summary>
 public class LevelGenerationConfig
 {
@@ -26,8 +26,8 @@ public class LevelGenerationConfig
     /// <summary>Exponential multiplier applied per level, compounding the budget growth.</summary>
     public float BudgetMultiplierPerLevel { get; set; } = 1.12f;
 
-    /// <summary>How many budget points a single Rifle costs.</summary>
-    public int RifleCost { get; set; } = 3;
+    /// <summary>How many budget points a baseline procedural enemy costs before ammo surcharges are applied.</summary>
+    public int BaseCost { get; set; } = 3;
 
     /// <summary>Distance (world units) at the start of each level where no enemies spawn.</summary>
     public float SafeZoneDistance { get; set; } = 2000f;

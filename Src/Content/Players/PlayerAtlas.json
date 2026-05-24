@@ -584,7 +584,7 @@
             "y": 0.5
           }
         },
-        "Player3_Fall2.png": {
+        "Player3_Fall2": {
           "frame": {
             "x": 1230,
             "y": 2000,
@@ -596,7 +596,7 @@
             "y": 0.5
           }
         },
-        "Player3_Fall3.png": {
+        "Player3_Fall3": {
           "frame": {
             "x": 1640,
             "y": 2000,
@@ -608,7 +608,7 @@
             "y": 0.5
           }
         },
-        "Player3_Fall4.png": {
+        "Player3_Fall4": {
           "frame": {
             "x": 2050,
             "y": 2000,
