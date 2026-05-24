@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Gamelab.Assets;
+using Gamelab.Enemies.Core;
 using Gamelab.Items.Bullets;
 using Gamelab.PhysicalEntities.Bullets.Components;
 using Gamelab.PhysicalEntities.Interfaces;
+using Gamelab.PhysicalEntities.Stations.Cannon;
+using Gamelab.PhysicalEntities.Structures;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -21,6 +24,7 @@ public class BulletEntity : AbstractPhysicalEntity
     public List<IBulletEffect> Effects { get; }
     public bool IsActive { get; set; } = true;
     public IBulletEmitter InitialShooter { get; set; }
+    public BulletFaction Faction { get; }
     public float Age { get; set; } = 0f;
     public World World { get; set; }
     public BulletEntity ChildTemplate { get; set; }
@@ -40,6 +44,7 @@ public class BulletEntity : AbstractPhysicalEntity
         Effects = ammo.GetEffects();
         World = world;
         InitialShooter = initialShooter;
+        Faction = ResolveFaction(initialShooter);
     }
 
     public BulletEntity(BulletEntity parent, IBulletEffect spawningEffect = null)
@@ -48,6 +53,7 @@ public class BulletEntity : AbstractPhysicalEntity
         Item = parent.Item;
         World = parent.World;
         InitialShooter = parent.InitialShooter;
+        Faction = parent.Faction;
         ChildTemplate = parent.ChildTemplate;
         
         // Create copies of every effect
@@ -144,5 +150,16 @@ public class BulletEntity : AbstractPhysicalEntity
     public IBulletEffect GetEffect(IBulletEffect effect)
     {
         return Effects.Find(e => e.Guid == effect.Guid);
+    }
+
+    private static BulletFaction ResolveFaction(IBulletEmitter shooter)
+    {
+        return shooter switch
+        {
+            AbstractEnemy => BulletFaction.Enemy,
+            CannonStation => BulletFaction.Player,
+            CannonSlot => BulletFaction.Player,
+            _ => BulletFaction.Player
+        };
     }
 }

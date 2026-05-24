@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
-using Gamelab.Enemies.Core;
 using Gamelab.Items.Bullets;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Services.Bullet;
@@ -57,17 +54,11 @@ public class MatryoshkaProjectile : AbstractComponent
                 .EmitAdditionalBullet(child, this);
             
             ((MatryoshkaProjectile)childBullet.GetEffect(this)).Level = Level - 1;
-            ((MatryoshkaProjectile)childBullet.GetEffect(this)).Target = GetClosestEnemy(bulletEntity, hitEntity);
+            ((MatryoshkaProjectile)childBullet.GetEffect(this)).Target =
+                BulletTargetingHelper.GetClosestHostileTarget(bulletEntity, hitEntity);
             
             childBullet?.AddHitCooldown(hitEntity, 1.0f);
         }
     }
 
-    private Body GetClosestEnemy(BulletEntity bulletEntity, IDamageable hitEntity)
-    {
-        return bulletEntity.World?.BodyList
-            .Where(b => b.Tag is AbstractEnemy && b != bulletEntity.PhysicsBody)
-            .Where(b => b.Tag != hitEntity)
-            .MinBy(b => (b.Position - bulletEntity.PhysicsBody.Position).LengthSquared()) ?? null;
-    }
 }

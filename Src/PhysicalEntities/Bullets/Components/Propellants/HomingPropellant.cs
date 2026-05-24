@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Gamelab.Enemies.Core;
 using Gamelab.Items.Bullets;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
@@ -17,7 +16,7 @@ public class HomingPropellant : AbstractComponent
     private float initialLockOnDelay = 0.2f;
     private float lockOnInterval = 0.3f;
     private float timer;
-    private Body lockedOnEnemy;
+    private Body lockedOnTarget;
     private Vector2 randomizedLockOnOffset = Vector2.Zero;
     private bool hasSpedUp;
     
@@ -46,19 +45,19 @@ public class HomingPropellant : AbstractComponent
 
         if (timer >= initialLockOnDelay + lockOnInterval)
         {
-            lockedOnEnemy = LockOnEnemy(bulletEntity);
+            lockedOnTarget = LockOnTarget(bulletEntity);
             timer -= lockOnInterval;
         }
 
         var body = bulletEntity.PhysicsBody;
         
-        float maxRotation = 1.8f;
+        float maxRotation = 2.8f;
         float angle = (float)Math.Atan2(body.LinearVelocity.Y, body.LinearVelocity.X);
         float maxRotationThisFrame = maxRotation * deltaTime;
         float speed = body.LinearVelocity.Length();
-        if (lockedOnEnemy != null)
+        if (lockedOnTarget != null)
         {
-            Vector2 desiredDirection = lockedOnEnemy.Position + randomizedLockOnOffset - body.Position;
+            Vector2 desiredDirection = lockedOnTarget.Position + randomizedLockOnOffset - body.Position;
             float targetAngle = (float)Math.Atan2(desiredDirection.Y, desiredDirection.X);
             float angleDifference = MathHelper.WrapAngle(targetAngle - angle);
             float rotationAmount = Math.Clamp(angleDifference, -maxRotationThisFrame, maxRotationThisFrame);
@@ -66,7 +65,7 @@ public class HomingPropellant : AbstractComponent
 
             if (!hasSpedUp)
             {
-                speed *= 2f;
+                speed *= 1.7f;
                 hasSpedUp = true;
             }
         } 
@@ -83,24 +82,26 @@ public class HomingPropellant : AbstractComponent
         float renderDepth = RenderUtility.CalculateDepth(bottomCenter.Y) - 0.001f;
         Vector2 direction = Vector2.Normalize(bulletEntity.PhysicsBody.LinearVelocity);
         Vector2 position = bulletEntity.PhysicsBody.Position.ToPixels();
+        const float indicatorLength = 80f;
+        const float indicatorThickness = 1f;
         
         spriteBatch.DrawLine(
             position,
-            position + Vector2.Rotate(direction, -Single.Pi/4) * 300,
-            lockedOnEnemy != null ? homing : searching,
-            2f,
+            position + Vector2.Rotate(direction, -Single.Pi/4) * indicatorLength,
+            lockedOnTarget != null ? homing : searching,
+            indicatorThickness,
             renderDepth
         );
         spriteBatch.DrawLine(
             position,
-            position + Vector2.Rotate(direction, Single.Pi/4) * 300,
-            lockedOnEnemy != null ? homing : searching,
-            2f,
+            position + Vector2.Rotate(direction, Single.Pi/4) * indicatorLength,
+            lockedOnTarget != null ? homing : searching,
+            indicatorThickness,
             renderDepth
         );
     }
 
-    private Body LockOnEnemy(BulletEntity bulletEntity)
+    private Body LockOnTarget(BulletEntity bulletEntity)
     {
         Vector2 pos = bulletEntity.PhysicsBody.Position;
         Vector2 velocity = bulletEntity.PhysicsBody.LinearVelocity;
@@ -108,48 +109,25 @@ public class HomingPropellant : AbstractComponent
         if (velocity.LengthSquared() < 0.01f) return null;
         Vector2 forward = Vector2.Normalize(velocity);
 
-        List<Body> enemies = bulletEntity.World?.BodyList
-            .Where(b => b.Tag is AbstractEnemy && b != bulletEntity.PhysicsBody)
-            .Where(b =>
-            {
-                Vector2 toEnemy = b.Position - pos;
-                float dot = Vector2.Dot(forward, Vector2.Normalize(toEnemy));
-                return dot > 0.5f;
-            })
-            .ToList() ?? new List<Body>();
+        List<Body> hostileTargets = BulletTargetingHelper.GetHostileTargets(bulletEntity)
+            .Where(body => IsWithinHomingArc(bulletEntity, pos, forward, body))
+            .ToList();
 
-        return GetClosestEnemyToLine(pos, pos + (forward * 1000f), enemies);
+        if (hostileTargets.Count == 0) return null;
+        return BulletTargetingHelper.GetClosestHomingTargetToLine(bulletEntity, hostileTargets, pos,
+            pos + (forward * 1000f));
     }
 
-    private Body GetClosestEnemyToLine(Vector2 lineStart, Vector2 lineEnd, List<Body> enemies)
+    private static bool IsWithinHomingArc(BulletEntity bulletEntity, Vector2 position, Vector2 forward, Body targetBody)
     {
-        if (enemies.Count == 0) return null;
-        return enemies
-            .Select(enemy => new
-            {
-                Body = enemy,
-                Dist = GetDistanceToLine(lineStart, lineEnd, enemy.Position)
-            })
-            .OrderBy(item => item.Dist)
-            .FirstOrDefault()?.Body;
-    }
+        Vector2 toTarget = targetBody.Position - position;
+        if (toTarget.LengthSquared() < 0.0001f)
+        {
+            return true;
+        }
 
-    private float GetDistanceToLine(Vector2 a, Vector2 b, Vector2 p)
-    {
-        // Direction of the line
-        Vector2 dir = b - a;
-        float lengthSquared = dir.LengthSquared();
-
-        if (lengthSquared == 0) return Vector2.Distance(p, a);
-
-        // Calculate the projection to ensure the enemy is IN FRONT of the bullet
-        float t = Vector2.Dot(p - a, dir) / lengthSquared;
-
-        // If t < 0, the enemy is behind the bullet. We return a huge distance.
-        if (t < 0) return float.MaxValue;
-
-        // Closest point on the line segment
-        Vector2 projection = a + t * dir;
-        return Vector2.Distance(p, projection);
+        float dot = Vector2.Dot(forward, Vector2.Normalize(toTarget));
+        float minDot = BulletTargetingHelper.GetHomingTargetDotThreshold(bulletEntity.Faction, targetBody.Tag);
+        return dot >= minDot;
     }
 }

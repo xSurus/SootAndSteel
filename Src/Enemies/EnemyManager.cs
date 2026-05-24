@@ -78,6 +78,7 @@ public class EnemyManager(LevelDefinition levelDef) : IDisposable
     private void SpawnFromEvent(SpawnEvent spawnEvent)
     {
         EnemyDefinition def = EnemyDefinition.Parse(spawnEvent.Type);
+        EnemyAmmoDefinition ammoDefinition = EnemyCatalog.GetAmmoDefinition(spawnEvent.AmmoId);
         EnemySlotSide side = spawnEvent.Side?.ToLowerInvariant() switch
         {
             "top" => EnemySlotSide.Top,
@@ -85,10 +86,13 @@ public class EnemyManager(LevelDefinition levelDef) : IDisposable
             _ => random.NextSingle() < 0.5f ? EnemySlotSide.Top : EnemySlotSide.Bottom
         };
 
-        SpawnEnemy(side, def.Type);
+        SpawnEnemy(side, ammoDefinition, def.Type);
     }
 
-    private void SpawnEnemy(EnemySlotSide preferredSide, EnemyType type = EnemyType.Rifle)
+    private void SpawnEnemy(
+        EnemySlotSide preferredSide,
+        EnemyAmmoDefinition ammoDefinition,
+        EnemyType type = EnemyType.Rifle)
     {
         if (!slotManager.TryReserveSideAttackSlotOnSide(preferredSide, out EnemyTrainSlot slot))
         {
@@ -96,7 +100,7 @@ public class EnemyManager(LevelDefinition levelDef) : IDisposable
         }
 
         Vector2 spawnPosition = GetSideAttackSpawnPosition(slot);
-        AbstractEnemy enemy = EnemyFactory.Create(spawnPosition, slot, type);
+        AbstractEnemy enemy = EnemyFactory.Create(spawnPosition, slot, ammoDefinition, type);
         enemies.Add(enemy);
     }
 
