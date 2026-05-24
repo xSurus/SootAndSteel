@@ -301,9 +301,6 @@ public class Enemy : AbstractEnemy
         if (currentRiderState != RiderState.Dead)
         {
             riderHeadSprite.Depth = armDepth;
-            riderHeadSprite.Effect = (attackAngle > MathF.PI / 2f || attackAngle < -MathF.PI / 2f)
-                ? SpriteEffects.FlipHorizontally
-                : SpriteEffects.None;
             Vector2 offset = (attackAngle > MathF.PI / 2f || attackAngle < -MathF.PI / 2f)
                 ? new Vector2(6f, 0f)
                 : Vector2.Zero;
@@ -328,11 +325,14 @@ public class Enemy : AbstractEnemy
 
     private string GetAimAnimationName()
     {
-        float adjustedAngle = Slot.Side == EnemySlotSide.Bottom ? -attackAngle : attackAngle;
+        if (Slot.Side == EnemySlotSide.Top)
+        {
+            if (attackAngle > 5f * MathF.PI / 6f) return "RifleWide";
+            if (attackAngle > 4f * MathF.PI / 6f) return "RifleSemi";
+            return "RifleMiddle";
+        }
 
-        if (adjustedAngle > 5f * MathF.PI / 6f) return "RifleWide";
-        if (adjustedAngle > 4f * MathF.PI / 6f) return "RifleSemi";
-        return "RifleMiddle";
+        return "RifleBottom";
     }
 
     private Vector2 GetApproachAnchor(Vector2 slotAnchor)
