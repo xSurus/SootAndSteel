@@ -170,14 +170,14 @@ public static class ParticleFactory
             {
                 MinQuantity = 8, MaxQuantity = 14,
                 MinSpeed = 80f, MaxSpeed = 150f,
-                MinAge = 3.5f, MaxAge = 6.0f,
+                MinAge = 2f, MaxAge = 4.0f,
                 MinSize = 0.35f, MaxSize = 0.75f,
-                Color = new Color(40, 40, 40, 100)
+                Color = new Color(40, 40, 40, 80)
             }
         };
 
-        emitter.Modifiers.Add(new FadeInModifier(0.3f));
-        emitter.Modifiers.Add(new FadeOutModifier(1.2f));
+        emitter.Modifiers.Add(new FadeInModifier(0.15f));
+        emitter.Modifiers.Add(new FadeOutModifier(3f));
         emitter.Modifiers.Add(new TrainWindModifier());
         emitter.Modifiers.Add(new DirectionalForceModifier(Vector2.UnitY, 20f));
 
@@ -250,6 +250,30 @@ public static class ParticleFactory
 
         emitter.Modifiers.Add(new FadeOutModifier(0.3f));
         emitter.Modifiers.Add(new DirectionalForceModifier(-Vector2.UnitY, 90f));
+
+        return emitter;
+    }
+
+    public static ParticleEmitter CreateWallSmoke(Vector2 position)
+    {
+        var emitter = new ParticleEmitter(20, AssetManager.GetItemTexture("WoodSmoke"))
+        {
+            Position = position + new Vector2(0, -30),
+            AutoTrigger = false,
+            Profile = new CircleProfile(radius: 3f, onlyRing: false, radiateOutward: true),
+
+            Parameters = new ParticleReleaseParameters
+            {
+                MinQuantity = 2, MaxQuantity = 4,
+                MinSpeed = 30f, MaxSpeed = 50f,
+                MinAge = 1f, MaxAge = 2f,
+                MinSize = 0.1f, MaxSize = 0.2f,
+                Color = Color.White * 0.6f
+            }
+        };
+
+        emitter.Modifiers.Add(new FadeOutModifier(0.5f));
+        emitter.Modifiers.Add(new DirectionalForceModifier(-Vector2.UnitY, 20f));
 
         return emitter;
     }

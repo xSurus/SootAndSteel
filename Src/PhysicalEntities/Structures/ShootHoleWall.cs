@@ -1,10 +1,12 @@
 using System;
 using Gamelab.Assets;
 using Gamelab.Enemies.Core;
+using Gamelab.Particles;
 using Gamelab.PhysicalEntities.Bullets;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.Players;
 using Gamelab.Services.Sound;
+using Gamelab.Services.Vfx;
 using Gamelab.Utils;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -25,6 +27,7 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
     private int variation;
 
     private ISoundService soundService;
+    private float smokeCooldown = 0f;
 
     public ShootHoleWall(Vector2 dimensionsPixels, Vector2 positionPixels, bool isTop)
     {
@@ -76,15 +79,19 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
 
         CurrentHealth = Math.Min(MaxHealth, CurrentHealth + HealthRestoredPerSecond * dt);
 
-        if (isBreached && CurrentHealth > 0f)
+        if (CurrentHealth >= MaxHealth && isBreached)
         {
             isBreached = false;
+            variation = Random.Shared.Next(1, 4);
             gameplayContext.Events.FireWallRepaired();
         }
 
-        if (CurrentHealth >= MaxHealth)
+        smokeCooldown -= dt;
+        if (smokeCooldown <= 0f)
         {
-            variation = Random.Shared.Next(1, 4);
+            GamelabGame.Instance.Services.GetService<IVfxService>()
+                .EmitBurst(ParticleFactory.CreateWallSmoke(Position));
+            smokeCooldown = 0.35f;
         }
     }
 
@@ -92,12 +99,12 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
     {
         int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
         float damagePercent = (1f - CurrentHealth / MaxHealth) * 100f;
-        
+
         string textureName;
 
         if (isTop)
         {
-            if (IsBroken)
+            if (isBreached)
             {
                 textureName = $"WallTileTopBroken4_Variation{variation}";
             }
@@ -120,7 +127,7 @@ public class ShootHoleWall : AbstractPhysicalEntity, IInteractable, IDamageable,
         }
         else
         {
-            if (IsBroken)
+            if (isBreached)
             {
                 textureName = "WallTileBottomBroken3";
             }
