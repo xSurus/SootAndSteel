@@ -1,0 +1,13 @@
+Game Title: Soot & Steel
+
+Long Description:
+Soot & Steel throws players into a desperate co-op fight aboard an iron train charging through a frozen wasteland. Keep the engine alive, feed the furnace, forge ammunition under pressure, man the cannon, repair shattered walls, and repel relentless raiders before the train is torn apart. Every second is a scramble of smoke, snow, steel, and shouting as your crew races between stations to hold the line. Victory demands sharp coordination, split-second decisions, and absolute trust in your team. This is high-pressure cooperative survival where the battlefield moves, the cold closes in, and every delivery feels hard earned.
+
+Short Description:
+An explosive co-op train-defense adventure where your crew battles raiders, fire, and frost aboard a roaring iron war train.
+
+Asset Attributions:
+In-game art, audio, logo work, trailer footage, and slide visuals were created by Team Snow.
+
+Download Link:
+https://olliesara.itch.io/soot-steel
