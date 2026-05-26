@@ -4,21 +4,6 @@
   <BaseType>Container</BaseType>
   <State>
     <Name>Default</Name>
-    <Variable Type="float" Name="DialFace.Height" SetsValue="true">
-      <Value xsi:type="xsd:float">100</Value>
-    </Variable>
-    <Variable Type="DimensionUnitType" Name="DialFace.HeightUnits" SetsValue="true">
-      <Value xsi:type="xsd:int">1</Value>
-    </Variable>
-    <Variable IsFile="true" Type="string" Name="DialFace.SourceFile" SetsValue="true">
-      <Value xsi:type="xsd:string">Gauge.png</Value>
-    </Variable>
-    <Variable Type="float" Name="DialFace.Width" SetsValue="true">
-      <Value xsi:type="xsd:float">100</Value>
-    </Variable>
-    <Variable Type="DimensionUnitType" Name="DialFace.WidthUnits" SetsValue="true">
-      <Value xsi:type="xsd:int">1</Value>
-    </Variable>
     <Variable Type="float" Name="Height" SetsValue="true">
       <Value xsi:type="xsd:float">300</Value>
     </Variable>
@@ -70,8 +55,8 @@
     <Variable Type="DimensionUnitType" Name="NeedleContainer.HeightUnits" SetsValue="true">
       <Value xsi:type="xsd:int">1</Value>
     </Variable>
-    <Variable Type="float" Name="NeedleContainer.Rotation" SetsValue="true">
-      <Value xsi:type="xsd:float">-105.70863</Value>
+    <Variable Type="float" Name="NeedleContainer.Rotation" ExposedAsName="NeedleContainerRotation" SetsValue="true">
+      <Value xsi:type="xsd:float">178.32352</Value>
     </Variable>
     <Variable Type="float" Name="NeedleContainer.Width" SetsValue="true">
       <Value xsi:type="xsd:float">6.6666665</Value>
@@ -108,7 +93,6 @@
     </Variable>
   </State>
   <Instance Name="Needle" BaseType="Sprite" />
-  <Instance Name="DialFace" BaseType="Sprite" />
   <Instance Name="NeedleContainer" BaseType="Container" />
   <Behaviors />
 </ComponentSave>

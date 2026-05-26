@@ -1617,6 +1617,76 @@
         "ElementType": "Components",
         "EventType": 3,
         "TimestampUtc": "2026-05-26T12:48:05.3668056Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "IngameHUD/DistanceTravelledDisplay (Container).ColoredRectangle ColoredRectangleInstance3 in IngameHUD/DistanceTravelledDisplay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-26T15:33:57.8907111Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "IngameHUD/DistanceTravelledDisplay (Container).ColoredRectangle ColoredRectangleInstance4 in IngameHUD/DistanceTravelledDisplay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-26T15:34:00.0266559Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "IngameHUD/DistanceTravelledDisplay (Container).Rectangle RectangleInstance in IngameHUD/DistanceTravelledDisplay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-26T15:34:01.9820306Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "IngameHUD/DistanceTravelledDisplay (Container).Text DistanceVSMax in IngameHUD/DistanceTravelledDisplay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-26T15:34:02.0089859Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "IngameHUD/DistanceTravelledDisplay (Container).ColoredRectangle MovingDistanceBox in IngameHUD/DistanceTravelledDisplay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-26T15:34:02.0267131Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "IngameHUD/DistanceTravelledDisplay (Container).Text FinalDistance in IngameHUD/DistanceTravelledDisplay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-26T15:34:35.0329922Z"
+      },
+      {
+        "NewName": "IngameHUD/IngameHudOverlay (Container).NeedleContainer",
+        "OldName": null,
+        "ElementType": "Components",
+        "EventType": 5,
+        "TimestampUtc": "2026-05-26T15:35:35.6689549Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "IngameHUD/DistanceTravelledDisplay (Container).ColoredRectangle ColoredRectangleInstance2 in IngameHUD/DistanceTravelledDisplay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-26T15:35:38.1908065Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "IngameHUD/Speedometer (Container).Sprite DialFace in IngameHUD/Speedometer (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-26T15:36:32.0580055Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "IngameHUD/IngameHudOverlay (Container).Container NeedleContainer in IngameHUD/IngameHudOverlay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-26T15:37:02.1525323Z"
       }
     ],
     "fa6598317163f260c9f3bb0959f80974868eb5ff3f6bf80a092f54e042071aa2": [

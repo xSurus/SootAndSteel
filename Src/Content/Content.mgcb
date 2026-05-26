@@ -3208,3 +3208,8 @@
 /processor:TextureProcessor
 /build:GumProject/Silhouette.png
 
+#begin GumProject/GaugeDistance.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/GaugeDistance.png
+
