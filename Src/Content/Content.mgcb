@@ -3594,3 +3594,8 @@
 /processor:TextureProcessor
 /build:Enemies/EnemyAtlas-texture.png
 
+#begin Players/Silhouette.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Players/Silhouette.png
+
