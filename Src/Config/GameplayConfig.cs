@@ -64,7 +64,7 @@ public class GameplayConfig
     public float TrainMaxTemperature { get; set; } = 100f;
     public float TrainTemperatureDecreasePerSecondPerBreachedWall { get; set; } = 3f;
     public float TrainTemperatureDecreasePerSecondEngineOff { get; set; } = 3f;
-    public float TrainTemperatureIncreasePerSecond { get; set; } = 3f;
+    public float TrainTemperatureIncreasePerSecond { get; set; } = 6f;
 
     public float PatchRemoveDurationSeconds { get; set; } = 1.5f;
 

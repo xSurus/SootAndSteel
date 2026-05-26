@@ -34,6 +34,7 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
     // - Set both false to restore normal flow into GameplayScreen.
     private static bool ForcePostStatsScreenForTesting = false;
     private static bool ForcePostDeathScreenForTesting = false;
+
     private enum HubPhase
     {
         Intro,
@@ -239,6 +240,7 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
     {
         SaveManager.SaveRun(Game.CurrentRun);
         gameplayContext = new GameplayContext(virtualScreenSize, Game.CurrentRun);
+        gameplayContext.Events.OnCannonFired += OnCannonFired;
         craftingHelpVisible = Game.CurrentRun.HubScreenCraftingHelpVisible;
         Services.AddService(gameplayContext);
         gameplayContext.WorldHeight = worldHeight;
@@ -426,8 +428,18 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
         }
     }
 
+    private void OnCannonFired()
+    {
+        cameraDirector.TriggerShake(Game.GameplayConfig.ScreenShakeIntensity, Game.GameplayConfig.ScreenShakeDuration);
+    }
+
     public override void UnloadContent()
     {
+        if (gameplayContext?.Events != null)
+        {
+            gameplayContext.Events.OnCannonFired -= OnCannonFired;
+        }
+
         worldUiManager?.ClearAll();
         departureHintOverlay?.Hide();
         departureHintOverlay = null;

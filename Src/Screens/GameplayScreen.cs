@@ -148,7 +148,7 @@ public class GameplayScreen : GamelabGameScreen
     private void BeginFailureOutro()
     {
         if (phase == GameplayPhase.FailureOutro) return;
-        
+
         trainSound?.Stop();
         battleTheme?.Stop();
         gameplayContext?.State.freezeSound?.Stop();
@@ -159,7 +159,7 @@ public class GameplayScreen : GamelabGameScreen
             if (player.IsStunned) continue;
             player.TakeDamage(0f); // Stun all players
         }
-        
+
         screenTransitionFilter.FadeIn(4f, 0f, Color.Black);
         phase = GameplayPhase.FailureOutro;
     }
@@ -188,6 +188,7 @@ public class GameplayScreen : GamelabGameScreen
         {
             gameplayContext.Events.OnWallBreached -= OnWallBreached;
             gameplayContext.Events.OnWallRepaired -= OnWallRepaired;
+            gameplayContext.Events.OnCannonFired -= OnCannonFired;
         }
 
         if (gameplayContext?.State != null)
@@ -225,7 +226,7 @@ public class GameplayScreen : GamelabGameScreen
         battleTheme?.Dispose();
         hud?.Dispose();
         pauseMenu?.Dispose();
-        
+
         enemyManager?.Dispose();
 
         base.UnloadContent();
@@ -240,6 +241,7 @@ public class GameplayScreen : GamelabGameScreen
         gameplayContext.State.ConfigurePlayerScaling(playerCount);
         gameplayContext.Events.OnWallBreached += OnWallBreached;
         gameplayContext.Events.OnWallRepaired += OnWallRepaired;
+        gameplayContext.Events.OnCannonFired += OnCannonFired;
         gameplayContext.State.OnTrainFrozen += OnTrainFrozen;
 
         ILevelProvider levelProvider = director != null
@@ -340,7 +342,7 @@ public class GameplayScreen : GamelabGameScreen
                 gameplayContext.State.Update(fixedDt);
                 gameplayContext.PatchManager.Update(fixedDt, gameplayContext.State);
             }
-            
+
             if (IsFailureTriggered)
             {
                 BeginFailureOutro();
@@ -492,15 +494,15 @@ public class GameplayScreen : GamelabGameScreen
         spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
         hud?.Draw(spriteBatch, virtualScreenSize);
         spriteBatch.End();
-        
+
         GumService.Default.Draw();
-        
+
         float w = screenTransitionFilter.Opacity;
         if (w > 0.001f)
         {
             spriteBatch.Begin(transformMatrix: viewportAdapter.GetScaleMatrix());
             spriteBatch.Draw(
-                AssetManager.BlankTexture, 
+                AssetManager.BlankTexture,
                 new Rectangle(0, 0, virtualScreenSize.X, virtualScreenSize.Y),
                 screenTransitionFilter.FilterColor * w
             );
@@ -515,6 +517,11 @@ public class GameplayScreen : GamelabGameScreen
     }
 
     private void OnWallRepaired() => gameplayContext.State.numberBreachedWalls--;
+
+    private void OnCannonFired()
+    {
+        cameraDirector.TriggerShake(Game.GameplayConfig.ScreenShakeIntensity, Game.GameplayConfig.ScreenShakeDuration);
+    }
 
     private void OnTrainFrozen()
     {
@@ -547,7 +554,7 @@ public class GameplayScreen : GamelabGameScreen
             director.OnAllPlayersKnockedOut();
             return;
         }
-        
+
         CommitLevelStatsToRunSession();
         var snapshot = CreatePostDeathStatsSnapshot();
         SaveManager.DeleteSave();
@@ -570,6 +577,7 @@ public class GameplayScreen : GamelabGameScreen
         screenTransitionFilter.FadeIn(2f, 1.5f);
         phase = GameplayPhase.EndOfLevelOutro;
     }
+
     private void CommitLevelStatsToRunSession()
     {
         if (levelStatsCommitted)

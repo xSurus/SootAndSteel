@@ -266,6 +266,18 @@
 /processorParam:TextureFormat=Color
 /build:Enemies/EnemyAtlas-texture-0.png
 
+#begin Enemies/EnemyAtlas-texture.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Enemies/EnemyAtlas-texture.png
+
 #begin Enemies/EnemyAtlas.json
 /importer:TexturePackerJsonImporter
 /processor:TexturePackerProcessor
@@ -1822,6 +1834,18 @@
 /processorParam:TextureFormat=Color
 /build:GumProject/spr_coin_32.png
 
+#begin GumProject/spr_controls.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:GumProject/spr_controls.png
+
 #begin GumProject/spr_filed_closed_stamp.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -2331,6 +2355,18 @@
 /processor:TexturePackerProcessor
 /build:Players/PlayerAtlas.json
 
+#begin Players/Silhouette.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Players/Silhouette.png
+
 #begin promptfont.ttf
 /copy:promptfont.ttf
 
@@ -2771,6 +2807,18 @@
 /processorParam:TextureFormat=Color
 /build:Structures/TrainNoseOff.png
 
+#begin Structures/TrainNoseTop.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Structures/TrainNoseTop.png
+
 #begin Title.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -3154,448 +3202,4 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Walls/WallTileUpperSide.png
-
-#begin GumProject/spr_waybill_paper.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/spr_waybill_paper.png
-
-#begin GumProject/FontCache/Font16Ubuntu_Mono_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font16Ubuntu_Mono_0.png
-
-#begin GumProject/FontCache/Font176Ubuntu_Mono_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font176Ubuntu_Mono_0.png
-
-#begin GumProject/FontCache/Font176Ubuntu_Mono_1.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font176Ubuntu_Mono_1.png
-
-#begin GumProject/FontCache/Font17Ubuntu_Mono_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font17Ubuntu_Mono_0.png
-
-#begin GumProject/FontCache/Font18_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18_0.png
-
-#begin GumProject/FontCache/Font22Bodoni_MT_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font22Bodoni_MT_0.png
-
-#begin GumProject/FontCache/Font30Special_Elite_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font30Special_Elite_0.png
-
-#begin GumProject/spr_waybill_paid_stamp.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/spr_waybill_paid_stamp.png
-
-#begin GumProject/spr_waybill_punch.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/spr_waybill_punch.png
-
-#begin GumProject/spr_filed_closed_stamp.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/spr_filed_closed_stamp.png
-
-#begin GumProject/spr_incident_paper.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/spr_incident_paper.png
-
-#begin GumProject/FontCache/Font12Courier_New_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font12Courier_New_0.png
-
-#begin GumProject/FontCache/Font13Courier_New_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font13Courier_New_0.png
-
-#begin GumProject/FontCache/Font14Bodoni_MT_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font14Bodoni_MT_0.png
-
-#begin GumProject/FontCache/Font14Courier_New_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font14Courier_New_0.png
-
-#begin GumProject/FontCache/Font15Bodoni_MT_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font15Bodoni_MT_0.png
-
-#begin GumProject/FontCache/Font15Courier_New_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font15Courier_New_0.png
-
-#begin GumProject/FontCache/Font16Courier_New_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font16Courier_New_0.png
-
-#begin GumProject/FontCache/Font17Arial_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font17Arial_0.png
-
-#begin GumProject/FontCache/Font17Courier_New_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font17Courier_New_0.png
-
-#begin GumProject/FontCache/Font18Courier_New_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Courier_New_0.png
-
-#begin GumProject/FontCache/Font18Courier_New_Bold_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Courier_New_Bold_0.png
-
-#begin GumProject/FontCache/Font30Courier_New_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font30Courier_New_0.png
-
-#begin GumProject/FontCache/Font30Ub_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font30Ub_0.png
-
-#begin GumProject/FontCache/Font16Arial_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font16Arial_0.png
-
-#begin GumProject/FontCache/Font16Bodoni_MT_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font16Bodoni_MT_0.png
-
-#begin GumProject/FontCache/Font35Ubuntu_Mono_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font35Ubuntu_Mono_0.png
-
-#begin Walls/WallTileTopBroken2_Variation1.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Walls/WallTileTopBroken2_Variation1.png
-
-#begin Walls/WallTileBottomBroken1.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Walls/WallTileBottomBroken1.png
-
-#begin Walls/WallTileTopBroken2_Variation2.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Walls/WallTileTopBroken2_Variation2.png
-
-#begin Walls/WallTileTopBroken2_Variation3.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Walls/WallTileTopBroken2_Variation3.png
-
-#begin Walls/WallTileTopBroken3_Variation3.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Walls/WallTileTopBroken3_Variation3.png
-
-#begin Walls/WallTileTopBroken3_Variation2.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Walls/WallTileTopBroken3_Variation2.png
-
-#begin Walls/WallTileTopBroken3_Variation1.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Walls/WallTileTopBroken3_Variation1.png
-
-#begin Walls/WallTileTopDoorBroken1.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Walls/WallTileTopDoorBroken1.png
-
-#begin Walls/WallTileTopDoorBroken3.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Walls/WallTileTopDoorBroken3.png
-
-#begin Walls/WallTileTopDoorBroken2.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Walls/WallTileTopDoorBroken2.png
-
-#begin Walls/WallTileBottomBroken3.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Walls/WallTileBottomBroken3.png
-
-#begin Walls/WallTileTopBroken1_Variation2.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Walls/WallTileTopBroken1_Variation2.png
-
-#begin Walls/WallTileTopBroken1_Variation3.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Walls/WallTileTopBroken1_Variation3.png
-
-#begin Walls/WallTileTopBroken1_Variation1.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Walls/WallTileTopBroken1_Variation1.png
-
-#begin Walls/WallTileBottomBroken2.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Walls/WallTileBottomBroken2.png
-
-#begin Decorations/Light.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Decorations/Light.png
-
-#begin Decorations/BlueLight.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Decorations/BlueLight.png
-
-#begin Decorations/IceFloor.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Decorations/IceFloor.png
-
-#begin GumProject/spr_waybill_paper.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/spr_waybill_paper.png
-
-#begin GumProject/FontCache/Font16Ubuntu_Mono_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font16Ubuntu_Mono_0.png
-
-#begin GumProject/FontCache/Font176Ubuntu_Mono_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font176Ubuntu_Mono_0.png
-
-#begin GumProject/FontCache/Font176Ubuntu_Mono_1.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font176Ubuntu_Mono_1.png
-
-#begin GumProject/FontCache/Font17Ubuntu_Mono_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font17Ubuntu_Mono_0.png
-
-#begin GumProject/FontCache/Font18_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18_0.png
-
-#begin GumProject/FontCache/Font22Bodoni_MT_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font22Bodoni_MT_0.png
-
-#begin GumProject/FontCache/Font30Special_Elite_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font30Special_Elite_0.png
-
-#begin GumProject/spr_waybill_paid_stamp.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/spr_waybill_paid_stamp.png
-
-#begin GumProject/spr_waybill_punch.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/spr_waybill_punch.png
-
-#begin GumProject/spr_filed_closed_stamp.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/spr_filed_closed_stamp.png
-
-#begin GumProject/spr_incident_paper.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/spr_incident_paper.png
-
-#begin GumProject/FontCache/Font12Courier_New_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font12Courier_New_0.png
-
-#begin GumProject/FontCache/Font13Courier_New_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font13Courier_New_0.png
-
-#begin GumProject/FontCache/Font14Bodoni_MT_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font14Bodoni_MT_0.png
-
-#begin GumProject/FontCache/Font14Courier_New_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font14Courier_New_0.png
-
-#begin GumProject/FontCache/Font15Bodoni_MT_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font15Bodoni_MT_0.png
-
-#begin GumProject/FontCache/Font15Courier_New_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font15Courier_New_0.png
-
-#begin GumProject/FontCache/Font16Courier_New_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font16Courier_New_0.png
-
-#begin GumProject/FontCache/Font17Arial_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font17Arial_0.png
-
-#begin GumProject/FontCache/Font17Courier_New_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font17Courier_New_0.png
-
-#begin GumProject/FontCache/Font18Courier_New_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Courier_New_0.png
-
-#begin GumProject/FontCache/Font18Courier_New_Bold_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font18Courier_New_Bold_0.png
-
-#begin GumProject/FontCache/Font30Courier_New_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font30Courier_New_0.png
-
-#begin GumProject/FontCache/Font30Ub_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font30Ub_0.png
-
-#begin GumProject/spr_hud_dial_face.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/spr_hud_dial_face.png
-
-#begin GumProject/spr_hud_dial_needle.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/spr_hud_dial_needle.png
-
-#begin GumProject/spr_hud_enemy.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/spr_hud_enemy.png
-
-#begin GumProject/spr_hud_goal_x.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/spr_hud_goal_x.png
-
-#begin GumProject/spr_hud_scroll.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/spr_hud_scroll.png
-
-#begin GumProject/spr_hud_train_marker.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/spr_hud_train_marker.png
-
-#begin GumProject/FontCache/Font16Arial_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font16Arial_0.png
-
-#begin GumProject/FontCache/Font16Bodoni_MT_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font16Bodoni_MT_0.png
-
-#begin GumProject/FontCache/Font35Ubuntu_Mono_0.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/FontCache/Font35Ubuntu_Mono_0.png
-
-#begin GumProject/Gauge.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/Gauge.png
-
-#begin GumProject/GaugeHand.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/GaugeHand.png
-#begin Hub/House2.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Hub/House2.png
-
-#begin Hub/House1.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Hub/House1.png
-
-#begin GumProject/spr_xbox_select_32.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/spr_xbox_select_32.png
-
-#begin GumProject/spr_controls.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:GumProject/spr_controls.png
-
-#begin Structures/TrainNoseTop.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Structures/TrainNoseTop.png
-
-#begin Enemies/EnemyAtlas-texture.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Enemies/EnemyAtlas-texture.png
-
-#begin Players/Silhouette.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/build:Players/Silhouette.png
 

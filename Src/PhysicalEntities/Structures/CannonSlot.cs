@@ -19,7 +19,7 @@ using nkast.Aether.Physics2D.Dynamics;
 
 namespace Gamelab.PhysicalEntities.Structures;
 
-public class CannonSlot : ICannonSeat, IBulletEmitter, IHighlightable, IGrabbable
+public class CannonSlot : ICannonSeat, IBulletEmitter, IHighlightable, IInteractable, IPickable
 {
     private readonly ISoundService soundService;
     private readonly IBulletService bulletService;
@@ -102,12 +102,11 @@ public class CannonSlot : ICannonSeat, IBulletEmitter, IHighlightable, IGrabbabl
         PhysicsBody.Tag = this;
     }
 
-    public bool OnGrab(Player player, Vector2 grabPointWorldMeters)
+    public void OnInteract(Player player)
     {
-        if (SeatedPlayer != null) return false;
+        if (SeatedPlayer != null) return;
         SeatedPlayer = player;
         player.SeatAt(this);
-        return true;
     }
 
     public void OnRelease(Player player)
@@ -119,7 +118,7 @@ public class CannonSlot : ICannonSeat, IBulletEmitter, IHighlightable, IGrabbabl
         SeatedPlayer = null;
     }
 
-    public void OnInteract(Player player)
+    public void OnPickup(Player player)
     {
         if (ammoRack.Count == 0 && pairedRack != null && pairedRack.TryProvideItem(out Item item) &&
             item is BulletItem bullet)
@@ -164,6 +163,7 @@ public class CannonSlot : ICannonSeat, IBulletEmitter, IHighlightable, IGrabbabl
     private void FireCannon()
     {
         var config = GamelabGame.Instance.GameplayConfig;
+        GameplayContext gameplayContext = GamelabGame.Instance.Services.GetService<GameplayContext>();
         BulletItem bullet = ammoRack[0];
         ammoRack.RemoveAt(0);
 
@@ -174,8 +174,8 @@ public class CannonSlot : ICannonSeat, IBulletEmitter, IHighlightable, IGrabbabl
 
         bulletService.EmitBullet(bullet, barrelTip, direction, this);
         vfxService.EmitBurst(ParticleFactory.CreateCannonMuzzleFlash(barrelTip, direction));
-
         cooldownTimer = config.CannonCooldown;
         soundService.PlayOnce(Sounds.CannonFire);
+        gameplayContext.Events.FireCannonFired();
     }
 }

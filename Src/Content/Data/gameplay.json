@@ -53,7 +53,7 @@
   "trainMaxTemperature": 100.0,
   "temperatureDecreasePerSecondPerBreachedWall": 3.0,
   "temperatureDecreasePerSecondEngineOff": 5.0,
-  "temperatureIncreasePerSecond": 3.0,
+  "temperatureIncreasePerSecond": 6.0,
   "threatScalePerExtraPlayer": 0.45,
   "threatScaleExponent": 0.85,
   "enemySpawnPacingScaleStrength": 0.25,

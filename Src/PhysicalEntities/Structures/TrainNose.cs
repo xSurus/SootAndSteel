@@ -44,11 +44,17 @@ public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
         int trainHeightTiles = GamelabGame.Instance.GameplayConfig.TrainHeight;
         int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
 
-        widthPixels = tileSize;
+        Texture2D tex = AssetManager.GetStructureTexture("TrainNoseOff");
+        float tileScale = tileSize / (float)AssetManager.TileTexture[0].Width;
+
+        widthPixels = tex.Width * tileScale;
         heightPixels = trainHeightTiles * tileSize;
 
+        float hitboxCenterX = (position.X - tileSize / 2f) + NoseDrawOffsetX + (widthPixels / 2f);
+        float hitboxCenterY = position.Y;
+
         PhysicsBody = gameplayContext.PhysicsWorld.CreateRectangle(widthPixels.ToMeters(), heightPixels.ToMeters(), 1f,
-            position.ToMeters());
+            new Vector2(hitboxCenterX, hitboxCenterY).ToMeters());
         smokeEmitter = ParticleFactory.CreateOvenSmoke(position + new Vector2(60, 0));
         GamelabGame.Instance.Services.GetService<IVfxService>()?.AddContinuous(smokeEmitter);
 
@@ -159,37 +165,43 @@ public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
         currentFuel = MathHelper.Clamp(fuel, 0f, maxFuel);
     }
 
+    private Vector2 GetBottomLeft()
+    {
+        TrainMap map = gameplayContext.Map;
+        return map.GetTileTopLeftPixels(map.Width, map.Height);
+    }
+
     public override void Draw(SpriteBatch spriteBatch)
     {
         int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
         // Match TrainMap.DrawTrainTiles scaling so cab/nose art shares the same pixel density as train tiles.
         float tileScale = tileSize / (float)AssetManager.TileTexture[0].Width;
 
-        TrainMap map = gameplayContext.Map;
-        Vector2 feetAnchor = map != null
-            ? map.GetTileTopLeftPixels(map.Width, map.Height - 1) + new Vector2(0, map.TileSize)
-            : Position + new Vector2(0, heightPixels);
-
+        Vector2 bottomLeft = GetBottomLeft();
         float fuelFactor = Math.Min(Math.Max(0f, (currentFuel / maxFuel) * 2), 1);
         Texture2D tex = AssetManager.GetStructureTexture("TrainNoseOff");
         Texture2D texOn = AssetManager.GetStructureTexture("TrainNose");
         Texture2D texTop = AssetManager.GetStructureTexture("TrainNoseTop");
         Vector2 origin = new Vector2(0f, tex.Height);
-        spriteBatch.Draw(tex, feetAnchor + new Vector2(NoseDrawOffsetX, NoseDrawOffsetY), null, Color.White, 0f, origin,
+        spriteBatch.Draw(tex, bottomLeft + new Vector2(NoseDrawOffsetX, NoseDrawOffsetY), null, Color.White, 0f, origin,
             tileScale, SpriteEffects.None, RenderUtility.FloorLayer + RenderUtility.Eps);
-        spriteBatch.Draw(texOn, feetAnchor + new Vector2(NoseDrawOffsetX, NoseDrawOffsetY), null,
+        spriteBatch.Draw(texOn, bottomLeft + new Vector2(NoseDrawOffsetX, NoseDrawOffsetY), null,
             Color.White * fuelFactor, 0f, origin, tileScale, SpriteEffects.None,
             RenderUtility.FloorLayer + 2 * RenderUtility.Eps);
-        spriteBatch.Draw(texTop, feetAnchor + new Vector2(NoseDrawOffsetX, NoseDrawOffsetY), null,
+        spriteBatch.Draw(texTop, bottomLeft + new Vector2(NoseDrawOffsetX, NoseDrawOffsetY), null,
             Color.White * fuelFactor, 0f, origin, tileScale, SpriteEffects.None, RenderUtility.TopEntityLayer);
     }
 
     public void DrawLightBatch(SpriteBatch spriteBatch)
     {
+        Vector2 bottomLeft = GetBottomLeft();
+        int tileSize = GamelabGame.Instance.GameplayConfig.TrainTileSize;
+        Vector2 noseCenterLeft = bottomLeft + new Vector2(tileSize / 2f, -heightPixels / 2f);
+
         float fuelFactor = Math.Min(Math.Max(0f, (currentFuel / maxFuel) * 2), 1);
         spriteBatch.Draw(
             AssetManager.GetDecorationTexture("FurnaceLight"),
-            Position - new Vector2(340, 390),
+            noseCenterLeft - new Vector2(340, 390),
             null,
             Color.White * fuelFactor,
             0f,
@@ -201,7 +213,7 @@ public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
 
         spriteBatch.Draw(
             AssetManager.GetDecorationTexture("FurnaceLight"),
-            Position,
+            noseCenterLeft,
             null,
             Color.White * fuelFactor,
             0f,
@@ -217,7 +229,7 @@ public class TrainNose : AbstractPhysicalEntity, IPickable, IUpdatable
         glow *= fuelFactor;
         spriteBatch.Draw(
             AssetManager.GetDecorationTexture("FurnaceLight"),
-            Position,
+            noseCenterLeft,
             null,
             Color.White * glow,
             0f,

@@ -247,7 +247,7 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable, IItemP
         seat?.OnRelease(this);
 
         HeldItem = null;
-        
+
         soundService.PlayOnce(Sounds.Fall);
     }
 
@@ -277,15 +277,10 @@ public class Player : AbstractPhysicalEntity, IInteractable, IDamageable, IItemP
 
         var input = PlayerConfiguration.Input;
 
-        if (input.IsGrabJustPressed())
+        if (input.IsInteractJustPressed())
         {
             SeatedAt.OnRelease(this);
             return;
-        }
-
-        if (input.IsInteractJustPressed())
-        {
-            SeatedAt.OnInteract(this);
         }
 
         if (input.IsPickupJustPressed())
