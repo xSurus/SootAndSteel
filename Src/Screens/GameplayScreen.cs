@@ -263,9 +263,11 @@ public class GameplayScreen : GamelabGameScreen
         enemyManager = new EnemyManager(currentLevelDef);
 
         players = [];
+        HashSet<Point> alreadyChosenTiles = [];
         foreach (var playerConfig in Game.playerManager.Configs)
         {
-            players.Add(new Player(trainMap.GetTileCenterPixels(playerConfig.PlayerIndex, 1), playerConfig));
+            Vector2 spawnPos = trainMap.GetFreeSpawnTile(playerConfig.PlayerIndex, alreadyChosenTiles);
+            players.Add(new Player(spawnPos, playerConfig));
         }
 
         footprintSystem = new FootprintSystem(Services.GetService<IVfxService>(), players.Count);

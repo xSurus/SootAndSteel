@@ -88,6 +88,49 @@ public class TrainMap : IDisposable
         return GetTileCenterPixels(x, y).ToMeters();
     }
 
+    public Vector2 GetFreeSpawnTile(int playerIndex, HashSet<Point> alreadyChosenTiles)
+    {
+        List<int> preferredRows = [];
+        int center = Height / 2;
+        preferredRows.Add(center);
+
+        // use center row first, and if its full the closest available row
+        for (int offset = 1; offset < Height; offset++)
+        {
+            int above = center - offset;
+            int below = center + offset;
+
+            if (above >= 0)
+            {
+                preferredRows.Add(above);
+            }
+            if (below < Height)
+            {
+                preferredRows.Add(below);
+            }
+        }
+
+        Point spawnTile;
+        foreach (int y in preferredRows)
+        {
+            for (int i = 0; i < Width; i++)
+            {
+                int x = (playerIndex + i) % Width;
+                spawnTile = new Point(x, y);
+                if (!stationGrid.ContainsKey(spawnTile) && !alreadyChosenTiles.Contains(spawnTile))
+                {
+                    alreadyChosenTiles.Add(spawnTile);
+                    return GetTileCenterPixels(x, y);
+                }
+            }
+        }
+
+        // do the same thing as before the fix
+        spawnTile = new Point(playerIndex, center);
+        alreadyChosenTiles.Add(spawnTile);
+        return GetTileCenterPixels(spawnTile.X, spawnTile.Y);
+    }
+
     public Point GetTileIndexFromPixels(Vector2 pixelPosition)
     {
         Vector2 localPos = pixelPosition - Position;

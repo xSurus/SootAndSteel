@@ -276,9 +276,11 @@ public class HubScreen(GamelabGame game) : GamelabGameScreen(game)
     private void InitializePlayers()
     {
         players = [];
+        HashSet<Point> alreadyChosenTiles = [];
         foreach (var playerConfig in Game.playerManager.Configs)
         {
-            players.Add(new Player(prepTrainMap.GetTileCenterPixels(playerConfig.PlayerIndex, 1), playerConfig));
+            Vector2 spawnPos = prepTrainMap.GetFreeSpawnTile(playerConfig.PlayerIndex, alreadyChosenTiles);
+            players.Add(new Player(spawnPos, playerConfig));
         }
 
         footprintSystem = new FootprintSystem(Services.GetService<IVfxService>(), players.Count);
