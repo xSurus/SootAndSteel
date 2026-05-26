@@ -183,6 +183,7 @@ public class CannonStation : AbstractStation, IBulletEmitter, IInteractable, ICa
         cooldownTimer = config.CannonCooldown;
         soundService.PlayOnce(Sounds.CannonFire);
         HeldItem = null;
+        gameplayContext.Events.FireCannonFired();
     }
 
     public override void Draw(SpriteBatch spriteBatch)
