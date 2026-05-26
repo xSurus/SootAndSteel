@@ -23,8 +23,11 @@
     <Variable Type="DimensionUnitType" Name="HeightUnits" SetsValue="true">
       <Value xsi:type="xsd:int">4</Value>
     </Variable>
+    <Variable Type="float" Name="SpriteInstance.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">32</Value>
+    </Variable>
     <Variable Type="DimensionUnitType" Name="SpriteInstance.HeightUnits" SetsValue="true">
-      <Value xsi:type="xsd:int">3</Value>
+      <Value xsi:type="xsd:int">0</Value>
     </Variable>
     <Variable Type="string" Name="SpriteInstance.Parent" SetsValue="true">
       <Value xsi:type="xsd:string">ContainerInstance</Value>
@@ -32,8 +35,11 @@
     <Variable IsFile="true" Type="string" Name="SpriteInstance.SourceFile" ExposedAsName="ButtonIcon" SetsValue="true">
       <Value xsi:type="xsd:string">spr_coin_32.png</Value>
     </Variable>
+    <Variable Type="float" Name="SpriteInstance.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">32</Value>
+    </Variable>
     <Variable Type="DimensionUnitType" Name="SpriteInstance.WidthUnits" SetsValue="true">
-      <Value xsi:type="xsd:int">3</Value>
+      <Value xsi:type="xsd:int">0</Value>
     </Variable>
     <Variable Type="float" Name="SpriteInstance.X" SetsValue="true">
       <Value xsi:type="xsd:float">10</Value>

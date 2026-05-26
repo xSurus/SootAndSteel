@@ -9,8 +9,7 @@ using MonoGameGum.GueDeriving;
 using RenderingLibrary.Graphics;
 using System.Linq;
 namespace Gamelab.Components;
-
-public partial class ButtonWithIcon : global::Gum.Forms.Controls.FrameworkElement
+partial class ButtonWithIcon : global::Gum.Forms.Controls.FrameworkElement
 {
     [System.Runtime.CompilerServices.ModuleInitializer]
     public static void RegisterRuntimeType()

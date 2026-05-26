@@ -17,10 +17,10 @@
       <Value xsi:type="xsd:int">89</Value>
     </Variable>
     <Variable Type="float" Name="Amount.Height" SetsValue="true">
-      <Value xsi:type="xsd:float">0</Value>
+      <Value xsi:type="xsd:float">32</Value>
     </Variable>
     <Variable Type="DimensionUnitType" Name="Amount.HeightUnits" SetsValue="true">
-      <Value xsi:type="xsd:int">4</Value>
+      <Value xsi:type="xsd:int">0</Value>
     </Variable>
     <Variable Type="bool" Name="Amount.IsBold" SetsValue="true">
       <Value xsi:type="xsd:boolean">true</Value>
@@ -53,13 +53,25 @@
       <Value xsi:type="xsd:int">7</Value>
     </Variable>
     <Variable Type="float" Name="CurrencyIcon.Height" SetsValue="true">
-      <Value xsi:type="xsd:float">150</Value>
+      <Value xsi:type="xsd:float">64</Value>
     </Variable>
     <Variable IsFile="true" Type="string" Name="CurrencyIcon.SourceFile" SetsValue="true">
       <Value xsi:type="xsd:string">spr_coin_32.png</Value>
     </Variable>
     <Variable Type="float" Name="CurrencyIcon.Width" SetsValue="true">
-      <Value xsi:type="xsd:float">150</Value>
+      <Value xsi:type="xsd:float">64</Value>
+    </Variable>
+    <Variable Type="float" Name="CurrencyIcon.X" SetsValue="true">
+      <Value xsi:type="xsd:float">25</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="CurrencyIcon.XOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="CurrencyIcon.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
+    <Variable Type="float" Name="CurrencyIcon.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
     </Variable>
     <Variable Type="VerticalAlignment" Name="CurrencyIcon.YOrigin" SetsValue="true">
       <Value xsi:type="xsd:int">1</Value>

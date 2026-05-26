@@ -9,7 +9,5 @@
   "OutputLibrary": 5,
   "AdjustPixelValuesForDensity": false,
   "BaseTypesNotCodeGenerated": "",
-  "GenerateGumDataTypes": false,
-  "SyntaxVersion": "*",
-  "Version": 1
+  "GenerateGumDataTypes": false
 }

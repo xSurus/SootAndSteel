@@ -3203,3 +3203,8 @@
 /processorParam:TextureFormat=Color
 /build:Walls/WallTileUpperSide.png
 
+#begin GumProject/Silhouette.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/Silhouette.png
+

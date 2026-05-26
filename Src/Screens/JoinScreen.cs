@@ -17,11 +17,6 @@ namespace Gamelab;
 /// </summary>
 public sealed class JoinScreen(GamelabGame game) : Screens.GamelabGameScreen(game)
 {
-    /// <summary>Names must match <c>JoinPlayerComponentAnimations.ganx</c> (set in Gum).</summary>
-    private const string AnimPlayerJoined = "PlayerJoinedAnimation";
-
-    private const string AnimPlayerEmpty = "PlayerEmptyAnimation";
-
     private readonly Dictionary<int, GamePadState> previousGamePadStates = new();
 
     /// <summary>Last frame's join occupancy per slot — only then we swap animations.</summary>
@@ -46,13 +41,15 @@ public sealed class JoinScreen(GamelabGame game) : Screens.GamelabGameScreen(gam
         joinUi = new Screens.JoinScreen();
         joinUi.AddToRoot();
 
-        foreach (JoinPlayerComponent p in new[]
-                 {
-                     joinUi.First_Player, joinUi.Second_Player, joinUi.Third_Player, joinUi.Fourth_Player
-                 })
+        JoinPlayerComponent[] players =
+        [
+            joinUi.First_Player, joinUi.Second_Player, joinUi.Third_Player, joinUi.Fourth_Player
+        ];
+
+        for (int i = 0; i < players.Length; i++)
         {
-            p.Visual.PlayAnimation(AnimPlayerEmpty);
-            SetJoinButtonState(p, isJoined: false);
+            SetPlayerFigureState(players[i], isJoined: false, slotNumber: i + 1);
+            SetJoinButtonState(players[i], isJoined: false);
         }
     }
 
@@ -110,13 +107,12 @@ public sealed class JoinScreen(GamelabGame game) : Screens.GamelabGameScreen(gam
 
             if (isJoined)
             {
-                p.Visual.PlayAnimation(AnimPlayerJoined);
+                SetPlayerFigureState(p, isJoined: true, slotNumber: i + 1);
                 SetJoinButtonState(p, isJoined: true);
             }
             else
             {
-                p.Visual.StopAnimation();
-                p.Visual.PlayAnimation(AnimPlayerEmpty);
+                SetPlayerFigureState(p, isJoined: false, slotNumber: i + 1);
                 SetJoinButtonState(p, isJoined: false);
             }
         }
@@ -159,5 +155,23 @@ public sealed class JoinScreen(GamelabGame game) : Screens.GamelabGameScreen(gam
             XboxButtonGlyphs.ApplyFaceButton(joinButton, XboxButtonAtlas.Face.A);
             joinButton.ButtonText = "Join";
         }
+    }
+
+    private static void SetPlayerFigureState(JoinPlayerComponent playerSlot, bool isJoined, int slotNumber)
+    {
+        if (!isJoined)
+        {
+            playerSlot.JoinedState = JoinPlayerComponent.Joined.empty;
+            return;
+        }
+
+        playerSlot.JoinedState = slotNumber switch
+        {
+            1 => JoinPlayerComponent.Joined.joined1,
+            2 => JoinPlayerComponent.Joined.joined2,
+            3 => JoinPlayerComponent.Joined.joined3,
+            4 => JoinPlayerComponent.Joined.joined4,
+            _ => JoinPlayerComponent.Joined.empty
+        };
     }
 }
