@@ -125,19 +125,19 @@
     <State>
       <Name>joined2</Name>
       <Variable IsFile="true" Type="string" Name="PlayerFigure.SourceFile" ExposedAsName="SpriteInstanceSourceFile" SetsValue="true">
-        <Value xsi:type="xsd:string">IdleA1.png</Value>
+        <Value xsi:type="xsd:string">IdleA3.png</Value>
       </Variable>
     </State>
     <State>
       <Name>joined3</Name>
       <Variable IsFile="true" Type="string" Name="PlayerFigure.SourceFile" ExposedAsName="SpriteInstanceSourceFile" SetsValue="true">
-        <Value xsi:type="xsd:string">IdleA2.png</Value>
+        <Value xsi:type="xsd:string">IdleA1.png</Value>
       </Variable>
     </State>
     <State>
       <Name>joined4</Name>
       <Variable IsFile="true" Type="string" Name="PlayerFigure.SourceFile" ExposedAsName="SpriteInstanceSourceFile" SetsValue="true">
-        <Value xsi:type="xsd:string">IdleA3.png</Value>
+        <Value xsi:type="xsd:string">IdleA2.png</Value>
       </Variable>
     </State>
   </Category>
