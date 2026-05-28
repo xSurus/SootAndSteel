@@ -452,7 +452,7 @@
       <Value xsi:type="xsd:float">50</Value>
     </Variable>
     <Variable Type="float" Name="FileClosedStamp.X" SetsValue="true">
-      <Value xsi:type="xsd:float">407</Value>
+      <Value xsi:type="xsd:float">480</Value>
     </Variable>
     <Variable Type="float" Name="FileClosedStamp.Y" SetsValue="true">
       <Value xsi:type="xsd:float">39</Value>

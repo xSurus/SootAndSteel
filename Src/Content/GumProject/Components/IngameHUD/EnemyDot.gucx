@@ -5,22 +5,52 @@
   <State>
     <Name>Default</Name>
     <Variable Type="float" Name="Height" SetsValue="true">
-      <Value xsi:type="xsd:float">0</Value>
+      <Value xsi:type="xsd:float">100</Value>
     </Variable>
     <Variable Type="DimensionUnitType" Name="HeightUnits" SetsValue="true">
-      <Value xsi:type="xsd:int">4</Value>
+      <Value xsi:type="xsd:int">0</Value>
     </Variable>
     <Variable IsFile="true" Type="string" Name="SpriteInstance.SourceFile" SetsValue="true">
       <Value xsi:type="xsd:string">spr_hud_enemy.png</Value>
+    </Variable>
+    <Variable Type="float" Name="SpriteInstance.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">50</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="SpriteInstance.HeightUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="float" Name="SpriteInstance.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">50</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="SpriteInstance.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="float" Name="SpriteInstance.X" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="SpriteInstance.XOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="SpriteInstance.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">6</Value>
+    </Variable>
+    <Variable Type="float" Name="SpriteInstance.Y" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="VerticalAlignment" Name="SpriteInstance.YOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="SpriteInstance.YUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">7</Value>
     </Variable>
     <Variable Type="State" Name="State" Category="States and Visibility" SetsValue="false">
       <Value xsi:type="xsd:string">Default</Value>
     </Variable>
     <Variable Type="float" Name="Width" SetsValue="true">
-      <Value xsi:type="xsd:float">0</Value>
+      <Value xsi:type="xsd:float">100</Value>
     </Variable>
     <Variable Type="DimensionUnitType" Name="WidthUnits" SetsValue="true">
-      <Value xsi:type="xsd:int">4</Value>
+      <Value xsi:type="xsd:int">0</Value>
     </Variable>
   </State>
   <Instance Name="SpriteInstance" BaseType="Sprite" />
