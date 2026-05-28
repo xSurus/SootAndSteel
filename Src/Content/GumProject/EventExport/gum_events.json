@@ -2,307 +2,6 @@
   "UserEvents": {
     "35298781dc6efb3dbe57241319cda4e5e1ea4236e0692bc1fa26f9ddd9b359ac": [
       {
-        "NewName": "CharterMenu",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 0,
-        "TimestampUtc": "2026-05-10T15:59:08.739793Z"
-      },
-      {
-        "NewName": "CharterMenu (Container).Seperator1",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T15:59:18.6875823Z"
-      },
-      {
-        "NewName": "CharterMenu (Container).Seperator2",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T15:59:18.7156831Z"
-      },
-      {
-        "NewName": "CharterMenu (Container).ButtonWithIconInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T15:59:18.7228952Z"
-      },
-      {
-        "NewName": "CharterMenu (Container).ButtonWithIconInstance1",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T15:59:18.7298068Z"
-      },
-      {
-        "NewName": "CharterMenu (Container).ItemFunction",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T15:59:18.7368084Z"
-      },
-      {
-        "NewName": "CharterMenu (Container).ItemName",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T15:59:18.7437357Z"
-      },
-      {
-        "NewName": "CharterMenu (Container).ShopItemTypeInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T15:59:18.7507519Z"
-      },
-      {
-        "NewName": "CharterMenu (Container).TextInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T15:59:18.7579033Z"
-      },
-      {
-        "NewName": "CharterMenu (Container).Background",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T15:59:18.7650897Z"
-      },
-      {
-        "NewName": "CharterMenu (Container).Wrapper",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T15:59:18.774039Z"
-      },
-      {
-        "NewName": "CharterMenu (Container).Interactions",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T15:59:18.7814334Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "CharterMenu",
-        "ElementType": "Components",
-        "EventType": 1,
-        "TimestampUtc": "2026-05-10T17:59:20.8707197Z"
-      },
-      {
-        "NewName": "HubOverlay",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 0,
-        "TimestampUtc": "2026-05-10T17:59:45.4156275Z"
-      },
-      {
-        "NewName": "HubOverlay (Container).TextInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T18:00:58.5697877Z"
-      },
-      {
-        "NewName": "CurrencyDisplay",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 0,
-        "TimestampUtc": "2026-05-10T18:01:40.5145006Z"
-      },
-      {
-        "NewName": "CurrencyDisplay (Container).TextInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T18:01:46.9756741Z"
-      },
-      {
-        "NewName": "CurrencyDisplay (Container).SpriteInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T18:01:48.9677167Z"
-      },
-      {
-        "NewName": "CurrencyDisplay (Container).Amount",
-        "OldName": "CurrencyDisplay (Container).TextInstance",
-        "ElementType": "Components",
-        "EventType": 7,
-        "TimestampUtc": "2026-05-10T18:04:07.6117134Z"
-      },
-      {
-        "NewName": "CurrencyDisplay (Container).CurrencyIcon",
-        "OldName": "CurrencyDisplay (Container).SpriteInstance",
-        "ElementType": "Components",
-        "EventType": 7,
-        "TimestampUtc": "2026-05-10T18:04:12.4076692Z"
-      },
-      {
-        "NewName": "HubOverlay (Container).CurrencyDisplayInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T18:04:40.7317009Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "HubOverlay (Container).Text TextInstance in HubOverlay (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-10T18:04:56.6291925Z"
-      },
-      {
-        "NewName": "NotReady",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 0,
-        "TimestampUtc": "2026-05-10T18:14:58.8455021Z"
-      },
-      {
-        "NewName": "NotReady (Container).TextInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T18:15:02.4122463Z"
-      },
-      {
-        "NewName": "NotReady (Container).SpriteInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T18:16:02.3073564Z"
-      },
-      {
-        "NewName": "NotReady (Container).SpriteInstance1",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T18:16:38.4777377Z"
-      },
-      {
-        "NewName": "NotReady (Container).SpriteInstance2",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T18:16:42.1346084Z"
-      },
-      {
-        "NewName": "NotReady (Container).SpriteInstance3",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T18:16:44.2788908Z"
-      },
-      {
-        "NewName": "NotReady (Container).RedPlayer",
-        "OldName": "NotReady (Container).SpriteInstance3",
-        "ElementType": "Components",
-        "EventType": 7,
-        "TimestampUtc": "2026-05-10T18:16:52.1387089Z"
-      },
-      {
-        "NewName": "NotReady (Container).BluePlayer",
-        "OldName": "NotReady (Container).SpriteInstance2",
-        "ElementType": "Components",
-        "EventType": 7,
-        "TimestampUtc": "2026-05-10T18:16:56.2187999Z"
-      },
-      {
-        "NewName": "NotReady (Container).YellowPlayer",
-        "OldName": "NotReady (Container).SpriteInstance1",
-        "ElementType": "Components",
-        "EventType": 7,
-        "TimestampUtc": "2026-05-10T18:17:00.4186639Z"
-      },
-      {
-        "NewName": "NotReady (Container).BrownPlayer",
-        "OldName": "NotReady (Container).SpriteInstance",
-        "ElementType": "Components",
-        "EventType": 7,
-        "TimestampUtc": "2026-05-10T18:17:28.2972349Z"
-      },
-      {
-        "NewName": "NotReady (Container).ContainerInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T18:18:21.3645772Z"
-      },
-      {
-        "NewName": "Ready",
-        "OldName": "NotReady",
-        "ElementType": "Components",
-        "EventType": 2,
-        "TimestampUtc": "2026-05-10T18:25:05.8747946Z"
-      },
-      {
-        "NewName": "HubOverlay (Container).ReadyInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T18:30:23.4897934Z"
-      },
-      {
-        "NewName": "NotReady",
-        "OldName": "Ready",
-        "ElementType": "Components",
-        "EventType": 2,
-        "TimestampUtc": "2026-05-10T18:58:24.513384Z"
-      },
-      {
-        "NewName": "PlayersReady",
-        "OldName": "NotReady",
-        "ElementType": "Components",
-        "EventType": 2,
-        "TimestampUtc": "2026-05-10T19:14:31.6265995Z"
-      },
-      {
-        "NewName": "allReady",
-        "OldName": "AllReady",
-        "ElementType": "Components",
-        "EventType": 3,
-        "TimestampUtc": "2026-05-10T19:33:52.9434477Z"
-      },
-      {
-        "NewName": "HubOverlay (Container).PlayersReadyInstance",
-        "OldName": null,
-        "ElementType": "Components",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-10T19:37:01.277789Z"
-      },
-      {
-        "NewName": null,
-        "OldName": "HubOverlay (Container).PlayersReady ReadyInstance in HubOverlay (Container)",
-        "ElementType": "Components",
-        "EventType": 6,
-        "TimestampUtc": "2026-05-10T19:37:03.4140645Z"
-      },
-      {
-        "NewName": "MainMenuScreen.SpriteInstance",
-        "OldName": null,
-        "ElementType": "Screens",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-11T08:10:52.8374414Z"
-      },
-      {
-        "NewName": "MainMenuScreen.FMOD LOGO",
-        "OldName": "MainMenuScreen.SpriteInstance",
-        "ElementType": "Screens",
-        "EventType": 7,
-        "TimestampUtc": "2026-05-11T08:15:59.3704545Z"
-      },
-      {
-        "NewName": "JoinScreen.FMOD LOGO",
-        "OldName": null,
-        "ElementType": "Screens",
-        "EventType": 5,
-        "TimestampUtc": "2026-05-11T08:16:02.1211669Z"
-      },
-      {
         "NewName": "PostStatsScreenOverlay",
         "OldName": null,
         "ElementType": "Components",
@@ -1862,6 +1561,118 @@
         "ElementType": "Components",
         "EventType": 5,
         "TimestampUtc": "2026-05-20T21:46:57.9451432Z"
+      },
+      {
+        "NewName": "joinedState",
+        "OldName": "Empty",
+        "ElementType": "Components",
+        "EventType": 4,
+        "TimestampUtc": "2026-05-26T12:42:10.1875784Z"
+      },
+      {
+        "NewName": "Joined",
+        "OldName": "joinedState",
+        "ElementType": "Components",
+        "EventType": 4,
+        "TimestampUtc": "2026-05-26T12:42:14.9408396Z"
+      },
+      {
+        "NewName": "emptayempty",
+        "OldName": "emptay",
+        "ElementType": "Components",
+        "EventType": 3,
+        "TimestampUtc": "2026-05-26T12:42:34.3880051Z"
+      },
+      {
+        "NewName": "empty",
+        "OldName": "emptayempty",
+        "ElementType": "Components",
+        "EventType": 3,
+        "TimestampUtc": "2026-05-26T12:42:38.6282245Z"
+      },
+      {
+        "NewName": "joined1",
+        "OldName": "joined",
+        "ElementType": "Components",
+        "EventType": 3,
+        "TimestampUtc": "2026-05-26T12:47:50.325391Z"
+      },
+      {
+        "NewName": "joined2",
+        "OldName": "joined1Copy",
+        "ElementType": "Components",
+        "EventType": 3,
+        "TimestampUtc": "2026-05-26T12:47:57.796814Z"
+      },
+      {
+        "NewName": "joined3",
+        "OldName": "joined1Copy1",
+        "ElementType": "Components",
+        "EventType": 3,
+        "TimestampUtc": "2026-05-26T12:48:01.3559987Z"
+      },
+      {
+        "NewName": "joined4",
+        "OldName": "joined1Copy2",
+        "ElementType": "Components",
+        "EventType": 3,
+        "TimestampUtc": "2026-05-26T12:48:05.3668056Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "IngameHUD/Speedometer (Container).Sprite DialFace in IngameHUD/Speedometer (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-26T13:04:07.9581555Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "IngameHUD/DistanceTravelledDisplay (Container).Rectangle RectangleInstance in IngameHUD/DistanceTravelledDisplay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-26T13:12:09.2179884Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "IngameHUD/DistanceTravelledDisplay (Container).Text DistanceVSMax in IngameHUD/DistanceTravelledDisplay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-26T13:12:21.8339311Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "IngameHUD/DistanceTravelledDisplay (Container).ColoredRectangle MovingDistanceBox in IngameHUD/DistanceTravelledDisplay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-26T13:12:21.8502761Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "IngameHUD/DistanceTravelledDisplay (Container).Text FinalDistance in IngameHUD/DistanceTravelledDisplay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-26T13:12:34.6772469Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "IngameHUD/DistanceTravelledDisplay (Container).ColoredRectangle ColoredRectangleInstance4 in IngameHUD/DistanceTravelledDisplay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-26T13:14:48.5955857Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "IngameHUD/DistanceTravelledDisplay (Container).ColoredRectangle ColoredRectangleInstance3 in IngameHUD/DistanceTravelledDisplay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-26T13:14:53.8354299Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "IngameHUD/DistanceTravelledDisplay (Container).ColoredRectangle ColoredRectangleInstance2 in IngameHUD/DistanceTravelledDisplay (Container)",
+        "ElementType": "Components",
+        "EventType": 6,
+        "TimestampUtc": "2026-05-26T13:15:47.0225692Z"
       }
     ],
     "fa6598317163f260c9f3bb0959f80974868eb5ff3f6bf80a092f54e042071aa2": [

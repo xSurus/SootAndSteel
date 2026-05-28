@@ -28,11 +28,23 @@
     <Variable Type="float" Name="Background.Y" SetsValue="true">
       <Value xsi:type="xsd:float">0</Value>
     </Variable>
+    <Variable Type="float" Name="SpriteInstance.Height" SetsValue="true">
+      <Value xsi:type="xsd:float">32</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="SpriteInstance.HeightUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
+    </Variable>
     <Variable Type="string" Name="SpriteInstance.Parent" SetsValue="true">
       <Value xsi:type="xsd:string">Background</Value>
     </Variable>
     <Variable IsFile="true" Type="string" Name="SpriteInstance.SourceFile" ExposedAsName="ShopItemTypeIcon" SetsValue="true">
       <Value xsi:type="xsd:string">spr_icon_projectile_24.png</Value>
+    </Variable>
+    <Variable Type="float" Name="SpriteInstance.Width" SetsValue="true">
+      <Value xsi:type="xsd:float">32</Value>
+    </Variable>
+    <Variable Type="DimensionUnitType" Name="SpriteInstance.WidthUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">0</Value>
     </Variable>
     <Variable Type="float" Name="SpriteInstance.X" SetsValue="true">
       <Value xsi:type="xsd:float">10</Value>
