@@ -91,6 +91,15 @@
       <Variable IsFile="true" Type="string" Name="SpriteInstance.SourceFile" SetsValue="true">
         <Value xsi:type="xsd:string">spr_chevron_32.png</Value>
       </Variable>
+      <Variable Type="int" Name="SpriteInstance.Blue" Category="Rendering" SetsValue="true">
+        <Value xsi:type="xsd:int">45</Value>
+      </Variable>
+      <Variable Type="int" Name="SpriteInstance.Green" Category="Rendering" SetsValue="true">
+        <Value xsi:type="xsd:int">60</Value>
+      </Variable>
+      <Variable Type="int" Name="SpriteInstance.Red" Category="Rendering" SetsValue="true">
+        <Value xsi:type="xsd:int">130</Value>
+      </Variable>
       <Variable Type="bool" Name="SpriteInstance.Visible" Category="States and Visibility" SetsValue="true">
         <Value xsi:type="xsd:boolean">true</Value>
       </Variable>
