@@ -22,6 +22,15 @@
     <Variable Type="HorizontalAlignment" Name="Lable.HorizontalAlignment" SetsValue="true">
       <Value xsi:type="xsd:int">1</Value>
     </Variable>
+    <Variable Type="float" Name="Lable.X" SetsValue="true">
+      <Value xsi:type="xsd:float">0</Value>
+    </Variable>
+    <Variable Type="HorizontalAlignment" Name="Lable.XOrigin" SetsValue="true">
+      <Value xsi:type="xsd:int">1</Value>
+    </Variable>
+    <Variable Type="PositionUnitType" Name="Lable.XUnits" SetsValue="true">
+      <Value xsi:type="xsd:int">6</Value>
+    </Variable>
     <Variable Type="string" Name="Lable.Text" ExposedAsName="ButtonText" SetsValue="false" />
     <Variable Type="DimensionUnitType" Name="Lable.WidthUnits" SetsValue="true">
       <Value xsi:type="xsd:int">4</Value>

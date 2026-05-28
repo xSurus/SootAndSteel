@@ -18,10 +18,12 @@ public class Stake : AbstractPhysicalEntity
 
     private readonly float visualScale;
     private readonly Rectangle visibleSource;
+    private readonly string textureKey;
 
-    public Stake(Vector2 feetPositionPixels)
+    public Stake(Vector2 feetPositionPixels, string textureKey = "Stake")
     {
-        Texture2D tex = AssetManager.GetHubDecorationTexture("Stake");
+        this.textureKey = textureKey;
+        Texture2D tex = AssetManager.GetHubDecorationTexture(textureKey);
         visualScale = VisualWidthPixels / tex.Width;
         int visibleHeight = (int)MathF.Round(tex.Height * (1f - BuriedTipFraction));
         visibleSource = new Rectangle(0, 0, tex.Width, visibleHeight);
@@ -45,7 +47,7 @@ public class Stake : AbstractPhysicalEntity
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        Texture2D tex = AssetManager.GetHubDecorationTexture("Stake");
+        Texture2D tex = AssetManager.GetHubDecorationTexture(textureKey);
         Vector2 origin = new Vector2(visibleSource.Width / 2f, visibleSource.Height);
         Vector2 feet = Position + new Vector2(0, CollisionHeightPixels / 2f);
         float depth = RenderUtility.CalculateDepth(feet.Y);

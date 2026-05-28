@@ -3213,3 +3213,23 @@
 /processor:TextureProcessor
 /build:GumProject/GaugeDistance.png
 
+#begin Hub/Stake3.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Hub/Stake3.png
+
+#begin Hub/Stake2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Hub/Stake2.png
+
+#begin Hub/Stake1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Hub/Stake1.png
+
+#begin GumProject/Title1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/Title1.png
+
