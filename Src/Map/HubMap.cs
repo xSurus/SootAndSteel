@@ -31,6 +31,8 @@ public class HubMap : IDisposable
     private const float HubTreeBaseScale = 0.55f;
     private const string PineDecorationKey = "Snow_Covered_Pine";
 
+    private static readonly string[] StakeTex = { "Stake1", "Stake2", "Stake3" };
+
     private readonly record struct HubTree(Vector2 Feet, float Scale);
 
     private const float TrackScale = 1.4f;
@@ -181,7 +183,8 @@ public class HubMap : IDisposable
 
     private void AddStake(Vector2 feetPos)
     {
-        Stake stake = new Stake(feetPos);
+        string variant = StakeTex[fenceStakes.Count % StakeTex.Length];
+        Stake stake = new Stake(feetPos, variant);
         fenceStakes.Add(stake);
     }
 
@@ -235,9 +238,7 @@ public class HubMap : IDisposable
     private void DrawFence(SpriteBatch spriteBatch)
     {
         foreach (Stake stake in fenceStakes)
-        {
             stake.Draw(spriteBatch);
-        }
     }
 
     private void DrawHubTrees(SpriteBatch spriteBatch)

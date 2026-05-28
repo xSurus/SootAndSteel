@@ -6,11 +6,6 @@ namespace Gamelab.Components;
 
 partial class HubOverlay
 {
-    // Player join index -> icon color slot in PlayersReady:
-    // 0=Blue, 1=Red, 2=Brown, 3=Yellow
-    // Your current player colors are: P1 Blue, P2 Brown, P3 Red, P4 Yellow.
-    private static readonly int[] PlayerIndexToColorSlot = [0, 2, 1, 3];
-
     partial void CustomInitialize()
     {
     }
@@ -63,14 +58,10 @@ partial class HubOverlay
             int playerIndex = joinedPlayerIndices[i];
             if (!readyPlayers.Contains(playerIndex))
                 continue;
-            if ((uint)playerIndex >= (uint)PlayerIndexToColorSlot.Length)
+            if ((uint)i >= (uint)byColorSlot.Length)
                 continue;
 
-            int colorSlot = PlayerIndexToColorSlot[playerIndex];
-            if ((uint)colorSlot >= (uint)byColorSlot.Length)
-                continue;
-
-            SpriteRuntime sprite = byColorSlot[colorSlot];
+            SpriteRuntime sprite = byColorSlot[i];
             if (sprite != null)
                 sprite.Visible = true;
         }

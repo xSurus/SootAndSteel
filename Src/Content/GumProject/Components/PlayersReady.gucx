@@ -26,7 +26,7 @@
       <Value xsi:type="xsd:string">ContainerInstance</Value>
     </Variable>
     <Variable IsFile="true" Type="string" Name="BrownPlayer.SourceFile" SetsValue="true">
-      <Value xsi:type="xsd:string">IdleA2.png</Value>
+      <Value xsi:type="xsd:string">IdleA1.png</Value>
     </Variable>
     <Variable Type="bool" Name="BrownPlayer.Visible" SetsValue="true">
       <Value xsi:type="xsd:boolean">false</Value>
@@ -72,7 +72,7 @@
       <Value xsi:type="xsd:string">ContainerInstance</Value>
     </Variable>
     <Variable IsFile="true" Type="string" Name="RedPlayer.SourceFile" SetsValue="true">
-      <Value xsi:type="xsd:string">IdleA1.png</Value>
+      <Value xsi:type="xsd:string">IdleA3.png</Value>
     </Variable>
     <Variable Type="bool" Name="RedPlayer.Visible" SetsValue="true">
       <Value xsi:type="xsd:boolean">false</Value>
@@ -141,7 +141,7 @@
       <Value xsi:type="xsd:string">ContainerInstance</Value>
     </Variable>
     <Variable IsFile="true" Type="string" Name="YellowPlayer.SourceFile" SetsValue="true">
-      <Value xsi:type="xsd:string">IdleA3.png</Value>
+      <Value xsi:type="xsd:string">IdleA2.png</Value>
     </Variable>
     <Variable Type="bool" Name="YellowPlayer.Visible" SetsValue="true">
       <Value xsi:type="xsd:boolean">false</Value>
