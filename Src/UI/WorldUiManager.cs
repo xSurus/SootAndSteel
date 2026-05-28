@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Gamelab.Components;
 using Gamelab.Items;
@@ -304,18 +306,40 @@ public class WorldUiManager(GamelabGame game)
 
         shopItemType.Visual.Visible = true;
         shopItemType.ShopItemTypeName = categoryName;
-        ApplyShopItemIcon(shopItemType, item.IconSourceRect);
+        string iconSourceFile = GetCategoryIconSourceFile(categoryName);
+        ApplyShopItemIcon(shopItemType, iconSourceFile, item.IconSourceRect);
     }
 
+    private static string GetCategoryIconSourceFile(string categoryName) => categoryName switch
+    {
+        // Gum resolves source files from Content/GumProject, so ../Items maps to Content/Items.
+        "Casing" => "../Items/BasicCasing.png",
+        "Projectile" => "../Items/BasicProjectile.png",
+        "Propellant" => "../Items/BasicPropellant.png",
+        _ => null,
+    };
+
     /// <summary>
-    /// Points the tooltip's category icon at <see cref="ShopItemIconAtlas.SheetFile"/>
-    /// and crops to <paramref name="sourceRect"/>. When <paramref name="sourceRect"/> is null
-    /// the icon sprite is hidden but the label stays visible.
+    /// Uses per-category icon files when provided; otherwise falls back to a crop from
+    /// <see cref="ShopItemIconAtlas.SheetFile"/>. If neither is provided, hides the icon.
     /// </summary>
-    private static void ApplyShopItemIcon(ShopItemType shopItemType, Rectangle? sourceRect)
+    private static void ApplyShopItemIcon(ShopItemType shopItemType, string sourceFile, Rectangle? sourceRect)
     {
         var sprite = shopItemType.SpriteInstance;
         if (sprite == null) return;
+
+        if (!string.IsNullOrEmpty(sourceFile))
+        {
+            string absolutePath = Path.GetFullPath(
+                Path.Combine(AppContext.BaseDirectory, "Content", "GumProject", sourceFile));
+            if (File.Exists(absolutePath))
+            {
+                sprite.Visible = true;
+                sprite.SourceFileName = sourceFile;
+                sprite.TextureAddress = Gum.Managers.TextureAddress.EntireTexture;
+                return;
+            }
+        }
 
         if (sourceRect is not { } rect)
         {
