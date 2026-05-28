@@ -72,5 +72,5 @@
   "iceMeltIntervalSeconds": 6.0,
   "iceLinearDamping": 1.5,
   "iceForce": 4.0,
-  "iceTripChancePerSecond": 0.05
+  "iceTripChancePerSecond": 0.75
 }

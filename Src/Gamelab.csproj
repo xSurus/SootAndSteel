@@ -99,6 +99,16 @@
     <Content Update="Content\Data\ComponentConfig.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <!-- Gum tooltips load category icons as PNGs relative to Content/GumProject (see WorldUiManager). -->
+    <None Update="Content\Items\BasicCasing.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Content\Items\BasicProjectile.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Content\Items\BasicPropellant.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Aether.Physics2D.MG" Version="2.2.0" />
