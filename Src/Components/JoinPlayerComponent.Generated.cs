@@ -34,36 +34,33 @@ if(element == null) throw new System.InvalidOperationException("Could not find a
             return gue;
         });
     }
-    public enum MovingPlayer
+    public enum Joined
     {
-        Frame0Joined,
-        Frame1Joined,
-        Frame3Joined,
-        Frame4Joined,
-        Frame0Empty,
-        Frame1Empty,
-        Frame2Empty,
-        Frame3Empty,
+        joined1,
+        empty,
+        joined2,
+        joined3,
+        joined4,
     }
 
-    MovingPlayer? _movingPlayerState;
-    public MovingPlayer? MovingPlayerState
+    Joined? _joinedState;
+    public Joined? JoinedState
     {
-        get => _movingPlayerState;
+        get => _joinedState;
         set
         {
-            _movingPlayerState = value;
+            _joinedState = value;
             if(value != null)
             {
-                if(Visual.Categories.ContainsKey("MovingPlayer"))
+                if(Visual.Categories.ContainsKey("Joined"))
                 {
-                    var category = Visual.Categories["MovingPlayer"];
+                    var category = Visual.Categories["Joined"];
                     var state = category.States.Find(item => item.Name == value.ToString());
                     this.Visual.ApplyState(state);
                 }
                 else
                 {
-                    var category = ((global::Gum.DataTypes.ElementSave)this.Visual.Tag).Categories.FirstOrDefault(item => item.Name == "MovingPlayer");
+                    var category = ((global::Gum.DataTypes.ElementSave)this.Visual.Tag).Categories.FirstOrDefault(item => item.Name == "Joined");
                     var state = category.States.Find(item => item.Name == value.ToString());
                     this.Visual.ApplyState(state);
                 }
@@ -74,11 +71,6 @@ if(element == null) throw new System.InvalidOperationException("Could not find a
     public ButtonWithIcon Join { get; protected set; }
     public ContainerRuntime Player { get; protected set; }
 
-
-    #region Animation Fields
-    public AnimationRuntime PlayerJoinedAnimation {get; protected set;}
-    public AnimationRuntime PlayerEmptyAnimation {get; protected set;}
-    #endregion
     public int JoinText
     {
         get;
@@ -104,8 +96,6 @@ if(element == null) throw new System.InvalidOperationException("Could not find a
         PlayerFigure = this.Visual?.GetGraphicalUiElementByName("PlayerFigure") as global::MonoGameGum.GueDeriving.SpriteRuntime;
         Join = global::Gum.Forms.GraphicalUiElementFormsExtensions.TryGetFrameworkElementByName<ButtonWithIcon>(this.Visual,"Join");
         Player = this.Visual?.GetGraphicalUiElementByName("Player") as global::MonoGameGum.GueDeriving.ContainerRuntime;
-        PlayerJoinedAnimation = this.Visual.GetAnimation("PlayerJoinedAnimation");
-        PlayerEmptyAnimation = this.Visual.GetAnimation("PlayerEmptyAnimation");
         CustomInitialize();
     }
     //Not assigning variables because Object Instantiation Type is set to By Name rather than Fully In Code

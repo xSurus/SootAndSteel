@@ -33,8 +33,13 @@ if(element == null) throw new System.InvalidOperationException("Could not find a
         });
     }
     public SpriteRuntime Needle { get; protected set; }
-    public SpriteRuntime DialFace { get; protected set; }
     public ContainerRuntime NeedleContainer { get; protected set; }
+
+    public float NeedleContainerRotation
+    {
+        get => NeedleContainer.Rotation;
+        set => NeedleContainer.Rotation = value;
+    }
 
     public Speedometer(InteractiveGue visual) : base(visual)
     {
@@ -49,7 +54,6 @@ if(element == null) throw new System.InvalidOperationException("Could not find a
     {
         base.ReactToVisualChanged();
         Needle = this.Visual?.GetGraphicalUiElementByName("Needle") as global::MonoGameGum.GueDeriving.SpriteRuntime;
-        DialFace = this.Visual?.GetGraphicalUiElementByName("DialFace") as global::MonoGameGum.GueDeriving.SpriteRuntime;
         NeedleContainer = this.Visual?.GetGraphicalUiElementByName("NeedleContainer") as global::MonoGameGum.GueDeriving.ContainerRuntime;
         CustomInitialize();
     }

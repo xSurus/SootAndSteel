@@ -28,10 +28,10 @@
     <Variable Type="PositionUnitType" Name="Join.YUnits" SetsValue="true">
       <Value xsi:type="xsd:int">3</Value>
     </Variable>
+    <Variable Type="Joined" Name="JoinedState" SetsValue="true" />
     <Variable Type="int" Name="JoinText" SetsValue="true" IsCustomVariable="true">
       <Value xsi:type="xsd:int">10</Value>
     </Variable>
-    <Variable Type="MovingPlayer" Name="MovingPlayerState" SetsValue="true" />
     <Variable Type="float" Name="Player.Height" SetsValue="true">
       <Value xsi:type="xsd:float">80</Value>
     </Variable>
@@ -109,53 +109,35 @@
     </Variable>
   </State>
   <Category>
-    <Name>MovingPlayer</Name>
+    <Name>Joined</Name>
     <State>
-      <Name>Frame0Joined</Name>
+      <Name>joined1</Name>
       <Variable IsFile="true" Type="string" Name="PlayerFigure.SourceFile" ExposedAsName="SpriteInstanceSourceFile" SetsValue="true">
         <Value xsi:type="xsd:string">IdleA0.png</Value>
       </Variable>
     </State>
     <State>
-      <Name>Frame1Joined</Name>
+      <Name>empty</Name>
       <Variable IsFile="true" Type="string" Name="PlayerFigure.SourceFile" ExposedAsName="SpriteInstanceSourceFile" SetsValue="true">
-        <Value xsi:type="xsd:string">IdleB0.png</Value>
+        <Value xsi:type="xsd:string">Silhouette.png</Value>
       </Variable>
     </State>
     <State>
-      <Name>Frame3Joined</Name>
+      <Name>joined2</Name>
       <Variable IsFile="true" Type="string" Name="PlayerFigure.SourceFile" ExposedAsName="SpriteInstanceSourceFile" SetsValue="true">
-        <Value xsi:type="xsd:string">IdleC0.png</Value>
+        <Value xsi:type="xsd:string">IdleA3.png</Value>
       </Variable>
     </State>
     <State>
-      <Name>Frame4Joined</Name>
+      <Name>joined3</Name>
       <Variable IsFile="true" Type="string" Name="PlayerFigure.SourceFile" ExposedAsName="SpriteInstanceSourceFile" SetsValue="true">
-        <Value xsi:type="xsd:string">IdleD0.png</Value>
+        <Value xsi:type="xsd:string">IdleA1.png</Value>
       </Variable>
     </State>
     <State>
-      <Name>Frame0Empty</Name>
+      <Name>joined4</Name>
       <Variable IsFile="true" Type="string" Name="PlayerFigure.SourceFile" ExposedAsName="SpriteInstanceSourceFile" SetsValue="true">
-        <Value xsi:type="xsd:string">..\..\Content\Characters\IdleA1.png</Value>
-      </Variable>
-    </State>
-    <State>
-      <Name>Frame1Empty</Name>
-      <Variable IsFile="true" Type="string" Name="PlayerFigure.SourceFile" ExposedAsName="SpriteInstanceSourceFile" SetsValue="true">
-        <Value xsi:type="xsd:string">..\..\Content\Characters\IdleB1.png</Value>
-      </Variable>
-    </State>
-    <State>
-      <Name>Frame2Empty</Name>
-      <Variable IsFile="true" Type="string" Name="PlayerFigure.SourceFile" ExposedAsName="SpriteInstanceSourceFile" SetsValue="true">
-        <Value xsi:type="xsd:string">..\..\Content\Characters\IdleC1.png</Value>
-      </Variable>
-    </State>
-    <State>
-      <Name>Frame3Empty</Name>
-      <Variable IsFile="true" Type="string" Name="PlayerFigure.SourceFile" ExposedAsName="SpriteInstanceSourceFile" SetsValue="true">
-        <Value xsi:type="xsd:string">..\..\Content\Characters\IdleD1.png</Value>
+        <Value xsi:type="xsd:string">IdleA2.png</Value>
       </Variable>
     </State>
   </Category>

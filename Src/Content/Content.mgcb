@@ -3203,3 +3203,13 @@
 /processorParam:TextureFormat=Color
 /build:Walls/WallTileUpperSide.png
 
+#begin GumProject/Silhouette.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/Silhouette.png
+
+#begin GumProject/GaugeDistance.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:GumProject/GaugeDistance.png
+

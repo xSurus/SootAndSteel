@@ -5,7 +5,7 @@
   <State>
     <Name>Default</Name>
     <Variable Type="float" Name="DistanceTravelledDisplayInstance.Y" SetsValue="true">
-      <Value xsi:type="xsd:float">20</Value>
+      <Value xsi:type="xsd:float">0</Value>
     </Variable>
     <Variable Type="float" Name="Height" SetsValue="true">
       <Value xsi:type="xsd:float">100</Value>
@@ -14,16 +14,19 @@
       <Value xsi:type="xsd:int">1</Value>
     </Variable>
     <Variable Type="float" Name="SpeedometerInstance.Height" SetsValue="true">
-      <Value xsi:type="xsd:float">200</Value>
+      <Value xsi:type="xsd:float">194</Value>
+    </Variable>
+    <Variable Type="float" Name="SpeedometerInstance.NeedleContainerRotation" SetsValue="true">
+      <Value xsi:type="xsd:float">-40</Value>
     </Variable>
     <Variable Type="float" Name="SpeedometerInstance.Width" SetsValue="true">
-      <Value xsi:type="xsd:float">200</Value>
+      <Value xsi:type="xsd:float">192</Value>
     </Variable>
     <Variable Type="float" Name="SpeedometerInstance.X" SetsValue="true">
-      <Value xsi:type="xsd:float">31</Value>
+      <Value xsi:type="xsd:float">4</Value>
     </Variable>
     <Variable Type="float" Name="SpeedometerInstance.Y" SetsValue="true">
-      <Value xsi:type="xsd:float">-28</Value>
+      <Value xsi:type="xsd:float">2</Value>
     </Variable>
     <Variable Type="State" Name="State" Category="States and Visibility" SetsValue="false">
       <Value xsi:type="xsd:string">Default</Value>

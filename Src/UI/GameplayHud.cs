@@ -31,8 +31,8 @@ public class GameplayHud : IDisposable
     private const float NeedleSmoothing = 0.15f;
     private const float MinimumTrackWidthPixels = 1f;
     private const float TrainMarkerPaddingPixels = 24f;
-    private const float DefaultMovingDistanceBoxYOffset = 35f;
-    private const float EnemyDotYOffset = 9f;
+    private const float DefaultTrainSpriteYOffset = 65f;
+    private const float EnemyDotYOffset = 33f;
     private float smoothedSpeedRatio;
     private bool needlePivotConfigured;
     
@@ -62,8 +62,6 @@ public class GameplayHud : IDisposable
         float distanceRatio = Math.Clamp(distanceInLevel / levelDistance, 0f, 1f);
         EnsureEnemyDots(currentLevelDef, levelDistance);
 
-        distanceDisplay.DistanceVSMaxText = $"{FormatMeters(distanceInLevel)} / {FormatMeters(levelDistance)}";
-        distanceDisplay.FinalDistanceText = FormatMeters(levelDistance);
         UpdateTrainMarkerPosition(distanceRatio);
         UpdateEnemyDotPositions();
 
@@ -140,9 +138,7 @@ public class GameplayHud : IDisposable
         if (enemyDots.Count == 0 || !TryGetTrackTravelRange(out float travelRange))
             return;
 
-        float markerY = (distanceDisplay.MovingTrain?.Y ?? 0f)
-            + (distanceDisplay.MovingDistanceBox?.Y ?? DefaultMovingDistanceBoxYOffset)
-            + EnemyDotYOffset;
+        float markerY = (distanceDisplay.TrainSprite?.Y ?? DefaultTrainSpriteYOffset) + EnemyDotYOffset;
         foreach (var marker in enemyDots)
         {
             marker.Dot.Visual.X = marker.Ratio * travelRange;
@@ -205,9 +201,6 @@ public class GameplayHud : IDisposable
 
     private static float GetSanitizedLevelDistance(LevelDefinition levelDefinition)
         => Math.Max(levelDefinition?.LevelDistance ?? 1f, 1f);
-
-    private static string FormatMeters(float value)
-        => $"{value:F0} m";
 
     public void Dispose()
     {
