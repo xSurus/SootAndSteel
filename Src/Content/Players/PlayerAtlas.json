@@ -1,740 +1,198 @@
 {
-  "textures": [
-    {
-      "filename": "PlayerAtlas-texture.png",
-      "format": "RGBA8888",
-      "size": {
-        "w": 3690,
-        "h": 2800
-      },
-      "frames": {
-        "Player0_CannonBottom": {
-          "frame": {
-            "x": 0,
-            "y": 0,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player0_CannonTop": {
-          "frame": {
-            "x": 410,
-            "y": 0,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player0_Fall1": {
-          "frame": {
-            "x": 820,
-            "y": 0,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player0_Fall2": {
-          "frame": {
-            "x": 1230,
-            "y": 0,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player0_Fall3": {
-          "frame": {
-            "x": 1640,
-            "y": 0,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player0_Fall4": {
-          "frame": {
-            "x": 2050,
-            "y": 0,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player0_Idle1": {
-          "frame": {
-            "x": 2460,
-            "y": 0,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player0_Idle2": {
-          "frame": {
-            "x": 2870,
-            "y": 0,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player0_Idle3": {
-          "frame": {
-            "x": 3280,
-            "y": 0,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player0_Idle4": {
-          "frame": {
-            "x": 0,
-            "y": 400,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player0_Walk0": {
-          "frame": {
-            "x": 410,
-            "y": 400,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player0_Walk1": {
-          "frame": {
-            "x": 820,
-            "y": 400,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player0_Walk2": {
-          "frame": {
-            "x": 1230,
-            "y": 400,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player0_Walk3": {
-          "frame": {
-            "x": 1640,
-            "y": 400,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player0_Walk4": {
-          "frame": {
-            "x": 2050,
-            "y": 400,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player1_CannonBottom": {
-          "frame": {
-            "x": 2460,
-            "y": 400,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player1_CannonTop": {
-          "frame": {
-            "x": 2870,
-            "y": 400,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player1_Fall1": {
-          "frame": {
-            "x": 3280,
-            "y": 400,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player1_Fall2": {
-          "frame": {
-            "x": 0,
-            "y": 800,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player1_Fall3": {
-          "frame": {
-            "x": 410,
-            "y": 800,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player1_Fall4": {
-          "frame": {
-            "x": 720,
-            "y": 800,
-            "w": 510,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player1_Idle1": {
-          "frame": {
-            "x": 1230,
-            "y": 800,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player1_Idle2": {
-          "frame": {
-            "x": 1640,
-            "y": 800,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player1_Idle3": {
-          "frame": {
-            "x": 2050,
-            "y": 800,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player1_Idle4": {
-          "frame": {
-            "x": 2460,
-            "y": 800,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player1_Walk0": {
-          "frame": {
-            "x": 2870,
-            "y": 800,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player1_Walk1": {
-          "frame": {
-            "x": 3280,
-            "y": 800,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player1_Walk2": {
-          "frame": {
-            "x": 0,
-            "y": 1200,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player1_Walk3": {
-          "frame": {
-            "x": 410,
-            "y": 1200,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player1_Walk4": {
-          "frame": {
-            "x": 820,
-            "y": 1200,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player2_CannonBottom": {
-          "frame": {
-            "x": 1230,
-            "y": 1200,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player2_CannonTop": {
-          "frame": {
-            "x": 1640,
-            "y": 1200,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player2_Fall1": {
-          "frame": {
-            "x": 2050,
-            "y": 1200,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player2_Fall2": {
-          "frame": {
-            "x": 2460,
-            "y": 1200,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player2_Fall3": {
-          "frame": {
-            "x": 2870,
-            "y": 1200,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player2_Fall4": {
-          "frame": {
-            "x": 3280,
-            "y": 1200,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player2_Idle1": {
-          "frame": {
-            "x": 0,
-            "y": 1600,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player2_Idle2": {
-          "frame": {
-            "x": 410,
-            "y": 1600,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player2_Idle3": {
-          "frame": {
-            "x": 820,
-            "y": 1600,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player2_Idle4": {
-          "frame": {
-            "x": 1230,
-            "y": 1600,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player2_Walk0": {
-          "frame": {
-            "x": 1640,
-            "y": 1600,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player2_Walk1": {
-          "frame": {
-            "x": 2050,
-            "y": 1600,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player2_Walk2": {
-          "frame": {
-            "x": 2460,
-            "y": 1600,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player2_Walk3": {
-          "frame": {
-            "x": 2870,
-            "y": 1600,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player2_Walk4": {
-          "frame": {
-            "x": 3280,
-            "y": 1600,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player3_CannonBottom": {
-          "frame": {
-            "x": 0,
-            "y": 2000,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player3_CannonTop": {
-          "frame": {
-            "x": 410,
-            "y": 2000,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player3_Fall1": {
-          "frame": {
-            "x": 820,
-            "y": 2000,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player3_Fall2": {
-          "frame": {
-            "x": 1230,
-            "y": 2000,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player3_Fall3": {
-          "frame": {
-            "x": 1540,
-            "y": 2000,
-            "w": 510,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player3_Fall4": {
-          "frame": {
-            "x": 2050,
-            "y": 2000,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player3_Idle1": {
-          "frame": {
-            "x": 2460,
-            "y": 2000,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player3_Idle2": {
-          "frame": {
-            "x": 2870,
-            "y": 2000,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player3_Idle3": {
-          "frame": {
-            "x": 3280,
-            "y": 2000,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player3_Idle4": {
-          "frame": {
-            "x": 0,
-            "y": 2400,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player3_Walk0": {
-          "frame": {
-            "x": 410,
-            "y": 2400,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player3_Walk1": {
-          "frame": {
-            "x": 820,
-            "y": 2400,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player3_Walk2": {
-          "frame": {
-            "x": 1230,
-            "y": 2400,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player3_Walk3": {
-          "frame": {
-            "x": 1640,
-            "y": 2400,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "Player3_Walk4": {
-          "frame": {
-            "x": 2050,
-            "y": 2400,
-            "w": 410,
-            "h": 400
-          },
-          "pivot": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        }
-      }
-    }
-  ],
-  "meta": {
-    "app": "https://www.codeandweb.com/texturepacker",
-    "dataformat": "monogame-extended",
-    "version": "1.2",
-    "smartupdate": "$TexturePacker:SmartUpdate:898396c4174891f517f812c77331eb44:a11d721720d1fa5e87ca7019bb1c272a:6657e51545ec489009bb8c548ed492d3$"
-  }
+	"textures": [
+		{
+			"filename": "PlayerAtlas-texture.png",
+			"format": "RGBA8888",
+			"size": {"w":3690,"h":2800},
+			"frames": {
+				"Player0_CannonBottom":{
+					"frame": {"x":0,"y":0,"w":410,"h":400}
+				},
+				"Player0_CannonTop":{
+					"frame": {"x":410,"y":0,"w":410,"h":400}
+				},
+				"Player0_Fall1":{
+					"frame": {"x":820,"y":0,"w":410,"h":400}
+				},
+				"Player0_Fall2":{
+					"frame": {"x":1230,"y":0,"w":410,"h":400}
+				},
+				"Player0_Fall3":{
+					"frame": {"x":1640,"y":0,"w":410,"h":400}
+				},
+				"Player0_Fall4":{
+					"frame": {"x":2050,"y":0,"w":410,"h":400}
+				},
+				"Player0_Idle1":{
+					"frame": {"x":2460,"y":0,"w":410,"h":400}
+				},
+				"Player0_Idle2":{
+					"frame": {"x":2870,"y":0,"w":410,"h":400}
+				},
+				"Player0_Idle3":{
+					"frame": {"x":3280,"y":0,"w":410,"h":400}
+				},
+				"Player0_Idle4":{
+					"frame": {"x":0,"y":400,"w":410,"h":400}
+				},
+				"Player0_Walk0":{
+					"frame": {"x":410,"y":400,"w":410,"h":400}
+				},
+				"Player0_Walk1":{
+					"frame": {"x":820,"y":400,"w":410,"h":400}
+				},
+				"Player0_Walk2":{
+					"frame": {"x":1230,"y":400,"w":410,"h":400}
+				},
+				"Player0_Walk3":{
+					"frame": {"x":1640,"y":400,"w":410,"h":400}
+				},
+				"Player0_Walk4":{
+					"frame": {"x":2050,"y":400,"w":410,"h":400}
+				},
+				"Player1_CannonBottom":{
+					"frame": {"x":2460,"y":400,"w":410,"h":400}
+				},
+				"Player1_CannonTop":{
+					"frame": {"x":2870,"y":400,"w":410,"h":400}
+				},
+				"Player1_Fall1":{
+					"frame": {"x":3280,"y":400,"w":410,"h":400}
+				},
+				"Player1_Fall2":{
+					"frame": {"x":0,"y":800,"w":410,"h":400}
+				},
+				"Player1_Fall3":{
+					"frame": {"x":410,"y":800,"w":410,"h":400}
+				},
+				"Player1_Fall4":{
+					"frame": {"x":820,"y":800,"w":410,"h":400}
+				},
+				"Player1_Idle1":{
+					"frame": {"x":1230,"y":800,"w":410,"h":400}
+				},
+				"Player1_Idle2":{
+					"frame": {"x":1640,"y":800,"w":410,"h":400}
+				},
+				"Player1_Idle3":{
+					"frame": {"x":2050,"y":800,"w":410,"h":400}
+				},
+				"Player1_Idle4":{
+					"frame": {"x":2460,"y":800,"w":410,"h":400}
+				},
+				"Player1_Walk0":{
+					"frame": {"x":2870,"y":800,"w":410,"h":400}
+				},
+				"Player1_Walk1":{
+					"frame": {"x":3280,"y":800,"w":410,"h":400}
+				},
+				"Player1_Walk2":{
+					"frame": {"x":0,"y":1200,"w":410,"h":400}
+				},
+				"Player1_Walk3":{
+					"frame": {"x":410,"y":1200,"w":410,"h":400}
+				},
+				"Player1_Walk4":{
+					"frame": {"x":820,"y":1200,"w":410,"h":400}
+				},
+				"Player2_CannonBottom":{
+					"frame": {"x":1230,"y":1200,"w":410,"h":400}
+				},
+				"Player2_CannonTop":{
+					"frame": {"x":1640,"y":1200,"w":410,"h":400}
+				},
+				"Player2_Fall1":{
+					"frame": {"x":2050,"y":1200,"w":410,"h":400}
+				},
+				"Player2_Fall2":{
+					"frame": {"x":2460,"y":1200,"w":410,"h":400}
+				},
+				"Player2_Fall3":{
+					"frame": {"x":2870,"y":1200,"w":410,"h":400}
+				},
+				"Player2_Fall4":{
+					"frame": {"x":3280,"y":1200,"w":410,"h":400}
+				},
+				"Player2_Idle1":{
+					"frame": {"x":0,"y":1600,"w":410,"h":400}
+				},
+				"Player2_Idle2":{
+					"frame": {"x":410,"y":1600,"w":410,"h":400}
+				},
+				"Player2_Idle3":{
+					"frame": {"x":820,"y":1600,"w":410,"h":400}
+				},
+				"Player2_Idle4":{
+					"frame": {"x":1230,"y":1600,"w":410,"h":400}
+				},
+				"Player2_Walk0":{
+					"frame": {"x":1640,"y":1600,"w":410,"h":400}
+				},
+				"Player2_Walk1":{
+					"frame": {"x":2050,"y":1600,"w":410,"h":400}
+				},
+				"Player2_Walk2":{
+					"frame": {"x":2460,"y":1600,"w":410,"h":400}
+				},
+				"Player2_Walk3":{
+					"frame": {"x":2870,"y":1600,"w":410,"h":400}
+				},
+				"Player2_Walk4":{
+					"frame": {"x":3280,"y":1600,"w":410,"h":400}
+				},
+				"Player3_CannonBottom":{
+					"frame": {"x":0,"y":2000,"w":410,"h":400}
+				},
+				"Player3_CannonTop":{
+					"frame": {"x":410,"y":2000,"w":410,"h":400}
+				},
+				"Player3_Fall1":{
+					"frame": {"x":820,"y":2000,"w":410,"h":400}
+				},
+				"Player3_Fall2":{
+					"frame": {"x":1230,"y":2000,"w":410,"h":400}
+				},
+				"Player3_Fall3":{
+					"frame": {"x":1640,"y":2000,"w":410,"h":400}
+				},
+				"Player3_Fall4":{
+					"frame": {"x":2050,"y":2000,"w":410,"h":400}
+				},
+				"Player3_Idle1":{
+					"frame": {"x":2460,"y":2000,"w":410,"h":400}
+				},
+				"Player3_Idle2":{
+					"frame": {"x":2870,"y":2000,"w":410,"h":400}
+				},
+				"Player3_Idle3":{
+					"frame": {"x":3280,"y":2000,"w":410,"h":400}
+				},
+				"Player3_Idle4":{
+					"frame": {"x":0,"y":2400,"w":410,"h":400}
+				},
+				"Player3_Walk0":{
+					"frame": {"x":410,"y":2400,"w":410,"h":400}
+				},
+				"Player3_Walk1":{
+					"frame": {"x":820,"y":2400,"w":410,"h":400}
+				},
+				"Player3_Walk2":{
+					"frame": {"x":1230,"y":2400,"w":410,"h":400}
+				},
+				"Player3_Walk3":{
+					"frame": {"x":1640,"y":2400,"w":410,"h":400}
+				},
+				"Player3_Walk4":{
+					"frame": {"x":2050,"y":2400,"w":410,"h":400}
+				}
+			}
+		}
+	],
+
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"dataformat": "monogame-extended",
+		"version": "1.2",
+		"smartupdate": "$TexturePacker:SmartUpdate:954e24801a90ae73389e8aeb5400c641:8cf6083e50f74b603f6807de04963ca7:6657e51545ec489009bb8c548ed492d3$"
+	}
 }
