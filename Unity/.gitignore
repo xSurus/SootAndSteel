@@ -8,5 +8,12 @@
 [Uu]serSettings/
 *.csproj
 *.sln
+*.slnx
 *.tmp
 .vs/
+.vscode/
+
+# Repo-root .gitignore has a bare `*.dll` rule that would otherwise silently
+# swallow FMOD's native plugins (fmodstudio.dll etc.) installed under
+# Assets/Plugins/. Un-ignore them here so they get committed.
+!Assets/Plugins/**/*.dll
