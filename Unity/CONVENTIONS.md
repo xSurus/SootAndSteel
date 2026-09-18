@@ -20,6 +20,11 @@ Keep the original `Gamelab.*` namespace roots from `Src/` unchanged where the
 type ports directly (e.g. `Gamelab.Services.Random`). This keeps side-by-side
 diffing against the MonoGame source easy.
 
+New test classes go under `Gamelab.Tests.*` (e.g. `Gamelab.Tests.Services`),
+mirroring the type under test. Several Wave A agents are adding EditMode
+tests in parallel; the shared namespace prefix keeps test class names from
+colliding.
+
 ## C# language version constraints
 
 This project's Unity assemblies are pinned to C# 9.0 targeting netstandard2.1
@@ -52,15 +57,40 @@ Port hand-registered catalogs (`EnemyCatalog`, `StationRegistry`, bullet
 casing/propellant/projectile combinators) to `ScriptableObject` assets rather
 than JSON + factory registration. Keep the same interface names
 (`IInteractable`, `IDamageable`, etc.) from `Src/PhysicalEntities/Interfaces/`.
+See "Core vs. Runtime: where catalogs and interfaces live" below for which
+assembly each piece belongs in.
+
+## Core vs. Runtime: where catalogs and interfaces live
+
+`Gamelab.Core` has `noEngineReferences: true`, so nothing that references
+`UnityEngine` (including `ScriptableObject`) can live there. Split ported
+catalogs and interfaces like this:
+
+- **`Gamelab.Core`**: the pure data, calculation logic, and engine-free
+  interfaces. Use `System.Numerics.Vector2` (available on netstandard2.1)
+  anywhere the original MonoGame code used `Microsoft.Xna.Framework.Vector2`.
+  Reason: `System.Numerics.Vector2` is engine-agnostic and testable without a
+  scene, same as the rest of Core, whereas `UnityEngine.Vector2` drags a
+  `UnityEngine` reference into an assembly whose whole point is not having
+  one. Don't swap this back to `UnityEngine.Vector2` even though it's the more
+  common Unity idiom.
+- **`Gamelab.Runtime`**: the `ScriptableObject` catalog/wrapper assets
+  themselves (`EnemyCatalog`, `StationRegistry`, bullet combinators), plus any
+  interface whose signature needs a `UnityEngine` type. These reference the
+  plain data types that live in Core.
 
 ## Headless Unity verification (no GUI needed)
 
 You do not need Editor GUI access to verify compilation or run tests — use the
-Unity CLI in batch mode. The binary on this machine is at:
+Unity CLI in batch mode. The binary on this machine (macOS) is at:
 
 ```
 /Applications/Unity/Hub/Editor/6000.3.24f1/Unity.app/Contents/MacOS/Unity
 ```
+
+(This is this machine's path, not a universal one. On Windows it's typically
+`C:\Program Files\Unity\Hub\Editor\6000.3.24f1\Editor\Unity.exe`; on Linux,
+`~/Unity/Hub/Editor/6000.3.24f1/Editor/Unity`. Adjust for your platform.)
 
 **Compile-only check** (fast, use `-quit` freely here):
 
@@ -97,3 +127,11 @@ Before merging any subsystem worktree: `Gamelab.Tests.EditMode` (and
 `PlayMode` if present) must be green, and the relevant `GameInstructions.md`
 checklist items for that subsystem must be manually re-checked against the
 integrated build.
+
+When staging new files, use `git add Unity/Assets` (or run `git status`
+afterward and check for stray untracked `.meta` files) instead of narrow
+per-file/per-folder `git add` paths. Unity generates a `.meta` file for a
+folder one level above the folder's own contents, so a `git add <folder>`
+that only targets the folder's contents misses the parent folder's `.meta`
+file, and it's easy for the omission to go unnoticed across four parallel
+Wave A branches.
