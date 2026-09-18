@@ -4,6 +4,7 @@ namespace Gamelab.Services.Random
 {
     public class RandomService : IRandomService
     {
+        // Using new Random() instead of Random.Shared: sufficient for single instantiation, but Random.Shared is thread-safe if this service is instantiated multiple times in future.
         private System.Random random = new System.Random();
 
         public double SampleGaussian(double mu, double sigma)
