@@ -1,7 +1,6 @@
 // Unity/Assets/Scripts/Runtime/PhysicalEntities/Stations/StationCatalogAsset.cs
 using System;
 using System.Collections.Generic;
-using Gamelab.PhysicalEntities.Stations;
 using UnityEngine;
 
 namespace Gamelab.PhysicalEntities.Stations

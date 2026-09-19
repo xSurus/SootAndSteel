@@ -17,8 +17,12 @@ namespace Gamelab.PhysicalEntities.Stations
 
         public Vector2 Position
         {
-            get => PhysicsBody.position;
-            set => PhysicsBody.position = value;
+            get => PhysicsBody != null ? PhysicsBody.position : (Vector2)transform.position;
+            set
+            {
+                if (PhysicsBody != null) PhysicsBody.position = value;
+                else transform.position = value;
+            }
         }
 
         protected readonly List<ProviderTicket> providerQueue = new List<ProviderTicket>();
@@ -99,6 +103,12 @@ namespace Gamelab.PhysicalEntities.Stations
             // here (Scope decisions #2), so that carve-out is dropped; a real Player
             // implementing IPlayerActor doesn't participate in this FIFO queue check
             // at all in this port, it's purely for provider/receiver stations.
+            // Src: `consumer == null` (default-arg TryProvideItem, player pickup) always passes.
+            if (consumer == null)
+            {
+                return true;
+            }
+
             return consumerQueue.Count == 0 || consumerQueue[0].Consumer == consumer;
         }
 

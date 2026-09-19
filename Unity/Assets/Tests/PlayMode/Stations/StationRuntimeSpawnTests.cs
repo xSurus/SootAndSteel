@@ -38,5 +38,24 @@ namespace Gamelab.Tests.Stations
 
             Object.Destroy(go);
         }
+
+        [UnityTest]
+        public IEnumerator TryProvideItem_NullConsumer_IgnoresQueuedConsumers()
+        {
+            var go = new GameObject("Counter");
+            go.AddComponent<Rigidbody2D>();
+            var counter = go.AddComponent<CounterRuntime>();
+            counter.Initialize(new StationCatalogEntry { stationId = StationIds.Counter });
+            counter.ReceiveItem(new Item("Coal"), null);
+            var other = new GameObject("Other");
+            other.AddComponent<Rigidbody2D>();
+            counter.PingPullIntent(other.AddComponent<CounterRuntime>(), 0f);
+
+            yield return null;
+
+            Assert.IsTrue(counter.TryProvideItem(out Item item), "Player-style (null consumer) pickup bypasses the FIFO queue.");
+            Assert.AreEqual("Coal", item.Id);
+            Object.Destroy(go);
+        }
     }
 }

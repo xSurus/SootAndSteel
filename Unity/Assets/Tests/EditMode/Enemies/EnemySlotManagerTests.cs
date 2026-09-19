@@ -23,11 +23,18 @@ namespace Gamelab.Tests.Enemies
         public void ReleaseSlot_MakesSlotReservableAgain()
         {
             var manager = new EnemySlotManager();
-            manager.TryReserveSideAttackSlot(out EnemyTrainSlot slot);
-            manager.ReleaseSlot(slot);
+            EnemyTrainSlot first = default;
+            bool haveFirst = false;
+            for (int i = 0; i < 6; i++)
+            {
+                Assert.IsTrue(manager.TryReserveSideAttackSlot(out EnemyTrainSlot s));
+                if (!haveFirst) { first = s; haveFirst = true; }
+            }
 
-            manager.Clear();
-            Assert.IsTrue(manager.TryReserveSideAttackSlot(out _));
+            Assert.IsFalse(manager.TryReserveSideAttackSlot(out _), "All slots taken.");
+            manager.ReleaseSlot(first);
+            Assert.IsTrue(manager.TryReserveSideAttackSlot(out EnemyTrainSlot again));
+            Assert.AreEqual(first, again);
         }
     }
 }
