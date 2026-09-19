@@ -2,7 +2,8 @@
     "name": "Gamelab.Runtime",
     "rootNamespace": "",
     "references": [
-        "Gamelab.Core"
+        "Gamelab.Core",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
