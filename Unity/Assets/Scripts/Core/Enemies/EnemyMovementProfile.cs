@@ -28,6 +28,19 @@ namespace Gamelab.Enemies.Movement
             BrakeRadius = brakeRadius;
         }
 
+        /// <summary>All seven fields are pixel-based; returns the same profile in meters.</summary>
+        public EnemyMovementProfile ToMeters()
+        {
+            return new EnemyMovementProfile(
+                WorldUnits.ToMeters(MaxForwardSpeed),
+                WorldUnits.ToMeters(MaxReverseSpeed),
+                WorldUnits.ToMeters(MaxLateralSpeed),
+                WorldUnits.ToMeters(Acceleration),
+                WorldUnits.ToMeters(Deceleration),
+                WorldUnits.ToMeters(ArrivalRadius),
+                WorldUnits.ToMeters(BrakeRadius));
+        }
+
         public static EnemyMovementProfile CreateDefault(float maxForwardSpeed)
         {
             return new EnemyMovementProfile(

@@ -10,12 +10,14 @@ namespace Gamelab.Enemies
     public class EnemyMovementController
     {
         private readonly Rigidbody2D physicsBody;
+        /// <summary>Profile in meters (the physics body is in world units).</summary>
         public EnemyMovementProfile Profile { get; }
 
+        /// <param name="profile">Pixel-unit profile, as authored in Src; converted to meters here.</param>
         public EnemyMovementController(Rigidbody2D physicsBody, EnemyMovementProfile profile)
         {
             this.physicsBody = physicsBody;
-            Profile = profile;
+            Profile = profile.ToMeters();
         }
 
         public void UpdateTowardPoint(Vector2 targetPosition, float deltaTime)
