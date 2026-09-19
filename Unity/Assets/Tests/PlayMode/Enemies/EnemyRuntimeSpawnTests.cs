@@ -36,7 +36,7 @@ namespace Gamelab.Tests.Enemies
             // Stats for the test, since BulletRuntime's real constructor path is Spawn()
             // (Task 5), which needs a BulletDefinitionAsset this test doesn't need.
             typeof(BulletRuntime).GetProperty("Faction").SetValue(bullet, BulletFaction.Player);
-            typeof(BulletRuntime).GetProperty("Stats").SetValue(bullet, new BulletStats { Damage = 30f });
+            bullet.Stats = new BulletStats { Damage = 30f };
 
             bool hit = enemy.OnHit(bullet);
 

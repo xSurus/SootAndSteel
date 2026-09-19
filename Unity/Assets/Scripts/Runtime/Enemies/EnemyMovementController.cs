@@ -20,6 +20,8 @@ namespace Gamelab.Enemies
             Profile = profile.ToMeters();
         }
 
+        // Src UpdateHoldPosition (an alias of UpdateTowardPoint) was not ported.
+        /// <summary>targetPosition is in meters.</summary>
         public void UpdateTowardPoint(Vector2 targetPosition, float deltaTime)
         {
             Vector2 currentPosition = physicsBody.position;
@@ -43,6 +45,7 @@ namespace Gamelab.Enemies
             UpdateTowardDirection(direction, desiredSpeed, deltaTime);
         }
 
+        /// <summary>desiredSpeed is in meters per second.</summary>
         public void UpdateTowardDirection(Vector2 direction, float desiredSpeed, float deltaTime)
         {
             if (direction == Vector2.zero || desiredSpeed <= 0f)

@@ -36,6 +36,7 @@ namespace Gamelab.Tests.Gate
             SetPrivate(catalog, "entries", new List<EnemyCatalogEntry> { entry });
 
             var enemyGo = new GameObject("DummyEnemy");
+            enemyGo.transform.position = new Vector2(0f, 50f); // away from the bullet so real physics does not hit it
             enemyGo.AddComponent<Rigidbody2D>();
             var enemy = enemyGo.AddComponent<DummyEnemyRuntime>();
             enemy.Initialize(catalog.Get(EnemyType.Dummy));

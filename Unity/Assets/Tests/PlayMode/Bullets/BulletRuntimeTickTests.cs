@@ -26,6 +26,16 @@ namespace Gamelab.Tests.Bullets
             return n;
         }
 
+        [UnityTearDown]
+        public IEnumerator TearDown()
+        {
+            foreach (var go in UnityEngine.Object.FindObjectsByType<GameObject>(FindObjectsSortMode.None))
+            {
+                if (go.name.StartsWith("Bullet_")) UnityEngine.Object.Destroy(go);
+            }
+            yield return null;
+        }
+
         [UnityTest]
         public IEnumerator Spawn_Speed800_VelocityIsEightMetersPerSecond()
         {
