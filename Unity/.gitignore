@@ -17,3 +17,6 @@
 # swallow FMOD's native plugins (fmodstudio.dll etc.) installed under
 # Assets/Plugins/. Un-ignore them here so they get committed.
 !Assets/Plugins/**/*.dll
+
+# Editor-generated, appears in every worktree
+/ProjectSettings/SceneTemplateSettings.json

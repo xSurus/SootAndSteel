@@ -44,6 +44,36 @@ constraints:
   Examples: certain record type features, raw string literals, generic math.
   This list isn't exhaustive; these two are the ones already hit.
 
+### Found by A2 (domain/catalog layer)
+
+Porting the domain/catalog layer (bullets, enemies, stations, physical-entity
+interfaces) hit several more C# 10-12/.NET 6+ idioms in the MonoGame source that
+don't work in C# 9.0/netstandard2.1. Add these to your mental model before
+porting any file in this subsystem:
+
+- **No primary constructors on non-record classes/structs** (C# 12).
+  Examples: `class EnemySlotManager()`, `class Counter(Vector2 position) : AbstractStation(...)`,
+  `class EnemyMovementController(Body physicsBody, EnemyMovementProfile profile)`.
+  Rewrite as explicit constructor bodies instead.
+
+- **No `record struct` / `readonly record struct`** (C# 10).
+  Use a plain `readonly struct` with hand-written properties and constructor.
+  Value equality isn't needed by anything this subsystem ports; if it becomes
+  needed later, hand-write `Equals`/`GetHashCode`.
+
+- **No collection expressions** (C# 12).
+  Examples: `[1, 2, 3]`, `[]`, `[..existing]`.
+  Use `new[] { ... }`, `new List<T> { ... }`, `new HashSet<T>()` instead.
+
+- **No `ArgumentException.ThrowIfNullOrWhiteSpace` / `ArgumentNullException.ThrowIfNull`** (.NET 6/7 static helpers).
+  Use explicit `if` guards:
+  `if (string.IsNullOrWhiteSpace(x)) throw new ArgumentException(...)`
+  `if (x == null) throw new ArgumentNullException(...)`
+
+- **Verify `System.Linq.Enumerable.MinBy`/`MaxBy` before using them** (.NET 6).
+  These aren't guaranteed present in Unity's netstandard2.1 BCL.
+  Prefer a manual loop or `OrderBy(...).FirstOrDefault()` when in doubt.
+
 ## Sprite import
 
 Every sprite sheet import: Filter Mode = Point (no filter), Compression = None,
