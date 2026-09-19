@@ -135,3 +135,26 @@ folder one level above the folder's own contents, so a `git add <folder>`
 that only targets the folder's contents misses the parent folder's `.meta`
 file, and it's easy for the omission to go unnoticed across four parallel
 Wave A branches.
+
+## FMOD native libraries
+
+The Editor and PlayMode tests run real FMOD. Provenance and caveats:
+
+- The natives are the same binaries the MonoGame build uses (repo-root
+  `libfmodL.dylib`, `fmodL.dll`, `fmodstudioL.dll`, 2.02.19), copied under
+  `Assets/Plugins/FMOD/platforms/{mac,win}/lib` and tracked by Git LFS. The
+  vendored managed wrapper is 2.02.35. FMOD only enforces major.minor, so this
+  runs today, but a header mismatch error means one side moved.
+- `platforms/mac/lib/fmodstudioL.dylib` is patched: `install_name_tool
+  -add_rpath @loader_path/.` plus an ad hoc `codesign`, so it finds the sibling
+  `libfmodL.dylib`. Refreshing it from an FMOD download loses that patch.
+- Editor only. The plugin metas enable Editor and disable Standalone. FMOD's
+  own macOS build step expects `fmodstudio{L}.bundle`, so a macOS player build
+  has no FMOD natives yet. Whoever does the build wave must install the
+  official FMOD Unity plugin binaries or extend this setup.
+- Windows files are untested (no Windows machine was available).
+- `SourceBankPath` is `../Src/Content/soundbanks` (authoring-time read
+  dependency on the MonoGame tree). Copy the banks into Unity before `Src/` is
+  removed.
+- No automated test can prove audible output. Play a scene with
+  `SoundServiceRunner` in the Editor with speakers on to confirm.

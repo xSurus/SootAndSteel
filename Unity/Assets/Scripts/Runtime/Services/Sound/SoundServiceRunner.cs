@@ -34,7 +34,7 @@ namespace Gamelab.Services.Sound
 
         private void Update()
         {
-            SoundService.Tick();
+            SoundService?.Tick();
         }
     }
 }

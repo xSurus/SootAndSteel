@@ -25,6 +25,8 @@
 
 ## Known blocker (read before Task 1)
 
+> Resolved during Task 6: the repo-root FMOD natives from the MonoGame build were reused and work in the Editor. See "FMOD native libraries" in Unity/CONVENTIONS.md. The text below is the original assumption.
+
 The public `fmod/fmod-for-unity` GitHub source (what Task 1 vendors) explicitly
 ships **without** the native FMOD engine binaries (`fmod`/`fmodstudio`
 core libraries per platform). Those are only distributed through an

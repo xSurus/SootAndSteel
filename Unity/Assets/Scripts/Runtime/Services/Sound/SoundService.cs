@@ -48,7 +48,7 @@ namespace Gamelab.Services.Sound
         {
             LoadSound(id);
             EventInstance sound = playOnceInstances[id];
-            sound.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
+            sound.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
             sound.start();
         }
 
@@ -130,8 +130,9 @@ namespace Gamelab.Services.Sound
                     binding.Update();
                     return false;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    UnityEngine.Debug.LogWarning($"Failed to update parameter: {ex.Message}. Disposing binding.");
                     binding.Deactivate();
                     return true;
                 }

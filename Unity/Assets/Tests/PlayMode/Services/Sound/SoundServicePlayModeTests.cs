@@ -7,31 +7,29 @@ using Gamelab.Services.Sound;
 namespace Gamelab.Tests.Services
 {
     // These tests exercise the real FMOD Studio runtime (RuntimeManager, the
-    // vendored banks under Src/Content/soundbanks). They need the native FMOD
-    // engine libraries for the current platform, which are not included in
-    // the vendored Assets/Plugins/FMOD source (see this plan's "Known
-    // blocker" section) - they must be added from an authenticated
-    // FMOD/Unity Asset Store download before these tests can pass.
-    // Verification uses FMOD's own RESULT codes and event/parameter state,
-    // never audio playback - there's no way to listen for this in this
-    // environment, and that's the point (per the work order).
+    // banks under Src/Content/soundbanks). The native libraries are committed
+    // under Assets/Plugins/FMOD/platforms (see "FMOD native libraries" in
+    // Unity/CONVENTIONS.md). Verification uses FMOD's own RESULT codes and
+    // event/parameter state, never audible playback.
     public class SoundServicePlayModeTests
     {
         private SoundService soundService;
+        private string settingsPath;
 
         [SetUp]
         public void SetUp()
         {
-            SoundSettings.SettingsFilePathOverride =
-                System.IO.Path.Combine(System.IO.Path.GetTempPath(), "gamelab_test_audio_settings.json");
+            settingsPath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), $"gamelab_test_{System.Guid.NewGuid():N}.json");
+            SoundSettings.SettingsFilePathOverride = settingsPath;
             soundService = new SoundService();
         }
 
         [TearDown]
         public void TearDown()
         {
-            soundService.Dispose();
+            soundService?.Dispose();
             SoundSettings.SettingsFilePathOverride = null;
+            System.IO.File.Delete(settingsPath);
         }
 
         [Test]
