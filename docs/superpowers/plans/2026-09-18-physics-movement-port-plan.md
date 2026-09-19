@@ -712,8 +712,8 @@ git commit -m "Add physics parity demo scene and scene-load smoke test"
 
 ## Wave A1 verification gate
 
-- [ ] `Gamelab.Tests.PlayMode` passes in full (all four tasks' tests, run together in one final pass)
-- [ ] `Unity/Assets/Scenes/PhysicsParityDemo.unity` exists, is registered in Build Settings, and its scene-load test passes
-- [ ] MonoGame reference build still runs unmodified: `dotnet run --project Src/Gamelab.csproj`
-- [ ] No file under `Src/` was modified (`git status` / `git diff` against the branch's base commit shows changes only under `Unity/` and `docs/superpowers/plans/`)
-- [ ] Human visual side-by-side check against the MonoGame reference — **not completed by this plan**, flagged for the coordinator (see Task 4 note)
+- [x] `Gamelab.Tests.PlayMode` passes in full (all four tasks' tests, run together in one final pass) — re-verified fresh after the final-review fix commit (297aa1b): 9/9 passed.
+- [x] `Unity/Assets/Scenes/PhysicsParityDemo.unity` exists, is registered in Build Settings, and its scene-load test passes — `PhysicsParityDemoScene_BodyMovesTowardWallAndComesToRest` passed in the same run.
+- [x] MonoGame reference build still runs unmodified: `dotnet run --project Src/Gamelab.csproj` — re-verified: builds with 0 errors, runs, loads content, reaches "Game initialized".
+- [x] No file under `Src/` was modified (`git status` / `git diff` against the branch's base commit shows changes only under `Unity/` and `docs/superpowers/plans/`) — re-verified: `git diff --stat 6c13b36..297aa1b -- Src/` is empty.
+- [ ] Human visual side-by-side check against the MonoGame reference — **still not completed** (no Editor GUI/screenshot tooling available to this agent either), same gap Task 4 originally flagged. Flagged for the coordinator. See `.superpowers/sdd/2026-09-18-physics-movement-port-plan/progress.md` for the full final-review/re-review record, including a note that the demo scene's rendered ball is small on screen (~3% of viewport height) — worth a quick look whenever this check happens.
