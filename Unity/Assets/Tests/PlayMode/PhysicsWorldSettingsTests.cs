@@ -27,5 +27,20 @@ namespace Gamelab.Tests.PhysicalEntities
         {
             Assert.AreEqual(0.25f, Time.maximumDeltaTime, 0.0001f);
         }
+
+        [Test]
+        public void DefaultCollider2D_Friction_MatchesAetherBox2DDefault()
+        {
+            var probe = new GameObject("FrictionProbe");
+            try
+            {
+                CircleCollider2D collider = probe.AddComponent<CircleCollider2D>();
+                Assert.AreEqual(0.2f, collider.friction, 0.0001f);
+            }
+            finally
+            {
+                Object.DestroyImmediate(probe);
+            }
+        }
     }
 }

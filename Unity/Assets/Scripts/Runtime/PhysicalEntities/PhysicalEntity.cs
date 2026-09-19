@@ -25,7 +25,14 @@ namespace Gamelab.PhysicalEntities
 
         public Rigidbody2D Body => body;
 
-        public Vector2 Position
+        /// <summary>
+        /// Alias for <see cref="Body"/> matching Src/PhysicalEntities/Interfaces/IPhysicalEntity.cs's
+        /// `PhysicsBody` member name, so a later `: IPhysicalEntity` retrofit (A2) doesn't require
+        /// renaming <see cref="Body"/> out from under existing call sites.
+        /// </summary>
+        public Rigidbody2D PhysicsBody => Body;
+
+        public virtual Vector2 Position
         {
             get => Body.position;
             set => Body.position = value;
