@@ -40,6 +40,7 @@ namespace Gamelab.Tests.Players
 
         public override void TearDown()
         {
+            joinManager.ResetJoins();
             Object.DestroyImmediate(managerGo);
             base.TearDown();
         }
@@ -83,6 +84,35 @@ namespace Gamelab.Tests.Players
             yield return null;
 
             Assert.AreEqual(2, joinManager.Roster.Slots.Count, "gamepad and keyboard should both be able to join");
+        }
+
+        [UnityTest]
+        public IEnumerator TwoPlayers_HaveIndependentActionInstances_AndInputs()
+        {
+            var pad1 = InputSystem.AddDevice<Gamepad>();
+            var pad2 = InputSystem.AddDevice<Gamepad>();
+
+            Press(pad1.buttonSouth);
+            yield return null;
+            Release(pad1.buttonSouth);
+            yield return null;
+            Press(pad2.buttonSouth);
+            yield return null;
+            Release(pad2.buttonSouth);
+            yield return null;
+
+            var a = ((MonoBehaviour)joinManager.Roster.Slots[0].Input).GetComponent<PlayerInput>();
+            var b = ((MonoBehaviour)joinManager.Roster.Slots[1].Input).GetComponent<PlayerInput>();
+            Assert.AreNotSame(a.actions, b.actions,
+                "each player needs its own InputActionAsset instance, or enabling one player's actions cross-enables the other's");
+
+            // Only pad1 presses Start: exactly one player's handler may see it.
+            Press(pad1.startButton);
+            yield return null;
+            int seen = 0;
+            foreach (var slot in joinManager.Roster.Slots)
+                if (slot.Input.IsStartJustPressed()) seen++;
+            Assert.AreEqual(1, seen, "a press on one pad must reach only that pad's player");
         }
     }
 }
