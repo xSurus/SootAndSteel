@@ -1,0 +1,51 @@
+{
+    "name": "GameplayControls",
+    "maps": [
+        {
+            "name": "Player",
+            "id": "8f1a2b3c-0001-4a11-9c11-000000000001",
+            "actions": [
+                { "name": "Move", "type": "Value", "id": "8f1a2b3c-0002-4a11-9c11-000000000001", "expectedControlType": "Vector2" },
+                { "name": "Interact", "type": "Button", "id": "8f1a2b3c-0003-4a11-9c11-000000000001" },
+                { "name": "Grab", "type": "Button", "id": "8f1a2b3c-0004-4a11-9c11-000000000001" },
+                { "name": "Pickup", "type": "Button", "id": "8f1a2b3c-0005-4a11-9c11-000000000001" },
+                { "name": "Start", "type": "Button", "id": "8f1a2b3c-0006-4a11-9c11-000000000001" },
+                { "name": "Pause", "type": "Button", "id": "8f1a2b3c-0007-4a11-9c11-000000000001" },
+                { "name": "Back", "type": "Button", "id": "8f1a2b3c-0008-4a11-9c11-000000000001" }
+            ],
+            "bindings": [
+                { "name": "WASD", "id": "8f1a2b3c-1001-4a11-9c11-000000000001", "path": "2DVector", "isComposite": true, "isPartOfComposite": false, "action": "Move" },
+                { "name": "up", "id": "8f1a2b3c-1002-4a11-9c11-000000000001", "path": "<Keyboard>/w", "isComposite": false, "isPartOfComposite": true, "action": "Move" },
+                { "name": "down", "id": "8f1a2b3c-1003-4a11-9c11-000000000001", "path": "<Keyboard>/s", "isComposite": false, "isPartOfComposite": true, "action": "Move" },
+                { "name": "left", "id": "8f1a2b3c-1004-4a11-9c11-000000000001", "path": "<Keyboard>/a", "isComposite": false, "isPartOfComposite": true, "action": "Move" },
+                { "name": "right", "id": "8f1a2b3c-1005-4a11-9c11-000000000001", "path": "<Keyboard>/d", "isComposite": false, "isPartOfComposite": true, "action": "Move" },
+                { "name": "", "id": "8f1a2b3c-1006-4a11-9c11-000000000001", "path": "<Gamepad>/leftStick", "isComposite": false, "isPartOfComposite": false, "action": "Move" },
+                { "name": "", "id": "8f1a2b3c-1007-4a11-9c11-000000000001", "path": "<Gamepad>/dpad", "isComposite": false, "isPartOfComposite": false, "action": "Move" },
+                { "name": "", "id": "8f1a2b3c-1010-4a11-9c11-000000000001", "path": "<Keyboard>/e", "isComposite": false, "isPartOfComposite": false, "action": "Interact" },
+                { "name": "", "id": "8f1a2b3c-1011-4a11-9c11-000000000001", "path": "<Gamepad>/buttonWest", "isComposite": false, "isPartOfComposite": false, "action": "Interact" },
+                { "name": "", "id": "8f1a2b3c-1020-4a11-9c11-000000000001", "path": "<Keyboard>/r", "isComposite": false, "isPartOfComposite": false, "action": "Grab" },
+                { "name": "", "id": "8f1a2b3c-1021-4a11-9c11-000000000001", "path": "<Gamepad>/buttonNorth", "isComposite": false, "isPartOfComposite": false, "action": "Grab" },
+                { "name": "", "id": "8f1a2b3c-1030-4a11-9c11-000000000001", "path": "<Keyboard>/space", "isComposite": false, "isPartOfComposite": false, "action": "Pickup" },
+                { "name": "", "id": "8f1a2b3c-1031-4a11-9c11-000000000001", "path": "<Gamepad>/buttonSouth", "isComposite": false, "isPartOfComposite": false, "action": "Pickup" },
+                { "name": "", "id": "8f1a2b3c-1040-4a11-9c11-000000000001", "path": "<Keyboard>/enter", "isComposite": false, "isPartOfComposite": false, "action": "Start" },
+                { "name": "", "id": "8f1a2b3c-1041-4a11-9c11-000000000001", "path": "<Gamepad>/start", "isComposite": false, "isPartOfComposite": false, "action": "Start" },
+                { "name": "", "id": "8f1a2b3c-1050-4a11-9c11-000000000001", "path": "<Keyboard>/escape", "isComposite": false, "isPartOfComposite": false, "action": "Pause" },
+                { "name": "", "id": "8f1a2b3c-1051-4a11-9c11-000000000001", "path": "<Gamepad>/start", "isComposite": false, "isPartOfComposite": false, "action": "Pause" },
+                { "name": "", "id": "8f1a2b3c-1060-4a11-9c11-000000000001", "path": "<Keyboard>/h", "isComposite": false, "isPartOfComposite": false, "action": "Back" },
+                { "name": "", "id": "8f1a2b3c-1061-4a11-9c11-000000000001", "path": "<Gamepad>/select", "isComposite": false, "isPartOfComposite": false, "action": "Back" }
+            ]
+        },
+        {
+            "name": "Join",
+            "id": "8f1a2b3c-0100-4a11-9c11-000000000001",
+            "actions": [
+                { "name": "JoinAction", "type": "Button", "id": "8f1a2b3c-0101-4a11-9c11-000000000001" }
+            ],
+            "bindings": [
+                { "name": "", "id": "8f1a2b3c-1101-4a11-9c11-000000000001", "path": "<Keyboard>/space", "isComposite": false, "isPartOfComposite": false, "action": "JoinAction" },
+                { "name": "", "id": "8f1a2b3c-1102-4a11-9c11-000000000001", "path": "<Gamepad>/buttonSouth", "isComposite": false, "isPartOfComposite": false, "action": "JoinAction" }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

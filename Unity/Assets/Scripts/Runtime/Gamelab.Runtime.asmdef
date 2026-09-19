@@ -3,7 +3,8 @@
     "rootNamespace": "",
     "references": [
         "Gamelab.Core",
-        "FMODUnity"
+        "FMODUnity",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
