@@ -3,7 +3,9 @@
     "rootNamespace": "",
     "references": [
         "Gamelab.Core",
-        "Gamelab.Runtime"
+        "Gamelab.Runtime",
+        "FMODUnity",
+        "FMODUnityEditor"
     ],
     "includePlatforms": [
         "Editor"
