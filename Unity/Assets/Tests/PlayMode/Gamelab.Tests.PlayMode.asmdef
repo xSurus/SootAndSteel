@@ -4,6 +4,7 @@
     "references": [
         "Gamelab.Core",
         "Gamelab.Runtime",
+        "FMODUnity",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner"
     ],
