@@ -62,10 +62,10 @@ namespace Gamelab.Input
         private bool ComputeJustPressed(float current, float previous, bool positive)
         {
             bool held = positive ? current > pressThreshold : current < -pressThreshold;
-            bool wasHeld = positive ? previous >= pressThreshold : previous <= -pressThreshold;
+            bool wasHeld = positive ? previous > pressThreshold : previous < -pressThreshold;
             bool justPressed = held && !wasHeld;
-            // wasHeld is redundant here (CheckDirectionalRepeat already gates on isDirectionHeld,
-            // and justPressed already covers the wasHeld==false case) — kept for readability.
+            // wasHeld short-circuits like the original's ||, so CheckDirectionalRepeat's
+            // repeatTimer side effect only runs when the direction was already held.
             bool repeat = wasHeld && CheckDirectionalRepeat(held);
             return justPressed || repeat;
         }

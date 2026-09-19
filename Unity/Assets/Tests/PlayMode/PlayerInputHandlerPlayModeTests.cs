@@ -55,5 +55,13 @@ namespace Gamelab.Tests.Input
             Assert.Greater(movement.X, 0f);
             Assert.AreEqual(0f, movement.Y, 0.001f);
         }
+
+        [UnityTest]
+        public IEnumerator HoldingW_ReportsNegativeY_MonoGameConvention()
+        {
+            Press(keyboard.wKey);
+            yield return null;
+            Assert.Less(handler.GetMovement().Y, 0f);
+        }
     }
 }

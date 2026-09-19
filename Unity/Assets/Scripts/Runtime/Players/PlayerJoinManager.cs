@@ -20,6 +20,7 @@ namespace Gamelab.Players.Runtime
         public PlayerRoster Roster { get; } = new PlayerRoster();
 
         private PlayerInputManager playerInputManager;
+        private InputActionAsset joinActions;
         private readonly Dictionary<int, PlayerInput> playersBySlot = new Dictionary<int, PlayerInput>();
 
         // Deviation from brief: PlayerInputManager.notificationBehavior defaults to
@@ -32,7 +33,13 @@ namespace Gamelab.Players.Runtime
         // firing Awake() followed by an explicit Configure() call in tests).
         public void Configure(PlayerInputManager manager, InputActionAsset actions)
         {
+            if (playerInputManager != null && playerInputManager != manager)
+                playerInputManager.onPlayerJoined -= HandlePlayerJoined;
             playerInputManager = manager;
+            // Separate clones for the join action and the prefab: joined players disable
+            // bindings of other devices on their asset, which would block later joins,
+            // and player 0 would otherwise hold the caller's shared asset instance.
+            joinActions = Instantiate(actions);
 
             // Deviation from brief: the prefab's PlayerInput needs an actions asset
             // assigned before PlayerInputManager clones it, otherwise the cloned
@@ -46,7 +53,7 @@ namespace Gamelab.Players.Runtime
             // isolation is supposed to work.
             PlayerInput prefabInput = manager.playerPrefab.GetComponent<PlayerInput>();
             if (prefabInput != null)
-                prefabInput.actions = actions;
+                prefabInput.actions = Instantiate(actions);
 
             EnsureWired();
         }
@@ -61,6 +68,14 @@ namespace Gamelab.Players.Runtime
         private void EnsureWired()
         {
             playerInputManager.notificationBehavior = PlayerNotifications.InvokeCSharpEvents;
+            // maxPlayerCount is read-only at runtime; over-capacity joins are rejected in HandlePlayerJoined.
+            // Join only on A / Space (Join/JoinAction), per GameInstructions.md.
+            var joinAction = joinActions != null ? joinActions.FindAction("Join/JoinAction") : null;
+            if (joinAction != null)
+            {
+                playerInputManager.joinAction = new InputActionProperty(joinAction);
+                playerInputManager.joinBehavior = PlayerJoinBehavior.JoinPlayersWhenJoinActionIsTriggered;
+            }
             playerInputManager.onPlayerJoined -= HandlePlayerJoined;
             playerInputManager.onPlayerJoined += HandlePlayerJoined;
         }

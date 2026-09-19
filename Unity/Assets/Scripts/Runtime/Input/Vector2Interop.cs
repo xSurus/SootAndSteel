@@ -16,6 +16,6 @@ namespace Gamelab.Input.Runtime
     public static class Vector2InteropExtensions
     {
         public static Vector2Raw ToSystemVector2(this UnityEngine.Vector2 v) =>
-            new Vector2Raw(new System.Numerics.Vector2(v.x, v.y));
+            new Vector2Raw(new System.Numerics.Vector2(v.x, -v.y) /* Core uses MonoGame Y-down */);
     }
 }

@@ -68,6 +68,17 @@ namespace Gamelab.Tests.Players
         }
 
         [UnityTest]
+        public IEnumerator NonJoinButton_DoesNotJoin()
+        {
+            var pad = InputSystem.AddDevice<Gamepad>();
+            Press(pad.buttonEast);
+            yield return null;
+            Release(pad.buttonEast);
+            yield return null;
+            Assert.AreEqual(0, joinManager.Roster.Slots.Count, "only A/Space may join");
+        }
+
+        [UnityTest]
         public IEnumerator KeyboardSpace_Joins_AlongsideGamepad()
         {
             var pad1 = InputSystem.AddDevice<Gamepad>();
@@ -103,6 +114,9 @@ namespace Gamelab.Tests.Players
 
             var a = ((MonoBehaviour)joinManager.Roster.Slots[0].Input).GetComponent<PlayerInput>();
             var b = ((MonoBehaviour)joinManager.Roster.Slots[1].Input).GetComponent<PlayerInput>();
+            var shared = Resources.Load<InputActionAsset>("GameplayControls");
+            Assert.AreNotSame(shared, a.actions, "player 0 must not hold the shared asset");
+            Assert.AreNotSame(shared, b.actions, "player 1 must not hold the shared asset");
             Assert.AreNotSame(a.actions, b.actions,
                 "each player needs its own InputActionAsset instance, or enabling one player's actions cross-enables the other's");
 
