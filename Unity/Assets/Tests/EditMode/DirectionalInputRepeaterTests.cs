@@ -43,11 +43,13 @@ namespace Gamelab.Tests.Input
         {
             var repeater = new DirectionalInputRepeater();
 
-            repeater.Tick(new Vector2(1f, 0f), 0.016f);
-            repeater.Tick(Vector2.Zero, 0.5f); // below deadzone squared -> resets accumulation
-            repeater.Tick(new Vector2(1f, 0f), 0.35f); // would have repeated if the timer hadn't reset
+            repeater.Tick(new Vector2(1f, 0f), 0.016f);   // press
+            repeater.Tick(new Vector2(1f, 0f), 0.35f);    // held long enough that leftover timer state would look "due" for a repeat
+            repeater.Tick(Vector2.Zero, 0.5f);            // release -> resets hold/repeat timers
+            repeater.Tick(new Vector2(1f, 0f), 0.016f);   // re-press: justPressed fires here (expected, not what's under test)
+            repeater.Tick(new Vector2(1f, 0f), 0.05f);    // only ~0.066s since re-press, well under the 0.3s initial delay
 
-            Assert.IsFalse(repeater.IsRightJustPressed, "hold timer must reset when movement drops below the deadzone");
+            Assert.IsFalse(repeater.IsRightJustPressed, "hold timer must reset when movement drops below the deadzone, not carry over into an early repeat");
         }
 
         [Test]

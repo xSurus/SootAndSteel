@@ -62,9 +62,10 @@ namespace Gamelab.Input
         private bool ComputeJustPressed(float current, float previous, bool positive)
         {
             bool held = positive ? current > pressThreshold : current < -pressThreshold;
-            bool wasHeld = positive ? previous > pressThreshold : previous < -pressThreshold;
+            bool wasHeld = positive ? previous >= pressThreshold : previous <= -pressThreshold;
             bool justPressed = held && !wasHeld;
-            // Only allow repeats if direction was held in previous frame (not a new press)
+            // wasHeld is redundant here (CheckDirectionalRepeat already gates on isDirectionHeld,
+            // and justPressed already covers the wasHeld==false case) — kept for readability.
             bool repeat = wasHeld && CheckDirectionalRepeat(held);
             return justPressed || repeat;
         }
