@@ -20,7 +20,7 @@ namespace Gamelab.PhysicalEntities.Bullets.Propellants
             // spread-to-standard-deviation scaling.
             float randomSpread = (float)RandomService.SampleGaussian(0, bullet.Stats.Spread / 3f);
             Vector2 direction = RotateVector(bullet.AimDirection, randomSpread);
-            bullet.PhysicsBody.linearVelocity = direction * bullet.Stats.Speed;
+            bullet.PhysicsBody.linearVelocity = direction * WorldUnits.ToMeters(bullet.Stats.Speed); // stats stay in pixels (ruling 1)
         }
 
         private static Vector2 RotateVector(Vector2 v, float radians)

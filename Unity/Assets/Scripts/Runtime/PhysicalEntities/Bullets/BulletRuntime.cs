@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Gamelab.PhysicalEntities.Bullets
@@ -10,6 +11,7 @@ namespace Gamelab.PhysicalEntities.Bullets
         public Vector2 AimDirection { get; private set; }
         public bool IsActive { get; private set; } = true;
         public Rigidbody2D PhysicsBody { get; private set; }
+        public float Age { get; private set; }
 
         private BulletDefinitionAsset definition;
 
@@ -19,6 +21,13 @@ namespace Gamelab.PhysicalEntities.Bullets
             Vector2 aimDirection,
             BulletFaction faction)
         {
+            if (definition == null)
+            {
+                throw new ArgumentNullException(nameof(definition));
+            }
+
+            definition.Validate();
+
             var go = new GameObject($"Bullet_{definition.name}");
             go.transform.position = position;
 
@@ -44,6 +53,8 @@ namespace Gamelab.PhysicalEntities.Bullets
             return bullet;
         }
 
+        private void FixedUpdate() => Tick(Time.fixedDeltaTime);
+
         public void Tick(float deltaTime)
         {
             if (!IsActive)
@@ -54,11 +65,27 @@ namespace Gamelab.PhysicalEntities.Bullets
             definition.Casing.OnUpdate(this, deltaTime);
             definition.Propellant.OnUpdate(this, deltaTime);
             definition.Projectile.OnUpdate(this, deltaTime);
+
+            // Src checks lifetime in BasicPropellant.OnUpdate; the runtime owns it now (plan ruling 4).
+            Age += deltaTime;
+            if (Age > Stats.Lifetime)
+            {
+                Deactivate();
+            }
         }
 
         public void Deactivate()
         {
+            if (!IsActive)
+            {
+                return;
+            }
+
             IsActive = false;
+            definition.Casing.OnCleanup(this);
+            definition.Propellant.OnCleanup(this);
+            definition.Projectile.OnCleanup(this);
+            Destroy(gameObject);
         }
     }
 }
