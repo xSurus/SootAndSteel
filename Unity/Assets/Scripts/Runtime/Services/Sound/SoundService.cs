@@ -5,7 +5,7 @@ using FMODUnity;
 
 namespace Gamelab.Services.Sound
 {
-    public class SoundService : ISoundService
+    public class SoundService : ISoundService, IDisposable
     {
         private readonly List<ParameterBinding> parameterUpdates = new List<ParameterBinding>();
         private readonly Dictionary<string, EventDescription> eventDescriptions = new Dictionary<string, EventDescription>();
@@ -105,6 +105,15 @@ namespace Gamelab.Services.Sound
             {
                 SetGlobalParameter(pair.Key, pair.Value);
             }
+        }
+
+        public void Dispose()
+        {
+            foreach (string id in new List<string>(eventDescriptions.Keys))
+            {
+                UnloadSound(id);
+            }
+            parameterUpdates.Clear();
         }
 
         // Advances every registered parameter binding. Call once per frame

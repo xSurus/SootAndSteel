@@ -25,6 +25,13 @@ namespace Gamelab.Services.Sound
             SoundService = new SoundService();
         }
 
+        private void OnDestroy()
+        {
+            if (Instance != this) return;
+            SoundService?.Dispose();
+            Instance = null;
+        }
+
         private void Update()
         {
             SoundService.Tick();

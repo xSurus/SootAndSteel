@@ -22,7 +22,16 @@ namespace Gamelab.Tests.Services
         [SetUp]
         public void SetUp()
         {
+            SoundSettings.SettingsFilePathOverride =
+                System.IO.Path.Combine(System.IO.Path.GetTempPath(), "gamelab_test_audio_settings.json");
             soundService = new SoundService();
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            soundService.Dispose();
+            SoundSettings.SettingsFilePathOverride = null;
         }
 
         [Test]

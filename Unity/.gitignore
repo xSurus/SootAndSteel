@@ -17,3 +17,6 @@
 # swallow FMOD's native plugins (fmodstudio.dll etc.) installed under
 # Assets/Plugins/. Un-ignore them here so they get committed.
 !Assets/Plugins/**/*.dll
+
+# Editor-generated scene template defaults, not project content.
+ProjectSettings/SceneTemplateSettings.json
