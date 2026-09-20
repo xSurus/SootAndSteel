@@ -207,4 +207,4 @@ The Editor and PlayMode tests run real FMOD. Provenance and caveats:
 - Conveyors.
 - SpeedLever and BuyableStationWrapper: game state and shop.
 - BulletStats.Color: draw-only. The render wave derives it from the recipe.
-- `TryReserveSideAttackSlotOnSide` returns false when the side is full. Src falls back to any free slot, so callers that want that must retry with the other side.
+- Off-screen-left bullet removal: needs the map/camera origin from wave B1. Lifetime bounds bullets meanwhile.

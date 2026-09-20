@@ -38,7 +38,7 @@ namespace Gamelab.Tests.Enemies
         }
 
         [Test]
-        public void TryReserveSideAttackSlotOnSide_ReservesOnlyRequestedSideAndFailsWhenFull()
+        public void TryReserveSideAttackSlotOnSide_PrefersRequestedSideThenFallsBackToOtherSide()
         {
             var manager = new EnemySlotManager();
             EnemyTrainSlot first = default;
@@ -49,9 +49,10 @@ namespace Gamelab.Tests.Enemies
                 if (i == 0) first = s;
             }
 
-            Assert.IsFalse(manager.TryReserveSideAttackSlotOnSide(EnemySlotSide.Top, out _));
-            Assert.IsTrue(manager.TryReserveSideAttackSlotOnSide(EnemySlotSide.Bottom, out EnemyTrainSlot b));
+            // Top is full: Src falls back to any free slot, so the next reservation lands on Bottom.
+            Assert.IsTrue(manager.TryReserveSideAttackSlotOnSide(EnemySlotSide.Top, out EnemyTrainSlot b));
             Assert.AreEqual(EnemySlotSide.Bottom, b.Side);
+            manager.ReleaseSlot(b);
 
             manager.ReleaseSlot(first);
             Assert.IsTrue(manager.TryReserveSideAttackSlotOnSide(EnemySlotSide.Top, out EnemyTrainSlot again));
