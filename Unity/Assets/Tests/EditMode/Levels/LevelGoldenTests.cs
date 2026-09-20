@@ -83,7 +83,7 @@ namespace Gamelab.Tests.Levels
             {
                 string[] e = expected[i].Split(',');
                 SpawnEvent actual = def.SpawnEvents[i];
-                Assert.AreEqual(float.Parse(e[0], CultureInfo.InvariantCulture), actual.Distance, 1e-3f, "distance " + i);
+                Assert.AreEqual(float.Parse(e[0], CultureInfo.InvariantCulture), actual.Distance, 0.01f, "distance " + i); // Mono differs from .NET by 1 float ulp (~0.002 above 16384) in a few events
                 Assert.AreEqual(e[1], actual.Type, "type " + i);
                 Assert.AreEqual(e[2], actual.AmmoId, "ammo " + i);
                 Assert.AreEqual(e[3], actual.Side, "side " + i);
