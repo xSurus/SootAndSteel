@@ -109,6 +109,7 @@ namespace Gamelab.Tests.Bullets
             Assert.IsTrue(root == null);
             var children = Bullets();
             Assert.AreEqual(10, children.Count);
+            Assert.GreaterOrEqual(children.FindAll(c => c.IsPending).Count, 8); // delays i * 0.1 cannot have elapsed in one frame
             foreach (var c in children)
             {
                 Assert.AreEqual(0.5f, c.Stats.Spread, 1e-4f);
