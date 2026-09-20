@@ -42,6 +42,7 @@ namespace Gamelab.Tests.Enemies
         {
             foreach (var go in Object.FindObjectsByType<GameObject>(FindObjectsSortMode.None))
                 if (go.name.StartsWith("Bullet_")) Object.Destroy(go);
+            yield return null; // bullets are gone before their definition and components are destroyed
             foreach (var o in created) Object.Destroy(o);
             created.Clear();
             yield return null;
@@ -51,14 +52,19 @@ namespace Gamelab.Tests.Enemies
         public IEnumerator AllNineRecipes_ResolveValidateAndSpawn()
         {
             var catalog = MakeCatalog();
-            Assert.AreEqual(13, catalog.Components.Count);
             foreach (EnemyAmmoDefinition ammo in EnemyAmmoCatalog.All)
             {
                 var def = BulletDefinitionAsset.BuildFromRecipe(ammo.BuildRecipe(), catalog, BulletStats.CannonDefault());
                 created.Add(def);
                 CollectionAssert.AreEqual(ammo.OrderedComponentIds, System.Linq.Enumerable.Select(def.Components, c => c.ComponentId), ammo.Id);
                 Assert.DoesNotThrow(def.Validate, ammo.Id);
-                Assert.DoesNotThrow(() => BulletRuntime.Spawn(def, Vector2.zero, Vector2.right, BulletFaction.Enemy), ammo.Id);
+                BulletRuntime bullet = BulletRuntime.Spawn(def, Vector2.zero, Vector2.right, BulletFaction.Enemy);
+                Assert.IsNotNull(bullet, ammo.Id);
+                Assert.AreEqual(BulletFaction.Enemy, bullet.Faction, ammo.Id);
+                // EnemyCasing sets Damage to 10 and Heavy doubles it (recipe order); PiercingProjectile adds 3 to base Pierce 1.
+                if (ammo.Id == EnemyAmmoIds.Basic) Assert.AreEqual(10f, bullet.Stats.Damage, ammo.Id);
+                if (ammo.Id == EnemyAmmoIds.Heavy) Assert.AreEqual(20f, bullet.Stats.Damage, ammo.Id);
+                if (ammo.Id == EnemyAmmoIds.Piercing) Assert.AreEqual(4f, bullet.Stats.Pierce, ammo.Id);
             }
 
             yield return null;

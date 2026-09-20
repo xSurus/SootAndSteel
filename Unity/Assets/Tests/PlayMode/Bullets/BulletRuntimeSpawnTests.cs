@@ -11,6 +11,15 @@ namespace Gamelab.Tests.Bullets
 {
     public class BulletRuntimeSpawnTests
     {
+        private BulletRuntime bullet;
+
+        [UnityTearDown]
+        public IEnumerator TearDown()
+        {
+            if (bullet != null) Object.Destroy(bullet.gameObject);
+            yield return null;
+        }
+
         [UnityTest]
         public IEnumerator Spawn_FromCatalogDefinition_AppliesStatsAndVelocity()
         {
@@ -19,7 +28,7 @@ namespace Gamelab.Tests.Bullets
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
                 .SetValue(definition, 0f); // zero spread => deterministic velocity direction
 
-            BulletRuntime bullet = BulletRuntime.Spawn(
+            bullet = BulletRuntime.Spawn(
                 definition, Vector2.zero, Vector2.right, BulletFaction.Player);
 
             yield return null; // let physics settle one frame
@@ -28,8 +37,6 @@ namespace Gamelab.Tests.Bullets
             Assert.AreEqual(BulletFaction.Player, bullet.Faction);
             Assert.Greater(bullet.PhysicsBody.linearVelocity.x, 0f);
             Assert.AreEqual(0f, bullet.PhysicsBody.linearVelocity.y, 0.01f);
-
-            Object.Destroy(bullet.gameObject);
         }
     }
 }

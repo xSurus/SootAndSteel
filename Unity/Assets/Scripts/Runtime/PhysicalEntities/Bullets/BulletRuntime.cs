@@ -115,7 +115,11 @@ namespace Gamelab.PhysicalEntities.Bullets
 
         private void RunSpawnPhase()
         {
-            foreach (BulletComponentAsset c in definition.Components) c.OnSpawn(this);
+            foreach (BulletComponentAsset c in definition.Components)
+            {
+                if (!IsActive) break;
+                c.OnSpawn(this);
+            }
             RefreshCollider();
         }
 
@@ -149,10 +153,9 @@ namespace Gamelab.PhysicalEntities.Bullets
         }
 
 
-        // Src also removes bullets that leave the screen to the left. Not ported: it needs the
-        // map/camera origin from wave B1 (plan ruling 6). Lifetime already bounds bullets.
         public void Tick(float deltaTime)
         {
+            if (definition == null) return;
             if (!IsActive)
             {
                 return;

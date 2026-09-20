@@ -37,6 +37,27 @@ namespace Gamelab.Tests.Stations
         }
 
         [Test]
+        public void SharedEntry_IsNotMutated_AndStationIdsDiffer()
+        {
+            var entry = new StationCatalogEntry { stationId = "Original" };
+            var goA = new GameObject("ResA");
+            goA.AddComponent<Rigidbody2D>();
+            var a = goA.AddComponent<ResourceStationRuntime>();
+            var goB = new GameObject("ResB");
+            goB.AddComponent<Rigidbody2D>();
+            var b = goB.AddComponent<ResourceStationRuntime>();
+            a.Initialize(entry, "Coal");
+            b.Initialize(entry, "Iron");
+
+            Assert.AreEqual(StationIds.GetResourceStationId("Coal"), a.StationId);
+            Assert.AreEqual(StationIds.GetResourceStationId("Iron"), b.StationId);
+            Assert.AreNotEqual(a.StationId, b.StationId);
+            Assert.AreEqual("Original", entry.stationId);
+            Object.DestroyImmediate(goA);
+            Object.DestroyImmediate(goB);
+        }
+
+        [Test]
         public void AcceptsOnlyOwnResourceId()
         {
             var s = Make("Coal");

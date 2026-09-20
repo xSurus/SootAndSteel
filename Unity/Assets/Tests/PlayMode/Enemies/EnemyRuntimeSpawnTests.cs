@@ -10,6 +10,17 @@ namespace Gamelab.Tests.Enemies
 {
     public class EnemyRuntimeSpawnTests
     {
+        private GameObject go;
+        private GameObject bulletGo;
+
+        [UnityTearDown]
+        public IEnumerator TearDown()
+        {
+            if (go != null) Object.Destroy(go);
+            if (bulletGo != null) Object.Destroy(bulletGo);
+            yield return null;
+        }
+
         [UnityTest]
         public IEnumerator Spawn_FromCatalogEntry_AppliesHealthAndTakesDamageFromPlayerBullet()
         {
@@ -19,7 +30,7 @@ namespace Gamelab.Tests.Enemies
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
                 .SetValue(catalog, new System.Collections.Generic.List<EnemyCatalogEntry> { entry });
 
-            var go = new GameObject("DummyEnemy");
+            go = new GameObject("DummyEnemy");
             go.AddComponent<Rigidbody2D>();
             var enemy = go.AddComponent<DummyEnemyRuntime>();
             enemy.Initialize(catalog.Get(EnemyType.Dummy));
@@ -29,7 +40,7 @@ namespace Gamelab.Tests.Enemies
             Assert.AreEqual(100f, enemy.Health);
             Assert.IsTrue(enemy.IsAlive);
 
-            var bulletGo = new GameObject("FakeBullet");
+            bulletGo = new GameObject("FakeBullet");
             bulletGo.AddComponent<Rigidbody2D>();
             var bullet = bulletGo.AddComponent<BulletRuntime>();
             // Reflection is used here only to arrange a BulletRuntime with a known Faction/
@@ -42,9 +53,6 @@ namespace Gamelab.Tests.Enemies
 
             Assert.IsTrue(hit);
             Assert.AreEqual(70f, enemy.Health);
-
-            Object.Destroy(go);
-            Object.Destroy(bulletGo);
         }
     }
 }

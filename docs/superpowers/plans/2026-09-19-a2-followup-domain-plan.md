@@ -26,7 +26,7 @@ Verify with the headless Unity CLI (never `-quit` with `-runTests`; read the res
    `BulletRuntime.OnTriggerEnter2D` mirrors Src `BulletEntity.OnCollision` (IDamageable, per-target hit
    cooldown, pierce count).
 6. **Dropped behaviour policy.** Record in code comments plus the final report.
-   `BulletStats.Color` (draw-only), off-screen-left removal (needs the map/camera origin of B1),
+   `BulletStats.Color` (draw-only), off-screen enemy removal (needs the map/camera origin of B1),
    `TryReserveSideAttackSlotOnSide` (decided in the breadth task).
 
 ## Tasks (one commit each, review after each)
@@ -36,7 +36,7 @@ Verify with the headless Unity CLI (never `-quit` with `-runTests`; read the res
 - T2 Bullet core: retype slots to `BulletComponentAsset`, validation with a clear error, units, FixedUpdate
   tick, lifetime, `PhysicalEntity` reuse, Destroy on deactivate (items 1a, 3, 5, 7).
 - T3 Collisions: bullet + enemy colliders, `OnTriggerEnter2D`, pierce, hit cooldown; PlayMode test with real
-  physics (item 4). Off-screen-left removal decision.
+  physics (item 4). Off-screen enemy removal decision.
 - T4 Per-bullet state and child spawning: `GetState`, `IsRoot`, `SpawnChild`, delayed spawn (item 2).
 - T5 Bullet parts, simple: Enemy/Scatter/Burst/RapidFire casings, Heavy propellant, Piercing/Frangible
   projectiles (item 1b).

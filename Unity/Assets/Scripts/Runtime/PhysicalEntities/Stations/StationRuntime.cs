@@ -11,7 +11,7 @@ namespace Gamelab.PhysicalEntities.Stations
     {
         private const float TimeUntilKick = 0.5f;
 
-        public string StationId { get; private set; }
+        public string StationId { get; protected set; }
         public Item HeldItem { get; set; }
         public Rigidbody2D PhysicsBody { get; private set; }
 

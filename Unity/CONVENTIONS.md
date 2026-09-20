@@ -207,4 +207,4 @@ The Editor and PlayMode tests run real FMOD. Provenance and caveats:
 - Conveyors.
 - SpeedLever and BuyableStationWrapper: game state and shop.
 - BulletStats.Color: draw-only. The render wave derives it from the recipe.
-- Off-screen-left bullet removal: needs the map/camera origin from wave B1. Lifetime bounds bullets meanwhile.
+- Off-screen enemy removal (Src AbstractEnemy.IsOffScreenLeft -> ShouldRemove, and Enemy.cs's right-edge cull): needs the map/camera origin from wave B1. EnemyRuntime.ShouldRemove is currently set only on death.

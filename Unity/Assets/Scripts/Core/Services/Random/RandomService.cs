@@ -10,6 +10,8 @@ namespace Gamelab.Services.Random
         // (were it available) is thread-safe and avoids correlated sequences between
         // instances created in the same clock tick; a plain new Random() has neither
         // guarantee.
+        public static readonly RandomService Shared = new RandomService();
+
         private System.Random random = new System.Random();
 
         public float NextSingle() => (float)random.NextDouble() * 0.99999994f; // keep the cast below 1.0

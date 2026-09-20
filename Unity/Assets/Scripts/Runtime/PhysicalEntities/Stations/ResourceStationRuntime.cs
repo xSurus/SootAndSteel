@@ -12,8 +12,8 @@ namespace Gamelab.PhysicalEntities.Stations
         public void Initialize(StationCatalogEntry catalogEntry, string resourceId)
         {
             ResourceId = resourceId;
-            catalogEntry.stationId = StationIds.GetResourceStationId(resourceId);
             Initialize(catalogEntry);
+            StationId = StationIds.GetResourceStationId(resourceId);
         }
 
         public override Item PeekNextItem() => new Item(ResourceId);

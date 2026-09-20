@@ -22,7 +22,7 @@ namespace Gamelab.PhysicalEntities.Bullets.Propellants
 
         private const float LockOnInterval = 0.3f;
         private const float MaxRotation = 2.8f;
-        private static readonly IRandomService RandomService = new RandomService();
+        private static readonly IRandomService RandomService = Gamelab.Services.Random.RandomService.Shared;
 
         public override void OnCreate(BulletRuntime bullet)
         {

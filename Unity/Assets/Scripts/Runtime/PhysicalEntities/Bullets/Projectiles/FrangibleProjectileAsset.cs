@@ -11,7 +11,7 @@ namespace Gamelab.PhysicalEntities.Bullets.Projectiles
         public override EComponentType Type => EComponentType.Projectile;
         public override string ComponentId => ComponentIds.FrangibleProjectile;
 
-        private static readonly IRandomService RandomService = new RandomService();
+        private static readonly IRandomService RandomService = Gamelab.Services.Random.RandomService.Shared;
 
         public override void OnCreate(BulletRuntime bullet)
         {

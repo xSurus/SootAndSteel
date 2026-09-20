@@ -10,7 +10,7 @@ namespace Gamelab.PhysicalEntities.Bullets.Propellants
         public override EComponentType Type => EComponentType.Propellant;
         public override string ComponentId => ComponentIds.BasicPropellant;
 
-        private static readonly IRandomService RandomService = new RandomService();
+        private static readonly IRandomService RandomService = Gamelab.Services.Random.RandomService.Shared;
 
         public override void OnSpawn(BulletRuntime bullet)
         {

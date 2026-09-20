@@ -66,7 +66,7 @@ namespace Gamelab.PhysicalEntities.Bullets
             lifetime = stats.Lifetime;
         }
 
-        /// <summary>Runtime definition with the recipe's components in recipe order. The caller owns (and destroys) it.</summary>
+        /// <summary>Runtime definition with the recipe's components in recipe order. It must outlive every bullet spawned from it and their delayed children; destroy it only after those are gone.</summary>
         public static BulletDefinitionAsset BuildFromRecipe(BulletRecipe recipe, BulletComponentCatalogAsset catalog, BulletStats baseStats)
         {
             if (recipe == null) throw new ArgumentNullException(nameof(recipe));

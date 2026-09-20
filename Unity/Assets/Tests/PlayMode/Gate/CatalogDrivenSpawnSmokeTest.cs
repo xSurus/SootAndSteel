@@ -18,6 +18,17 @@ namespace Gamelab.Tests.Gate
     // projectile combination) and one enemy spawn correctly from data.
     public class CatalogDrivenSpawnSmokeTest
     {
+        private BulletRuntime bullet;
+        private GameObject enemyGo;
+
+        [UnityTearDown]
+        public IEnumerator TearDown()
+        {
+            if (bullet != null) Object.Destroy(bullet.gameObject);
+            if (enemyGo != null) Object.Destroy(enemyGo);
+            yield return null;
+        }
+
         [UnityTest]
         public IEnumerator CatalogDrivenBulletAndEnemy_BothSpawnFromData()
         {
@@ -31,14 +42,14 @@ namespace Gamelab.Tests.Gate
             });
             SetPrivate(definition, "spread", 0f);
 
-            BulletRuntime bullet = BulletRuntime.Spawn(definition, Vector2.zero, Vector2.right, BulletFaction.Player);
+            bullet = BulletRuntime.Spawn(definition, Vector2.zero, Vector2.right, BulletFaction.Player);
 
             // --- Enemy: spawned from a catalog entry ---
             var catalog = ScriptableObject.CreateInstance<EnemyCatalogAsset>();
             var entry = new EnemyCatalogEntry { type = EnemyType.Dummy, health = 100f, size = 72f };
             SetPrivate(catalog, "entries", new List<EnemyCatalogEntry> { entry });
 
-            var enemyGo = new GameObject("DummyEnemy");
+            enemyGo = new GameObject("DummyEnemy");
             enemyGo.transform.position = new Vector2(0f, 50f); // away from the bullet so real physics does not hit it
             enemyGo.AddComponent<Rigidbody2D>();
             var enemy = enemyGo.AddComponent<DummyEnemyRuntime>();
@@ -57,9 +68,6 @@ namespace Gamelab.Tests.Gate
             bool tookDamage = enemy.OnHit(bullet);
             Assert.IsTrue(tookDamage, "The catalog-spawned player bullet should be able to damage the catalog-spawned enemy.");
             Assert.AreEqual(50f, enemy.Health, "Damage should come from the bullet's catalog-driven stats.");
-
-            Object.Destroy(bullet.gameObject);
-            Object.Destroy(enemyGo);
         }
 
         private static void SetPrivate(object target, string fieldName, object value)

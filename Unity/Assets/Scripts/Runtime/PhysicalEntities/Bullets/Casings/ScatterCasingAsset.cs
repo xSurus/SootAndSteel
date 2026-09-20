@@ -10,7 +10,7 @@ namespace Gamelab.PhysicalEntities.Bullets.Casings
         public override EComponentType Type => EComponentType.Casing;
         public override string ComponentId => ComponentIds.ScatterCasing;
 
-        private static readonly IRandomService RandomService = new RandomService();
+        private static readonly IRandomService RandomService = Gamelab.Services.Random.RandomService.Shared;
 
         public override void OnCreate(BulletRuntime bullet)
         {

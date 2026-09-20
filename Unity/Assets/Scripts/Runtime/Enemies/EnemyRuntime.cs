@@ -10,6 +10,8 @@ namespace Gamelab.Enemies
     {
         public float Health { get; protected set; }
         public bool IsAlive => Health > 0;
+        // Off-screen enemy removal (Src AbstractEnemy.IsOffScreenLeft -> ShouldRemove, and Enemy.cs's right-edge cull):
+        // needs the map/camera origin from wave B1. ShouldRemove is currently set only on death.
         public bool ShouldRemove { get; protected set; }
         public Rigidbody2D PhysicsBody { get; private set; }
 
