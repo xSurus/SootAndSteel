@@ -13,8 +13,8 @@ namespace Gamelab.Enemies
         public bool ShouldRemove { get; protected set; }
         public Rigidbody2D PhysicsBody { get; private set; }
 
-        private void OnEnable() => BulletTargeting.Register(this);
-        private void OnDisable() => BulletTargeting.Unregister(this);
+        protected virtual void OnEnable() => BulletTargeting.Register(this);
+        protected virtual void OnDisable() => BulletTargeting.Unregister(this);
 
         public virtual void Initialize(EnemyCatalogEntry catalogEntry)
         {

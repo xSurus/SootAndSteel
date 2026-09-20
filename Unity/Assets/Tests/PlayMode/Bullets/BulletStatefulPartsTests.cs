@@ -37,20 +37,18 @@ namespace Gamelab.Tests.Bullets
         }
 
         [UnityTest]
-        public IEnumerator Boomerang_DeceleratesThenReverses()
+        public IEnumerator Boomerang_VelocityFollowsConstantDecelerationByAge()
         {
             var b = Fire(BulletFaction.Player, ScriptableObject.CreateInstance<BoomerangPropellantAsset>());
             yield return new WaitForFixedUpdate();
-            float first = b.PhysicsBody.linearVelocity.x;
-            Assert.Greater(first, 0f);
+            Assert.Greater(b.PhysicsBody.linearVelocity.x, 0f);
 
             float deadline = Time.realtimeSinceStartup + 3f;
-            while (b != null && b.PhysicsBody.linearVelocity.x > 0f && Time.realtimeSinceStartup < deadline)
-                yield return new WaitForFixedUpdate();
+            while (b.Age < 1f && Time.realtimeSinceStartup < deadline) yield return new WaitForFixedUpdate();
 
-            Assert.IsTrue(b != null);
-            Assert.Less(b.PhysicsBody.linearVelocity.x, 0f); // reversed
-            Assert.Less(b.PhysicsBody.linearVelocity.x, first);
+            // Src decel = Speed / 2 px/s^2 = 4 m/s^2 from 8 m/s. Read Age and velocity in the same frame.
+            Assert.GreaterOrEqual(b.Age, 1f);
+            Assert.AreEqual(8f - 4f * b.Age, b.PhysicsBody.linearVelocity.x, 0.3f);
         }
 
         private static IEnumerator RunUntilEnemyHurt(DummyEnemyRuntime enemy, float seconds)
@@ -117,23 +115,29 @@ namespace Gamelab.Tests.Bullets
         }
 
         [UnityTest]
-        public IEnumerator Matryoshka_Level0HitSpawnsNothing()
+        public IEnumerator Matryoshka_Level0Child_KeepsPierceHasScaledStatsAndSpawnsNothing()
         {
             var matryoshka = ScriptableObject.CreateInstance<MatryoshkaProjectileAsset>();
-            MakeEnemy(new Vector2(2f, 0f), 100000f);
+            var enemy = MakeEnemy(new Vector2(2f, 0f), 100000f);
             var definition = BulletTestUtil.MakeBasicDefinition(0f, 5f, 800f, 50f, matryoshka);
-            var root = BulletRuntime.Spawn(definition, Vector2.zero, Vector2.right, BulletFaction.Player);
-            // Level 0 bullet: pierce stays 1, so it dies on the first hit without spawning.
-            var m = root.GetState<MatryoshkaProjectileAsset.MatryoshkaState>(matryoshka);
-            m.Level = 0;
-            root.Stats.Pierce = 1f;
+            // Root flies away from the enemy so only the Level 0 child can hit it.
+            var root = BulletRuntime.Spawn(definition, Vector2.zero, Vector2.left, BulletFaction.Player);
+            var child = root.SpawnChild(matryoshka, Vector2.zero, Vector2.right, 0f,
+                c => c.GetState<MatryoshkaProjectileAsset.MatryoshkaState>(matryoshka).Level = 0);
+
+            Assert.Greater(child.Stats.Pierce, 0f); // Level 0 does not zero Pierce
+            Assert.AreEqual(50f * 0.3f, child.Stats.Damage, 1e-2f);
+            Assert.AreEqual(12f * 0.5f, child.Stats.Size, 1e-2f);
 
             float deadline = Time.realtimeSinceStartup + 3f;
-            while (root != null && Time.realtimeSinceStartup < deadline) yield return null;
+            while (child != null && Time.realtimeSinceStartup < deadline) yield return null;
             yield return null;
 
-            Assert.IsTrue(root == null);
-            Assert.AreEqual(0, Object.FindObjectsByType<BulletRuntime>(FindObjectsSortMode.None).Length);
+            Assert.IsTrue(child == null, "Level 0 child should die on its hit.");
+            Assert.Less(enemy.Health, 100000f);
+            var others = new System.Collections.Generic.List<BulletRuntime>(
+                Object.FindObjectsByType<BulletRuntime>(FindObjectsSortMode.None));
+            Assert.IsTrue(others.TrueForAll(o => o == root), "Level 0 hit must not spawn children.");
         }
 
         [UnityTest]

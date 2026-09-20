@@ -103,6 +103,7 @@ namespace Gamelab.PhysicalEntities.Stations
             // here (Scope decisions #2), so that carve-out is dropped; a real Player
             // implementing IPlayerActor doesn't participate in this FIFO queue check
             // at all in this port, it's purely for provider/receiver stations.
+            // Only divergence from Src: the Player carve-out above. Revisit when a Player is ported.
             // Src: `consumer == null` (default-arg TryProvideItem, player pickup) always passes.
             if (consumer == null)
             {
@@ -111,6 +112,9 @@ namespace Gamelab.PhysicalEntities.Stations
 
             return consumerQueue.Count == 0 || consumerQueue[0].Consumer == consumer;
         }
+
+        // Unity message; subclasses override Update(float), never this.
+        private void Update() => Update(Time.deltaTime);
 
         public virtual void Update(float dt)
         {
