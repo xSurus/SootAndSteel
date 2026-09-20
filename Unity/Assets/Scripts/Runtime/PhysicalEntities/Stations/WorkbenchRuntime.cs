@@ -6,7 +6,8 @@ namespace Gamelab.PhysicalEntities.Stations
 {
     // Port of Src Workbench. Dropped presentation: sparks, craft sound, table light,
     // item drawing and the highlight-driven isCrafting (Src OnHighlightRemoved).
-    public class WorkbenchRuntime : StationRuntime
+    // Re-declares IInteractable so the holds rebind the interface slot owned by StationRuntime.
+    public class WorkbenchRuntime : StationRuntime, IInteractable
     {
         protected readonly WorkbenchCrafting crafting = new WorkbenchCrafting();
 

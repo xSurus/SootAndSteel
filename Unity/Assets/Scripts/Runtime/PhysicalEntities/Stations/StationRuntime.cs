@@ -98,14 +98,9 @@ namespace Gamelab.PhysicalEntities.Stations
 
         protected bool IsConsumerFirstInLine(IItemReceiver consumer)
         {
-            // Src/PhysicalEntities/Stations/AbstractStation.cs special-cases
-            // "consumer is Player" to always be first in line — Player isn't ported
-            // here (Scope decisions #2), so that carve-out is dropped; a real Player
-            // implementing IPlayerActor doesn't participate in this FIFO queue check
-            // at all in this port, it's purely for provider/receiver stations.
-            // Only divergence from Src: the Player carve-out above. Revisit when a Player is ported.
-            // Src: `consumer == null` (default-arg TryProvideItem, player pickup) always passes.
-            if (consumer == null)
+            // Src AbstractStation: a null consumer (default-arg TryProvideItem) and a
+            // Player consumer both always pass the FIFO check.
+            if (consumer == null || consumer is IPlayerActor)
             {
                 return true;
             }

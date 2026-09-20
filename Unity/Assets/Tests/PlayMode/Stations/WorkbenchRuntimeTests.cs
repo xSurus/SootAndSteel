@@ -1,5 +1,6 @@
 using Gamelab.Items;
 using Gamelab.Items.Bullets;
+using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.PhysicalEntities.Stations;
 using NUnit.Framework;
 using UnityEngine;
@@ -92,6 +93,21 @@ namespace Gamelab.Tests.Stations
             for (int i = 0; i < 3; i++) w.OnInteractHeld(null, 0.5f);
             Assert.IsTrue(w.CanProvideItem(null));
             Assert.AreEqual(1, w.Crafting.PlacedItems.Count);
+            Object.DestroyImmediate(w.gameObject);
+        }
+
+        [Test]
+        public void InteractHeld_ThroughInterface_Crafts()
+        {
+            var w = Make<WorkbenchRuntime>();
+            Put(w, ComponentIds.BasicCasing);
+            Put(w, ComponentIds.ScatterCasing);
+            IInteractable i = w;
+            for (int k = 0; k < 4; k++) i.OnInteractHeld(null, 0.5f);
+            Assert.AreEqual(1, w.Crafting.PlacedItems.Count);
+            i.OnInteractHeld(null, 0.5f);
+            i.OnInteractReleased(null);
+            Assert.IsFalse(w.Crafting.IsCrafting);
             Object.DestroyImmediate(w.gameObject);
         }
 

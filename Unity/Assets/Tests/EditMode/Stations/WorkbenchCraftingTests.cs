@@ -73,6 +73,17 @@ namespace Gamelab.Tests.Stations
         }
 
         [Test]
+        public void CanCraft_TwoBulletTypeItems_False()
+        {
+            BulletItem Bullet() => new BulletItem(B(ComponentIds.BasicCasing), B(ComponentIds.BasicProjectile),
+                B(ComponentIds.BasicPropellant));
+            var w = new WorkbenchCrafting();
+            w.Place(Bullet());
+            w.Place(Bullet());
+            Assert.IsFalse(w.CanCraft());
+        }
+
+        [Test]
         public void InvalidSet_DoesNotProgress()
         {
             var w = With(ComponentIds.BasicCasing);
