@@ -225,3 +225,58 @@ Deferred (needs wave B). Each line is exactly what is missing and why:
 - Player-driven pieces: `OnPickup` / grab / highlight / snap-to-cell on stations; workbench sparks, light and the `isCrafting` flag driven by highlight. Need the player and UI.
 - `BulletStats.Color` and the `BulletItem` colour: draw-only. The render wave derives it from the recipe.
 - Sound, VFX, animation for all of the above (horse sound, neck bleed, blood, muzzle flash, conveyor belt animation, aim line).
+
+## B1 levels and map: what is ported, what is deferred
+
+Plan: `docs/superpowers/plans/2026-09-20-b1-levels-map-plan.md`.
+
+### The single Y flip
+
+The enemy, cannon and map layers all live in Src's pixel frame, Y down, in meters (`WorldUnits`, 100 px per meter). The train tile is 80 px = 0.8 m. No position, velocity or direction is ever negated.
+
+The only flip is the display mirror in `Runtime/Map/MapSpace.cs`:
+
+- `MapSpace.ApplyTo(Camera)` mirrors the projection in Y, so the Y-down world shows Y down on screen. `MirroredCamera` is a component that re-applies it every LateUpdate. A custom projection matrix stops Unity recomputing it when `orthographicSize` or the aspect changes, so any camera driver (B2's camera director, zoom, shake) must either keep `MirroredCamera` on the camera or call `ApplyTo` after each change.
+- The mirror also turns upright art upside down. `MapSpace.SpriteFlip` (tile transform) and `MapSpace.ApplyToSprite` (`flipY`) cancel that. Every new `SpriteRenderer` in the world must go through `ApplyToSprite`. This compensates the mirror, it is not a second coordinate flip.
+- UI and world-space text are affected by a mirrored camera. Screen-space canvases are not. B2 should use screen-space canvases or a second unmirrored UI camera.
+
+### Sprites and scale
+
+Art lives in `Assets/Resources/Map/` (loaded by `MapSprites.Get`). `Assets/Editor/MapSpriteImportSettings.cs` applies the import rule (Point, no compression, PPU) by path; `MapSpriteImportTests` checks every importer. PPU is 100 for the 100 px train family (floor tiles, all walls) and the sprite's own width for everything else (rails 233, pine 847, hub sheets by width). Runtime scale is `MapSpace.SpriteScale(ppu, srcScale)` = `srcScale * ppu / 100`. Sort order is the feet Y in pixels.
+
+### Facts found while porting
+
+- `gameplay.json` overrides the C# defaults where the key matches a property name: `trainHeight` is 5 (default 6), so the train is 10 x 5 tiles and the left wall door rows are 1 and 2. `TrainTuning` holds the effective values. The json temperature keys lack the `Train` prefix and never bind, so the class defaults (3, 3, 6) apply.
+- Mono and .NET agree bit for bit on `System.Random(seed)` sequences, but a few level distances differ by one float ulp (about 0.002). The golden tests use a 0.01 tolerance on distances.
+- `GameplayScreen` and `HubScreen` use `Random.Shared` for tile variants, walls and scroller trees. B1 takes an injected `System.Random`, so those are deterministic per seed but not comparable with Src output.
+
+### Ported
+
+- Levels (`Core/Levels`): `LevelDefinition`, `SpawnEvent`, `LevelGenerationConfig`, `ProceduralLevelGenerator` (goldens produced by running the real Src generator), `ProceduralLevelProvider(playerCount, runSeed)`, `PlayerCountScaling`, `LevelCompletionWatcher.Update(distance, hasThreats)`, `SpawnSchedule` (the spawn consumption of Src `EnemyManager`), and `LevelRuntime` (Runtime) that raises `SpawnDue` and `LevelCompleted`.
+- Train (`Core/Map`, `Core/Map/Train`): `TrainLayout` (geometry, wall specs, left wall tiles, spawn tiles, snap cell), `TrainGrid<T>`, `PatchField`, `TrainState` and `TrainStateTuning`, `WallHealth`, `WallSpriteNames`, `EnemyWorldMath`, `MapBounds`, `EnemyTrainSlot.GetAnchor`.
+- Runtime train (`Runtime/Map`): `TrainMapRuntime` (Tilemap floor with A/B variants, snow and ice overlay, left wall Tilemap collider, one static box per boundary wall, station cell registry and snap), `ShootHoleWallRuntime` (health, repair, enemy bullet hits, damage sprites), `DoorWallRuntime` (sensor toggle), `TrainStateRuntime`.
+- World scroller and hub: `WorldScrollerModel` and `WorldScrollerView`, `HubMapModel` (goldens from Src) and `HubMapView` (boundary, houses, stakes, prep train with its door).
+
+### Seam implementations
+
+- `IStationGrid`: `TrainMapRuntime.GetAdjacentStation(positionMeters, dir)`. Use `TrainMapRuntime.Attach(station)` to snap a station and set `Grid` on conveyors and cannons.
+- `IEnemyWorld` and `IWorldBounds`: `TrainMapRuntime` too. Set `EnemyRuntime.Bounds` and `RifleEnemyRuntime` world to the map. `WorldBounds` defaults to MinX 0, MaxX 1920 (Src virtual screen). Slot anchors use `Layout.GetBounds()` and the tile size as top clearance. Target point is the nearest ShootHoleWall on the side by wall centre, else the train bounds centre.
+- `ITrainState` and the shared `TrainSpeedSetting.Set`: `TrainStateRuntime` (`Speeds` is the one set, pass it to `SpeedLeverRuntime.Speeds`). `TrainMapRuntime.Link(TrainStateRuntime)` keeps `numberBreachedWalls` in step with wall breach and repair. Call it once per map.
+
+### Deferred (exact seam and reason)
+
+- Structures `CannonWagon`, `CannonSlot`, `CoalWagon`, `TrainNose`, and `AddDefaultStructures` (cannon wagon bounds). Need the cannon seat and player. Seam: assign `TrainLayout.CannonWagonBounds` when the wagon exists (`IsOnTrain` and `SnapCell` already read it).
+- `TrainMap.LoadLayout`, `CaptureLayout`, `AddDefaultStationLoadout`. Need `StationFactory`, `StationSaveData` and `RunSession` (save system). Seam: create stations from `StationCatalogAsset` and call `TrainMapRuntime.Attach`.
+- Wall interaction: `OnPickup`, `OnInteractHeld` (repair driven by a player), highlight, wall sound, smoke VFX, screen shake on breach, `DrawLightBatch`. Seam: `ShootHoleWallRuntime.Repair(dt)` and the `Breached` and `Repaired` events. Door: `OnInteract` sound and highlight; `Toggle()` is the seam. Door damage sprites are not used by Src walls either.
+- Train visuals not drawn: wheels and their animation, the shadow rectangle, side wall strips and corner, patch and furnace lights, the depth function `RenderUtility.CalculateDepth` (replaced by Y-based sorting order).
+- `TrainState` freeze sound and the temperature FMOD parameter. Seam: `Temperature / MaxTemperature`.
+- Hub: shop offers (`RestockHubDragOffers`, `BuyableStationWrapper`, `IShopService`). Seam: `HubMapModel.SelectOfferIndices`, `OfferPositions`, `RestockSeed` are ported; the shop wave spawns the wrappers. `Hub.png` and `Village_Enter` are imported, but their draw code lives in `HubScreen`, not `HubMap`.
+- `TutorialLevelProvider` (`Src/Tutorial`), `EnemyManager`, `CameraDirector`, player spawning glue (`GetFreeSpawnTile` exists in `TrainLayout`).
+- `IInteractable` default interface methods on the wall and door runtimes are not needed until the player exists.
+
+### Integration notes for wave B2 (UI and camera)
+
+- Put the camera under `MirroredCamera` (or call `MapSpace.ApplyTo` after each size change). Camera position and zoom are in the Y-down world: to follow the train, use `TrainLayout.GetBounds()` divided by 100.
+- HUD data: `TrainStateRuntime.State` (`Temperature`, `MaxTemperature`, `DistanceTraveled`, `CurrentSpeed`), `LevelRuntime.Definition.LevelDistance` and `DistanceTraveled`, `ShootHoleWallRuntime.Health` and events.
+- `LevelRuntime.SpawnDue` is where the enemy manager hooks in. `LevelRuntime` does not tick the train state because `TrainStateRuntime` ticks itself.
+- Screen-space UI is not mirrored. World-space text is.
