@@ -197,14 +197,35 @@ The Editor and PlayMode tests run real FMOD. Provenance and caveats:
 - Phases: create phase (OnCreate of all components in list order, then RefreshCollider), then spawn phase (OnSpawn of all, then RefreshCollider). With delay > 0 the child runs only the create phase, is not simulated, and `Tick` runs the spawn phase after the delay. Age and lifetime start after the spawn phase. Pending bullets get no OnUpdate.
 - Units: `BulletStats` stay in MonoGame pixels (Speed, Size). Conversion to Unity meters happens only through `WorldUnits` at the physics boundary (velocity, collider radius).
 
-## Not ported yet (A2 follow-up)
+## A2 breadth round: what is ported, what is deferred
 
-- Enemy.cs firing state machine (355 lines): coupled to horse/rider animation, sound and VFX, and needs the train/map wave and ammo catalog wiring.
-- TutorialEnemy: a stat variant that reads its values from the GameplayConfig tutorial section.
-- Workbench and AutoWorkbench: player interaction and UI.
-- CannonStation and AmmoRack: player seat and cannon aiming (wave B).
-- ComponentResourceStation: needs BulletItem, the component registry and shop icons. CoalResourceStation needs no class of its own, since `ResourceStationRuntime` already handles the Coal id (sounds dropped).
-- Conveyors.
-- SpeedLever and BuyableStationWrapper: game state and shop.
-- BulletStats.Color: draw-only. The render wave derives it from the recipe.
-- Off-screen enemy removal (Src AbstractEnemy.IsOffScreenLeft -> ShouldRemove, and Enemy.cs's right-edge cull): needs the map/camera origin from wave B1. EnemyRuntime.ShouldRemove is currently set only on death.
+Ported (logic, with tests). Presentation (sound, VFX, animation, draw, highlight, shop tooltips) is dropped everywhere and marked in code comments.
+
+- `BulletItem`, `ComponentTraits`, `GridDirection` (Core). `BulletItem` has no colour, `IsEqual` or `GetEffects` (draw/guid only). `HasUpgrade` replaces `GetEffects().Any(!IsBasic)`.
+- Workbench and AutoWorkbench: `WorkbenchCrafting` (Core rules and 2 s timing) plus `WorkbenchRuntime` / `AutoWorkbenchRuntime`.
+- Conveyor, BulletConveyor, UpgradedComponentConveyor: `ConveyorRuntime` and subclasses, full `Update` state machine. Neighbours come from `IStationGrid`.
+- `ComponentResourceStationRuntime` (station id `ResourceComponent<id>`; use `InitializeComponent`), `BulletRackRuntime` (Src class `BulletRack`, capacity 5, FIFO). Coal needs no class (see `ResourceStationRuntime`). Peek on the component station returns the `BulletItem` it would provide, where Src inherits `Item("Component<id>")`. Every conveyor filter treats the two the same.
+- Rifle enemy: `RifleEnemyBrain` (Core state machine and timers) and `RifleEnemyRuntime` / `TutorialEnemyRuntime` (movement, firing, hit rule). Tutorial values come from `EnemyTuning` (Core), which holds the effective Src `GameplayConfig` values (class defaults overlaid with `gameplay.json`). Health and size for the rifle come from the enemy catalog entry, as before.
+- Off-screen enemy removal: `EnemyCulling` rules plus `EnemyRuntime.Bounds` (`IWorldBounds`). With `Bounds == null` nothing is culled. The flee cull (Enemy.cs right edge) sits in `RifleEnemyRuntime`.
+- Cannon logic: `CannonStationRuntime` (cooldown, reload from adjacent racks, fire, aim step via Core `CannonAim`). `AimAngle` is a field on the station, not the Rigidbody rotation (the station body is static).
+- SpeedLever: `SpeedLeverRuntime`, `ITrainState`, `TrainSpeedSetting` (Core, namespace `Gamelab.Map.Train.State`, folder `Core/Map`), `TrainSpeedTuning` (speeds 150/300/600, burn 0.5/1/4 from `gameplay.json`; the class defaults are 1/1/1).
+- `StationRuntime.IsConsumerFirstInLine` now returns true for `IPlayerActor` consumers, as Src does for `Player`.
+- Classes that re-implement `IInteractable` hooks must re-declare `: IInteractable`, or interface-typed calls from the player hit the default no-op.
+
+Dead code, not ported:
+
+- `BuyableStationWrapper` and `StationConfig`: `Src/Gamelab.csproj` has `Compile Remove` for both. Do not port them.
+
+Deferred (needs wave B). Each line is exactly what is missing and why:
+
+- Cannon seat: `OnGrab` / `OnRelease`, `SeatedPlayer`, `SeatPosition`, `FindEjectPosition`, `IsTileFree`. Needs the player type (`SeatAt` / `UnseatFrom`) and map tile and `MapObjects` queries. The aim seam is `ICannonAimSource` (`GetMovement()`); the seat should set it. `CannonSlot` (Structures) is not ported.
+- Map adjacency: `IStationGrid.GetAdjacentStation(position, direction)` must be supplied by the map for conveyors and the cannon. The map also has to call `Initialize`, set `Grid`, `Spawner` and `IsBeingHeld`.
+- Enemy world: `IEnemyWorld` (`GetSlotAnchor`, `GetTargetPoint`, `MinX`, `MaxX`). `EnemyTrainSlot.GetAnchor` needs map bounds. Target semantics: nearest ShootHoleWall on the side (Top means Y < map centre Y), else the map bounds centre. Positions are pixels in Src's y-down frame. `Vector2Interop` flips Y for input only. The enemy layer keeps Src's frame in the Unity world, so the map/camera seam should flip once, not per call site.
+- Enemy manager hook: Src `AbstractEnemy.TryShoot` is virtual and called by `EnemyManager`. `RifleEnemyRuntime.TryShoot` is a plain method; wave B should add a virtual on `EnemyRuntime`. `Configure` must run after `Initialize`.
+- Train state: `ITrainState` (`VictoryLapActive`, `IsCoalOvenBurning`, `CurrentSpeed`, `SlowDownIfRunning`) and `SpeedLeverRuntime.Speeds` (the `TrainSpeedSetting.Set` shared with the train) come from wave B's `TrainState`.
+- Bullet emission from a held item: `IBulletItemSpawner` (`CatalogBulletSpawner` is the default implementation, it needs a `BulletComponentCatalogAsset`). Src `InitialShooter is CannonStation or CannonSlot` is replaced by `BulletFaction.Player`. The cannon `Fired` event replaces `Events.FireCannonFired`.
+- Shop and tooltips: `CategoryName`, `FunctionalityName`, `IconSourceRect`, `DispensedItemType`, `ShopItemIconAtlas`. Needs the shop and item icon systems.
+- Player-driven pieces: `OnPickup` / grab / highlight / snap-to-cell on stations; workbench sparks, light and the `isCrafting` flag driven by highlight. Need the player and UI.
+- `BulletStats.Color` and the `BulletItem` colour: draw-only. The render wave derives it from the recipe.
+- Sound, VFX, animation for all of the above (horse sound, neck bleed, blood, muzzle flash, conveyor belt animation, aim line).
+- `EnemyRuntime` reads `transform.position.x` for the left cull, where Src reads the body position. Negligible one-frame latency.
