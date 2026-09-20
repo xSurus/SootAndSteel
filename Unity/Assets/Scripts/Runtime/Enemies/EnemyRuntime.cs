@@ -31,6 +31,9 @@ namespace Gamelab.Enemies
             }
         }
 
+        // Src AbstractEnemy.WasNeutralized; subclasses with a non-lethal defeat state extend it.
+        public virtual bool WasNeutralized => !IsAlive;
+
         protected virtual void OnEnable() => BulletTargeting.Register(this);
         protected virtual void OnDisable() => BulletTargeting.Unregister(this);
 
