@@ -139,12 +139,65 @@ namespace Gamelab.Tests.Bullets
             Assert.AreEqual(1, spawner.Spawns); // root only
             Assert.AreEqual(0f, child.Age);
 
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.1f);
+            Assert.IsTrue(child.IsPending); // about 0.1 s of 0.3 s, still pending with no OnSpawn
+            Assert.AreEqual(1, spawner.Spawns);
+
+            float deadline = Time.realtimeSinceStartup + 3f;
+            while (child.IsPending && Time.realtimeSinceStartup < deadline) yield return null;
 
             Assert.IsFalse(child.IsPending);
             Assert.IsTrue(child.PhysicsBody.simulated);
             Assert.AreEqual(2, spawner.Spawns);
             Assert.Greater(child.PhysicsBody.linearVelocity.y, 0f);
+        }
+
+        [UnityTest]
+        public IEnumerator Deactivate_WhilePending_Destroys()
+        {
+            var spawner = ScriptableObject.CreateInstance<SpawnerProjectileAsset>();
+            spawner.ChildDelay = 5f;
+            var root = BulletRuntime.Spawn(DefinitionWith(spawner), Vector2.zero, Vector2.right, BulletFaction.Player);
+            BulletRuntime child = null;
+            foreach (var b in UnityEngine.Object.FindObjectsByType<BulletRuntime>(FindObjectsSortMode.None))
+                if (b != root) child = b;
+            Assert.IsTrue(child.IsPending);
+
+            child.Deactivate();
+            yield return null;
+
+            Assert.IsTrue(child == null);
+            Assert.AreEqual(1, spawner.Spawns);
+        }
+
+        [UnityTest]
+        public IEnumerator SpawnChild_DelayZero_SpawnsImmediately()
+        {
+            var spawner = ScriptableObject.CreateInstance<SpawnerProjectileAsset>();
+            var root = BulletRuntime.Spawn(DefinitionWith(spawner), Vector2.zero, Vector2.right, BulletFaction.Player);
+            yield return null;
+
+            Assert.AreEqual(2, spawner.Spawns);
+            Assert.AreEqual(2, spawner.Creates);
+        }
+
+        private class UpdateCounterProjectileAsset : BasicProjectileAsset
+        {
+            public int Updates;
+            public override void OnUpdate(BulletRuntime bullet, float deltaTime) => Updates++;
+        }
+
+        [UnityTest]
+        public IEnumerator OnUpdate_NotCalledWhilePending()
+        {
+            var probe = ScriptableObject.CreateInstance<UpdateCounterProjectileAsset>();
+            var root = BulletRuntime.Spawn(BulletTestUtil.MakeDefinitionWith(probe), Vector2.zero, Vector2.right, BulletFaction.Player);
+            root.SpawnChild(probe, Vector2.zero, Vector2.up, 5f);
+            root.Deactivate(); // stops the root's own updates
+            probe.Updates = 0;
+            yield return new WaitForSeconds(0.2f);
+
+            Assert.AreEqual(0, probe.Updates);
         }
 
         [Test]

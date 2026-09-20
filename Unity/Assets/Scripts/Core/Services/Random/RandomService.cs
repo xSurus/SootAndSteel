@@ -12,6 +12,8 @@ namespace Gamelab.Services.Random
         // guarantee.
         private System.Random random = new System.Random();
 
+        public float NextSingle() => (float)random.NextDouble() * 0.99999994f; // keep the cast below 1.0
+
         public double SampleGaussian(double mu, double sigma)
         {
             double u1 = 1.0 - random.NextDouble();

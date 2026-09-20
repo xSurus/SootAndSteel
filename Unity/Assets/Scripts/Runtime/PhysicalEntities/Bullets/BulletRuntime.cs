@@ -164,8 +164,8 @@ namespace Gamelab.PhysicalEntities.Bullets
                 if (pendingDelay <= 0f)
                 {
                     IsPending = false;
+                    PhysicsBody.simulated = true; // before the spawn phase so the velocity lands on a simulated body
                     RunSpawnPhase();
-                    PhysicsBody.simulated = true;
                 }
 
                 return; // age, lifetime and OnUpdate start after the spawn phase
@@ -199,6 +199,7 @@ namespace Gamelab.PhysicalEntities.Bullets
             }
 
             IsActive = false;
+            // OnCleanup also runs for pending bullets whose OnSpawn never ran.
             foreach (BulletComponentAsset c in definition.Components) c.OnCleanup(this);
             Destroy(gameObject);
         }

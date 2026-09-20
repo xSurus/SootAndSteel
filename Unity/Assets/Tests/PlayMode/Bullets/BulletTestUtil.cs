@@ -30,6 +30,21 @@ namespace Gamelab.Tests.Bullets
             return definition;
         }
 
+        /// <summary>Basic definition with the slot of each extra component's type replaced by it.</summary>
+        public static BulletDefinitionAsset MakeDefinitionWith(params BulletComponentAsset[] parts)
+        {
+            var definition = MakeBasicDefinition();
+            var list = new List<BulletComponentAsset>(definition.Components);
+            foreach (var part in parts)
+            {
+                list.RemoveAll(c => c.Type == part.Type);
+                list.Add(part);
+            }
+
+            SetPrivate(definition, "components", list);
+            return definition;
+        }
+
         public static void SetPrivate<T>(object target, string field, T value)
         {
             target.GetType().GetField(field, BindingFlags.NonPublic | BindingFlags.Instance)
