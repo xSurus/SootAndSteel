@@ -27,6 +27,11 @@ namespace Gamelab.Map
         /// </summary>
         public static float SpriteScale(float pixelsPerUnit, float srcScale) => srcScale * pixelsPerUnit / 100f;
 
+        /// <summary>
+        /// Mirrors the camera projection in Y. A custom projection matrix stops Unity recomputing it when
+        /// aspect or orthographicSize change, so callers must re-apply after every camera size or aspect
+        /// change. Add <see cref="MirroredCamera"/> to do that every frame.
+        /// </summary>
         public static void ApplyTo(Camera cam)
         {
             cam.ResetProjectionMatrix();

@@ -1,5 +1,10 @@
 using System.Collections;
 using Gamelab.Config;
+using Gamelab.Enemies;
+using Gamelab.Enemies.Core;
+using Gamelab.Map.Train.State;
+using Gamelab.PhysicalEntities.Bullets;
+using Gamelab.Tests.Bullets;
 using Gamelab.Items;
 using Gamelab.Map;
 using Gamelab.Map.Train;
@@ -168,10 +173,57 @@ namespace Gamelab.Tests.PlayMode
                 // Sprite: tile wide (80 px) with its bottom edge at the Src feet.
                 Bounds sb = map.Walls[i].GetComponentInChildren<SpriteRenderer>().bounds;
                 float feet = spec.CenterPx.Y + (spec.IsTop ? spec.SizePx.Y / 2f : -spec.SizePx.Y / 2f);
+                Assert.IsTrue(map.Walls[i].GetComponentInChildren<SpriteRenderer>().flipY);
                 Assert.AreEqual(0.8f, sb.size.x, 1e-4f);
                 Assert.AreEqual(feet / 100f, sb.max.y, 1e-4f);
                 Assert.AreEqual(spec.CenterPx.X / 100f, sb.center.x, 1e-4f);
             }
+        }
+
+        [UnityTest]
+        public IEnumerator Floor_TileMatrixIsSpriteFlip()
+        {
+            Build();
+            yield return null;
+            Assert.AreEqual(MapSpace.SpriteFlip, map.Floor.GetTransformMatrix(new Vector3Int(1, 1, 0)));
+        }
+
+        [UnityTest]
+        public IEnumerator BottomDoor_SpriteFeetAtColliderBottomEdge_LikeSrcDoorWall()
+        {
+            Build(new DoorSpec(true, 2), new DoorSpec(false, 3));
+            yield return null;
+            for (int i = 0; i < map.Walls.Count; i++)
+            {
+                WallSpec spec = layout.WallSpecs[i];
+                if (spec.Kind != WallKind.Door) continue;
+                foreach (SpriteRenderer sr in map.Walls[i].GetComponentsInChildren<SpriteRenderer>())
+                {
+                    Assert.IsTrue(sr.flipY);
+                    Assert.AreEqual((spec.CenterPx.Y + spec.SizePx.Y / 2f) / 100f, sr.bounds.max.y, 1e-4f,
+                        (spec.IsTop ? "top" : "bottom") + " door");
+                    Assert.AreEqual(spec.CenterPx.X / 100f, sr.bounds.center.x, 1e-4f);
+                }
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator MirroredCamera_KeepsMirror_WhenSizeChanges()
+        {
+            var go = new GameObject("Cam");
+            var cam = go.AddComponent<Camera>();
+            cam.orthographic = true;
+            cam.orthographicSize = 5f;
+            go.transform.position = new Vector3(0f, 0f, -10f);
+            go.AddComponent<MirroredCamera>();
+            yield return null;
+            Assert.Less(cam.WorldToViewportPoint(new Vector3(0f, 2f, 0f)).y, cam.WorldToViewportPoint(Vector3.zero).y);
+            cam.orthographicSize = 3f;
+            yield return null;
+            float y = cam.WorldToViewportPoint(new Vector3(0f, 2f, 0f)).y;
+            Assert.Less(y, cam.WorldToViewportPoint(Vector3.zero).y);
+            Assert.AreEqual(0.5f - 2f / 6f, y, 1e-4f); // mirrored and rescaled to the new size
+            Object.Destroy(go);
         }
 
         [UnityTest]
