@@ -7,6 +7,7 @@ namespace Gamelab.Items.Bullets
 {
     // Port of Src/Items/Bullets/BulletItem.cs without draw code, colour and effect objects
     // (BulletStats.Color and BulletItem colour are draw-only and stay deferred).
+    // Deviation: an empty component list throws here, where Src returns an empty item.
     public class BulletItem : Item
     {
         private readonly List<string> componentIds = new List<string>();

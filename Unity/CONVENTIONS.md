@@ -211,10 +211,7 @@ Ported (logic, with tests). Presentation (sound, VFX, animation, draw, highlight
 - SpeedLever: `SpeedLeverRuntime`, `ITrainState`, `TrainSpeedSetting` (Core, namespace `Gamelab.Map.Train.State`, folder `Core/Map`), `TrainSpeedTuning` (speeds 150/300/600, burn 0.5/1/4 from `gameplay.json`; the class defaults are 1/1/1).
 - `StationRuntime.IsConsumerFirstInLine` now returns true for `IPlayerActor` consumers, as Src does for `Player`.
 - Classes that re-implement `IInteractable` hooks must re-declare `: IInteractable`, or interface-typed calls from the player hit the default no-op.
-
-Dead code, not ported:
-
-- `BuyableStationWrapper` and `StationConfig`: `Src/Gamelab.csproj` has `Compile Remove` for both. Do not port them.
+- `IInteractable` uses default interface methods. They work in the Editor (Mono) but are not yet exercised in a player build. Any new `StationRuntime` subclass that defines an interaction hook must re-declare `: IInteractable`.
 
 Deferred (needs wave B). Each line is exactly what is missing and why:
 
@@ -224,8 +221,7 @@ Deferred (needs wave B). Each line is exactly what is missing and why:
 - Enemy manager hook: Src `AbstractEnemy.TryShoot` is virtual and called by `EnemyManager`. `RifleEnemyRuntime.TryShoot` is a plain method; wave B should add a virtual on `EnemyRuntime`. `Configure` must run after `Initialize`.
 - Train state: `ITrainState` (`VictoryLapActive`, `IsCoalOvenBurning`, `CurrentSpeed`, `SlowDownIfRunning`) and `SpeedLeverRuntime.Speeds` (the `TrainSpeedSetting.Set` shared with the train) come from wave B's `TrainState`.
 - Bullet emission from a held item: `IBulletItemSpawner` (`CatalogBulletSpawner` is the default implementation, it needs a `BulletComponentCatalogAsset`). Src `InitialShooter is CannonStation or CannonSlot` is replaced by `BulletFaction.Player`. The cannon `Fired` event replaces `Events.FireCannonFired`.
-- Shop and tooltips: `CategoryName`, `FunctionalityName`, `IconSourceRect`, `DispensedItemType`, `ShopItemIconAtlas`. Needs the shop and item icon systems.
+- Shop and tooltips: `CategoryName`, `FunctionalityName`, `IconSourceRect`, `DispensedItemType`, `ShopItemIconAtlas`. Needs the shop and item icon systems. Also here: `BuyableStationWrapper` (shop offer wrapper around a station, `Src/PhysicalEntities/Stations/BuyableStationWrapper.cs`) and `StationConfig` (JSON station config declared in `Src/PhysicalEntities/Configurable/StationRegistry.cs`, behind `GetTitle`/`GetDescription`; `StationDefinition` already carries the catalog subset). Both are live in Src. The two `Compile Remove` entries for them in `Src/Gamelab.csproj` are stale no-op paths and prove nothing.
 - Player-driven pieces: `OnPickup` / grab / highlight / snap-to-cell on stations; workbench sparks, light and the `isCrafting` flag driven by highlight. Need the player and UI.
 - `BulletStats.Color` and the `BulletItem` colour: draw-only. The render wave derives it from the recipe.
 - Sound, VFX, animation for all of the above (horse sound, neck bleed, blood, muzzle flash, conveyor belt animation, aim line).
-- `EnemyRuntime` reads `transform.position.x` for the left cull, where Src reads the body position. Negligible one-frame latency.

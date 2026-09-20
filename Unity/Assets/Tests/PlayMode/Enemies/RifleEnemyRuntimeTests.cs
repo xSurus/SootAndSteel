@@ -281,6 +281,9 @@ namespace Gamelab.Tests.Enemies
             Assert.DoesNotThrow(() => e.Step(0.02f));
             Assert.IsFalse(e.WasNeutralized);
             Assert.DoesNotThrow(() => e.OnHit(PlayerBullet()));
+            Assert.AreEqual(HorseState.ApproachingSideAttackSlot, e.Horse);
+            Assert.AreEqual(RiderState.Idle, e.Rider);
+            Assert.IsFalse(e.TryShoot());
             yield return null;
         }
     }

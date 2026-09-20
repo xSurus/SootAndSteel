@@ -30,6 +30,17 @@ namespace Gamelab.Tests.Stations
         }
 
         [Test]
+        public void ComponentId_BeforeInitializeComponent_ThrowsInvalidOperation()
+        {
+            var go = new GameObject("CompRes");
+            go.AddComponent<Rigidbody2D>();
+            var s = go.AddComponent<ComponentResourceStationRuntime>();
+            var ex = Assert.Throws<System.InvalidOperationException>(() => { var _ = s.ComponentId; });
+            StringAssert.Contains("InitializeComponent", ex.Message);
+            Object.DestroyImmediate(go);
+        }
+
+        [Test]
         public void BaseInitialize_WithComponentResourceId_YieldsComponentId()
         {
             var go = new GameObject("CompRes");

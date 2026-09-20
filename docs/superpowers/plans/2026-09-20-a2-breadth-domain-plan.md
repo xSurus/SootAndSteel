@@ -17,7 +17,7 @@
 - Pixel units stay pixels in Core; convert with `WorldUnits` only at the Unity physics boundary. Src frame is y-down (Top side = smaller Y).
 - Tests: `-quit` is never combined with `-runTests`. Confirm `result="Passed"` in the results XML. Never start Unity while another Unity process runs (`pgrep -fl "Unity.app/Contents/MacOS/Unity"`).
 - `git add Unity/Assets` (metas) and commit after each task. Never touch `Src/`.
-- Dead code: `Src/Gamelab.csproj` has `Compile Remove` for `PhysicalEntities/Structures/BuyableStationWrapper.cs` and `PhysicalEntities/Configurable/StationConfig.cs`. `BuyableStationWrapper` is NOT ported. `SpeedLever` is compiled and is ported (Task 8).
+- Not dead: the two `Compile Remove` entries in `Src/Gamelab.csproj` for `BuyableStationWrapper` and `StationConfig` are stale no-op paths and prove nothing. Both types are live in Src. `BuyableStationWrapper` is deferred with the shop. `SpeedLever` is compiled and is ported (Task 8).
 
 ## Scope decisions
 
@@ -117,7 +117,7 @@ Produces:
 - `CannonTuning` defaults: CannonCooldown 0.5, CannonRotationSpeed 6, TrainTileSize 80, InputMovementDeadzoneSquared 0.25.
 - `CannonAim.Step(float currentAngle, Vector2 input, float dt, float rotationSpeed, float deadzoneSquared)` returns the new angle (Src UpdateAim, `WrapAngle` diff clamped to `speed*dt`).
 - `CannonStationRuntime : StationRuntime` with `float CooldownTimer`, `Update` decrement then aim, `OnInteract(IPlayerActor)` (cooldown gate, `ReloadCannon` from every adjacent `BulletRackRuntime` via `IStationGrid` over all four directions, then `FireCannon`), `FireCannon()` (barrel offset `tile * 0.5` along the aim from the cannon centre, emits the held `BulletItem` through `IBulletItemSpawner` with `BulletFaction.Player`, sets cooldown, clears HeldItem, raises `event Action Fired`), `float AimAngle` (radians, kept on the Rigidbody rotation), `ICannonAimSource AimSource` (`Vector2 GetMovement()`; null means unseated). Seat, eject search and `OnGrab/OnRelease` are DEFERRED: they need the player type and map tiles (`FindEjectPosition`, `IsTileFree`); document in CONVENTIONS. Muzzle flash, sounds dropped.
-- `TrainSpeedSetting` (Core): `Stopped/Slow/Default/Fast`, `All = [Slow, Default, Fast]`, built from `TrainSpeedTuning` (150/300/600, burn 1). `ITrainState { bool VictoryLapActive; bool IsCoalOvenBurning; TrainSpeedSetting CurrentSpeed { get; set; } void SlowDownIfRunning(); }`.
+- `TrainSpeedSetting` (Core): `Stopped/Slow/Default/Fast`, `All = [Slow, Default, Fast]`, built from `TrainSpeedTuning` (150/300/600, burn 0.5/1/4). `ITrainState { bool VictoryLapActive; bool IsCoalOvenBurning; TrainSpeedSetting CurrentSpeed { get; set; } void SlowDownIfRunning(); }`.
 - `SpeedLeverRuntime : StationRuntime`: `ITrainState State`, `Action<IPlayerActor> OnInteractOverride`, `OnInteract` per Src (override first; victory lap noop; oven out slows down; otherwise next of `All` cyclic, `NextIndex` exposed for the sound parameter).
 
 ### Task 9: CONVENTIONS and final verification

@@ -123,6 +123,36 @@ namespace Gamelab.Tests.Stations
         }
 
         [Test]
+        public void Fire_WithoutSpawner_Throws()
+        {
+            var c = Make<CannonStationRuntime>();
+            c.HeldItem = new BulletItem(ComponentIds.BasicCasing);
+            Assert.Throws<System.InvalidOperationException>(() => c.FireCannon());
+        }
+
+        [Test]
+        public void Interact_FiresAgainAfterCooldown()
+        {
+            var (c, sp, g) = Setup();
+            g.Map[GridDirection.Left] = LoadedRack(ComponentIds.BasicCasing);
+            Interact(c);
+            g.Map[GridDirection.Up] = LoadedRack(ComponentIds.BasicCasing);
+            c.Update(0.6f);
+            Interact(c);
+            Assert.AreEqual(2, sp.Calls.Count);
+        }
+
+        [Test]
+        public void Interact_HeldBulletFiresWithoutAdjacentRack()
+        {
+            var (c, sp, _) = Setup();
+            c.HeldItem = new BulletItem(ComponentIds.BasicCasing);
+            Interact(c);
+            Assert.AreEqual(1, sp.Calls.Count);
+            Assert.IsNull(c.HeldItem);
+        }
+
+        [Test]
         public void Fire_NoHeldItem_IsNoOp()
         {
             var (c, sp, _) = Setup();

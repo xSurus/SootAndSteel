@@ -25,7 +25,7 @@ namespace Gamelab.Enemies
         protected virtual void Tick(float dt)
         {
             if (Bounds != null &&
-                EnemyCulling.IsOffScreenLeft(WorldUnits.ToPixels(transform.position.x), SizePixels, Bounds))
+                EnemyCulling.IsOffScreenLeft(WorldUnits.ToPixels(PhysicsBody != null ? PhysicsBody.position.x : transform.position.x), SizePixels, Bounds))
             {
                 ShouldRemove = true;
             }

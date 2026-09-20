@@ -13,7 +13,9 @@ namespace Gamelab.PhysicalEntities.Stations
     public class ComponentResourceStationRuntime : ResourceStationRuntime
     {
         // Derived from ResourceId ("Component<id>") so the base Initialize overload also works.
-        public string ComponentId => ResourceId.Substring(StationIds.Component.Length);
+        public string ComponentId => ResourceId == null
+            ? throw new System.InvalidOperationException("ResourceId is not set, call InitializeComponent first.")
+            : ResourceId.Substring(StationIds.Component.Length);
 
         public void InitializeComponent(StationCatalogEntry catalogEntry, string componentId) =>
             Initialize(catalogEntry, StationIds.GetComponentResourceId(componentId));

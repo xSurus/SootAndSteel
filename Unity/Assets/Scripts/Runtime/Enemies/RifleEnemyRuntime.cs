@@ -31,8 +31,8 @@ namespace Gamelab.Enemies
         protected EnemyTuning Tuning => tuning;
 
         public override bool WasNeutralized => base.WasNeutralized || (brain != null && brain.WasNeutralized);
-        public HorseState Horse => brain.Horse;
-        public RiderState Rider => brain.Rider;
+        public HorseState Horse => brain != null ? brain.Horse : HorseState.ApproachingSideAttackSlot;
+        public RiderState Rider => brain != null ? brain.Rider : RiderState.Idle;
 
         /// <summary>Call after Initialize (needs the Rigidbody2D and size).</summary>
         // Health and size come from the EnemyCatalogEntry given to Initialize (Src reads them from
@@ -57,7 +57,7 @@ namespace Gamelab.Enemies
         // Public only so tests can advance time without Time.deltaTime; Update calls Tick.
         public void Step(float dt) => Tick(dt);
 
-        public bool TryShoot() => brain.TryShoot();
+        public bool TryShoot() => brain != null && brain.TryShoot();
 
         protected override void Tick(float dt)
         {

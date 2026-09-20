@@ -24,6 +24,9 @@ namespace Gamelab.PhysicalEntities.Stations
     public class CannonStationRuntime : StationRuntime, IInteractable
     {
         public IStationGrid Grid { get; set; }
+        private static readonly GridDirection[] AllDirections =
+            { GridDirection.Up, GridDirection.Down, GridDirection.Left, GridDirection.Right };
+
         public IBulletItemSpawner Spawner { get; set; }
         public ICannonAimSource AimSource { get; set; }
         public CannonTuning Tuning { get; set; } = CannonTuning.Default;
@@ -67,7 +70,7 @@ namespace Gamelab.PhysicalEntities.Stations
         private void ReloadCannon()
         {
             if (Grid == null) return;
-            foreach (GridDirection dir in new[] { GridDirection.Up, GridDirection.Down, GridDirection.Left, GridDirection.Right })
+            foreach (GridDirection dir in AllDirections)
             {
                 if (Grid.GetAdjacentStation(Position, dir) is BulletRackRuntime rack
                     && rack.TryProvideItem(out var bullet))

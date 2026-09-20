@@ -31,6 +31,7 @@ namespace Gamelab.Tests.Enemies
             go.transform.position = new Vector3(xMeters, 0f, 0f);
             var e = go.AddComponent<DummyEnemyRuntime>();
             e.Initialize(new EnemyCatalogEntry { type = EnemyType.Dummy, health = 100f, size = 72f });
+            e.PhysicsBody.position = new Vector2(xMeters, 0f); // the cull reads the body position
             e.Bounds = bounds;
             return e;
         }
