@@ -21,7 +21,7 @@ namespace Gamelab.Enemies
             PhysicsBody.freezeRotation = true;
 
             // Src enemy fixtures are sensors: trigger circle so bullets detect it without pushing it.
-            var entity = GetComponent<PhysicalEntity>() ?? gameObject.AddComponent<PhysicalEntity>();
+            if (!TryGetComponent(out PhysicalEntity entity)) entity = gameObject.AddComponent<PhysicalEntity>();
             entity.ConfigureAsDynamicCircle(WorldUnits.ToMeters(catalogEntry.size / 2f), 1f, 0f, true)
                 .isTrigger = true;
         }

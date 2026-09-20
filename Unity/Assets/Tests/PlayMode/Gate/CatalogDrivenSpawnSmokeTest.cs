@@ -23,9 +23,12 @@ namespace Gamelab.Tests.Gate
         {
             // --- Bullet: casing + propellant + projectile combination from a catalog asset ---
             var definition = ScriptableObject.CreateInstance<BulletDefinitionAsset>();
-            SetPrivate(definition, "casing", ScriptableObject.CreateInstance<BasicCasingAsset>());
-            SetPrivate(definition, "propellant", ScriptableObject.CreateInstance<BasicPropellantAsset>());
-            SetPrivate(definition, "projectile", ScriptableObject.CreateInstance<BasicProjectileAsset>());
+            SetPrivate(definition, "components", new List<BulletComponentAsset>
+            {
+                ScriptableObject.CreateInstance<BasicCasingAsset>(),
+                ScriptableObject.CreateInstance<BasicPropellantAsset>(),
+                ScriptableObject.CreateInstance<BasicProjectileAsset>()
+            });
             SetPrivate(definition, "spread", 0f);
 
             BulletRuntime bullet = BulletRuntime.Spawn(definition, Vector2.zero, Vector2.right, BulletFaction.Player);

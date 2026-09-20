@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 using Gamelab.PhysicalEntities.Bullets;
@@ -10,12 +11,18 @@ namespace Gamelab.Tests.Bullets
     public static class BulletTestUtil
     {
         public static BulletDefinitionAsset MakeBasicDefinition(
-            float spread = 0f, float lifetime = 5f, float speed = 800f, float damage = 50f)
+            float spread = 0f, float lifetime = 5f, float speed = 800f, float damage = 50f,
+            params BulletComponentAsset[] extra)
         {
             var definition = ScriptableObject.CreateInstance<BulletDefinitionAsset>();
-            SetPrivate(definition, "casing", ScriptableObject.CreateInstance<BasicCasingAsset>());
-            SetPrivate(definition, "propellant", ScriptableObject.CreateInstance<BasicPropellantAsset>());
-            SetPrivate(definition, "projectile", ScriptableObject.CreateInstance<BasicProjectileAsset>());
+            var list = new List<BulletComponentAsset>
+            {
+                ScriptableObject.CreateInstance<BasicCasingAsset>(),
+                ScriptableObject.CreateInstance<BasicPropellantAsset>(),
+                ScriptableObject.CreateInstance<BasicProjectileAsset>()
+            };
+            list.AddRange(extra);
+            SetPrivate(definition, "components", list);
             SetPrivate(definition, "spread", spread);
             SetPrivate(definition, "lifetime", lifetime);
             SetPrivate(definition, "speed", speed);

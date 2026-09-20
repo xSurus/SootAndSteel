@@ -14,20 +14,7 @@ namespace Gamelab.Tests.Bullets
         [UnityTest]
         public IEnumerator Spawn_FromCatalogDefinition_AppliesStatsAndVelocity()
         {
-            var casing = ScriptableObject.CreateInstance<BasicCasingAsset>();
-            var propellant = ScriptableObject.CreateInstance<BasicPropellantAsset>();
-            var projectile = ScriptableObject.CreateInstance<BasicProjectileAsset>();
-
-            var definition = ScriptableObject.CreateInstance<BulletDefinitionAsset>();
-            typeof(BulletDefinitionAsset).GetField("casing",
-                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                .SetValue(definition, casing);
-            typeof(BulletDefinitionAsset).GetField("propellant",
-                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                .SetValue(definition, propellant);
-            typeof(BulletDefinitionAsset).GetField("projectile",
-                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                .SetValue(definition, projectile);
+            var definition = BulletTestUtil.MakeBasicDefinition();
             typeof(BulletDefinitionAsset).GetField("spread",
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
                 .SetValue(definition, 0f); // zero spread => deterministic velocity direction

@@ -188,3 +188,11 @@ The Editor and PlayMode tests run real FMOD. Provenance and caveats:
   removed.
 - No automated test can prove audible output. Play a scene with
   `SoundServiceRunner` in the Editor with speakers on to confirm.
+
+## Bullet model
+
+- A `BulletDefinitionAsset` holds an ordered list of `BulletComponentAsset`s. It needs at least one Casing, one Propellant and one Projectile. The same asset may not appear twice (state and root flags are keyed by asset).
+- Component assets are stateless. Per-bullet data lives on the bullet: `bullet.GetState<T>(component)` creates it lazily.
+- `bullet.IsRoot(component)` is true unless `MarkNonRoot` was called. `SpawnChild(spawner, pos, aim, delay, configure)` builds a fresh bullet from the same definition and faction with the spawner marked non-root, so a spawner does not recurse. `configure` runs before the child's create phase.
+- Phases: create phase (OnCreate of all components in list order, then RefreshCollider), then spawn phase (OnSpawn of all, then RefreshCollider). With delay > 0 the child runs only the create phase, is not simulated, and `Tick` runs the spawn phase after the delay. Age and lifetime start after the spawn phase. Pending bullets get no OnUpdate.
+- Units: `BulletStats` stay in MonoGame pixels (Speed, Size). Conversion to Unity meters happens only through `WorldUnits` at the physics boundary (velocity, collider radius).

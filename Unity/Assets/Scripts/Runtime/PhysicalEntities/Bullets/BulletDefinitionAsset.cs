@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Gamelab.Items.Bullets;
 using UnityEngine;
 
@@ -8,9 +9,7 @@ namespace Gamelab.PhysicalEntities.Bullets
     [CreateAssetMenu(menuName = "Gamelab/Bullets/Bullet Definition", fileName = "BulletDefinition")]
     public class BulletDefinitionAsset : ScriptableObject
     {
-        [SerializeField] private BulletComponentAsset casing;
-        [SerializeField] private BulletComponentAsset propellant;
-        [SerializeField] private BulletComponentAsset projectile;
+        [SerializeField] private List<BulletComponentAsset> components = new List<BulletComponentAsset>();
         [SerializeField] private float speed = 800f;
         [SerializeField] private float damage = 50f;
         [SerializeField] private float pierce = 1f;
@@ -18,29 +17,41 @@ namespace Gamelab.PhysicalEntities.Bullets
         [SerializeField] private float spread = 0.2f;
         [SerializeField] private float lifetime = 5f;
 
-        public BulletComponentAsset Casing => casing;
-        public BulletComponentAsset Propellant => propellant;
-        public BulletComponentAsset Projectile => projectile;
+        public IReadOnlyList<BulletComponentAsset> Components => components;
 
         public void Validate()
         {
-            Check(casing, EComponentType.Casing, "casing");
-            Check(propellant, EComponentType.Propellant, "propellant");
-            Check(projectile, EComponentType.Projectile, "projectile");
-        }
-
-        private void Check(BulletComponentAsset component, EComponentType expected, string slot)
-        {
-            if (component == null)
+            if (components == null || components.Count == 0)
             {
-                throw new InvalidOperationException(
-                    $"BulletDefinition '{name}': {slot} slot is empty.");
+                throw new InvalidOperationException($"BulletDefinition '{name}': component list is empty.");
             }
 
-            if (component.Type != expected)
+            // Per-bullet state and root flags are keyed by asset, so one asset cannot appear twice.
+            var seen = new HashSet<BulletComponentAsset>();
+            var types = new HashSet<EComponentType>();
+            for (int i = 0; i < components.Count; i++)
             {
-                throw new InvalidOperationException(
-                    $"BulletDefinition '{name}': {slot} slot type mismatch, expected {expected} but '{component.name}' is {component.Type}.");
+                BulletComponentAsset c = components[i];
+                if (c == null)
+                {
+                    throw new InvalidOperationException($"BulletDefinition '{name}': component at index {i} is null.");
+                }
+
+                if (!seen.Add(c))
+                {
+                    throw new InvalidOperationException(
+                        $"BulletDefinition '{name}': component '{c.name}' appears twice (duplicate assets are not allowed).");
+                }
+
+                types.Add(c.Type);
+            }
+
+            foreach (EComponentType required in new[] { EComponentType.Casing, EComponentType.Propellant, EComponentType.Projectile })
+            {
+                if (!types.Contains(required))
+                {
+                    throw new InvalidOperationException($"BulletDefinition '{name}': missing a {required} component.");
+                }
             }
         }
 

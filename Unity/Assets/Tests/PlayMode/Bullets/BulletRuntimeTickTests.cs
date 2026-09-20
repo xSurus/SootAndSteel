@@ -51,9 +51,8 @@ namespace Gamelab.Tests.Bullets
         [UnityTest]
         public IEnumerator FixedUpdate_ExpiredLifetime_DestroysBulletAndCleansUpOnce()
         {
-            var definition = BulletTestUtil.MakeBasicDefinition(lifetime: 0.2f);
             var casing = ScriptableObject.CreateInstance<CountingCasingAsset>();
-            BulletTestUtil.SetPrivate<BulletComponentAsset>(definition, "casing", casing);
+            var definition = BulletTestUtil.MakeBasicDefinition(lifetime: 0.2f, extra: casing);
 
             var bullet = BulletRuntime.Spawn(definition, Vector2.zero, Vector2.right, BulletFaction.Player);
             yield return new WaitForSeconds(0.6f);
@@ -63,28 +62,14 @@ namespace Gamelab.Tests.Bullets
         }
 
         [Test]
-        public void Spawn_EmptyCasingSlot_ThrowsAndCreatesNoObject()
+        public void Spawn_EmptyList_ThrowsAndCreatesNoObject()
         {
             var definition = BulletTestUtil.MakeBasicDefinition();
-            BulletTestUtil.SetPrivate<BulletComponentAsset>(definition, "casing", null);
+            BulletTestUtil.SetPrivate(definition, "components", new System.Collections.Generic.List<BulletComponentAsset>());
 
             var ex = Assert.Throws<InvalidOperationException>(() =>
                 BulletRuntime.Spawn(definition, Vector2.zero, Vector2.right, BulletFaction.Player));
-            StringAssert.Contains("casing", ex.Message);
-            Assert.AreEqual(0, BulletObjectCount());
-        }
-
-        [Test]
-        public void Spawn_CasingInProjectileSlot_ThrowsTypeMismatch()
-        {
-            var definition = BulletTestUtil.MakeBasicDefinition();
-            BulletTestUtil.SetPrivate<BulletComponentAsset>(
-                definition, "projectile", ScriptableObject.CreateInstance<BasicCasingAsset>());
-
-            var ex = Assert.Throws<InvalidOperationException>(() =>
-                BulletRuntime.Spawn(definition, Vector2.zero, Vector2.right, BulletFaction.Player));
-            StringAssert.Contains("projectile", ex.Message);
-            StringAssert.Contains("mismatch", ex.Message);
+            StringAssert.Contains("empty", ex.Message);
             Assert.AreEqual(0, BulletObjectCount());
         }
 

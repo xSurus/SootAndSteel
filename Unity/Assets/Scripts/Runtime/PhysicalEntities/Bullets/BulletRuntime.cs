@@ -23,6 +23,12 @@ namespace Gamelab.PhysicalEntities.Bullets
         private readonly Dictionary<IDamageable, float> hitCooldown = new Dictionary<IDamageable, float>();
         private readonly List<IDamageable> cooldownKeys = new List<IDamageable>();
 
+        public bool IsPending { get; private set; }
+
+        private float pendingDelay;
+        private readonly Dictionary<BulletComponentAsset, object> states = new Dictionary<BulletComponentAsset, object>();
+        private readonly HashSet<BulletComponentAsset> nonRoot = new HashSet<BulletComponentAsset>();
+
         public static BulletRuntime Spawn(
             BulletDefinitionAsset definition,
             Vector2 position,
@@ -35,7 +41,41 @@ namespace Gamelab.PhysicalEntities.Bullets
             }
 
             definition.Validate();
+            return Build(definition, position, aimDirection, faction, 0f, null, null);
+        }
 
+        /// <summary>Per-bullet state for a stateless component asset, created on first use.</summary>
+        public T GetState<T>(BulletComponentAsset component) where T : class, new()
+        {
+            if (!states.TryGetValue(component, out object state))
+            {
+                state = new T();
+                states[component] = state;
+            }
+
+            return (T)state;
+        }
+
+        public bool IsRoot(BulletComponentAsset c) => !nonRoot.Contains(c);
+
+        public void MarkNonRoot(BulletComponentAsset c) => nonRoot.Add(c);
+
+        /// <summary>
+        /// Fresh bullet from the same definition and faction. The spawner is non-root in the child,
+        /// so it cannot recurse. configure runs before the create phase. delay > 0 keeps the child
+        /// unsimulated (create phase only) until Tick has counted the delay down.
+        /// </summary>
+        public BulletRuntime SpawnChild(
+            BulletComponentAsset spawner, Vector2 position, Vector2 aim, float delay = 0f,
+            Action<BulletRuntime> configure = null)
+        {
+            return Build(definition, position, aim, Faction, delay, spawner, configure);
+        }
+
+        private static BulletRuntime Build(
+            BulletDefinitionAsset definition, Vector2 position, Vector2 aimDirection, BulletFaction faction,
+            float delay, BulletComponentAsset nonRootSpawner, Action<BulletRuntime> configure)
+        {
             var go = new GameObject($"Bullet_{definition.name}");
             go.transform.position = position;
 
@@ -53,18 +93,30 @@ namespace Gamelab.PhysicalEntities.Bullets
             bullet.circle.isTrigger = true;
             bullet.Faction = faction;
             bullet.AimDirection = aimDirection.normalized;
+            if (nonRootSpawner != null) bullet.MarkNonRoot(nonRootSpawner);
+            configure?.Invoke(bullet);
 
-            definition.Casing.OnCreate(bullet);
-            definition.Propellant.OnCreate(bullet);
-            definition.Projectile.OnCreate(bullet);
+            foreach (BulletComponentAsset c in definition.Components) c.OnCreate(bullet);
             bullet.RefreshCollider();
 
-            definition.Casing.OnSpawn(bullet);
-            definition.Propellant.OnSpawn(bullet);
-            definition.Projectile.OnSpawn(bullet);
-            bullet.RefreshCollider();
+            if (delay > 0f)
+            {
+                bullet.IsPending = true;
+                bullet.pendingDelay = delay;
+                rb.simulated = false; // also deactivates the collider
+            }
+            else
+            {
+                bullet.RunSpawnPhase();
+            }
 
             return bullet;
+        }
+
+        private void RunSpawnPhase()
+        {
+            foreach (BulletComponentAsset c in definition.Components) c.OnSpawn(this);
+            RefreshCollider();
         }
 
         private void FixedUpdate() => Tick(Time.fixedDeltaTime);
@@ -83,12 +135,10 @@ namespace Gamelab.PhysicalEntities.Bullets
             if (!IsActive) return;
             Rigidbody2D otherBody = other.attachedRigidbody;
             if (otherBody == null || otherBody.gameObject == gameObject) return;
-            var target = otherBody.GetComponent<IDamageable>() ?? otherBody.GetComponentInParent<IDamageable>();
+            var target = otherBody.GetComponentInParent<IDamageable>();
             if (target == null || hitCooldown.ContainsKey(target) || !target.OnHit(this)) return;
 
-            definition.Casing.OnHit(this, target);
-            definition.Propellant.OnHit(this, target);
-            definition.Projectile.OnHit(this, target);
+            foreach (BulletComponentAsset c in definition.Components) c.OnHit(this, target);
             pierceCount++;
             hitCooldown[target] = HitCooldownSeconds;
 
@@ -108,9 +158,20 @@ namespace Gamelab.PhysicalEntities.Bullets
                 return;
             }
 
-            definition.Casing.OnUpdate(this, deltaTime);
-            definition.Propellant.OnUpdate(this, deltaTime);
-            definition.Projectile.OnUpdate(this, deltaTime);
+            if (IsPending)
+            {
+                pendingDelay -= deltaTime;
+                if (pendingDelay <= 0f)
+                {
+                    IsPending = false;
+                    RunSpawnPhase();
+                    PhysicsBody.simulated = true;
+                }
+
+                return; // age, lifetime and OnUpdate start after the spawn phase
+            }
+
+            foreach (BulletComponentAsset c in definition.Components) c.OnUpdate(this, deltaTime);
 
             // Src rebuilds the dictionary each tick; a reused key list avoids the allocation.
             cooldownKeys.Clear();
@@ -138,9 +199,7 @@ namespace Gamelab.PhysicalEntities.Bullets
             }
 
             IsActive = false;
-            definition.Casing.OnCleanup(this);
-            definition.Propellant.OnCleanup(this);
-            definition.Projectile.OnCleanup(this);
+            foreach (BulletComponentAsset c in definition.Components) c.OnCleanup(this);
             Destroy(gameObject);
         }
     }

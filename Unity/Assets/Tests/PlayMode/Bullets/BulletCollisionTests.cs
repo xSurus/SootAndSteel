@@ -9,7 +9,7 @@ using Gamelab.PhysicalEntities.Bullets;
 namespace Gamelab.Tests.Bullets
 {
     // Real Unity physics only: nothing here calls OnHit or TakeDamage.
-    // Tunnelling limit: 8 m/s * 0.02 s = 0.16 m per physics step vs enemy trigger radius 0.36 m.
+    // Tunnelling limit: 8 m/s * 1/60 s (fixed timestep 0.0167) = about 0.133 m per physics step vs enemy trigger radius 0.36 m.
     public class BulletCollisionTests
     {
         private static DummyEnemyRuntime SpawnEnemy(Vector2 position)
