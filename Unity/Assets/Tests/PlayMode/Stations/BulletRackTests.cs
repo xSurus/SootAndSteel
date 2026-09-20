@@ -75,6 +75,19 @@ namespace Gamelab.Tests.Stations
         }
 
         [Test]
+        public void EmptyRack_RefusesFirstInLineConsumer()
+        {
+            var r = Make();
+            var c = MakeConsumer();
+            r.PingPullIntent(c, 0f);
+            Assert.IsFalse(r.CanProvideItem(c));
+            Assert.IsFalse(r.TryProvideItem(out Item item, c));
+            Assert.IsNull(item);
+            Object.DestroyImmediate(r.gameObject);
+            Object.DestroyImmediate(c.gameObject);
+        }
+
+        [Test]
         public void QueuedConsumer_RespectsFifo_AndTicketRemoved()
         {
             var r = Make();

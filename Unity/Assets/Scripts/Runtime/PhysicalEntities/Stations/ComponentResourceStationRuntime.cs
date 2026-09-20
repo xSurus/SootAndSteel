@@ -12,14 +12,15 @@ namespace Gamelab.PhysicalEntities.Stations
     // IconSourceRect, DispensedItemType (shop tooltips) and Draw.
     public class ComponentResourceStationRuntime : ResourceStationRuntime
     {
-        public string ComponentId { get; private set; }
+        // Derived from ResourceId ("Component<id>") so the base Initialize overload also works.
+        public string ComponentId => ResourceId.Substring(StationIds.Component.Length);
 
-        public new void Initialize(StationCatalogEntry catalogEntry, string componentId)
-        {
-            ComponentId = componentId;
-            base.Initialize(catalogEntry, StationIds.GetComponentResourceId(componentId));
-        }
+        public void InitializeComponent(StationCatalogEntry catalogEntry, string componentId) =>
+            Initialize(catalogEntry, StationIds.GetComponentResourceId(componentId));
 
+        // Src does not override PeekNextItem (inherited peek is Item("Component<id>")); we return the
+        // BulletItem it would provide. Intentional deviation, equivalent for every conveyor filter
+        // (Bullet and UpgradedComponent conveyors reject both, plain Conveyor accepts both).
         public override Item PeekNextItem() => new BulletItem(ComponentId);
 
         public override bool CanReceiveItem(Item item, IItemProvider source) =>

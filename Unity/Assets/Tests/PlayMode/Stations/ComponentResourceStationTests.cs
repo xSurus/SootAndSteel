@@ -13,7 +13,7 @@ namespace Gamelab.Tests.Stations
             var go = new GameObject("CompRes");
             go.AddComponent<Rigidbody2D>();
             var s = go.AddComponent<ComponentResourceStationRuntime>();
-            s.Initialize(new StationCatalogEntry(), componentId);
+            s.InitializeComponent(new StationCatalogEntry(), componentId);
             return s;
         }
 
@@ -27,6 +27,40 @@ namespace Gamelab.Tests.Stations
             Assert.AreEqual(ComponentIds.BasicCasing, StationIds.GetStationComponentId(s.StationId));
             Assert.AreEqual(ComponentIds.BasicCasing, s.ComponentId);
             Object.DestroyImmediate(s.gameObject);
+        }
+
+        [Test]
+        public void BaseInitialize_WithComponentResourceId_YieldsComponentId()
+        {
+            var go = new GameObject("CompRes");
+            go.AddComponent<Rigidbody2D>();
+            var s = go.AddComponent<ComponentResourceStationRuntime>();
+            s.Initialize(new StationCatalogEntry(), StationIds.GetComponentResourceId(ComponentIds.BasicCasing));
+            Assert.AreEqual(ComponentIds.BasicCasing, s.ComponentId);
+            Assert.AreEqual("ResourceComponentBasicCasing", s.StationId);
+            Object.DestroyImmediate(go);
+        }
+
+        [Test]
+        public void QueuedConsumer_RespectsFifo_AndTicketRemoved()
+        {
+            var s = Make(ComponentIds.BasicCasing);
+            var goA = new GameObject("A");
+            goA.AddComponent<Rigidbody2D>();
+            var first = goA.AddComponent<CounterRuntime>();
+            first.Initialize(new StationCatalogEntry { stationId = StationIds.Counter });
+            var goB = new GameObject("B");
+            goB.AddComponent<Rigidbody2D>();
+            var second = goB.AddComponent<CounterRuntime>();
+            second.Initialize(new StationCatalogEntry { stationId = StationIds.Counter });
+            s.PingPullIntent(first, 0f);
+            s.PingPullIntent(second, 0f);
+            Assert.IsFalse(s.TryProvideItem(out _, second));
+            Assert.IsTrue(s.TryProvideItem(out _, first));
+            Assert.IsTrue(s.TryProvideItem(out _, second));
+            Object.DestroyImmediate(s.gameObject);
+            Object.DestroyImmediate(goA);
+            Object.DestroyImmediate(goB);
         }
 
         [Test]
