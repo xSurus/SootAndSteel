@@ -1,3 +1,5 @@
+using System.Numerics;
+
 namespace Gamelab.Enemies.Core
 {
     public enum EnemySlotSide
@@ -17,8 +19,15 @@ namespace Gamelab.Enemies.Core
             PositionRatio = positionRatio;
         }
 
-        // GetAnchor(float distanceFromTrain) is not ported yet: it needs the level/map
-        // bounds (Src/Map/), which is Wave B (B1)'s subsystem and doesn't exist yet.
-        // Add it back here once B1's map bounds API exists.
+        // Src GetAnchor. Bounds.Bottom is exclusive like MonoGame Rectangle.
+        public Vector2 GetAnchor(Gamelab.Map.RectPx bounds, float distanceFromTrainPx, float topClearancePx)
+        {
+            float x = bounds.Left + bounds.Width * PositionRatio;
+            if (Side == EnemySlotSide.Top)
+            {
+                return new Vector2(x, bounds.Top - distanceFromTrainPx - topClearancePx);
+            }
+            return new Vector2(x, bounds.Bottom + distanceFromTrainPx);
+        }
     }
 }
