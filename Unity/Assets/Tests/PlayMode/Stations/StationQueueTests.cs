@@ -14,11 +14,18 @@ namespace Gamelab.Tests.Stations
     // ported, so that carve-out is not covered here.
     public class StationQueueTests
     {
-        private static CounterRuntime MakeCounter(string name)
+        private class QueueCounter : CounterRuntime
+        {
+            public int ProviderTicketCount => providerQueue.Count;
+        }
+
+        private static CounterRuntime MakeCounter(string name) => MakeCounter<CounterRuntime>(name);
+
+        private static T MakeCounter<T>(string name) where T : CounterRuntime
         {
             var go = new GameObject(name);
             go.AddComponent<Rigidbody2D>();
-            var c = go.AddComponent<CounterRuntime>();
+            var c = go.AddComponent<T>();
             c.Initialize(new StationCatalogEntry { stationId = StationIds.Counter });
             return c;
         }
@@ -85,7 +92,11 @@ namespace Gamelab.Tests.Stations
             yield return PingFor(provider, second, 0.2f);
             Assert.IsFalse(provider.CanProvideItem(second), "First must not be kicked at 0.2 s.");
 
-            yield return PingFor(provider, second, 0.6f);
+            yield return PingFor(provider, second, 0.2f);
+            Assert.IsFalse(provider.CanProvideItem(second), "First must still be first at 0.4 s (double-tick check).");
+            Assert.IsTrue(provider.CanProvideItem(first));
+
+            yield return PingFor(provider, second, 0.4f);
             Assert.IsTrue(provider.CanProvideItem(second), "First should be kicked by 0.8 s.");
             Assert.IsTrue(provider.TryProvideItem(out _, second));
         }
@@ -115,18 +126,15 @@ namespace Gamelab.Tests.Stations
         [UnityTest]
         public IEnumerator ProviderTicket_IsKickedLikeConsumerTicket()
         {
-            var receiver = MakeCounter("R");
+            var receiver = MakeCounter<QueueCounter>("R");
             var pinger = MakeCounter("P");
             receiver.PingPushIntent(pinger, 0f);
-            var queue = (System.Collections.Generic.List<ProviderTicket>)typeof(StationRuntime)
-                .GetField("providerQueue", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                .GetValue(receiver);
 
             yield return Wait(0.2f);
-            Assert.AreEqual(1, queue.Count, "Not kicked at 0.2 s.");
+            Assert.AreEqual(1, receiver.ProviderTicketCount, "Not kicked at 0.2 s.");
 
             yield return Wait(0.6f);
-            Assert.AreEqual(0, queue.Count, "Kicked by 0.8 s.");
+            Assert.AreEqual(0, receiver.ProviderTicketCount, "Kicked by 0.8 s.");
         }
 
         [UnityTest]

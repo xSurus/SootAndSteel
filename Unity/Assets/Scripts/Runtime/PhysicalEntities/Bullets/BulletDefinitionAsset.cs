@@ -55,6 +55,29 @@ namespace Gamelab.PhysicalEntities.Bullets
             }
         }
 
+        public void Configure(IEnumerable<BulletComponentAsset> newComponents, BulletStats stats)
+        {
+            components = new List<BulletComponentAsset>(newComponents);
+            speed = stats.Speed;
+            damage = stats.Damage;
+            pierce = stats.Pierce;
+            size = stats.Size;
+            spread = stats.Spread;
+            lifetime = stats.Lifetime;
+        }
+
+        /// <summary>Runtime definition with the recipe's components in recipe order. The caller owns (and destroys) it.</summary>
+        public static BulletDefinitionAsset BuildFromRecipe(BulletRecipe recipe, BulletComponentCatalogAsset catalog, BulletStats baseStats)
+        {
+            if (recipe == null) throw new ArgumentNullException(nameof(recipe));
+            if (catalog == null) throw new ArgumentNullException(nameof(catalog));
+            var list = new List<BulletComponentAsset>();
+            foreach (string id in recipe.ComponentIds) list.Add(catalog.Get(id));
+            var definition = CreateInstance<BulletDefinitionAsset>();
+            definition.Configure(list, baseStats);
+            return definition;
+        }
+
         public BulletStats ToStats()
         {
             return new BulletStats
