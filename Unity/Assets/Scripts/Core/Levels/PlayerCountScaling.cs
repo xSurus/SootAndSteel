@@ -13,6 +13,7 @@ namespace Gamelab.Levels
         private const float ThreatScalePerExtraPlayer = 0.45f;
         private const float ThreatScaleExponent = 0.85f;
         private const float EnemySpawnPacingScaleStrength = 0.25f;
+        private const float MaintenanceScalePerExtraPlayer = 0.35f;
 
         public static float GetThreatScale(int playerCount)
         {
@@ -25,6 +26,13 @@ namespace Gamelab.Levels
             float exponent = Math.Max(0.01f, ThreatScaleExponent);
             float additionalThreat = ThreatScalePerExtraPlayer * MathF.Pow(extraPlayers, exponent);
             return Math.Max(1f, 1f + additionalThreat);
+        }
+
+        // Port of GameplayConfig.GetMaintenanceScaleForPlayerCount (json 0.35 = default 0.35).
+        public static float GetMaintenanceScale(int playerCount)
+        {
+            int extraPlayers = Math.Min(MaxSupportedPlayers, Math.Max(1, playerCount)) - 1;
+            return Math.Max(1f, 1f + extraPlayers * MaintenanceScalePerExtraPlayer);
         }
 
         public static float GetEnemySpawnSpacingScale(int playerCount)
