@@ -123,8 +123,10 @@ namespace Gamelab.Tests.Enemies
             foreach (var o in created) Object.Destroy(o);
             created.Clear();
             yield return null;
-            Physics2D.simulationMode = savedMode;
         }
+
+        [TearDown]
+        public void RestorePhysicsMode() => Physics2D.simulationMode = savedMode;
 
         [UnityTest]
         public IEnumerator ReachesApproachThenHolds_AtSlotAnchor()
@@ -154,8 +156,10 @@ namespace Gamelab.Tests.Enemies
             Assert.AreEqual(1f, call.dir.magnitude, 1e-4f);
             Assert.Less(call.dir.y, 0f); // target has the smaller Y (Src is y-down)
             // ZeroRandom gives spread = -0.5 * 0.2 = -0.1 rad off the aim direction.
-            float aim = Mathf.Atan2(-1f, 0f);
-            Assert.AreEqual(aim - 0.1f, Mathf.Atan2(call.dir.y, call.dir.x), 0.12f); // the body is still a few px off the anchor
+            Vector2 posPx = call.pos * WorldUnits.PixelsPerMeter;
+            float expected = Mathf.Atan2(100f - posPx.y, 500f - posPx.x) - 0.1f;
+            Assert.AreEqual(expected, Mathf.Atan2(call.dir.y, call.dir.x), 1e-4f);
+            Assert.AreEqual(0f, Vector2.Distance(call.pos, e.PhysicsBody.position), 0.05f);
             CollectionAssert.AreEqual(EnemyAmmoCatalog.GetAmmoDefinition(EnemyAmmoIds.Basic).OrderedComponentIds,
                 call.recipe.ComponentIds);
             yield return null;
@@ -251,6 +255,33 @@ namespace Gamelab.Tests.Enemies
             sp.Dispose();
             yield return null;
             Assert.AreEqual(before, Object.FindObjectsByType<BulletDefinitionAsset>(FindObjectsSortMode.None).Length);
+        }
+
+        [UnityTest]
+        public IEnumerator Configure_BeforeInitialize_Throws()
+        {
+            var go = new GameObject("Rifle");
+            go.AddComponent<Rigidbody2D>();
+            var e = go.AddComponent<RifleEnemyRuntime>();
+            e.enabled = false;
+            Assert.Throws<System.InvalidOperationException>(() => e.Configure(EnemyTuning.Default,
+                EnemyAmmoCatalog.GetAmmoDefinition(EnemyAmmoIds.Basic), new EnemyTrainSlot(EnemySlotSide.Top, 0.5f),
+                world, spawner, new ZeroRandom()));
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator UnconfiguredEnemy_TickHitAndNeutralizedDoNotThrow()
+        {
+            var go = new GameObject("Rifle");
+            go.AddComponent<Rigidbody2D>();
+            var e = go.AddComponent<RifleEnemyRuntime>();
+            e.Initialize(new EnemyCatalogEntry { type = EnemyType.Dummy, health = 100f, size = 72f });
+            e.enabled = false;
+            Assert.DoesNotThrow(() => e.Step(0.02f));
+            Assert.IsFalse(e.WasNeutralized);
+            Assert.DoesNotThrow(() => e.OnHit(PlayerBullet()));
+            yield return null;
         }
     }
 }

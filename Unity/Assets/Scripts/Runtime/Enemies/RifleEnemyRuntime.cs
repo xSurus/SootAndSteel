@@ -11,7 +11,7 @@ namespace Gamelab.Enemies
 {
     // Port of Src/Enemies/Types/Enemy.cs. State and timers live in RifleEnemyBrain.
     // Dropped presentation: horse/rider animation and draw, horse riding/flee/fire sounds,
-    // neck bleed emitter and blood splatter, EnemyMovementController train-frame drift, and
+    // neck bleed emitter and blood splatter, FeetPosition (footprints only), EnemyMovementController train-frame drift, and
     // the "InitialShooter is CannonStation or CannonSlot" check (Faction.Player instead, as
     // EnemyRuntime.OnHit). Y convention is Src's: pixel space is y-down, so the Top side has
     // the smaller Y (the approach anchor for Top is above the slot anchor: -tile).
@@ -30,14 +30,18 @@ namespace Gamelab.Enemies
         protected virtual void ApplyStartingHealth() { }
         protected EnemyTuning Tuning => tuning;
 
-        public override bool WasNeutralized => base.WasNeutralized || brain.WasNeutralized;
+        public override bool WasNeutralized => base.WasNeutralized || (brain != null && brain.WasNeutralized);
         public HorseState Horse => brain.Horse;
         public RiderState Rider => brain.Rider;
 
         /// <summary>Call after Initialize (needs the Rigidbody2D and size).</summary>
+        // Health and size come from the EnemyCatalogEntry given to Initialize (Src reads them from
+        // GameplayConfig; the catalog defaults carry the same values), so tuning.EnemyHealth and
+        // tuning.EnemySize are unused. Only the tutorial health is taken from tuning.
         public void Configure(EnemyTuning tuning, EnemyAmmoDefinition ammoDefinition, EnemyTrainSlot slot,
             IEnemyWorld world, IBulletItemSpawner spawner, Random rng)
         {
+            if (PhysicsBody == null) throw new InvalidOperationException("Configure must run after Initialize.");
             this.tuning = tuning ?? throw new ArgumentNullException(nameof(tuning));
             this.ammoDefinition = ammoDefinition ?? throw new ArgumentNullException(nameof(ammoDefinition));
             this.world = world ?? throw new ArgumentNullException(nameof(world));
@@ -58,6 +62,7 @@ namespace Gamelab.Enemies
         protected override void Tick(float dt)
         {
             base.Tick(dt);
+            if (brain == null) return; // not configured yet
             brain.Tick(dt);
             if (brain.UpdateRider(dt)) ExecuteFire();
 
@@ -108,6 +113,7 @@ namespace Gamelab.Enemies
 
         public override bool OnHit(BulletRuntime bullet)
         {
+            if (brain == null) return base.OnHit(bullet);
             if (brain.Rider == RiderState.Dead) return false;
 
             if (bullet.Faction == BulletFaction.Player && IsAlive && !ShouldRemove &&
