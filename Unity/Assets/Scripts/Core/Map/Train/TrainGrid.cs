@@ -38,7 +38,7 @@ namespace Gamelab.Map.Train
 
         public bool IsOccupied(TrainPoint cell) => cells.ContainsKey(cell);
 
-        // Src GetAdjacentStation: neighbour direction is rounded to a point. Null when empty.
+        // Src GetAdjacentStation: neighbour direction is truncated to a point. Null when empty.
         public TStation GetAdjacent(Vector2 posPx, GridDirection dir)
         {
             TrainPoint cur = layout.GetTileIndexFromPixels(posPx);

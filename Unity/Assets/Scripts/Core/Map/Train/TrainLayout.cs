@@ -95,7 +95,11 @@ namespace Gamelab.Map.Train
             }
         }
 
-        public int GetTileVariant(int x, int y) => tileVariants[x * Height + y];
+        public int GetTileVariant(int x, int y)
+        {
+            if (tileVariants == null) throw new InvalidOperationException("Call RollTileVariants first.");
+            return tileVariants[x * Height + y];
+        }
 
         public Vector2 GetTileTopLeftPixels(int x, int y) => Position + new Vector2(x * TileSize, y * TileSize);
 
