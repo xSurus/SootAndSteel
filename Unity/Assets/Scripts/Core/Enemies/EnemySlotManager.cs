@@ -23,6 +23,19 @@ namespace Gamelab.Enemies.Core
             return TryReserveSlot(SideAttackSlots, out slot);
         }
 
+        // Ruling: Src TryReserveSlotOnSide falls back to any free slot when the side is full.
+        // Here a full side returns false so the caller decides (tests pin this).
+        public bool TryReserveSideAttackSlotOnSide(EnemySlotSide side, out EnemyTrainSlot slot)
+        {
+            var candidates = new List<EnemyTrainSlot>();
+            foreach (EnemyTrainSlot candidate in SideAttackSlots)
+            {
+                if (candidate.Side == side) candidates.Add(candidate);
+            }
+
+            return TryReserveSlot(candidates, out slot);
+        }
+
         public void ReleaseSlot(EnemyTrainSlot slot)
         {
             occupiedSlots.Remove(slot);

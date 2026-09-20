@@ -36,5 +36,26 @@ namespace Gamelab.Tests.Enemies
             Assert.IsTrue(manager.TryReserveSideAttackSlot(out EnemyTrainSlot again));
             Assert.AreEqual(first, again);
         }
+
+        [Test]
+        public void TryReserveSideAttackSlotOnSide_ReservesOnlyRequestedSideAndFailsWhenFull()
+        {
+            var manager = new EnemySlotManager();
+            EnemyTrainSlot first = default;
+            for (int i = 0; i < 3; i++)
+            {
+                Assert.IsTrue(manager.TryReserveSideAttackSlotOnSide(EnemySlotSide.Top, out EnemyTrainSlot s));
+                Assert.AreEqual(EnemySlotSide.Top, s.Side);
+                if (i == 0) first = s;
+            }
+
+            Assert.IsFalse(manager.TryReserveSideAttackSlotOnSide(EnemySlotSide.Top, out _));
+            Assert.IsTrue(manager.TryReserveSideAttackSlotOnSide(EnemySlotSide.Bottom, out EnemyTrainSlot b));
+            Assert.AreEqual(EnemySlotSide.Bottom, b.Side);
+
+            manager.ReleaseSlot(first);
+            Assert.IsTrue(manager.TryReserveSideAttackSlotOnSide(EnemySlotSide.Top, out EnemyTrainSlot again));
+            Assert.AreEqual(first, again);
+        }
     }
 }

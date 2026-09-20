@@ -196,3 +196,15 @@ The Editor and PlayMode tests run real FMOD. Provenance and caveats:
 - `bullet.IsRoot(component)` is true unless `MarkNonRoot` was called. `SpawnChild(spawner, pos, aim, delay, configure)` builds a fresh bullet from the same definition and faction with the spawner marked non-root, so a spawner does not recurse. `configure` runs before the child's create phase.
 - Phases: create phase (OnCreate of all components in list order, then RefreshCollider), then spawn phase (OnSpawn of all, then RefreshCollider). With delay > 0 the child runs only the create phase, is not simulated, and `Tick` runs the spawn phase after the delay. Age and lifetime start after the spawn phase. Pending bullets get no OnUpdate.
 - Units: `BulletStats` stay in MonoGame pixels (Speed, Size). Conversion to Unity meters happens only through `WorldUnits` at the physics boundary (velocity, collider radius).
+
+## Not ported yet (A2 follow-up)
+
+- Enemy.cs firing state machine (355 lines): coupled to horse/rider animation, sound and VFX, and needs the train/map wave and ammo catalog wiring.
+- TutorialEnemy: a stat variant that reads its values from the GameplayConfig tutorial section.
+- Workbench and AutoWorkbench: player interaction and UI.
+- CannonStation and AmmoRack: player seat and cannon aiming (wave B).
+- ComponentResourceStation: needs BulletItem, the component registry and shop icons. CoalResourceStation needs no class of its own, since `ResourceStationRuntime` already handles the Coal id (sounds dropped).
+- Conveyors.
+- SpeedLever and BuyableStationWrapper: game state and shop.
+- BulletStats.Color: draw-only. The render wave derives it from the recipe.
+- `TryReserveSideAttackSlotOnSide` returns false when the side is full. Src falls back to any free slot, so callers that want that must retry with the other side.
