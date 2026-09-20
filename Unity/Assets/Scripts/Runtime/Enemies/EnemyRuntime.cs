@@ -1,6 +1,7 @@
 using Gamelab.PhysicalEntities.Bullets;
 using Gamelab.PhysicalEntities.Interfaces;
 using Gamelab.PhysicalEntities;
+using Gamelab.Enemies.Core;
 using UnityEngine;
 
 namespace Gamelab.Enemies
@@ -10,10 +11,25 @@ namespace Gamelab.Enemies
     {
         public float Health { get; protected set; }
         public bool IsAlive => Health > 0;
-        // Off-screen enemy removal (Src AbstractEnemy.IsOffScreenLeft -> ShouldRemove, and Enemy.cs's right-edge cull):
-        // needs the map/camera origin from wave B1. ShouldRemove is currently set only on death.
+        // Set on death, or by Tick when Bounds is set and the enemy is past the left edge
+        // (Src AbstractEnemy.IsOffScreenLeft). Enemy.cs's flee cull is EnemyCulling.IsFleeCulled.
         public bool ShouldRemove { get; protected set; }
         public Rigidbody2D PhysicsBody { get; private set; }
+        // Null means no cull. Wave B supplies the map/camera bounds.
+        public IWorldBounds Bounds { get; set; }
+        protected virtual float SizePixels => size;
+        private float size;
+
+        private void Update() => Tick(Time.deltaTime);
+
+        protected virtual void Tick(float dt)
+        {
+            if (Bounds != null &&
+                EnemyCulling.IsOffScreenLeft(WorldUnits.ToPixels(transform.position.x), SizePixels, Bounds))
+            {
+                ShouldRemove = true;
+            }
+        }
 
         protected virtual void OnEnable() => BulletTargeting.Register(this);
         protected virtual void OnDisable() => BulletTargeting.Unregister(this);
@@ -21,6 +37,7 @@ namespace Gamelab.Enemies
         public virtual void Initialize(EnemyCatalogEntry catalogEntry)
         {
             Health = catalogEntry.health;
+            size = catalogEntry.size;
             PhysicsBody = GetComponent<Rigidbody2D>();
             PhysicsBody.gravityScale = 0f;
             PhysicsBody.freezeRotation = true;
