@@ -21,6 +21,9 @@ namespace Gamelab.Map.Train.State
 
         public void Tick(float dt) => State.Update(dt);
 
-        private void Update() => Tick(Time.deltaTime);
+        /// <summary>Set false when another owner (for example a pause or test) calls Tick.</summary>
+        public bool SelfTick = true;
+
+        private void Update() { if (SelfTick) Tick(Time.deltaTime); }
     }
 }

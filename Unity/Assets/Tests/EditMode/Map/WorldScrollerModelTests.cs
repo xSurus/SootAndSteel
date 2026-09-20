@@ -8,7 +8,7 @@ namespace Gamelab.Tests.Map
 {
     public class WorldScrollerModelTests
     {
-        private static WorldScrollerModel Make(int seed) => new WorldScrollerModel(1920, 1080, 233, 409, 847, 1323,
+        private static WorldScrollerModel Make(int seed) => new WorldScrollerModel(1920, 1080, 233, 409, 847,
             CameraTuning.MinZoom, CameraTuning.MaxZoom, new Random(seed));
 
         // Golden values: Src/Map/WorldScroller.cs run with seed 7 (Update 0.5 s at speed 300).

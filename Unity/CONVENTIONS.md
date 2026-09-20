@@ -232,11 +232,12 @@ Plan: `docs/superpowers/plans/2026-09-20-b1-levels-map-plan.md`.
 
 ### The single Y flip
 
-The enemy, cannon and map layers all live in Src's pixel frame, Y down, in meters (`WorldUnits`, 100 px per meter). The train tile is 80 px = 0.8 m. No position, velocity or direction is ever negated.
+The enemy, cannon and map layers all live in Src's pixel frame, Y down, in meters (`WorldUnits`, 100 px per meter). The train tile is 80 px = 0.8 m. No position, velocity or direction is ever negated in the simulation. Input is the exception: `Vector2Interop` negates stick Y once, converting screen-up into world-up. That is a screen-to-world conversion, not a second world flip.
 
 The only flip is the display mirror in `Runtime/Map/MapSpace.cs`:
 
 - `MapSpace.ApplyTo(Camera)` mirrors the projection in Y, so the Y-down world shows Y down on screen. `MirroredCamera` is a component that re-applies it every LateUpdate. A custom projection matrix stops Unity recomputing it when `orthographicSize` or the aspect changes, so any camera driver (B2's camera director, zoom, shake) must either keep `MirroredCamera` on the camera or call `ApplyTo` after each change.
+- A mirrored projection reverses winding: fine for sprites and tilemaps with Cull Off, but anything with backface culling disappears. `Camera.ScreenToWorldPoint` and `ScreenPointToRay` must be checked against the custom projection matrix before mouse aiming is built on them (B2 note).
 - The mirror also turns upright art upside down. `MapSpace.SpriteFlip` (tile transform) and `MapSpace.ApplyToSprite` (`flipY`) cancel that. Every new `SpriteRenderer` in the world must go through `ApplyToSprite`. This compensates the mirror, it is not a second coordinate flip.
 - UI and world-space text are affected by a mirrored camera. Screen-space canvases are not. B2 should use screen-space canvases or a second unmirrored UI camera.
 
@@ -247,7 +248,7 @@ Art lives in `Assets/Resources/Map/` (loaded by `MapSprites.Get`). `Assets/Edito
 ### Facts found while porting
 
 - `gameplay.json` overrides the C# defaults where the key matches a property name: `trainHeight` is 5 (default 6), so the train is 10 x 5 tiles and the left wall door rows are 1 and 2. `TrainTuning` holds the effective values. The json temperature keys lack the `Train` prefix and never bind, so the class defaults (3, 3, 6) apply.
-- Mono and .NET agree bit for bit on `System.Random(seed)` sequences, but a few level distances differ by one float ulp (about 0.002). The golden tests use a 0.01 tolerance on distances.
+- Mono and .NET agree bit for bit on `System.Random(seed)` sequences, but 13 of the 48 golden rows have a distance that differs from the .NET value by exactly one float ulp (the ulp size depends on magnitude: 0.00024 near 3000, 0.0078 near 67000). The golden tests compare distances with `Within(1).Ulps`.
 - `GameplayScreen` and `HubScreen` use `Random.Shared` for tile variants, walls and scroller trees. B1 takes an injected `System.Random`, so those are deterministic per seed but not comparable with Src output.
 
 ### Ported
@@ -270,7 +271,7 @@ Art lives in `Assets/Resources/Map/` (loaded by `MapSprites.Get`). `Assets/Edito
 - Wall interaction: `OnPickup`, `OnInteractHeld` (repair driven by a player), highlight, wall sound, smoke VFX, screen shake on breach, `DrawLightBatch`. Seam: `ShootHoleWallRuntime.Repair(dt)` and the `Breached` and `Repaired` events. Door: `OnInteract` sound and highlight; `Toggle()` is the seam. Door damage sprites are not used by Src walls either.
 - Train visuals not drawn: wheels and their animation, the shadow rectangle, side wall strips and corner, patch and furnace lights, the depth function `RenderUtility.CalculateDepth` (replaced by Y-based sorting order).
 - `TrainState` freeze sound and the temperature FMOD parameter. Seam: `Temperature / MaxTemperature`.
-- Hub: shop offers (`RestockHubDragOffers`, `BuyableStationWrapper`, `IShopService`). Seam: `HubMapModel.SelectOfferIndices`, `OfferPositions`, `RestockSeed` are ported; the shop wave spawns the wrappers. `Hub.png` and `Village_Enter` are imported, but their draw code lives in `HubScreen`, not `HubMap`.
+- Hub: shop offers (`RestockHubDragOffers`, `BuyableStationWrapper`, `IShopService`). Seam: `HubMapModel.SelectOfferIndices`, `OfferPositions`, `RestockSeed` are ported; the shop wave spawns the wrappers. `Hub.png` is only read for its size (the village rect); `Village_Enter` is unreferenced in Src. Both are imported for the render wave.
 - `TutorialLevelProvider` (`Src/Tutorial`), `EnemyManager`, `CameraDirector`, player spawning glue (`GetFreeSpawnTile` exists in `TrainLayout`).
 - `IInteractable` default interface methods on the wall and door runtimes are not needed until the player exists.
 
@@ -278,5 +279,5 @@ Art lives in `Assets/Resources/Map/` (loaded by `MapSprites.Get`). `Assets/Edito
 
 - Put the camera under `MirroredCamera` (or call `MapSpace.ApplyTo` after each size change). Camera position and zoom are in the Y-down world: to follow the train, use `TrainLayout.GetBounds()` divided by 100.
 - HUD data: `TrainStateRuntime.State` (`Temperature`, `MaxTemperature`, `DistanceTraveled`, `CurrentSpeed`), `LevelRuntime.Definition.LevelDistance` and `DistanceTraveled`, `ShootHoleWallRuntime.Health` and events.
-- `LevelRuntime.SpawnDue` is where the enemy manager hooks in. `LevelRuntime` does not tick the train state because `TrainStateRuntime` ticks itself.
+- `LevelRuntime.SpawnDue` is where the enemy manager hooks in. `LevelRuntime` does not tick the train state because `TrainStateRuntime` ticks itself in `Update`. Set `TrainStateRuntime.SelfTick = false` if B2 wants to drive `Tick(dt)` itself (for example on pause).
 - Screen-space UI is not mirrored. World-space text is.

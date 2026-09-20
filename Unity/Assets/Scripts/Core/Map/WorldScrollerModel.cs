@@ -43,7 +43,7 @@ namespace Gamelab.Map
         private readonly float centerY;
 
         public WorldScrollerModel(int screenW, int screenH, int trackTexWidth, int trackTexHeight,
-            int pineTexWidth, int pineTexHeight, float cameraMinZoom, float cameraMaxZoom, Random random)
+            int pineTexWidth, float cameraMinZoom, float cameraMaxZoom, Random random)
         {
             screenWidth = screenW;
             screenHeight = screenH;

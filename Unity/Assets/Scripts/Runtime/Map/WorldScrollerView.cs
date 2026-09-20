@@ -38,14 +38,13 @@ namespace Gamelab.Map
             pine = MapSprites.Get("Decorations/Snow_Covered_Pine");
             Rebuild(new System.Random());
             SpeedSource = () => train != null ? train.State.actualSpeed : 0f;
-            Sync();
         }
 
         /// <summary>Recreates the model (fixed random for tests) and resyncs.</summary>
         public void Rebuild(System.Random random)
         {
             Model = new WorldScrollerModel(TrainTuning.ScreenWidth, TrainTuning.ScreenHeight,
-                (int)rail1.rect.width, (int)rail1.rect.height, (int)pine.rect.width, (int)pine.rect.height,
+                (int)rail1.rect.width, (int)rail1.rect.height, (int)pine.rect.width,
                 CameraTuning.MinZoom, CameraTuning.MaxZoom, random);
             Sync();
         }

@@ -17,6 +17,9 @@ namespace Gamelab.Tests.PlayMode.Gate
     // reference build's layout. Expected numbers are hand-computed from Src formulas for height 5.
     public class LevelLoadGateTests
     {
+        // First 50 draws of new System.Random(7).Next(0, 2) (computed with a scratch .NET program), index x * Height + y.
+        private const string Variants7 = "01100101110100101010110000100110000010111100111110";
+
         private TrainLayout layout;
         private TrainMapRuntime map;
         private GameObject scroller;
@@ -87,7 +90,7 @@ namespace Gamelab.Tests.PlayMode.Gate
                 for (int y = 0; y < layout.Height; y++)
                 {
                     var cell = new Vector3Int(x, y, 0);
-                    string name = layout.GetTileVariant(x, y) == 0 ? "Train_Tile_A" : "Train_Tile_B";
+                    string name = Variants7[x * layout.Height + y] == '0' ? "Train_Tile_A" : "Train_Tile_B";
                     Assert.AreSame(MapSprites.Get(name), map.Floor.GetSprite(cell), "sprite " + x + "," + y);
                     Vector3 c = map.Floor.GetCellCenterWorld(cell);
                     // Src GetTileCenterPixels / 100: (560 + x*80 + 40, 340 + y*80 + 40).

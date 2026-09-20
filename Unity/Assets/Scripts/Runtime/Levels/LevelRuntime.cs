@@ -18,7 +18,7 @@ namespace Gamelab.Levels
         private Func<bool> hasActiveThreats;
 
         public LevelDefinition Definition { get; private set; }
-        public float DistanceTraveled => train.State.DistanceTraveled;
+        public float DistanceTraveled => train != null ? train.State.DistanceTraveled : 0f;
         public SpawnSchedule Schedule => schedule;
 
         public event Action LevelCompleted;

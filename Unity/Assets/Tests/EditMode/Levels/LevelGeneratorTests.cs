@@ -86,6 +86,12 @@ namespace Gamelab.Tests.Levels
             LevelDefinition actual = provider.GetLevel(5);
             Assert.AreEqual(expected.LevelSeed, actual.LevelSeed);
             Assert.AreEqual(expected.SpawnEvents.Count, actual.SpawnEvents.Count);
+            for (int i = 0; i < expected.SpawnEvents.Count; i++)
+            {
+                Assert.AreEqual(expected.SpawnEvents[i].Distance, actual.SpawnEvents[i].Distance);
+                Assert.AreEqual(expected.SpawnEvents[i].AmmoId, actual.SpawnEvents[i].AmmoId);
+                Assert.AreEqual(expected.SpawnEvents[i].Side, actual.SpawnEvents[i].Side);
+            }
         }
 
         [Test]
