@@ -212,7 +212,10 @@ namespace Gamelab.Map.Train
         public NVector2 GetTargetPoint(EnemySlotSide side, NVector2 enemyPositionPx) =>
             EnemyWorldMath.GetTargetPoint(shootHoleCentersPx, side, enemyPositionPx, Layout.GetBounds());
 
-        /// <summary>Src GameplayScreen OnWallBreached / OnWallRepaired: keeps numberBreachedWalls in step.</summary>
+        /// <summary>
+        /// Src GameplayScreen OnWallBreached / OnWallRepaired: keeps numberBreachedWalls in step.
+        /// Call once per map: every call adds another pair of handlers, so counts would double.
+        /// </summary>
         public void Link(TrainStateRuntime train)
         {
             foreach (ShootHoleWallRuntime w in shootHoles)

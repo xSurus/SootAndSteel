@@ -50,6 +50,13 @@ namespace Gamelab.Map
             Sync();
         }
 
+        private void OnDestroy()
+        {
+            if (white == null) return;
+            Destroy(white.texture);
+            Destroy(white);
+        }
+
         private void Update() => Tick(Time.deltaTime);
 
         public void Tick(float dt)
