@@ -81,12 +81,24 @@ namespace Gamelab.Tests.PlayMode
         public IEnumerator House_BlocksEntity()
         {
             yield return null;
-            // House 1 collider spans x 2.33..8.47 m, y 1.5 -/+ 2.66 m, so push up from below? Its bottom is 4.16 m.
+            // Push up from below into the bottom edge of the House 1 collider.
             HubMapModel.BoxPx h = model.HouseColliders[0];
             float bottom = (h.Center.Y + h.Size.Y / 2f) / 100f;
             PhysicalEntity e = NewEntity(new Vector2(h.Center.X / 100f, bottom + 1f));
             yield return Push(e, new Vector2(0f, -3f), 60);
             Assert.Greater(e.Position.y, bottom, "at " + e.Position);
+        }
+
+        [UnityTest]
+        public IEnumerator House2Art_UsesHouse1Origin_LikeSrc()
+        {
+            yield return null;
+            // Src reuses House1's origin (w/2, h/2) for House2: centre = pos + ((w2-w1)/2, (h2-h1)/2) * 0.3 px.
+            // Textures: House1 2048x2176, House2 1846x2165.
+            Assert.AreEqual((model.House1Position.X) / 100f, view.HouseRenderers[0].bounds.center.x, 1e-3f);
+            Assert.AreEqual((model.House1Position.Y) / 100f, view.HouseRenderers[0].bounds.center.y, 1e-3f);
+            Assert.AreEqual((model.House2Position.X + (1846 - 2048) / 2f * 0.3f) / 100f, view.HouseRenderers[1].bounds.center.x, 1e-3f);
+            Assert.AreEqual((model.House2Position.Y + (2165 - 2176) / 2f * 0.3f) / 100f, view.HouseRenderers[1].bounds.center.y, 1e-3f);
         }
 
         [UnityTest]

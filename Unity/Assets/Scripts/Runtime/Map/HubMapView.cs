@@ -23,6 +23,7 @@ namespace Gamelab.Map
         private readonly List<BoxCollider2D> boundaryColliders = new List<BoxCollider2D>();
         private readonly List<BoxCollider2D> houseColliders = new List<BoxCollider2D>();
         private readonly List<BoxCollider2D> stakeColliders = new List<BoxCollider2D>();
+        private readonly List<SpriteRenderer> houseRenderers = new List<SpriteRenderer>();
         private readonly List<SpriteRenderer> stakeRenderers = new List<SpriteRenderer>();
         private readonly List<SpriteRenderer> railRenderers = new List<SpriteRenderer>();
         private readonly List<Object> owned = new List<Object>();
@@ -31,6 +32,7 @@ namespace Gamelab.Map
         public IReadOnlyList<BoxCollider2D> BoundaryColliders => boundaryColliders;
         public IReadOnlyList<BoxCollider2D> HouseColliders => houseColliders;
         public IReadOnlyList<BoxCollider2D> StakeColliders => stakeColliders;
+        public IReadOnlyList<SpriteRenderer> HouseRenderers => houseRenderers;
         public IReadOnlyList<SpriteRenderer> StakeRenderers => stakeRenderers;
         public IReadOnlyList<SpriteRenderer> RailRenderers => railRenderers;
 
@@ -61,8 +63,8 @@ namespace Gamelab.Map
 
             BuildBackdrop();
             BuildRails();
-            BuildHouse("House1", model.House1Position);
-            BuildHouse("House2", model.House2Position);
+            houseRenderers.Add(BuildHouse("House1", model.House1Position, "House1"));
+            houseRenderers.Add(BuildHouse("House2", model.House2Position, "House1"));
             foreach (HubMapModel.Tree t in model.Trees)
                 PlaceFeet("Tree", MapSprites.Get(PineKey), t.Feet, t.Scale);
             foreach (HubMapModel.Npc n in new[] { model.Vendor, model.Town1 })
@@ -98,12 +100,19 @@ namespace Gamelab.Map
             r.transform.localScale = new Vector3(s, s, 1f);
         }
 
-        // Src origin is the sprite centre at the given position.
-        private void BuildHouse(string name, System.Numerics.Vector2 pos)
+        // Src HubMap.DrawHouses builds ONE origin from House1's texture (w/2, h/2) and reuses it for House2.
+        // Src draws the pixel `origin` of the texture at `position`, so a sprite whose own centre differs from
+        // the origin pixel has its centre at position + (centre - origin) * scale. This replicates that quirk:
+        // House2's art sits offset from its collider. originKey names the texture the origin comes from.
+        private SpriteRenderer BuildHouse(string name, System.Numerics.Vector2 pos, string originKey)
         {
             SpriteRenderer r = NewRenderer(name, MapSprites.Get("Hub/" + name), HouseOrder);
             Scale(r, HubMapModel.HouseScale);
-            r.transform.position = MapSpace.PxToMeters(MapSpace.ToUnity(pos));
+            Sprite origin = MapSprites.Get("Hub/" + originKey);
+            var offsetPx = new Vector2(r.sprite.rect.width - origin.rect.width, r.sprite.rect.height - origin.rect.height)
+                / 2f * HubMapModel.HouseScale;
+            r.transform.position = MapSpace.PxToMeters(MapSpace.ToUnity(pos) + offsetPx);
+            return r;
         }
 
         // Src origin is bottom-centre at feet, depth by feet Y.
