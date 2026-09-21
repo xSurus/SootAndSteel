@@ -1,0 +1,17 @@
+.om-root { position: absolute; left: 0; top: 0; right: 0; bottom: 0; align-items: center; justify-content: center; }
+.om-paper { width: 380px; height: 280px; rotate: -1deg; }
+.om-title { position: absolute; left: -4px; top: 41px; width: 100%; font-size: 40px; color: rgb(17, 17, 9); -unity-text-align: upper-center; }
+.om-hint { position: absolute; left: 115px; top: 83px; width: 150px; font-size: 11px; color: rgba(0, 0, 0, 0.565); -unity-text-align: upper-center; }
+.om-dashes { position: absolute; left: 0; top: 104px; width: 100%; font-size: 18px; color: rgb(0, 0, 0); -unity-text-align: upper-center; }
+/* Centred horizontally (Gum's 21.35% puts the row off the paper), vertical centre at 71%. */
+.om-rows { position: absolute; left: 20px; width: 340px; top: 71%; translate: 0 -50%; }
+.om-row { width: 340px; height: 30px; }
+.om-chevron { position: absolute; left: 10px; top: 4px; width: 32px; height: 32px; display: none;
+    background-image: url("/Assets/Resources/UI/Art/spr_chevron_32.png"); -unity-background-image-tint-color: var(--chevron-tint); }
+.om-row--selected .om-chevron { display: flex; }
+.om-label, .om-percent { position: absolute; top: 0; height: 30px; font-size: 20px; color: var(--ink); -unity-text-align: middle-left; }
+.om-label { left: 50px; }
+.om-percent { right: 10px; -unity-text-align: middle-right; }
+.om-row--selected .om-label, .om-row--selected .om-percent { color: var(--label-selected); }
+.om-track { position: absolute; left: 140px; top: 7px; width: 120px; height: 15px; background-color: rgba(22, 13, 1, 0.647); }
+.om-thumb { position: absolute; top: -2.5px; width: 5px; height: 20px; background-color: rgb(0, 0, 0); }

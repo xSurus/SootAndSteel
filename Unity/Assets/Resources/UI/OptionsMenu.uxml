@@ -1,0 +1,10 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:VisualElement name="Root" class="om-root vignette">
+        <ui:VisualElement name="Paper" class="om-paper paper">
+            <ui:Label name="Title" text="Options" class="om-title font-typewriter" />
+            <ui:Label name="Hint" text="- Adjustments -" class="om-hint font-mono" />
+            <ui:Label name="Dashes" text="-----------------------" class="om-dashes font-mono" />
+            <ui:VisualElement name="Rows" class="om-rows" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

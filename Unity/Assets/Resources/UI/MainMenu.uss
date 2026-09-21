@@ -1,0 +1,18 @@
+.mm-root { position: absolute; left: 0; top: 0; right: 0; bottom: 0; }
+.mm-background {
+    position: absolute; left: 0; top: 0; right: 0; bottom: 0;
+    background-image: url("/Assets/Resources/UI/Art/Title.png");
+    background-size: 100% 100%;
+}
+.mm-menu {
+    position: absolute; left: 0; top: 0; right: 0; bottom: 0;
+    flex-direction: column; justify-content: center; align-items: center;
+}
+.mm-row { flex-direction: row; align-items: center; margin-top: 5px; margin-bottom: 5px; }
+.mm-label { font-size: 30px; color: var(--menu-unselected); -unity-text-align: middle-center; }
+.mm-row--selected .mm-label { color: var(--menu-selected); }
+.mm-tags { position: absolute; right: 100%; margin-right: 10px; font-size: 30px; color: var(--menu-unselected); white-space: nowrap; }
+.mm-fmod {
+    position: absolute; left: 90px; bottom: 10%; width: 30px; height: 30px;
+    background-image: url("/Assets/Resources/UI/Art/FmodLogo.png");
+}
