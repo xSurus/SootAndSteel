@@ -19,6 +19,8 @@ namespace Gamelab.Tests.UI
             Assert.NotNull(s, name);
             Assert.AreEqual(w, s.texture.width, name);
             Assert.AreEqual(h, s.texture.height, name);
+            Assert.AreEqual(new Rect(0, 0, w, h), s.rect, name);
+            Assert.AreEqual(new Rect(0, 0, w, h), s.textureRect, name);
         }
     }
 }

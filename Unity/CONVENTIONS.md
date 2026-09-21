@@ -294,7 +294,7 @@ Plan: `docs/superpowers/plans/2026-09-21-b2-1-menus-plan.md`. Slice: main menu, 
 - Views (Runtime, `Gamelab.UI.Runtime`): `MainMenuView`, `OptionsMenuView`, `PauseMenuView`, `ControlsOverlayView`, each a MonoBehaviour on a `UIDocument`. Controllers: `MainMenuController` and `PauseMenuController` own the models, views, one shared `PanelSettings` (`UiPanel.Create`: scale with screen size, 1920x1080, shrink, the same uniform scale as Gum) and tick the navigator in `Update`. Both have a `Configure(...)` with injected volume, players and sound, and a convenience overload that reads `SoundServiceRunner.Instance` and the `PlayerJoinManager` roster.
 - UXML and USS are in `Assets/Resources/UI/` (`MainMenu`, `OptionsMenu`, `PauseMenu`, `ControlsOverlay`, shared `Common.uss`, `RuntimeTheme.tss`) and load through `UiResources`. Layout numbers come from the Gum project files (`Src/Content/GumProject`), not from the `.Generated.cs` files, which hold no layout. Gum unit codes used: dimension 0 absolute, 1 percent of parent, 3 percent of source file, 4 relative to children; position 0 from left, 1 from top, 2 percent width, 3 percent height, 4 from right, 6 from center X, 7 from center Y.
 - Pause sets `Time.timeScale = 0` from `PauseMenuModel.Changed`, restores the value it saw when the pause began on unpause, disable and destroy, and re-applies it on re-enable while paused. The `TrainStateRuntime.SelfTick = false` fallback was not needed. `PlayerInputHandler` now ticks its directional repeater with `Time.unscaledDeltaTime`, because `deltaTime` is 0 while paused and hold-to-repeat would stop. Only the repeater uses it. A test proves the repeat under timeScale 0.
-- Art in `Assets/Resources/UI/Art/` (Title, FmodLogo, pause paper, controller image, chevron), imported by `Assets/Editor/UiSpriteImportSettings.cs` (Sprite, Point, uncompressed, no mipmaps, PPU = pixel width, max 8192). `UiSpriteImportTests` checks every importer.
+- Art in `Assets/Resources/UI/Art/` (Title, FmodLogo, pause paper, controller image, chevron), imported by `Assets/Editor/UiSpriteImportSettings.cs` (Sprite, FullRect, Point, uncompressed, no mipmaps, PPU = pixel width, max 8192). `UiSpriteImportTests` checks every importer.
 
 ### Facts found
 
@@ -377,6 +377,7 @@ Plan: `docs/superpowers/plans/2026-09-21-b2-3-hud-plan.md`. Slice: `GameplayHud`
 
 ### Facts found
 
+- UI art was importing as Tight, so the sprite rects in the .meta files were alpha-trimmed (GaugeDistance 3593x1000 instead of 4846x1000, GaugeHand 33x292). It now imports as FullRect like the map art, so rects equal the PNG size. This also affects the B2.1 and B2.2 art: their layouts were tested against trimmed sprites and still pass, but were not looked at visually.
 - The "enemy dots" are the level's spawn events, not live enemies. `EnsureEnemyDots` places one dot per `LevelDefinition.SpawnEvents` entry at `spawn.Distance / levelDistance`, and never removes them when the enemy spawns. No seam into the enemy runtime is needed.
 - The Src HUD shows no wall health, so `ShootHoleWallRuntime` is not touched. Temperature drives only the frost overlay.
 - There is no dial sprite in the speedometer. The dial is part of `GaugeDistance.png` (4846 x 1000, drawn at 20 percent, so 969.2 x 200). The track is 51.95 percent of that width, 503.5 canvas units, and the travel range is 503.5 minus 48.

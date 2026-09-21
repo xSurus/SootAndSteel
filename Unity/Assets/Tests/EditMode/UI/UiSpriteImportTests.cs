@@ -31,6 +31,19 @@ namespace Gamelab.Tests.UI
         }
 
         [Test]
+        public void EveryUiPngImportsAsFullRect()
+        {
+            foreach (var f in Directory.GetFiles(Root, "*.png"))
+            {
+                var path = f.Replace('\\', '/');
+                var ti = (TextureImporter)AssetImporter.GetAtPath(path);
+                var ts = new TextureImporterSettings();
+                ti.ReadTextureSettings(ts);
+                Assert.AreEqual(UnityEngine.SpriteMeshType.FullRect, ts.spriteMeshType, path);
+            }
+        }
+
+        [Test]
         public void FontsImportAsFonts()
         {
             foreach (var n in new[] { "UbuntuMono-Regular", "SpecialElite-Regular", "LibreBodoni" })
