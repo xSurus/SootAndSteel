@@ -1,0 +1,17 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:VisualElement name="Root" class="hub-view hub-fill" picking-mode="Ignore">
+        <ui:VisualElement name="Currency" class="ho-currency" picking-mode="Ignore">
+            <ui:VisualElement name="Coin" class="ho-coin" />
+            <ui:Label name="Amount" class="hub-text ho-amount font-mono" />
+        </ui:VisualElement>
+        <ui:VisualElement name="PlayersReady" class="ho-ready" picking-mode="Ignore">
+            <ui:Label name="ReadyLabel" class="hub-text ho-ready-label font-mono" />
+            <ui:VisualElement name="ReadyIcons" class="ho-ready-icons">
+                <ui:VisualElement name="BluePlayer" class="ho-player ho-player--blue" />
+                <ui:VisualElement name="BrownPlayer" class="ho-player ho-player--brown" />
+                <ui:VisualElement name="YellowPlayer" class="ho-player ho-player--yellow" />
+                <ui:VisualElement name="RedPlayer" class="ho-player ho-player--red" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

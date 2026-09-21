@@ -1,0 +1,3 @@
+/* Shared by the hub views. The default theme gives labels margin and padding, Gum text has none. */
+.hub-text { margin: 0; padding: 0; }
+.hub-fill { position: absolute; left: 0; top: 0; right: 0; bottom: 0; }

@@ -242,6 +242,75 @@ namespace Gamelab.Tests.UI
         }
 
         [Test]
+        public void UpdateRaisesChangedWhenReadySlotsOrAllReadyChange()
+        {
+            var m = new HubDepartureModel(100f);
+            int changed = 0;
+            m.Changed += () => changed++;
+            Run(m, 0.1f, One, 0);
+            m.ToggleReady(0);
+            changed = 0;
+            Run(m, 0.1f, One, 0);
+            Assert.AreEqual(0, changed, "nothing changed");
+            Run(m, 0.1f, Two, 0);
+            Assert.AreEqual(1, changed, "new player joined, AllReady off");
+            Run(m, 0.1f, new[] { 1, 0 }, 0);
+            Assert.AreEqual(2, changed, "joined order changed");
+        }
+
+        [Test]
+        public void ToggleReadyIgnoredWhileDeparting()
+        {
+            var m = new HubDepartureModel();
+            Run(m, 0.1f, One, 0);
+            m.ToggleReady(0);
+            Run(m, 1f, One, 0);
+            Assert.IsTrue(m.Departing);
+            m.ToggleReady(0);
+            Assert.IsTrue(m.IsReady(0));
+        }
+
+        [Test]
+        public void HubInputForwardsInteractAsAllowance()
+        {
+            var a = new FakeInputActions();
+            var slots = new List<PlayerSlot> { new PlayerSlot(0, a) };
+            var input = new HubInput(() => slots);
+            var help = new CraftingHelpModel(new RunCredits());
+            var dep = new HubDepartureModel(0.5f);
+            int departs = 0;
+            dep.DepartRequested += () => departs++;
+            input.Tick(0.1f, dep, help, 1);
+            dep.ToggleReady(0);
+            Assert.IsTrue(dep.IsDecisionOpen);
+            input.Tick(0.3f, dep, help, 1);
+            a.Interact = true;
+            input.Tick(0.1f, dep, help, 1);
+            a.Clear();
+            Assert.IsFalse(dep.IsDecisionOpen);
+            input.Tick(0.6f, dep, help, 1);
+            Assert.AreEqual(1, departs);
+        }
+
+        [Test]
+        public void HubInputGrabWinsWhenBothPressed()
+        {
+            var a = new FakeInputActions();
+            var slots = new List<PlayerSlot> { new PlayerSlot(0, a) };
+            var input = new HubInput(() => slots);
+            var help = new CraftingHelpModel(new RunCredits());
+            var dep = new HubDepartureModel(0.5f);
+            input.Tick(0.1f, dep, help, 1);
+            dep.ToggleReady(0);
+            input.Tick(0.3f, dep, help, 1);
+            a.Interact = true;
+            a.Grab = true;
+            input.Tick(0.1f, dep, help, 1);
+            Assert.IsFalse(dep.IsDecisionOpen);
+            Assert.IsFalse(dep.IsReady(0));
+        }
+
+        [Test]
         public void HubInputPollsAllSlots()
         {
             var a = new FakeInputActions();

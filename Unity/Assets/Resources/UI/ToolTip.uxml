@@ -1,0 +1,20 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:VisualElement name="Root" class="hub-view tt-root" picking-mode="Ignore">
+        <ui:VisualElement name="Background" class="tt-bg" />
+        <ui:VisualElement name="Separator1" class="tt-sep1" />
+        <ui:VisualElement name="Separator2" class="tt-sep2" />
+        <ui:VisualElement name="Wrapper" class="tt-wrapper" picking-mode="Ignore">
+            <ui:Label name="Functionality" class="hub-text tt-function font-mono" />
+            <ui:Label name="Title" class="hub-text tt-name font-mono" />
+            <ui:VisualElement name="Category" class="tt-category">
+                <ui:VisualElement name="CategoryIcon" class="tt-category-icon" />
+                <ui:Label name="CategoryText" class="hub-text tt-category-text font-mono" />
+            </ui:VisualElement>
+            <ui:Label name="Description" class="hub-text tt-description font-mono" />
+            <ui:VisualElement name="Interactions" class="tt-interactions">
+                <ui:VisualElement name="LeftButton" class="tt-left" />
+                <ui:VisualElement name="RightButton" class="tt-right" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,0 +1,10 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:VisualElement name="Root" class="hub-view ch-root" picking-mode="Ignore">
+        <ui:VisualElement name="Background" class="ch-bg" />
+        <ui:VisualElement name="Wrapper" class="ch-wrapper" picking-mode="Ignore">
+            <ui:Label name="Title" text="Crafting Recipes" class="hub-text ch-title font-mono" />
+            <ui:Label name="Description" class="hub-text ch-description font-mono" />
+            <ui:VisualElement name="ToggleButton" class="ch-button" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

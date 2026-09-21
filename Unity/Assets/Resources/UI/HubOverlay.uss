@@ -1,0 +1,18 @@
+/* Gum HubOverlay: CurrencyDisplay 40 px from the right, 40 from the top; PlayersReady 40 from the right, 20 from the bottom. */
+.ho-currency { position: absolute; right: 40px; top: 40px; width: 80px; height: 64px; }
+/* Coin is 64 px centred on x 25, so it starts at -7. */
+.ho-coin { position: absolute; left: -7px; top: 0; width: 64px; height: 64px; background-image: url("/Assets/Resources/UI/Art/spr_coin_32.png"); }
+.ho-amount { position: absolute; left: 55px; top: 16px; height: 32px; font-size: 25px; color: rgb(114, 89, 38);
+    -unity-font-style: bold; -unity-text-align: middle-left; white-space: nowrap; }
+.ho-ready { position: absolute; right: 40px; bottom: 20px; height: 50px; flex-direction: row; }
+/* Text is centred on the row plus 2 px (Y = 2). The icon container starts at x 165, or 230 when all are ready. */
+.ho-ready-label { width: 165px; height: 50px; padding-top: 4px; font-size: 20px; color: rgb(0, 0, 0); -unity-text-align: middle-left; white-space: nowrap; }
+.ho-ready-label--all { width: 230px; }
+/* Gum leaves the icon container at the top of the row (Y is not set). */
+.ho-ready-icons { flex-direction: row; align-self: flex-start; }
+.ho-player { width: 12px; height: 12px; display: none; }
+.ho-player--shown { display: flex; }
+.ho-player--blue { background-image: url("/Assets/Resources/UI/Art/IdleA0.png"); }
+.ho-player--brown { background-image: url("/Assets/Resources/UI/Art/IdleA1.png"); }
+.ho-player--yellow { background-image: url("/Assets/Resources/UI/Art/IdleA2.png"); }
+.ho-player--red { background-image: url("/Assets/Resources/UI/Art/IdleA3.png"); }

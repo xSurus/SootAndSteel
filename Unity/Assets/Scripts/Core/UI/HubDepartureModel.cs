@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Gamelab.UI
 {
@@ -66,7 +67,7 @@ namespace Gamelab.UI
         /// </summary>
         public void ToggleReady(int playerIndex)
         {
-            if (IsDecisionOpen) return;
+            if (IsDecisionOpen || Departing) return;
 
             bool justBecameReady = readyPlayers.Add(playerIndex);
             if (justBecameReady)
@@ -95,13 +96,16 @@ namespace Gamelab.UI
             hubElapsed += dt;
             UpdateDecisionInput(dt, interactPressed, grabPressed);
 
+            bool[] slotsBefore = ReadySlots;
+            bool allReadyBefore = AllReady;
             joined.Clear();
             for (int i = 0; i < joinedPlayerIndices.Count; i++) joined.Add(joinedPlayerIndices[i]);
-            if (readyPlayers.RemoveWhere(index => !joined.Contains(index)) > 0)
-                Changed?.Invoke();
+            readyPlayers.RemoveWhere(index => !joined.Contains(index));
 
             bool allReady = ComputeAllReady();
             AllReady = allReady;
+            if (allReady != allReadyBefore || !ReadySlots.SequenceEqual(slotsBefore))
+                Changed?.Invoke();
 
             pendingCount = pendingOffBoardCount;
             if (allowDepartWithPendingItems && pendingCount > previousPendingCount)

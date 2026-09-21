@@ -1,0 +1,11 @@
+/* Gum CraftingHelp: background 444x349 at the top left. Wrapper is 96% x 95% of it, centred. */
+.ch-root { position: absolute; left: 0; top: 0; width: 444px; height: 349px; }
+.ch-bg { position: absolute; left: 0; top: 0; width: 100%; height: 100%;
+    background-image: url("/Assets/Resources/UI/Art/tooltip_base_9slice_192x192.png");
+    -unity-slice-left: 64; -unity-slice-top: 64; -unity-slice-right: 64; -unity-slice-bottom: 64; }
+.ch-wrapper { position: absolute; left: 2%; top: 2.5%; width: 96%; height: 95%; }
+.ch-title { position: absolute; left: 50%; margin-left: -100px; top: 0; width: 200px; font-size: 20px; color: rgb(219, 219, 56); -unity-text-align: upper-center; }
+/* Font size 18 is the Gum default, the Gum font is Bahnschrift Light. */
+.ch-description { position: absolute; left: 5%; top: 35px; width: 90%; font-size: 18px; color: rgb(255, 255, 255); white-space: normal; }
+/* Width 176, X = 12 from the right edge (positive pushes it outside), Y = 276. */
+.ch-button { position: absolute; right: -12px; top: 276px; width: 176px; }

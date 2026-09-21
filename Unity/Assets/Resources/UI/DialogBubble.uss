@@ -1,0 +1,21 @@
+/* Gum DialogBubble: 920 wide, bottom centred with a 20 px gap (DialogueOverlay.RefreshLayoutAndPosition, passive and decision). */
+.db-root { align-items: center; justify-content: flex-end; padding-bottom: 20px; }
+.db-bubble { width: 920px; }
+.db-shadow { position: absolute; left: 3px; top: 4px; width: 100%; height: 100%; background-color: rgb(47, 35, 20); }
+.db-parchment { width: 100%;
+    background-image: url("/Assets/Resources/UI/Art/npc_bubble_nineslice.png");
+    -unity-slice-left: 16; -unity-slice-top: 16; -unity-slice-right: 16; -unity-slice-bottom: 16; }
+/* Namebar texture is 48x20, thirds are 16 and 7. Gum tints it (180, 156, 127). */
+.db-header { position: absolute; left: 0; top: 0; width: 100%; height: 30px;
+    background-image: url("/Assets/Resources/UI/Art/npc_bubble_namebar_nineslice.png");
+    -unity-background-image-tint-color: rgb(180, 156, 127);
+    -unity-slice-left: 16; -unity-slice-top: 7; -unity-slice-right: 16; -unity-slice-bottom: 7; justify-content: center; }
+.db-speaker { margin-left: 5%; width: 90%; font-size: 18px; color: rgb(200, 184, 120); -unity-text-align: middle-left; }
+/* Height is the text bottom plus 45. */
+.db-text-wrapper { width: 100%; padding-bottom: 45px; }
+.db-body { margin-left: 5%; margin-top: 42px; width: 90%; font-size: 20px; color: rgb(36, 27, 15); white-space: normal; }
+.db-footer { position: absolute; left: 0; bottom: 0; width: 100%; height: 40px; }
+.db-separator { position: absolute; left: 1%; top: 0; width: 98%; height: 1px; background-color: rgb(187, 169, 144); }
+/* 40 px box, 5 px in from the right and up from the bottom. Gum sizes it as the widest button plus 105, the port spaces the buttons 40 px apart. */
+.db-interactions { position: absolute; right: 5px; bottom: 5px; height: 40px; flex-direction: row; align-items: flex-start; }
+.db-left { margin-right: 40px; }
