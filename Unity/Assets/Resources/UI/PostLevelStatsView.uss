@@ -21,8 +21,8 @@
 .plv-summary-text { position: absolute; left: 0; top: 0; height: 60px; font-size: 30px; color: rgb(0, 0, 0); -unity-text-align: middle-left; white-space: nowrap; }
 .plv-summary-amount { left: auto; right: 0; -unity-text-align: middle-right; }
 .plv-punches { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
-.plv-punch { position: absolute; left: 7px; width: 50px; height: 50px; background-image: url("/Assets/Resources/UI/Art/spr_waybill_punch.png"); }
-.plv-stamp { position: absolute; left: 422px; top: 30px; width: 50px; height: 50px; background-image: url("/Assets/Resources/UI/Art/spr_waybill_paid_stamp.png"); }
+.plv-punch { position: absolute; left: 7px; width: 50px; height: 50px; background-image: url("/Assets/Resources/UI/Art/spr_waybill_punch.png");  background-size: 100% 100%; }
+.plv-stamp { position: absolute; left: 422px; top: 30px; width: 50px; height: 50px; background-image: url("/Assets/Resources/UI/Art/spr_waybill_paid_stamp.png");  background-size: 100% 100%; }
 /* Gum button (1081,691) minus the paper origin at (660,340) in the offset root. */
 .plv-button { position: absolute; left: 421px; top: 351px; }
 .plv-button .bwi-text { color: rgb(10, 8, 5); }

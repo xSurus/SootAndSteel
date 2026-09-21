@@ -45,6 +45,24 @@ namespace Gamelab.Tests.UI
         private static bool HasImage(VisualElement e) =>
             e.resolvedStyle.backgroundImage.texture != null || e.resolvedStyle.backgroundImage.sprite != null;
 
+        private static void AssertColor(Color expected, Color actual, float delta = 0.01f)
+        {
+            Assert.AreEqual(expected.r, actual.r, delta, "r");
+            Assert.AreEqual(expected.g, actual.g, delta, "g");
+            Assert.AreEqual(expected.b, actual.b, delta, "b");
+            Assert.AreEqual(expected.a, actual.a, delta, "a");
+        }
+
+        // Without background-size the art keeps its pixel size instead of stretching to the Gum box.
+        private static void AssertStretched(VisualElement e)
+        {
+            var size = e.resolvedStyle.backgroundSize;
+            Assert.AreEqual(LengthUnit.Percent, size.x.unit);
+            Assert.AreEqual(LengthUnit.Percent, size.y.unit);
+            Assert.AreEqual(100f, size.x.value, 0.01f);
+            Assert.AreEqual(100f, size.y.value, 0.01f);
+        }
+
         private static PostLevelStatsModel Level(out int total)
         {
             var rewards = LevelRewardBreakdown.FromCompletion(50f, 100f);
@@ -96,13 +114,15 @@ namespace Gamelab.Tests.UI
             Assert.AreEqual(root.width / 2f - 13f, paper.layout.x + 300f, Tol);
             Assert.AreEqual(root.height / 2f - 65f, paper.layout.y + 200f, Tol);
             Assert.IsTrue(HasImage(paper));
-            Assert.AreEqual(Color.white, view.Root.resolvedStyle.backgroundColor);
+            AssertColor(Color.white, view.Root.resolvedStyle.backgroundColor);
 
             Assert.AreEqual(15, view.Punches.childCount);
             Assert.AreEqual(7f, view.Punches[0].layout.x, Tol);
             Assert.AreEqual(20f, view.Punches[0].layout.y, Tol);
             Assert.AreEqual(370f, view.Punches[14].layout.y, Tol);
             Assert.AreEqual(50f, view.Punches[0].layout.width, Tol);
+            AssertStretched(view.Punches[0]);
+            AssertStretched(view.Stamp);
 
             Assert.AreEqual(40f, view.StageTitle.resolvedStyle.fontSize, 0.01f);
             Assert.AreEqual(47f, view.StageTitle.layout.y, Tol);
@@ -231,7 +251,7 @@ namespace Gamelab.Tests.UI
             Assert.AreEqual(600f, paper.layout.width, Tol);
             Assert.AreEqual((root.width - 600f) / 2f, paper.layout.x, Tol);
             Assert.AreEqual((root.height - paper.layout.height) / 2f, paper.layout.y, Tol);
-            Assert.AreEqual(new Color(20f / 255f, 0f, 0f), (Color)view.Root.resolvedStyle.backgroundColor);
+            AssertColor(new Color(20f / 255f, 0f, 0f), view.Root.resolvedStyle.backgroundColor);
             var vig = view.Vignette;
             Assert.AreEqual(root.width, vig.layout.width, Tol);
             Assert.AreEqual(root.height, vig.layout.height, Tol);
@@ -245,6 +265,8 @@ namespace Gamelab.Tests.UI
             Assert.AreEqual(40f, view.Root.Q<Label>("TitleText").resolvedStyle.fontSize, 0.01f);
             Assert.AreEqual(480f, view.Stamp.layout.x, Tol);
             Assert.AreEqual(39f, view.Stamp.layout.y, Tol);
+            AssertStretched(view.Root.Q("Hole1"));
+            AssertStretched(view.Stamp);
 
             // Stats grid: two columns of 250, label 65 percent of it, value 35 percent.
             var line = view.Root.Q("EnemiesLine");
