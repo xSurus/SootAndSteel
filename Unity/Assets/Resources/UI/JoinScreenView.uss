@@ -6,7 +6,11 @@
 /* PlayerFigureContainer: 90 percent wide at 5 percent, y at 35 percent, four slots of 25 percent. A slot is as high as it is wide. */
 .jsv-figures { position: absolute; left: 96px; top: 378px; width: 1728px; height: 432px; }
 .jsv-slot { position: absolute; top: 0; width: 432px; height: 432px; }
-/* Player: 80 percent square at x 5 percent of the slot width. The figure fills it (410x400 texture stretched, as in Gum). */
+#Slot0 { left: 0; }
+#Slot1 { left: 25%; }
+#Slot2 { left: 50%; }
+#Slot3 { left: 75%; }
+/* Player: 80 percent square at x 5 percent of the slot width. The figure fills it (Silhouette and IdleA0 are 410x400, IdleA1 to IdleA3 are 400x390, Gum's source rect is 410x400 for all, the port stretches every texture to the square, unverified). */
 .jsv-player { position: absolute; left: 21.6px; top: 0; width: 345.6px; height: 345.6px; }
 .jsv-figure { position: absolute; left: 0; top: 0; right: 0; bottom: 0; -unity-background-scale-mode: stretch-to-fill; }
 /* Join button: centred on 55 percent of the Player width, top at 110 percent of its height. */

@@ -103,7 +103,9 @@ namespace Gamelab.Tests.UI
                 Assert.AreEqual("Join", view.JoinText(i).text);
                 Assert.IsTrue(HasImage(view.JoinIcon(i)));
             }
-            var glyphA = Image(view.JoinIcon(0));
+            var glyphA = UiSpriteCrop.Glyph(XboxButtonAtlas.Face.A);
+            var glyphStart = UiSpriteCrop.Glyph(XboxButtonAtlas.Face.Start);
+            Assert.AreSame(glyphA, Image(view.JoinIcon(0)));
 
             count[0] = 1;
             model.Refresh();
@@ -111,7 +113,7 @@ namespace Gamelab.Tests.UI
             Assert.AreEqual("Press start to advance", view.Title.text);
             Assert.AreSame(Resources.Load<Sprite>("UI/Art/IdleA0"), Image(view.Figure(0)));
             Assert.AreEqual("Joined", view.JoinText(0).text);
-            Assert.AreNotSame(glyphA, Image(view.JoinIcon(0)));
+            Assert.AreSame(glyphStart, Image(view.JoinIcon(0)));
             Assert.AreSame(glyphA, Image(view.JoinIcon(1)));
             Assert.AreSame(silhouette, Image(view.Figure(1)));
             Assert.AreEqual("Join", view.JoinText(1).text);
@@ -178,7 +180,7 @@ namespace Gamelab.Tests.UI
             Assert.IsTrue(HasImage(view.Icon));
             Assert.AreEqual(32f, view.Icon.layout.width, Tol);
             Assert.AreEqual(26f, view.Icon.layout.x + 16f, Tol);
-            Assert.AreEqual(Resources.Load<Texture2D>("UI/Art/spr_xbox_select_32").width, 32);
+            Assert.AreEqual(32, Resources.Load<Texture2D>("UI/Art/spr_xbox_select_32").width);
         }
 
         [UnityTest]
