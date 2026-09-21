@@ -1,0 +1,11 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:VisualElement name="Root" class="jsv-root hub-fill" picking-mode="Ignore">
+        <ui:Label name="Title" class="hub-text jsv-title font-mono" />
+        <ui:VisualElement name="Figures" class="jsv-figures" picking-mode="Ignore">
+            <ui:VisualElement name="Slot0" class="jsv-slot" style="left: 0;" />
+            <ui:VisualElement name="Slot1" class="jsv-slot" style="left: 432px;" />
+            <ui:VisualElement name="Slot2" class="jsv-slot" style="left: 864px;" />
+            <ui:VisualElement name="Slot3" class="jsv-slot" style="left: 1296px;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
