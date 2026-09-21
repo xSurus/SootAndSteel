@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 
 namespace Gamelab.Screens
 {
@@ -46,6 +47,8 @@ namespace Gamelab.Screens
                     : timeAdjustment < 0 ? "Arrived behind schedule" : "Met scheduled arrival");
         }
 
-        public static string FormatSignedAmount(int amount) => amount >= 0 ? $"+{amount}" : amount.ToString();
+        public static string FormatSignedAmount(int amount) => amount >= 0
+            ? "+" + amount.ToString(CultureInfo.InvariantCulture)
+            : amount.ToString(CultureInfo.InvariantCulture);
     }
 }

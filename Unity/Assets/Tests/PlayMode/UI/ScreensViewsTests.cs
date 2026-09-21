@@ -81,6 +81,8 @@ namespace Gamelab.Tests.UI
             Assert.AreEqual(DisplayStyle.None, el.style.display.value);
 
             timer.Trigger();
+            StampView.Apply(el, timer, 45f);
+            Assert.AreEqual(-(45f - 10f), el.style.rotate.value.angle.ToDegrees(), 0.001f);
             StampView.Apply(el, timer, 10f);
             Assert.AreEqual(DisplayStyle.Flex, el.style.display.value);
             Assert.AreEqual(1.35f, el.style.scale.value.value.x, 0.001f);
@@ -273,6 +275,9 @@ namespace Gamelab.Tests.UI
             Assert.AreEqual(250f, line.layout.width, Tol);
             Assert.AreEqual(162.5f, line.Q<Label>(className: "fsv-stat-label").layout.width, Tol);
             Assert.AreEqual(87.5f, line.Q(className: "fsv-stat-item").layout.width, Tol);
+            // Two 19 px lines with 10 px between them fill the 48 px column.
+            Assert.AreEqual(29f, view.Root.Q("DistanceLine").layout.y, Tol);
+            Assert.AreEqual(48f, view.Root.Q("DistanceLine").layout.yMax, Tol);
             Assert.Greater(view.Root.Q("Column2").layout.x, view.Root.Q("Column1").layout.x + 200f);
             Assert.Greater(view.Root.Q("StagesLine").worldBound.x, view.Root.Q("EnemiesLine").worldBound.x);
             Assert.AreEqual(view.Root.Q("EnemiesLine").worldBound.y, view.Root.Q("StagesLine").worldBound.y, Tol);

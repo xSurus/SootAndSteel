@@ -8,7 +8,8 @@ namespace Gamelab.UI
     /// width is Progress / 1.5 (ProgressRatio), so a full hold takes 0.75 s.
     /// SkipRequested mirrors Src pendingHubOutroRequest: it is set whenever the unclamped progress
     /// reaches the cap and stays true until the caller consumes it, even if progress drains later.
-    /// Src's ConsumePendingHubOutroRequest also saves the run; that stays with the caller.
+    /// Src's ConsumePendingHubOutroRequest also clears tutorial guidance, marks the tutorial completed
+    /// and saves the run (TutorialDirector.cs:184-186); all of that stays with the caller.
     /// </summary>
     public class SkipTutorialModel
     {

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Gamelab.Input;
 using Gamelab.Screens;
 using Gamelab.Services.Sound;
+using Gamelab.UI;
 using Gamelab.UI.Runtime;
 using NUnit.Framework;
 using UnityEngine;
@@ -174,6 +175,19 @@ namespace Gamelab.Tests.UI
             Run(c.Tick, 0.3f);
             Assert.AreEqual(1, done);
             Run(c.Tick, 2f);
+            Assert.AreEqual(1, done);
+        }
+
+        [UnityTest]
+        public IEnumerator Fail_StartAloneConfirms()
+        {
+            var c = MakeFail();
+            yield return null;
+            p1.Start = true;
+            c.Tick(Dt);
+            p1.Start = false;
+            Assert.AreEqual(FailScreenPhase.Stamping, c.Model.Phase);
+            Run(c.Tick, 1.3f);
             Assert.AreEqual(1, done);
         }
 

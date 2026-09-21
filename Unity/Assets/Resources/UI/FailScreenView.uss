@@ -16,7 +16,8 @@
 /* Stats: 83.47 percent wide at x 49.6, 48 high, two columns with 10 px between rows. */
 .fsv-stats { width: 83.47%; margin-left: 49.6px; height: 48px; flex-direction: row; }
 .fsv-column { width: 50%; height: 100%; }
-.fsv-line { flex-direction: row; height: 18px; width: 100%; margin-bottom: 10px; }
+.fsv-line { flex-direction: row; height: 19px; width: 100%; flex-shrink: 0; }
+.fsv-line--first { margin-bottom: 10px; }
 .fsv-stat-label { width: 65%; height: 18px; font-size: 13px; color: rgba(90, 62, 32, 0.776); -unity-text-align: upper-left; white-space: nowrap; }
 /* PostDeathStatItem: the value and the dots both start at the box left, the dots 1 px right and 4 px down. Dots have no Gum font (default, size 17). */
 .fsv-stat-item { width: 35%; height: 18px; }
@@ -27,5 +28,5 @@
 .fsv-cause { width: 500px; align-self: center; font-size: 16px; color: rgba(0, 0, 0, 0.627); white-space: normal; }
 .fsv-button { align-self: flex-end; }
 .fsv-button .bwi-text { color: rgb(10, 8, 5); }
-.fsv-hole { position: absolute; top: 13px; width: 50px; height: 50px; background-image: url("/Assets/Resources/UI/Art/spr_waybill_punch.png");  background-size: 100% 100%; }
-.fsv-stamp { position: absolute; left: 480px; top: 39px; width: 50px; height: 50px; background-image: url("/Assets/Resources/UI/Art/spr_filed_closed_stamp.png");  background-size: 100% 100%; }
+.fsv-hole { position: absolute; top: 13px; width: 50px; height: 50px; background-image: url("/Assets/Resources/UI/Art/spr_waybill_punch.png"); background-size: 100% 100%; }
+.fsv-stamp { position: absolute; left: 480px; top: 39px; width: 50px; height: 50px; background-image: url("/Assets/Resources/UI/Art/spr_filed_closed_stamp.png"); background-size: 100% 100%; }

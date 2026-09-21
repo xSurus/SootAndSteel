@@ -8,8 +8,10 @@ namespace Gamelab.UI
     /// keyboard) and JoinFlowController raises OnReadyToAdvance when a joined player presses Start.
     /// Slot i is joined when i is below the count, the same rule as JoinFlowController.IsSlotJoined.
     /// Gaps between Src JoinScreen and that seam:
-    /// Src calls playerManager.Reset() in Initialize. The seam has no reset, so the join screen
-    /// controller does not clear the roster.
+    /// Src calls playerManager.Reset() in Initialize. PlayerJoinManager.ResetJoins() exists, so the
+    /// caller can call it before showing the screen for Src behaviour. The controller does not.
+    /// The first Refresh with zero joined raises no Changed (the initial state equals the empty
+    /// state), so a view must render the initial state itself.
     /// Src Start switches to MainMenuScreen. The seam only raises OnReadyToAdvance, the scene
     /// switch belongs to whoever subscribes.
     /// Src refreshes each frame and compares previousSlotJoined. Refresh does the same and raises

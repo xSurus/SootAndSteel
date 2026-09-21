@@ -6,7 +6,7 @@ namespace Gamelab.UI
 {
     public enum TooltipKind { None, Buyable, SpeedLever, Counter, ResourceStation, CannonSlot, Workbench, CraftingStation, Station }
 
-    public enum ButtonIcon { None, Coin, A, X, Y }
+    public enum ButtonIcon { None, Coin, A, X, Y, Start }
 
     public readonly struct ButtonSpec
     {

@@ -164,7 +164,9 @@ namespace Gamelab.Tests.Screens
         {
             var f = new FadeTransition();
             f.FadeIn(1f, 0.5f);
+            Assert.IsFalse(f.IsDone);
             AssertSeq(new[] { 0f, 0.15625f, 0.5f, 0.84375f, 1f, 1f }, Run(f, 0.25f, 6));
+            Assert.IsTrue(f.IsDone);
         }
 
         [Test]

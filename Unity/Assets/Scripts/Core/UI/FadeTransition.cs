@@ -5,6 +5,7 @@ namespace Gamelab.UI
     /// <summary>
     /// Opacity math of Src FilterTransition (delay, then smooth-step or linear fade). The colour parts
     /// and EffectIntensity are not ported, the view owns the colour.
+    /// delaySeconds and smoothEasing exist for Src parity and have no production caller yet.
     /// </summary>
     public sealed class FadeTransition
     {

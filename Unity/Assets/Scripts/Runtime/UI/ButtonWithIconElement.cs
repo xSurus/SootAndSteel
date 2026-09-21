@@ -21,6 +21,7 @@ namespace Gamelab.UI.Runtime
                 case ButtonIcon.A: iconElement.style.backgroundImage = new StyleBackground(UiSpriteCrop.Glyph(XboxButtonAtlas.Face.A)); break;
                 case ButtonIcon.X: iconElement.style.backgroundImage = new StyleBackground(UiSpriteCrop.Glyph(XboxButtonAtlas.Face.X)); break;
                 case ButtonIcon.Y: iconElement.style.backgroundImage = new StyleBackground(UiSpriteCrop.Glyph(XboxButtonAtlas.Face.Y)); break;
+                case ButtonIcon.Start: iconElement.style.backgroundImage = new StyleBackground(UiSpriteCrop.Glyph(XboxButtonAtlas.Face.Start)); break;
             }
             slot.Q<Label>("Text").text = label ?? "";
             slot.Q("Button").EnableInClassList("bwi--cant-afford", !canAfford);

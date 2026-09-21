@@ -29,7 +29,6 @@ namespace Gamelab.UI.Runtime
             panel = UiPanel.Create();
             var go = new GameObject("JoinScreenView");
             go.transform.SetParent(transform, false);
-            go.AddComponent<UIDocument>();
             View = go.AddComponent<JoinScreenView>();
             View.Bind(Model, panel);
             flow.OnReadyToAdvance.AddListener(OnAdvance);

@@ -38,8 +38,10 @@ namespace Gamelab.UI
         {
             fullCauseText = FailureReasonText.Get(reason);
             Stamp = new StampRevealTimer(StampRevealSeconds, 1.4f, -8f);
-            Stamp.Cue += s => Cue?.Invoke(s);
+            Stamp.Cue += PlayCue;
         }
+
+        private void PlayCue(string sound) => Cue?.Invoke(sound);
 
         public void Update(float dt, bool confirm)
         {
@@ -84,7 +86,7 @@ namespace Gamelab.UI
             soundTimer += dt;
             if (soundTimer >= SoundInterval)
             {
-                Cue?.Invoke(Sounds.PickupItem);
+                PlayCue(Sounds.PickupItem);
                 soundTimer -= SoundInterval;
             }
         }

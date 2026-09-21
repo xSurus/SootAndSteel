@@ -20,6 +20,7 @@ namespace Gamelab.UI.Runtime
         public VisualElement Icon { get; private set; }
         public Label Text { get; private set; }
         public VisualElement ProgressBar { get; private set; }
+        // Exposed for tests.
         public VisualElement Fill { get; private set; }
 
         public void Bind(SkipTutorialModel model, PanelSettings panel)

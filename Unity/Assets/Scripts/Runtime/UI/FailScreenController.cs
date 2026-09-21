@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Gamelab.Input;
+using Gamelab.Players;
 using Gamelab.Screens;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -35,7 +36,6 @@ namespace Gamelab.UI.Runtime
             panel = UiPanel.Create();
             var go = new GameObject("FailScreenView");
             go.transform.SetParent(transform, false);
-            go.AddComponent<UIDocument>();
             View = go.AddComponent<FailScreenView>();
             View.Bind(Model, stats, PostDeathStatsText.BuildIncidentLine(levelNumber, now), panel);
         }
@@ -43,7 +43,7 @@ namespace Gamelab.UI.Runtime
         public void Tick(float dt)
         {
             if (Model == null) return;
-            Model.Update(dt, MenuConfirm.Any(players));
+            Model.Update(dt, players?.Invoke().AnyPressedMenuConfirm() ?? false);
             View.Refresh();
         }
 

@@ -15,7 +15,7 @@
                     </ui:VisualElement>
                     <ui:VisualElement name="Stats" class="fsv-stats">
                         <ui:VisualElement name="Column1" class="fsv-column">
-                            <ui:VisualElement name="EnemiesLine" class="fsv-line">
+                            <ui:VisualElement name="EnemiesLine" class="fsv-line fsv-line--first">
                                 <ui:Label class="hub-text fsv-stat-label font-mono" text="Thieves neutralized" />
                                 <ui:VisualElement class="fsv-stat-item">
                                     <ui:Label name="EnemiesStat" class="hub-text fsv-stat font-mono" />
@@ -31,7 +31,7 @@
                             </ui:VisualElement>
                         </ui:VisualElement>
                         <ui:VisualElement name="Column2" class="fsv-column">
-                            <ui:VisualElement name="StagesLine" class="fsv-line">
+                            <ui:VisualElement name="StagesLine" class="fsv-line fsv-line--first">
                                 <ui:Label class="hub-text fsv-stat-label font-mono" text="Stages defeated" />
                                 <ui:VisualElement class="fsv-stat-item">
                                     <ui:Label name="StagesStat" class="hub-text fsv-stat font-mono" />

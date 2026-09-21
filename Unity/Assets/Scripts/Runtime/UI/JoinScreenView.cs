@@ -72,8 +72,7 @@ namespace Gamelab.UI.Runtime
             for (int i = 0; i < JoinScreenModel.SlotCount; i++)
             {
                 figures[i].style.backgroundImage = new StyleBackground(Resources.Load<Sprite>("UI/Art/" + model.FigureId(i)));
-                ButtonWithIconElement.Set(joinButtons[i], ButtonIcon.None, model.ButtonText(i));
-                joinButtons[i].Q("Icon").style.backgroundImage = new StyleBackground(UiSpriteCrop.Glyph(model.ButtonFace(i)));
+                ButtonWithIconElement.Set(joinButtons[i], model.IsJoined(i) ? ButtonIcon.Start : ButtonIcon.A, model.ButtonText(i));
             }
         }
 
