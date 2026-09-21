@@ -1,0 +1,20 @@
+:root {
+    --ink: rgb(0, 0, 0);
+    --label-selected: #6A3818;
+    --chevron-tint: #823C2D;
+    --menu-selected: #E7DE8A;
+    --menu-unselected: rgb(255, 255, 255);
+    --vignette: rgba(0, 0, 0, 0.78);
+}
+
+.font-mono { -unity-font-definition: url("/Assets/Resources/UI/Fonts/UbuntuMono-Regular.ttf"); }
+.font-typewriter { -unity-font-definition: url("/Assets/Resources/UI/Fonts/SpecialElite-Regular.ttf"); }
+.font-serif { -unity-font-definition: url("/Assets/Resources/UI/Fonts/LibreBodoni.ttf"); }
+
+.vignette { background-color: var(--vignette); }
+
+.paper {
+    background-image: url("/Assets/Resources/UI/Art/spr_pause_paper_burnt_380x280.png");
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+    color: var(--ink);
+}
