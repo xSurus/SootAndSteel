@@ -1,0 +1,33 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:VisualElement name="Root" class="plv-root hub-fill" picking-mode="Ignore">
+        <ui:VisualElement name="Paper" class="plv-paper">
+            <ui:Label name="IncidentDetail" class="hub-text plv-detail font-mono" text="ARRIVED 04 : 47 · CARRIAGE II · DELIVERED IN FULL" />
+            <ui:Label name="SeparatorTop" class="hub-text plv-separator font-mono" text="------------------------------------------------------------" />
+            <ui:Label name="StageTitle" class="hub-text plv-stage font-typewriter" />
+            <ui:VisualElement name="DeliveryRow" class="plv-row" style="top: 130px;">
+                <ui:Label name="DeliveryIndex" class="hub-text plv-index font-mono" />
+                <ui:VisualElement class="plv-label-box">
+                    <ui:Label name="DeliveryLabel" class="hub-text plv-label font-serif" />
+                    <ui:Label name="DeliveryDescription" class="hub-text plv-description" />
+                </ui:VisualElement>
+                <ui:Label name="DeliveryAmount" class="hub-text plv-amount font-mono" />
+            </ui:VisualElement>
+            <ui:VisualElement name="TimeRow" class="plv-row" style="top: 164px;">
+                <ui:Label name="TimeIndex" class="hub-text plv-index font-mono" />
+                <ui:VisualElement class="plv-label-box">
+                    <ui:Label name="TimeLabel" class="hub-text plv-label font-serif" />
+                    <ui:Label name="TimeDescription" class="hub-text plv-description" />
+                </ui:VisualElement>
+                <ui:Label name="TimeAmount" class="hub-text plv-amount font-mono" />
+            </ui:VisualElement>
+            <ui:VisualElement name="SummaryRow" class="plv-summary">
+                <ui:Label name="SummaryDescription" class="hub-text plv-summary-text font-typewriter" text="Account Credited" />
+                <ui:Label name="Summary" class="hub-text plv-summary-text plv-summary-amount font-typewriter" />
+            </ui:VisualElement>
+            <ui:VisualElement name="Punches" class="plv-punches" picking-mode="Ignore" />
+            <ui:VisualElement name="Stamp" class="plv-stamp" picking-mode="Ignore" />
+            <ui:VisualElement name="ContinueButton" class="plv-button" />
+        </ui:VisualElement>
+        <ui:VisualElement name="Fade" class="hub-fill plv-fade" picking-mode="Ignore" />
+    </ui:VisualElement>
+</ui:UXML>

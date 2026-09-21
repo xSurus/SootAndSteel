@@ -401,3 +401,12 @@ Plan: `docs/superpowers/plans/2026-09-21-b2-3-hud-plan.md`. Slice: `GameplayHud`
 - The runtime `Bind` overload throws a plain `NullReferenceException` on null arguments (review ruling).
 - Post-level and fail screens, the join screen, player spawning, the cannon seat: other slices.
 - Everything is unverified visually (no Editor GUI): the layout numbers are asserted only at a 640x480 test panel with a tolerance of 3, and the needle pivot, frost draw order, sorting order against other UI and scaling on non-16:9 windows were not seen.
+
+## B2.4 screens views (5a): post-level waybill and fail report
+
+- `StampView.Apply` sets display, scale and rotation from a `StampRevealTimer`. Gum resizes the sprite from its top-left origin, the view scales with `transform-origin: 0 0`, which gives the same picture. Rotation is negated (Gum counter-clockwise, USS clockwise).
+- `PostLevelStatsView` and `FailScreenView` (UXML and USS of the same name). `Refresh()` is meant to be called every frame by the controller. `PostLevelStatsModel.Rewards` was added for the row texts.
+- Nine-slice art uses `-unity-slice-type: tiled` (Gum tiles the middle sections). Borders are assumed thirds: waybill 32 on all sides, incident paper 85 and 64. Not looked at visually.
+- Waybill: the Gum root offset (-13,-65) is folded into the paper margin. The Continue button at Gum (1081,691) is paper-relative (421,351). The incident detail text is the static Gum string, Src never sets it.
+- Fail report: MainBox order follows the gucx instance order (title separator line, stats, dash separator, cause title, cause text, dash separator, button). Title lines are placed by their vertical centre (Gum uses 1 px high boxes anchored from the bottom). The paper height follows the content and grows while the cause text types, as in Gum.
+- Fonts without a Gum font (row descriptions, row amounts, the dots) use size 18 and 17 with the theme default font, the amounts use Ubuntu Mono. All layout and glyph rendering is unverified visually.

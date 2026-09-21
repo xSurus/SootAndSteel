@@ -53,6 +53,7 @@ namespace Gamelab.UI
         public string SummaryText => "+" + DisplayedTotal;
         public float FadeOpacity => fade.Opacity;
         public StampRevealTimer Stamp { get; }
+        public LevelRewardBreakdown Rewards => rewards;
 
         public PostLevelStatsModel(LevelRewardBreakdown rewards, Action<int> grantCredits)
         {
