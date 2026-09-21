@@ -91,6 +91,11 @@ namespace Gamelab.UI.Runtime
             navigator?.TickPause(Model);
         }
 
+        private void OnEnable()
+        {
+            if (Model != null && Model.IsPaused) ApplyTimeScale();
+        }
+
         private void OnDisable() => Restore();
 
         private void OnDestroy()

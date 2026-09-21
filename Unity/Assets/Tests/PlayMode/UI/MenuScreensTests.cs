@@ -62,9 +62,9 @@ namespace Gamelab.Tests.UI
         [TearDown]
         public void TearDown()
         {
-            Time.timeScale = savedTimeScale;
-            foreach (var o in cleanup) if (o != null) UnityEngine.Object.Destroy(o);
+            foreach (var o in cleanup) if (o != null) UnityEngine.Object.DestroyImmediate(o);
             cleanup.Clear();
+            Time.timeScale = savedTimeScale;
         }
 
         private static MainMenuViewModel Menu(bool withContinue)
@@ -281,7 +281,7 @@ namespace Gamelab.Tests.UI
 
         private static bool Shown(VisualElement root) => root.resolvedStyle.display == DisplayStyle.Flex;
 
-        private PauseMenuController MakePause(FakeInputActions input, Action<int> counter, FakeSound sound, Action exit)
+        private PauseMenuController MakePause(FakeInputActions input, FakeSound sound, Action exit)
         {
             var go = new GameObject("pause");
             cleanup.Add(go);
@@ -365,8 +365,16 @@ namespace Gamelab.Tests.UI
             Vector3 shift = pause.Menu.resolvedStyle.translate; // translate is not part of layout
             Assert.AreEqual(0.4852f * paper.width, menu.center.x + shift.x, 4f);
             Assert.AreEqual(0.6537f * paper.height, menu.center.y + shift.y, 4f);
+            float[] jitter = { 0f, -5f, 6f, 0f };
+            for (int i = 0; i < 4; i++)
+                Assert.AreEqual(jitter[i], pause.Rows[i].resolvedStyle.translate.x, 0.5f, "row " + i);
             vm.MoveDown(); vm.MoveDown(); vm.Confirm();
             yield return Frames(4);
+            Assert.AreEqual(71f, controls.Image.layout.x, 3f);
+            Assert.AreEqual(41f, controls.Image.layout.y, 3f);
+            var close = controls.Root.Q("Close");
+            Assert.AreEqual(611f, close.layout.x, 3f);
+            Assert.AreEqual(493f, close.layout.y, 3f);
             Assert.AreEqual(773f, controls.Paper.resolvedStyle.width, 3f);
             Assert.AreEqual(568f, controls.Paper.resolvedStyle.height, 3f);
             Assert.AreEqual(677f, controls.Image.resolvedStyle.width, 3f);
@@ -381,7 +389,7 @@ namespace Gamelab.Tests.UI
             var input = new FakeInputActions();
             var sound = new FakeSound();
             int exits = 0;
-            var c = MakePause(input, null, sound, () => exits++);
+            var c = MakePause(input, sound, () => exits++);
             yield return Frames();
             Assert.IsFalse(Shown(c.PauseView.Root));
             Assert.AreEqual(0.5f, Time.timeScale);
@@ -427,10 +435,27 @@ namespace Gamelab.Tests.UI
         }
 
         [UnityTest]
+        public IEnumerator PauseController_ReappliesTimeScaleOnReenableWhilePaused()
+        {
+            var input = new FakeInputActions();
+            var c = MakePause(input, new FakeSound(), null);
+            yield return Frames();
+            yield return Tap(input, () => input.Pause = true);
+            Assert.AreEqual(0f, Time.timeScale);
+            c.enabled = false;
+            Assert.AreEqual(1f, Time.timeScale);
+            c.enabled = true;
+            Assert.AreEqual(0f, Time.timeScale);
+            yield return Tap(input, () => input.Pause = true);
+            Assert.IsFalse(c.Model.IsPaused);
+            Assert.AreEqual(1f, Time.timeScale);
+        }
+
+        [UnityTest]
         public IEnumerator PauseController_RestoresTimeScaleOnDestroy()
         {
             var input = new FakeInputActions();
-            var c = MakePause(input, null, new FakeSound(), null);
+            var c = MakePause(input, new FakeSound(), null);
             yield return Frames();
             yield return Tap(input, () => input.Pause = true);
             Assert.AreEqual(0f, Time.timeScale);
