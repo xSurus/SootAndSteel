@@ -1,0 +1,27 @@
+/* Gum IngameHUD, 1920x1080 canvas units. */
+.hud-fill { position: absolute; left: 0; top: 0; right: 0; bottom: 0; }
+.hud-frost { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; opacity: 0; -unity-background-scale-mode: stretch-to-fill; }
+.hud-frost1 { background-image: url("/Assets/Resources/UI/Art/FrostScreen1.png"); }
+.hud-frost2 { background-image: url("/Assets/Resources/UI/Art/FrostScreen2.png"); }
+.hud-frost3 { background-image: url("/Assets/Resources/UI/Art/FrostScreen3.png"); }
+.hud-parchment { position: absolute; left: 0; top: -28px; width: 969.2px; height: 200px;
+    background-image: url("/Assets/Resources/UI/Art/GaugeDistance.png"); -unity-background-scale-mode: stretch-to-fill; }
+.hud-track { position: absolute; left: 181px; top: 3px; width: 503.5px; height: 200px; }
+.hud-ticks { position: absolute; left: -11.67px; top: -2px; width: 472.2px; height: 200px; }
+.hud-tick { position: absolute; top: 92.5px; width: 3px; height: 15px; background-color: rgb(42, 28, 16); }
+.hud-tick1 { left: 157.4px; }
+.hud-tick2 { left: 314.8px; }
+.hud-dashes { position: absolute; left: 0; top: 76px; height: 40px; font-size: 35px; color: rgb(0, 0, 0);
+    white-space: nowrap; -unity-text-align: middle-left; }
+.hud-goal { position: absolute; left: 428.5px; top: 68px; width: 64px; height: 64px;
+    background-image: url("/Assets/Resources/UI/Art/spr_hud_goal_x.png"); }
+.hud-dots { position: absolute; left: 0; top: 0; width: 0; height: 0; }
+.hud-dot { position: absolute; top: 73px; width: 50px; height: 50px;
+    background-image: url("/Assets/Resources/UI/Art/spr_hud_enemy.png"); -unity-background-scale-mode: stretch-to-fill; }
+.hud-marker { position: absolute; left: -16px; top: 83.5px; width: 32px; height: 28px;
+    background-image: url("/Assets/Resources/UI/Art/spr_hud_train_marker.png"); -unity-background-scale-mode: stretch-to-fill; }
+.hud-speedometer { position: absolute; left: 4px; top: -24px; width: 192px; height: 194px; }
+/* Pivot at the bottom centre of the container. The needle image is mirrored (Gum flipV plus 180 degrees). */
+.hud-needle-container { position: absolute; left: 89.6px; top: 38.8px; width: 12.8px; height: 58.2px; transform-origin: 50% 100%; }
+.hud-needle { position: absolute; left: -123.6px; top: -78.8px; width: 260px; height: 260px; scale: -1 1;
+    background-image: url("/Assets/Resources/UI/Art/GaugeHand.png"); -unity-background-scale-mode: stretch-to-fill; }

@@ -278,7 +278,7 @@ Art lives in `Assets/Resources/Map/` (loaded by `MapSprites.Get`). `Assets/Edito
 ### Integration notes for wave B2 (UI and camera)
 
 - Put the camera under `MirroredCamera` (or call `MapSpace.ApplyTo` after each size change). Camera position and zoom are in the Y-down world: to follow the train, use `TrainLayout.GetBounds()` divided by 100.
-- HUD data: `TrainStateRuntime.State` (`Temperature`, `MaxTemperature`, `DistanceTraveled`, `CurrentSpeed`), `LevelRuntime.Definition.LevelDistance` and `DistanceTraveled`, `ShootHoleWallRuntime.Health` and events.
+- HUD data: the HUD (`HudController`, see B2.3) reads `State.DistanceTraveled`, `actualSpeed`, `Temperature`, `MaxTemperature` and `LevelRuntime.Definition`. It does not read `CurrentSpeed` or wall health.
 - `LevelRuntime.SpawnDue` is where the enemy manager hooks in. `LevelRuntime` does not tick the train state because `TrainStateRuntime` ticks itself in `Update`. Set `TrainStateRuntime.SelfTick = false` if B2 wants to drive `Tick(dt)` itself (for example on pause).
 - Screen-space UI is not mirrored. World-space text is.
 
@@ -294,7 +294,7 @@ Plan: `docs/superpowers/plans/2026-09-21-b2-1-menus-plan.md`. Slice: main menu, 
 - Views (Runtime, `Gamelab.UI.Runtime`): `MainMenuView`, `OptionsMenuView`, `PauseMenuView`, `ControlsOverlayView`, each a MonoBehaviour on a `UIDocument`. Controllers: `MainMenuController` and `PauseMenuController` own the models, views, one shared `PanelSettings` (`UiPanel.Create`: scale with screen size, 1920x1080, shrink, the same uniform scale as Gum) and tick the navigator in `Update`. Both have a `Configure(...)` with injected volume, players and sound, and a convenience overload that reads `SoundServiceRunner.Instance` and the `PlayerJoinManager` roster.
 - UXML and USS are in `Assets/Resources/UI/` (`MainMenu`, `OptionsMenu`, `PauseMenu`, `ControlsOverlay`, shared `Common.uss`, `RuntimeTheme.tss`) and load through `UiResources`. Layout numbers come from the Gum project files (`Src/Content/GumProject`), not from the `.Generated.cs` files, which hold no layout. Gum unit codes used: dimension 0 absolute, 1 percent of parent, 3 percent of source file, 4 relative to children; position 0 from left, 1 from top, 2 percent width, 3 percent height, 4 from right, 6 from center X, 7 from center Y.
 - Pause sets `Time.timeScale = 0` from `PauseMenuModel.Changed`, restores the value it saw when the pause began on unpause, disable and destroy, and re-applies it on re-enable while paused. The `TrainStateRuntime.SelfTick = false` fallback was not needed. `PlayerInputHandler` now ticks its directional repeater with `Time.unscaledDeltaTime`, because `deltaTime` is 0 while paused and hold-to-repeat would stop. Only the repeater uses it. A test proves the repeat under timeScale 0.
-- Art in `Assets/Resources/UI/Art/` (Title, FmodLogo, pause paper, controller image, chevron), imported by `Assets/Editor/UiSpriteImportSettings.cs` (Sprite, Point, uncompressed, no mipmaps, PPU = pixel width, max 8192). `UiSpriteImportTests` checks every importer.
+- Art in `Assets/Resources/UI/Art/` (Title, FmodLogo, pause paper, controller image, chevron), imported by `Assets/Editor/UiSpriteImportSettings.cs` (Sprite, FullRect, Point, uncompressed, no mipmaps, PPU = pixel width, max 8192). `UiSpriteImportTests` checks every importer.
 
 ### Facts found
 
@@ -360,6 +360,44 @@ Plan: `docs/superpowers/plans/2026-09-21-b2-2-hub-shop-plan.md`. Slice: the hub 
 - DialogBubble typewriter reveal, `Show(line)` with world anchor and the bubble tail. They belong to the tutorial dialogue slice (`DialogueOverlay`, `DialogueManager`).
 - Category icons for categories other than Casing, Projectile and Propellant would crop `BulletComponentSpriteSheet.png`, which is not imported, so those icons stay hidden.
 - `CameraWorldToScreen` is checked only against `MirroredCamera` at the headless test camera size. Real scene cameras, non-16:9 windows and a camera rect that is not full screen are unverified, and the tooltip clamp now uses the real canvas size (see Facts found).
-- Not consumed yet: no scene contains `HubUiController`. Player spawning, the world-space hub view, the in-game HUD, post-level screens and the join screen belong to other slices.
+- Not consumed yet: no scene contains `HubUiController`. Player spawning, the world-space hub view, post-level screens and the join screen belong to other slices. The in-game HUD is B2.3.
 - Everything in this slice is unverified visually (no Editor GUI): fonts, nine-slice edges, text wrapping, tooltip placement over stations, panel scaling on non-16:9 windows.
 - The controller is stopped while paused, so the caller must hide tooltips with `Tooltips.SetAllVisible(false)` then and call `Tooltips.ClearAll` on departure.
+
+## B2.3 HUD: what is ported, what is deferred
+
+Plan: `docs/superpowers/plans/2026-09-21-b2-3-hud-plan.md`. Slice: `GameplayHud` and the four `Src/Components/IngameHUD` components (distance track with train marker, goal marker and enemy dots, speedometer needle, temperature frost), in UI Toolkit, screen space only.
+
+### Ported
+
+- Core (`Gamelab.UI`, `Core/UI`): `HudMath` (distance ratio, track travel range, speed ratio, needle degrees, frost opacity per layer, dot ratio) and `HudModel` (level, smoothed speed ratio, temperature ratio, marker fraction, needle degrees, frost opacities, dot ratios, `LevelVersion`). Goldens come from evaluating the Src expressions with a script. The model has no clock and no events.
+- Runtime (`Gamelab.UI.Runtime`): `HudView` (UXML and USS `Hud`, one `UIDocument`) and `HudController`. `HudController.Bind(TrainState, LevelDefinition, maxSpeed)` and `Bind(TrainStateRuntime, LevelRuntime)` read `State.DistanceTraveled`, `actualSpeed`, `Temperature`, `MaxTemperature` and the level definition. `Update` calls `HudModel.Update` and `HudView.Refresh` every frame. `SetLevel` rebuilds the dots only when the level reference changes.
+- Art in `Assets/Resources/UI/Art/`: `GaugeDistance`, `GaugeHand`, `spr_hud_train_marker`, `spr_hud_goal_x`, `spr_hud_enemy`, `FrostScreen1` to `3`. The UI import rule applies by path.
+- Pause: the HUD reads state and uses no clock, so `Time.timeScale = 0` needs no special case. The needle smoothing is one 0.15 lerp per `Update` call, as in Src, so it depends on frame rate and keeps converging while paused. A test runs the controller under timeScale 0.
+
+### Facts found
+
+- UI art was importing as Tight, so the sprite rects in the .meta files were alpha-trimmed (GaugeDistance 3593x1000 instead of 4846x1000, GaugeHand 33x292). It now imports as FullRect like the map art, so rects equal the PNG size. This also affects the B2.1 and B2.2 art: their layouts were tested against trimmed sprites and still pass, but were not looked at visually.
+- The "enemy dots" are the level's spawn events, not live enemies. `EnsureEnemyDots` places one dot per `LevelDefinition.SpawnEvents` entry at `spawn.Distance / levelDistance`, and never removes them when the enemy spawns. No seam into the enemy runtime is needed.
+- The Src HUD shows no wall health, so `ShootHoleWallRuntime` is not touched. Temperature drives only the frost overlay.
+- There is no dial sprite in the speedometer. The dial is part of `GaugeDistance.png` (4846 x 1000, drawn at 20 percent, so 969.2 x 200). The track is 51.95 percent of that width, 503.5 canvas units, and the travel range is 503.5 minus 48.
+- Gum position unit 5 is from the bottom with positive Y going down, unit 3 on a sprite is percent of the source image, and Gum rotation is counter-clockwise (USS `rotate` is clockwise, so the needle uses the negated angle).
+- `WorldUiManager` is the world-anchored tooltip manager. B2.2 ported all of it, and the HUD does not use `CurrencyDisplay` or `ToolTip`. Nothing of it was added here.
+
+### Deviations from the Gum layout and Src
+
+- `HudModel` starts with a temperature ratio of 1 (no frost). Src starts at 0, which would draw full frost on a frame before the first update.
+- Draw order is the same as Src: `GameplayScreen` draws `hud.Draw` (the frost) with the sprite batch and then calls `GumService.Default.Draw()`, so frost is under the gauge, as in the port's tree order. `virtualScreenSize` is 1920x1080, so the fixed 1920x1080 frost rect is the Src rect.
+- The three frost layers stay in the tree at opacity 0 (Src skips the draw below the threshold). This keeps about 44 MB of uncompressed textures resident for the HUD. Switch to `display: none` only if a frame capture shows a cost.
+- The HUD document has sorting order -10 so menus, hub views and tooltips draw above it.
+- Gum's needle is a 260 px image with a vertical flip and a 180 degree rotation about its top edge. The port uses a horizontal mirror and places the image so the tip lies 58 units above the pivot. Measured: the pivot is the container's bottom centre at (100, 73) canvas units. The dial pin in `GaugeDistance.png` is at about (100.1, 70.5) with radius 2.8, so the pivot is on the pin. `GaugeHand.png` has no hub, its wide end is a counterweight reaching 17 units past the pivot, and the tip reaches 58 units against a dial radius of 43 because Gum draws the hand at 26 percent and the dial at 20 percent of their sources (a Gum authoring mismatch, kept as is). The on-screen look was still not seen.
+- `TrackWidth` 503.5 is a constant in `HudView` and in `Hud.uss`. Src reads the real container width.
+- Font: Ubuntu Mono 35 for the dashes, as in Gum (it is already the B2.1 font).
+
+### Deferred (exact seam and reason)
+
+- Nothing in a scene contains `HudController`. Seam: a gameplay scene calls `Bind(trainStateRuntime, levelRuntime)` and `SetLevel` when the next level starts.
+- `HudController` does not follow `LevelRuntime.Definition` changes on its own (review ruling). The caller calls `SetLevel`, and `Bind` before `LevelRuntime.Initialize` sees a null definition.
+- The runtime `Bind` overload throws a plain `NullReferenceException` on null arguments (review ruling).
+- Post-level and fail screens, the join screen, player spawning, the cannon seat: other slices.
+- Everything is unverified visually (no Editor GUI): the layout numbers are asserted only at a 640x480 test panel with a tolerance of 3, and the needle pivot, frost draw order, sorting order against other UI and scaling on non-16:9 windows were not seen.

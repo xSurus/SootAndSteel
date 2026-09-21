@@ -1,0 +1,24 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:VisualElement name="Root" class="hud-fill" picking-mode="Ignore">
+        <ui:VisualElement name="Frost1" class="hud-frost hud-frost1" picking-mode="Ignore" />
+        <ui:VisualElement name="Frost2" class="hud-frost hud-frost2" picking-mode="Ignore" />
+        <ui:VisualElement name="Frost3" class="hud-frost hud-frost3" picking-mode="Ignore" />
+        <ui:VisualElement name="Parchment" class="hud-parchment" picking-mode="Ignore">
+            <ui:VisualElement name="Track" class="hud-track" picking-mode="Ignore">
+                <ui:VisualElement name="Ticks" class="hud-ticks" picking-mode="Ignore">
+                    <ui:VisualElement class="hud-tick hud-tick1" picking-mode="Ignore" />
+                    <ui:VisualElement class="hud-tick hud-tick2" picking-mode="Ignore" />
+                </ui:VisualElement>
+                <ui:Label name="Dashes" class="hud-dashes font-mono" text="-----------------------" picking-mode="Ignore" />
+                <ui:VisualElement name="GoalX" class="hud-goal" picking-mode="Ignore" />
+                <ui:VisualElement name="Dots" class="hud-dots" picking-mode="Ignore" />
+                <ui:VisualElement name="TrainMarker" class="hud-marker" picking-mode="Ignore" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="Speedometer" class="hud-speedometer" picking-mode="Ignore">
+            <ui:VisualElement name="NeedleContainer" class="hud-needle-container" picking-mode="Ignore">
+                <ui:VisualElement name="Needle" class="hud-needle" picking-mode="Ignore" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -12,7 +12,7 @@ namespace Gamelab.Tests.UI
         public void EveryUiPngHasSpriteSettings()
         {
             var files = Directory.GetFiles(Root, "*.png");
-            Assert.AreEqual(19, files.Length);
+            Assert.AreEqual(27, files.Length);
             foreach (var f in files)
             {
                 var path = f.Replace('\\', '/');
@@ -27,6 +27,19 @@ namespace Gamelab.Tests.UI
                 var b = File.ReadAllBytes(path);
                 int w = (b[16] << 24) | (b[17] << 16) | (b[18] << 8) | b[19];
                 Assert.AreEqual((float)w, ti.spritePixelsPerUnit, path);
+            }
+        }
+
+        [Test]
+        public void EveryUiPngImportsAsFullRect()
+        {
+            foreach (var f in Directory.GetFiles(Root, "*.png"))
+            {
+                var path = f.Replace('\\', '/');
+                var ti = (TextureImporter)AssetImporter.GetAtPath(path);
+                var ts = new TextureImporterSettings();
+                ti.ReadTextureSettings(ts);
+                Assert.AreEqual(UnityEngine.SpriteMeshType.FullRect, ts.spriteMeshType, path);
             }
         }
 
