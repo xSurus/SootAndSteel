@@ -43,6 +43,7 @@ namespace Gamelab.UI.ViewModels
             if (!playerSelections.ContainsKey(playerIndex))
             {
                 playerSelections[playerIndex] = 0;
+                OnSelectionChanged?.Invoke(playerIndex, 0);
             }
             return playerSelections[playerIndex];
         }

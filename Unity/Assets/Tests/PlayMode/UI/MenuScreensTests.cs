@@ -134,9 +134,34 @@ namespace Gamelab.Tests.UI
             var vm = Menu(false);
             var view = Make<MainMenuView>();
             view.Bind(vm, Panel());
+            var row = view.Rows[1];
+            yield return null;
+            view.enabled = false;
+            yield return null;
+            vm.MoveSelectionDown(0);
+            vm.SetSelection(0, 1);
+            Assert.IsFalse(Selected(row, "mm-row--selected"), "disabled view must not update");
+            view.enabled = true;
+            yield return null;
             UnityEngine.Object.Destroy(view.gameObject);
             yield return null;
-            Assert.DoesNotThrow(() => vm.MoveSelectionDown(0));
+            vm.SetSelection(0, 2);
+            Assert.IsFalse(Selected(row, "mm-row--selected"), "destroyed view must not update");
+            Assert.IsFalse(Selected(view.Rows[2], "mm-row--selected"));
+        }
+
+        [UnityTest]
+        public IEnumerator MainMenu_ControllerHighlightsFirstRowForNewPlayerWithoutInput()
+        {
+            var input = new FakeInputActions();
+            var go = new GameObject("controller");
+            cleanup.Add(go);
+            var c = go.AddComponent<MainMenuController>();
+            c.Configure(false, null, null, null, new FakeVolume(), 0.05f,
+                () => new List<IInputActions> { input }, () => { });
+            yield return Frames();
+            Assert.IsTrue(Selected(c.MenuView.Rows[0], "mm-row--selected"));
+            Assert.AreEqual("P1", ((Label)c.MenuView.Rows[0][0]).text);
         }
 
         [UnityTest]

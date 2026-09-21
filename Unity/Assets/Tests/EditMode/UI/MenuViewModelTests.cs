@@ -47,6 +47,19 @@ namespace Gamelab.Tests.EditMode.UI
         }
 
         [Test]
+        public void EnsurePlayer_raises_selection_changed_once_for_new_player()
+        {
+            var vm = Make();
+            int calls = 0, lastPlayer = -1, lastEntry = -1;
+            vm.OnSelectionChanged += (p, e) => { calls++; lastPlayer = p; lastEntry = e; };
+            vm.EnsurePlayer(2);
+            vm.EnsurePlayer(2);
+            Assert.AreEqual(1, calls);
+            Assert.AreEqual(2, lastPlayer);
+            Assert.AreEqual(0, lastEntry);
+        }
+
+        [Test]
         public void Confirm_invokes_selected_entry()
         {
             int a = 0, b = 0;
