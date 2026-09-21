@@ -43,7 +43,7 @@ namespace Gamelab.UI.Runtime
         public void Tick(float dt)
         {
             if (Model == null) return;
-            Model.Update(dt, players?.Invoke().AnyPressedMenuConfirm() ?? false);
+            Model.Update(dt, players?.Invoke()?.AnyPressedMenuConfirm() ?? false);
             View.Refresh();
         }
 

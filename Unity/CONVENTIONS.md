@@ -461,5 +461,5 @@ Every UI seam that no scene consumes yet, and what the scene or caller has to pa
 - `HudController`: `Bind(trainStateRuntime, levelRuntime)` and `SetLevel` per level.
 - `PostLevelStatsController`, `FailScreenController`, `JoinScreenController`, `SkipTutorialView` (this section).
 - Still not built: the dialogue overlay (typewriter, world anchored bubble), the tutorial director, player spawning, the cannon seat, snowstorm and other particles, the save system and run session, screen switching.
-- Scene wiring that touches several of these together: the pause interplay (`Time.timeScale` restored on scene switch, `TrainStateRuntime.SelfTick`), the sorting orders (HUD -10, hub views 0 to 2, menus above), and the shared `PanelSettings` per screen.
+- Scene wiring that touches several of these together: how pause and scene switching interact (`Time.timeScale` restored on scene switch, `TrainStateRuntime.SelfTick`), the sorting orders (HUD -10, hub views 0 to 2, menus above), and the shared `PanelSettings` per screen.
 - Visual check of every screen against the MonoGame build, on 16:9 and on other aspect ratios. Nobody has looked at any B2 screen.
