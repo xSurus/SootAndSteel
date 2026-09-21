@@ -47,8 +47,14 @@ namespace Gamelab.Tests.UI
 
         private static IEnumerator Frames(int n = 3) { for (int i = 0; i < n; i++) yield return null; }
 
-        private static bool HasImage(VisualElement e) =>
-            e.resolvedStyle.backgroundImage.texture != null || e.resolvedStyle.backgroundImage.sprite != null;
+        // The UI import rule makes the art sprites, so the resolved image is a sprite whose texture is the source.
+        private static Texture2D ImageTexture(VisualElement e)
+        {
+            var bg = e.resolvedStyle.backgroundImage;
+            return bg.texture != null ? bg.texture : bg.sprite != null ? bg.sprite.texture : null;
+        }
+
+        private static bool HasImage(VisualElement e) => ImageTexture(e) != null;
 
         private static float Angle(VisualElement e) => e.resolvedStyle.rotate.angle.ToDegrees();
 
@@ -73,6 +79,20 @@ namespace Gamelab.Tests.UI
             Assert.AreEqual(4f, view.Speedometer.layout.x, Tol);
             Assert.AreEqual(-24f, view.Speedometer.layout.y, Tol);
             Assert.AreEqual(89.6f, view.NeedleContainer.layout.x, Tol);
+            Assert.AreEqual(38.8f, view.NeedleContainer.layout.y, Tol);
+            Assert.AreEqual(12.8f, view.NeedleContainer.layout.width, Tol);
+            Assert.AreEqual(58.2f, view.NeedleContainer.layout.height, Tol);
+            Assert.AreEqual(-123.6f, view.Needle.layout.x, Tol);
+            Assert.AreEqual(-78.8f, view.Needle.layout.y, Tol);
+            Assert.AreEqual(260f, view.Needle.layout.width, Tol);
+            Assert.AreEqual(260f, view.Needle.layout.height, Tol);
+            var tick1 = view.Root.Q(className: "hud-tick1");
+            var tick2 = view.Root.Q(className: "hud-tick2");
+            Assert.AreEqual(92.5f, tick1.layout.y, Tol);
+            Assert.AreEqual(92.5f, tick2.layout.y, Tol);
+            Assert.AreEqual(157.4f, tick1.layout.x, Tol);
+            Assert.AreEqual(314.8f, tick2.layout.x, Tol);
+            Assert.AreEqual(83.5f, view.TrainMarker.layout.y, Tol);
             Assert.AreEqual(1920f, view.Frost1.layout.width, Tol);
             Assert.AreEqual(1080f, view.Frost1.layout.height, Tol);
             Assert.AreEqual(view.Root.layout.width, view.Root.parent.layout.width, Tol);
@@ -86,6 +106,7 @@ namespace Gamelab.Tests.UI
             yield return Frames();
             foreach (var e in new[] { view.Parchment, view.Needle, view.TrainMarker, view.GoalX, view.Dots[0], view.Frost1, view.Frost2, view.Frost3 })
                 Assert.IsTrue(HasImage(e), e.name + " " + string.Join(",", e.GetClasses()));
+            Assert.AreEqual(4846, ImageTexture(view.Parchment).width);
         }
 
         [UnityTest]
@@ -93,15 +114,16 @@ namespace Gamelab.Tests.UI
         {
             var model = new HudModel(Level());
             var view = Make(model);
+            float[] goldens = { 115.7099f, 358.3276f, 240.9454f };
+            int idx = 0;
             foreach (float speed in new[] { 0f, 300f, 600f })
             {
-                for (int i = 0; i < 60; i++) model.Update(0f, speed, 100f, 100f, 600f);
+                for (int i = 0; i < 300; i++) model.Update(0f, speed, 100f, 100f, 600f);
                 view.Refresh();
                 yield return Frames();
                 Assert.AreEqual(Wrap(-model.NeedleDegrees), Wrap(Angle(view.NeedleContainer)), 0.5f, "speed " + speed);
+                Assert.AreEqual(goldens[idx++], model.NeedleDegrees, 1e-3f, "golden " + speed);
             }
-            // Speed 600 has converged to the fast end, so it must differ from speed 0.
-            Assert.AreEqual(Wrap(-HudMath.NeedleDegrees(600f)), Wrap(Angle(view.NeedleContainer)), 0.5f);
         }
 
         [UnityTest]

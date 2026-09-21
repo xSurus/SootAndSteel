@@ -123,6 +123,7 @@ namespace Gamelab.Tests.UI
                 state.Update(1f);
                 yield return null;
                 yield return null;
+                Assert.Greater(c.Model.DistanceRatio, 0f);
                 Assert.AreEqual(state.DistanceTraveled / 1000f, c.Model.DistanceRatio, 1e-4f);
             }
             finally { Time.timeScale = old; }

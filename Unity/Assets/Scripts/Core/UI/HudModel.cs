@@ -11,7 +11,6 @@ namespace Gamelab.UI
     public class HudModel
     {
         private readonly List<float> dotRatios = new List<float>();
-        private LevelDefinition level;
         private float levelDistance = 1f;
         private float maxSpeed = 1f;
 
@@ -37,7 +36,6 @@ namespace Gamelab.UI
 
         public void SetLevel(LevelDefinition def)
         {
-            level = def;
             levelDistance = Math.Max(def?.LevelDistance ?? 1f, 1f);
             dotRatios.Clear();
             if (def != null)
@@ -56,7 +54,7 @@ namespace Gamelab.UI
             float speedRatio = HudMath.SpeedRatio(actualSpeed, maxSpeed);
             SmoothedSpeedRatio = HudMath.Lerp(SmoothedSpeedRatio, speedRatio, HudMath.NeedleSmoothing);
 
-            TemperatureRatio = HudMath.Clamp(temperature / Math.Max(maxTemperature, 1f), 0f, 1f);
+            TemperatureRatio = Math.Clamp(temperature / Math.Max(maxTemperature, 1f), 0f, 1f);
         }
     }
 }

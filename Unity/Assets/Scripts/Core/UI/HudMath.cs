@@ -19,21 +19,10 @@ namespace Gamelab.UI
         /// <summary>MathHelper.Lerp(a, b, t) = a + (b - a) * t.</summary>
         public static float Lerp(float a, float b, float t) => a + (b - a) * t;
 
-        /// <summary>
-        /// Clamp with MathHelper/Math.Clamp semantics for min less than or equal to max. NaN passes
-        /// through the comparisons unchanged, like Src.
-        /// </summary>
-        public static float Clamp(float v, float min, float max)
-        {
-            if (v < min) return min;
-            if (v > max) return max;
-            return v;
-        }
-
         public static float DistanceRatio(float distance, float levelDistance)
         {
             float level = Math.Max(levelDistance, 1f);
-            return Clamp(Math.Max(0f, distance) / level, 0f, 1f);
+            return Math.Clamp(Math.Max(0f, distance) / level, 0f, 1f);
         }
 
         /// <summary>Src TryGetTrackTravelRange: 0 when the track is too narrow to lay out.</summary>
@@ -45,12 +34,12 @@ namespace Gamelab.UI
         }
 
         public static float SpeedRatio(float actualSpeed, float maxSpeed)
-            => Clamp(actualSpeed / Math.Max(maxSpeed, 1f), 0f, 1f);
+            => Math.Clamp(actualSpeed / Math.Max(maxSpeed, 1f), 0f, 1f);
 
         /// <summary>Src GetNeedleContainerRotation, result in 0..360.</summary>
         public static float NeedleDegrees(float speed)
         {
-            float clamped = Clamp(speed, MinDisplaySpeed, MaxDisplaySpeed);
+            float clamped = Math.Clamp(speed, MinDisplaySpeed, MaxDisplaySpeed);
             float t = (clamped - MinDisplaySpeed) / (MaxDisplaySpeed - MinDisplaySpeed);
             float angle = Lerp(AngleAtMinDisplaySpeed, AngleAtMaxDisplaySpeed, t);
             float normalized = angle % 360f;
@@ -66,17 +55,18 @@ namespace Gamelab.UI
             switch (layer)
             {
                 case 1:
-                    return frost > 0.3f ? Clamp((frost - 0.3f) * (1f / 0.7f), 0f, 1f) : 0f;
+                    return frost > 0.3f ? Math.Clamp((frost - 0.3f) * (1f / 0.7f), 0f, 1f) : 0f;
+                // frost > 0.7 and > 0.9 compare as doubles on purpose, as in Src GameplayHud. Do not change to float.
                 case 2:
-                    return frost > 0.7 ? Clamp((frost - 0.7f) * (1f / 0.3f), 0f, 1f) : 0f;
+                    return frost > 0.7 ? Math.Clamp((frost - 0.7f) * (1f / 0.3f), 0f, 1f) : 0f;
                 case 3:
-                    return frost > 0.9 ? Clamp((frost - 0.9f) * (1f / 0.1f), 0f, 1f) : 0f;
+                    return frost > 0.9 ? Math.Clamp((frost - 0.9f) * (1f / 0.1f), 0f, 1f) : 0f;
                 default:
                     return 0f;
             }
         }
 
         public static float DotRatio(float spawnDistance, float levelDistance)
-            => Clamp(spawnDistance / Math.Max(levelDistance, 1f), 0f, 1f);
+            => Math.Clamp(spawnDistance / Math.Max(levelDistance, 1f), 0f, 1f);
     }
 }

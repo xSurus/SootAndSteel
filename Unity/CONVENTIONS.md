@@ -278,7 +278,7 @@ Art lives in `Assets/Resources/Map/` (loaded by `MapSprites.Get`). `Assets/Edito
 ### Integration notes for wave B2 (UI and camera)
 
 - Put the camera under `MirroredCamera` (or call `MapSpace.ApplyTo` after each size change). Camera position and zoom are in the Y-down world: to follow the train, use `TrainLayout.GetBounds()` divided by 100.
-- HUD data (consumed by `HudController`, see B2.3): `TrainStateRuntime.State` (`Temperature`, `MaxTemperature`, `DistanceTraveled`, `CurrentSpeed`), `LevelRuntime.Definition.LevelDistance` and `DistanceTraveled`, `ShootHoleWallRuntime.Health` and events.
+- HUD data: the HUD (`HudController`, see B2.3) reads `State.DistanceTraveled`, `actualSpeed`, `Temperature`, `MaxTemperature` and `LevelRuntime.Definition`. It does not read `CurrentSpeed` or wall health.
 - `LevelRuntime.SpawnDue` is where the enemy manager hooks in. `LevelRuntime` does not tick the train state because `TrainStateRuntime` ticks itself in `Update`. Set `TrainStateRuntime.SelfTick = false` if B2 wants to drive `Tick(dt)` itself (for example on pause).
 - Screen-space UI is not mirrored. World-space text is.
 
@@ -386,15 +386,17 @@ Plan: `docs/superpowers/plans/2026-09-21-b2-3-hud-plan.md`. Slice: `GameplayHud`
 ### Deviations from the Gum layout and Src
 
 - `HudModel` starts with a temperature ratio of 1 (no frost). Src starts at 0, which would draw full frost on a frame before the first update.
-- Draw order: frost sits under the gauge in the tree. Src draws frost with the sprite batch and Gum separately, and the order was not checked.
+- Draw order is the same as Src: `GameplayScreen` draws `hud.Draw` (the frost) with the sprite batch and then calls `GumService.Default.Draw()`, so frost is under the gauge, as in the port's tree order. `virtualScreenSize` is 1920x1080, so the fixed 1920x1080 frost rect is the Src rect.
+- The three frost layers stay in the tree at opacity 0 (Src skips the draw below the threshold). This keeps about 44 MB of uncompressed textures resident for the HUD. Switch to `display: none` only if a frame capture shows a cost.
 - The HUD document has sorting order -10 so menus, hub views and tooltips draw above it.
-- Gum's needle is a 260 px image with a vertical flip and a 180 degree rotation about its top edge. The port uses a horizontal mirror and places the image so the tip lies 58 units above the pivot. Where the needle hub sits relative to the dial pin was not verified visually.
+- Gum's needle is a 260 px image with a vertical flip and a 180 degree rotation about its top edge. The port uses a horizontal mirror and places the image so the tip lies 58 units above the pivot. Measured: the pivot is the container's bottom centre at (100, 73) canvas units. The dial pin in `GaugeDistance.png` is at about (100.1, 70.5) with radius 2.8, so the pivot is on the pin. `GaugeHand.png` has no hub, its wide end is a counterweight reaching 17 units past the pivot, and the tip reaches 58 units against a dial radius of 43 because Gum draws the hand at 26 percent and the dial at 20 percent of their sources (a Gum authoring mismatch, kept as is). The on-screen look was still not seen.
 - `TrackWidth` 503.5 is a constant in `HudView` and in `Hud.uss`. Src reads the real container width.
 - Font: Ubuntu Mono 35 for the dashes, as in Gum (it is already the B2.1 font).
 
 ### Deferred (exact seam and reason)
 
 - Nothing in a scene contains `HudController`. Seam: a gameplay scene calls `Bind(trainStateRuntime, levelRuntime)` and `SetLevel` when the next level starts.
-- `HudController` does not follow `LevelRuntime.Definition` changes on its own. The caller calls `SetLevel`.
+- `HudController` does not follow `LevelRuntime.Definition` changes on its own (review ruling). The caller calls `SetLevel`, and `Bind` before `LevelRuntime.Initialize` sees a null definition.
+- The runtime `Bind` overload throws a plain `NullReferenceException` on null arguments (review ruling).
 - Post-level and fail screens, the join screen, player spawning, the cannon seat: other slices.
 - Everything is unverified visually (no Editor GUI): the layout numbers are asserted only at a 640x480 test panel with a tolerance of 3, and the needle pivot, frost draw order, sorting order against other UI and scaling on non-16:9 windows were not seen.

@@ -13,6 +13,8 @@ namespace Gamelab.UI.Runtime
     [RequireComponent(typeof(UIDocument))]
     public class HudView : MonoBehaviour
     {
+        // Must match .hud-track width in Hud.uss. The HudMath.TrackTravelRange "width <= 1" guard is
+        // therefore never hit here (kept for Src parity).
         private const float TrackWidth = 503.5f;
         private const float DotSize = 50f;
 
@@ -45,6 +47,7 @@ namespace Gamelab.UI.Runtime
             var docRoot = GetComponent<UIDocument>().rootVisualElement;
             if (model == null || docRoot == null) return;
             docRoot.Clear();
+            docRoot.styleSheets.Clear();
             docRoot.styleSheets.Add(UiResources.LoadStyle("Common"));
             docRoot.styleSheets.Add(UiResources.LoadStyle("Hud"));
             UiResources.LoadTree("Hud").CloneTree(docRoot);
