@@ -1,5 +1,5 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements">
-    <ui:VisualElement name="Root" class="hub-view tt-root" picking-mode="Ignore">
+    <ui:VisualElement name="Root" class="tt-root" picking-mode="Ignore">
         <ui:VisualElement name="Background" class="tt-bg" />
         <ui:VisualElement name="Separator1" class="tt-sep1" />
         <ui:VisualElement name="Separator2" class="tt-sep2" />

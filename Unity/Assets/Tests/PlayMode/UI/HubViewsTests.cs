@@ -115,6 +115,7 @@ namespace Gamelab.Tests.UI
             Assert.AreEqual(-7f, coin.layout.x, Tol);
             Assert.AreEqual(64f, coin.resolvedStyle.width, Tol);
             Assert.AreEqual(55f, view.Amount.layout.x, Tol);
+            Assert.AreEqual(25f, view.Amount.resolvedStyle.fontSize, 0.01f);
             Assert.IsTrue(HasImage(coin));
 
             var ready = view.Root.Q("PlayersReady");
@@ -260,6 +261,22 @@ namespace Gamelab.Tests.UI
             Assert.AreEqual(0f, view.LeftButton.layout.x, Tol);
             Assert.AreEqual(wrapper.layout.width, Right(view.RightButton), Tol);
             Assert.AreEqual(32f, view.LeftButton.layout.height, Tol);
+            Assert.AreEqual(17f, view.LeftButton.Q<Label>("Text").resolvedStyle.fontSize, 0.01f, "compact button font");
+        }
+
+        [UnityTest]
+        public IEnumerator ToolTip_ComponentCategoriesUseTheirOwnArt()
+        {
+            foreach (var name in new[] { "Casing", "Projectile", "Propellant" })
+            {
+                var view = Make<ToolTipView>();
+                view.Bind(Model(new Item { Category = name }, TooltipKind.Station, 0), Panel());
+                yield return Frames();
+                Assert.AreEqual(name, view.CategoryText.text);
+                Assert.IsTrue(Shown(view.Category), name);
+                Assert.IsTrue(Shown(view.CategoryIcon), name);
+                Assert.IsTrue(HasImage(view.CategoryIcon), name);
+            }
         }
 
         [UnityTest]
@@ -330,22 +347,65 @@ namespace Gamelab.Tests.UI
             Assert.AreEqual(new Color32(255, 255, 255, 255), (Color32)view.RightButton.Q<Label>("Text").resolvedStyle.color);
         }
 
-        [UnityTest]
-        public IEnumerator Views_RebuildOnReEnable()
+        private IEnumerator Cycle(Component view)
         {
-            var model = new DialogBubbleModel();
-            var view = Make<DialogBubbleView>();
-            view.Bind(model, Panel());
-            model.ShowPassive("Hint", "Text");
             yield return Frames();
             view.gameObject.SetActive(false);
             yield return null;
-            view.gameObject.SetActive(true);
+        }
+
+        [UnityTest]
+        public IEnumerator Views_RebuildOnReEnable()
+        {
+            var bubble = new DialogBubbleModel();
+            var bubbleView = Make<DialogBubbleView>();
+            bubbleView.Bind(bubble, Panel());
+            bubble.ShowPassive("Hint", "Text");
+            yield return Cycle(bubbleView);
+            bubble.ShowPassive("Hint", "Newer");
+            bubbleView.gameObject.SetActive(true);
             yield return Frames();
-            Assert.AreEqual("Text", view.Body.text);
-            Assert.IsTrue(Shown(view.Root));
-            model.Hide();
-            Assert.IsFalse(Shown(view.Root));
+            Assert.AreEqual("Newer", bubbleView.Body.text);
+            Assert.IsTrue(Shown(bubbleView.Root));
+            bubble.Hide();
+            Assert.IsFalse(Shown(bubbleView.Root));
+
+            var credits = new RunCredits();
+            var dep = new HubDepartureModel(100f);
+            var overlay = Make<HubOverlayView>();
+            overlay.Bind(credits, dep, Panel());
+            yield return Cycle(overlay);
+            credits.AddCredits(7);
+            overlay.gameObject.SetActive(true);
+            yield return Frames();
+            Assert.AreEqual("7", overlay.Amount.text);
+            credits.AddCredits(1);
+            yield return Frames();
+            Assert.AreEqual("8", overlay.Amount.text);
+
+            var help = new CraftingHelpModel(credits);
+            var helpView = Make<CraftingHelpView>();
+            helpView.Bind(help, Panel());
+            yield return Cycle(helpView);
+            help.Toggle();
+            helpView.gameObject.SetActive(true);
+            yield return Frames();
+            Assert.AreEqual(help.Visible, Shown(helpView.Root));
+            help.Toggle();
+            Assert.AreEqual(help.Visible, Shown(helpView.Root));
+
+            var tip = Model(new Item { CostValue = 50 }, TooltipKind.Buyable, 10);
+            var tipView = Make<ToolTipView>();
+            tipView.Bind(tip, Panel());
+            yield return Cycle(tipView);
+            tip.Refresh(100);
+            tipView.gameObject.SetActive(true);
+            yield return Frames();
+            Assert.AreEqual(new Color32(255, 255, 255, 255), (Color32)tipView.LeftButton.Q<Label>("Text").resolvedStyle.color);
+            tip.Refresh(0);
+            yield return Frames();
+            Assert.AreEqual(new Color32(253, 82, 82, 255), (Color32)tipView.LeftButton.Q<Label>("Text").resolvedStyle.color);
+            LogAssert.NoUnexpectedReceived();
         }
     }
 }

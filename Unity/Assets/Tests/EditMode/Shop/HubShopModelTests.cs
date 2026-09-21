@@ -53,8 +53,8 @@ namespace Gamelab.Tests.Shop
             for (int i = 0; i < 4; i++) Assert.AreEqual(pos[i], model.Offers[i].Position);
         }
 
-        // Produced by running Src's catalog.OrderBy(x => new Random(seed).Next()).Take(4) over the 13 item
-        // catalog with a real .NET System.Random: (1000, 3) gives indices 2,8,3,1; (12345, 1) gives 8,11,0,12.
+        // Produced by running Src's catalog.OrderBy(x => hubRandom.Next()).Take(4) over the 13 item catalog
+        // with one real .NET System.Random(RestockSeed(seed, level)): (1000, 3) gives indices 2,8,3,1; (12345, 1) gives 8,11,0,12.
         [Test]
         public void Restock_Golden()
         {

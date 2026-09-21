@@ -49,6 +49,7 @@ namespace Gamelab.Tests.UI
         {
             public System.Numerics.Vector2 Pos;
             public bool Visible = true;
+            public int? Cost { get; set; }
             public System.Numerics.Vector2 Position => Pos;
             public string GetTitle() => "Item";
             public string GetDescription() => "Text";
@@ -72,7 +73,7 @@ namespace Gamelab.Tests.UI
             cleanup.Clear();
         }
 
-        private IEnumerator Setup()
+        private IEnumerator Setup(bool driven = true)
         {
             pending = 0;
             departs = 0;
@@ -86,12 +87,12 @@ namespace Gamelab.Tests.UI
             var go = new GameObject("HubUi");
             cleanup.Add(go);
             ctl = go.AddComponent<HubUiController>();
-            ctl.enabled = false; // ticks are driven by the test
+            ctl.enabled = !driven; // by default ticks are driven by the test
             ctl.Bind(credits, departure, help, () => slots, () => pending, projector);
             ctl.DepartRequested += () => departs++;
             yield return null;
             yield return null;
-            ctl.Tick(0.01f); // registers the joined players
+            if (driven) ctl.Tick(0.01f); // registers the joined players
         }
 
         private void Press(bool back = false, bool interact = false, bool grab = false, float dt = 0.01f)
@@ -196,6 +197,81 @@ namespace Gamelab.Tests.UI
             ctl.Tooltips.Set("a", item, TooltipKind.Station);
             yield return null;
             Assert.AreEqual(DisplayStyle.Flex, ctl.Tooltips.ViewOf("a").LeftButton.style.display.value);
+
+            var buy = new Item { Pos = new System.Numerics.Vector2(960, 540), Cost = 50 };
+            ctl.Tooltips.Set("b", buy, TooltipKind.Buyable);
+            yield return null;
+            var text = ctl.Tooltips.ViewOf("b").LeftButton.Q<Label>("Text");
+            Assert.AreEqual(new Color32(253, 82, 82, 255), (Color32)text.resolvedStyle.color);
+            credits.AddCredits(60);
+            ctl.Tick(0.01f);
+            yield return null;
+            Assert.AreEqual(new Color32(255, 255, 255, 255), (Color32)text.resolvedStyle.color);
+        }
+
+        [UnityTest]
+        public IEnumerator Tooltip_SetAllVisibleAndNullItem()
+        {
+            yield return Setup();
+            var item = new Item { Pos = new System.Numerics.Vector2(960, 540) };
+            ctl.Tooltips.Set("a", item, TooltipKind.Station);
+            yield return null;
+            ctl.Tick(0.01f);
+            var root = ctl.Tooltips.ViewOf("a").Root;
+            Assert.AreEqual(DisplayStyle.Flex, root.style.display.value);
+            ctl.Tooltips.SetAllVisible(false);
+            Assert.AreEqual(DisplayStyle.None, root.style.display.value);
+            ctl.Tooltips.SetAllVisible(true);
+            Assert.AreEqual(DisplayStyle.Flex, root.style.display.value);
+
+            ctl.Tooltips.Set("a", null, TooltipKind.Station);
+            Assert.AreEqual(0, ctl.Tooltips.Count);
+            ctl.Tooltips.Set("never", null, TooltipKind.Station);
+            Assert.AreEqual(0, ctl.Tooltips.Count);
+        }
+
+        [UnityTest]
+        public IEnumerator Tooltip_NonSixteenByNineScreen_UsesThePanelsRealScale()
+        {
+            yield return Setup();
+            yield return null;
+            var tree = ctl.OverlayView.Root.panel.visualTree.layout;
+            Assert.Greater(tree.width, 0f);
+            var screen = new Vector2(Screen.width, Screen.height);
+            Assert.Greater(Mathf.Abs(16f / 9f - screen.x / screen.y), 0.01f, "the test needs a non-16:9 screen");
+            // The panel's real scale, read from its layout: screen pixels per canvas unit.
+            float truth = screen.x / tree.width;
+            Assert.AreEqual(truth, UiPanel.CanvasScale(screen), 0.01f * truth);
+
+            projector.ScreenSize = screen;
+            var item = new Item { Pos = new System.Numerics.Vector2(screen.x / 2f, screen.y * 0.7f) };
+            ctl.Tooltips.Set("a", item, TooltipKind.Station);
+            yield return null;
+            ctl.Tick(0.01f);
+            var root = ctl.Tooltips.ViewOf("a").Root;
+            Assert.AreEqual(tree.width / 2f - TooltipLayout.PanelWidth / 2f, root.style.left.value.value, 1f);
+            Assert.AreEqual(tree.height * 0.7f - 40f - TooltipLayout.PanelHeight - 25f, root.style.top.value.value, 1f);
+        }
+
+        [UnityTest]
+        public IEnumerator BindTwice_Throws()
+        {
+            yield return Setup();
+            var ex = Assert.Throws<System.InvalidOperationException>(() =>
+                ctl.Bind(credits, departure, help, () => new List<PlayerSlot>(), () => 0, projector));
+            Assert.AreEqual("Bind once", ex.Message);
+        }
+
+        [UnityTest]
+        public IEnumerator EnabledController_UpdateDrivesTick()
+        {
+            yield return Setup(driven: false);
+            Assert.IsTrue(help.Visible);
+            p0.Back = true;
+            yield return null;
+            p0.Back = false;
+            yield return null;
+            Assert.IsFalse(help.Visible, "Update called Tick, which read the Back press");
         }
 
         [UnityTest]

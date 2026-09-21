@@ -1,3 +1,4 @@
+using Gamelab.Items.Bullets;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -71,7 +72,9 @@ namespace Gamelab.UI.Runtime
             if (name == null) return;
             CategoryText.text = name;
             Sprite icon = null;
-            if (name == "Casing" || name == "Projectile" || name == "Propellant")
+            if (name == ShopItemIconAtlas.GetComponentTypeName(EComponentType.Casing)
+                || name == ShopItemIconAtlas.GetComponentTypeName(EComponentType.Projectile)
+                || name == ShopItemIconAtlas.GetComponentTypeName(EComponentType.Propellant))
                 icon = Resources.Load<Sprite>("UI/Art/Basic" + name);
             else if (model.IconSourceRect is Gamelab.PhysicalEntities.Interfaces.SpriteRect rect)
                 icon = UiSpriteCrop.Get(ShopItemIconAtlas.SheetFile, rect);

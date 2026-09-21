@@ -44,6 +44,11 @@ namespace Gamelab.UI.Runtime
         /// <summary>Creates the tooltip for id, or rebuilds it when the item or kind changed.</summary>
         public void Set(object id, ITooltipable item, TooltipKind kind)
         {
+            if (item == null)
+            {
+                Clear(id);
+                return;
+            }
             if (!entries.TryGetValue(id, out var e))
             {
                 var go = new GameObject("ToolTip");
@@ -67,6 +72,13 @@ namespace Gamelab.UI.Runtime
             Object.Destroy(e.View.gameObject);
         }
 
+        /// <summary>Shows or hides every tooltip (the caller hides them while paused). Tick shows them again by item visibility.</summary>
+        public void SetAllVisible(bool visible)
+        {
+            foreach (var e in entries.Values)
+                if (e.View.Root != null) e.View.Root.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
+        }
+
         public void ClearAll()
         {
             foreach (var e in entries.Values) Object.Destroy(e.View.gameObject);
@@ -78,7 +90,10 @@ namespace Gamelab.UI.Runtime
             visible.Clear();
             rects.Clear();
             Vector2 size = projector.ScreenSize;
-            float scale = Mathf.Min(size.x / TooltipLayout.CanvasWidth, size.y / TooltipLayout.CanvasHeight);
+            float scale = UiPanel.CanvasScale(size);
+            if (scale <= 0f) return;
+            float canvasW = size.x / scale;
+            float canvasH = size.y / scale;
             foreach (var e in entries.Values)
             {
                 var root = e.View.Root;
@@ -89,11 +104,11 @@ namespace Gamelab.UI.Runtime
                 e.Model.Refresh(credits.Credits);
                 Vector2 canvas = projector.ToScreen(new Vector2(e.Item.Position.X, e.Item.Position.Y)) / scale;
                 rects.Add(TooltipLayout.Ideal(new System.Numerics.Vector2(canvas.x, canvas.y),
-                    TooltipLayout.PanelWidth, TooltipLayout.PanelHeight));
+                    TooltipLayout.PanelWidth, TooltipLayout.PanelHeight, canvasH));
                 visible.Add(e);
             }
             TooltipLayout.ResolveOverlaps(rects);
-            TooltipLayout.ClampToCanvas(rects);
+            TooltipLayout.ClampToCanvas(rects, canvasW, canvasH);
             for (int i = 0; i < visible.Count; i++)
             {
                 var root = visible[i].View.Root;

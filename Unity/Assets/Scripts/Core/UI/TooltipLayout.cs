@@ -34,7 +34,7 @@ namespace Gamelab.UI
         public const float OverlapGap = 10f;
         public const int OverlapIterations = 8;
 
-        public static TooltipRect Ideal(Vector2 anchorCanvas, float w, float h)
+        public static TooltipRect Ideal(Vector2 anchorCanvas, float w, float h, float canvasHeight = CanvasHeight)
         {
             float halfTile = TileSize / 2f;
             float x = anchorCanvas.X - w / 2f;
@@ -42,8 +42,8 @@ namespace Gamelab.UI
             float yBelow = anchorCanvas.Y + halfTile + Lift;
             float y;
             if (yAbove >= Margin) y = yAbove;
-            else if (yBelow + h <= CanvasHeight - Margin) y = yBelow;
-            else y = Math.Min(Math.Max(yAbove, Margin), Math.Max(Margin, CanvasHeight - h - Margin));
+            else if (yBelow + h <= canvasHeight - Margin) y = yBelow;
+            else y = Math.Min(Math.Max(yAbove, Margin), Math.Max(Margin, canvasHeight - h - Margin));
             return new TooltipRect(x, y, w, h);
         }
 
@@ -77,12 +77,13 @@ namespace Gamelab.UI
             }
         }
 
-        public static void ClampToCanvas(IList<TooltipRect> placements)
+        public static void ClampToCanvas(IList<TooltipRect> placements, float canvasWidth = CanvasWidth,
+            float canvasHeight = CanvasHeight)
         {
             foreach (TooltipRect p in placements)
             {
-                p.X = Math.Min(Math.Max(p.X, XMargin), Math.Max(XMargin, CanvasWidth - p.W - XMargin));
-                p.Y = Math.Min(Math.Max(p.Y, Margin), Math.Max(Margin, CanvasHeight - p.H - Margin));
+                p.X = Math.Min(Math.Max(p.X, XMargin), Math.Max(XMargin, canvasWidth - p.W - XMargin));
+                p.Y = Math.Min(Math.Max(p.Y, Margin), Math.Max(Margin, canvasHeight - p.H - Margin));
             }
         }
 

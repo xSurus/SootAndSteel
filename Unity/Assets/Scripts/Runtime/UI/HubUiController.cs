@@ -10,7 +10,8 @@ namespace Gamelab.UI.Runtime
     /// <summary>
     /// Owns the hub overlay, crafting help, dialog bubble and tooltip layer, and ticks HubInput in Update
     /// (Src HubScreen.Update). The caller supplies the models and callbacks, and stops the controller
-    /// (enabled = false) while paused, as Src skips the hub update then. Call Bind once.
+    /// (enabled = false) while paused, as Src skips the hub update then, so it also calls Tooltips.SetAllVisible(false)
+    /// on pause and Tooltips.ClearAll on departure. Call Bind once.
     /// </summary>
     public class HubUiController : MonoBehaviour
     {
@@ -32,6 +33,7 @@ namespace Gamelab.UI.Runtime
         public void Bind(RunCredits credits, HubDepartureModel departure, CraftingHelpModel help,
             Func<IReadOnlyList<PlayerSlot>> players, Func<int> pendingOffBoard, IWorldToScreen projector)
         {
+            if (input != null) throw new InvalidOperationException("Bind once");
             this.departure = departure;
             this.help = help;
             this.pendingOffBoard = pendingOffBoard;

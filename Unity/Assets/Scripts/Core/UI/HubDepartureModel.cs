@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Gamelab.UI
 {
@@ -21,6 +20,8 @@ namespace Gamelab.UI
         private readonly float departHoldSeconds;
         private readonly HashSet<int> readyPlayers = new HashSet<int>();
         private readonly List<int> joined = new List<int>();
+        private readonly bool[] slotsBefore = new bool[4];
+        private readonly bool[] slotsNow = new bool[4];
 
         private float hubElapsed;
         private int? lastReadyPlayerIndex;
@@ -55,10 +56,15 @@ namespace Gamelab.UI
             get
             {
                 var slots = new bool[4];
-                for (int i = 0; i < joined.Count && i < slots.Length; i++)
-                    slots[i] = readyPlayers.Contains(joined[i]);
+                FillSlots(slots);
                 return slots;
             }
+        }
+
+        private void FillSlots(bool[] slots)
+        {
+            for (int i = 0; i < slots.Length; i++)
+                slots[i] = i < joined.Count && readyPlayers.Contains(joined[i]);
         }
 
         /// <summary>
@@ -96,7 +102,7 @@ namespace Gamelab.UI
             hubElapsed += dt;
             UpdateDecisionInput(dt, interactPressed, grabPressed);
 
-            bool[] slotsBefore = ReadySlots;
+            FillSlots(slotsBefore);
             bool allReadyBefore = AllReady;
             joined.Clear();
             for (int i = 0; i < joinedPlayerIndices.Count; i++) joined.Add(joinedPlayerIndices[i]);
@@ -104,7 +110,11 @@ namespace Gamelab.UI
 
             bool allReady = ComputeAllReady();
             AllReady = allReady;
-            if (allReady != allReadyBefore || !ReadySlots.SequenceEqual(slotsBefore))
+            FillSlots(slotsNow);
+            bool slotsChanged = false;
+            for (int i = 0; i < slotsNow.Length; i++)
+                if (slotsNow[i] != slotsBefore[i]) slotsChanged = true;
+            if (allReady != allReadyBefore || slotsChanged)
                 Changed?.Invoke();
 
             pendingCount = pendingOffBoardCount;

@@ -102,13 +102,30 @@ namespace Gamelab.Tests.UI
         [Test]
         public void DecisionOpensViaUpdateFallbackAndHidesHint()
         {
-            var m = new HubDepartureModel();
-            var m2 = new HubDepartureModel();
-            Run(m2, 0.1f, One, 0);
-            m2.ToggleReady(0);
-            Run(m2, 0.01f, One, 1); // pending appears after ready
-            Assert.IsTrue(m2.IsDecisionOpen);
-            Assert.AreEqual(DialogBubbleModel.BubbleMode.Decision, m2.Bubble.Mode);
+            var m = new HubDepartureModel(100f);
+            Run(m, 6f, One, 0);
+            Assert.AreEqual(DialogBubbleModel.BubbleMode.Passive, m.Bubble.Mode);
+            m.ToggleReady(0);
+            Run(m, 0.01f, One, 1); // pending appears after ready
+            Assert.IsTrue(m.IsDecisionOpen);
+            Assert.AreEqual(DialogBubbleModel.BubbleMode.Decision, m.Bubble.Mode);
+        }
+
+        [Test]
+        public void InputBlockBoundary_PressAt019And021()
+        {
+            var m = new HubDepartureModel(100f);
+            Run(m, 0.1f, One, 0);
+            m.ToggleReady(0);
+            Assert.IsFalse(m.IsDecisionOpen);
+            Run(m, 0.01f, One, 1);
+            Assert.IsTrue(m.IsDecisionOpen);
+            Run(m, 0.19f, One, 1, interact: true);
+            Assert.IsTrue(m.IsDecisionOpen, "0.19 s is inside the 0.2 s block");
+            Run(m, 0.021f, One, 1, interact: true);
+            Assert.IsTrue(m.IsDecisionOpen, "the frame that ends the block still ignores the press");
+            Run(m, 0.01f, One, 1, interact: true);
+            Assert.IsFalse(m.IsDecisionOpen);
         }
 
         [Test]

@@ -320,6 +320,7 @@ Plan: `docs/superpowers/plans/2026-09-21-b2-1-menus-plan.md`. Slice: main menu, 
 - Not ported from Src `MainMenuScreen`: the Shift+R shortcut to `ShootingRangeScreen`, the snowstorm particles, the battle theme start and stop, `SaveManager.HasSave`. `hasSave` is a plain parameter. The screen switches (`StartNewGame`, `ContinueGame`, `Game.Exit`) are the callbacks the caller passes in.
 - `MainMenuPanel` also lists a "Shooting Range" entry that the live Gum screen does not show. Not ported.
 - Row pitch on the main menu: Gum `MainMenuButton` height is unit 5 with value 20, meaning unclear. The port uses 5 px margins top and bottom. Compare against the MonoGame build.
+- The controller is stopped while paused, so the caller must hide tooltips with `Tooltips.SetAllVisible(false)` then and call `Tooltips.ClearAll` on departure.
 - Everything in this slice is unverified visually (no Editor GUI): fonts, paper tilt, row spacing, the vignette, background stretch, panel scaling on non-16:9 windows.
 
 ## B2.2 hub and shop: what is ported, what is deferred
@@ -339,7 +340,7 @@ Plan: `docs/superpowers/plans/2026-09-21-b2-2-hub-shop-plan.md`. Slice: the hub 
 ### Facts found
 
 - `Resources.Load<StyleSheet>("UI/Name")` can return the StyleSheet named `inlineStyle` that a UXML of the same name exposes, instead of the USS. Which one comes back depends on import order, and it flipped once the art folder held twelve or more files, silently dropping a whole USS (three B2.1 tests failed). `UiResources.LoadStyle` now uses `LoadAll` and matches by name. Keep USS and UXML names identical per view and load styles only through it.
-- In the 640x480 headless panel the canvas scale is 0.44, so one screen pixel is 2.25 canvas units and layout values snap accordingly. Layout tests use a tolerance of 3.
+- In the 640x480 headless panel the canvas scale is 0.44, so one screen pixel is 2.25 canvas units and layout values snap accordingly. Layout tests use a tolerance of 3. 0.44 is the max rule: Shrink with ScaleWithScreenSize resolves to the larger of the two axis scales, max(w/1920, h/1080), and the root is 1440 wide there. The B2.1 comment "min, same as Gum" was wrong. Gum letterboxes with the smaller scale, so on non-16:9 windows UI Toolkit shows less of the canvas than Gum. Left as is, unverified against Gum. `UiPanel.CanvasScale` returns the real value and `TooltipLayer` clamps to the real canvas size (screen / scale).
 - Category icons: Src picks `Content/Items/Basic*.png` when the file exists and only otherwise crops the atlas, so the three categories always use the files. The atlas rect stays in Core for `IconSourceRect` parity.
 - `spr_xbtn_32.png` is a Gum design-time value that Src overrides with a glyph from the Xbox sheet at runtime, so it is not imported.
 - The plan's `HubUiController` takes `Func<IReadOnlyList<PlayerSlot>>` (the API `HubInput` already had) and a caller-supplied `Func<int>` for the pending off-board count, which needs the map.
@@ -351,6 +352,7 @@ Plan: `docs/superpowers/plans/2026-09-21-b2-2-hub-shop-plan.md`. Slice: the hub 
 - The decision bubble spaces its two buttons 40 px apart. Gum sizes the interaction box as the widest button plus 105, so the gap differs by a few pixels.
 - ButtonWithIcon text stays at the top of the button, as Gum leaves Y unset.
 - The CraftingHelp text is hard-coded in the view (static text in Gum).
+- `HubDepartureModel.ToggleReady` is also blocked while Departing. Src blocks it only while the decision is open. Harmless, since the screen is leaving.
 
 ### Deferred (exact seam and reason)
 
@@ -358,6 +360,6 @@ Plan: `docs/superpowers/plans/2026-09-21-b2-2-hub-shop-plan.md`. Slice: the hub 
 - `CountPendingShopItemsOffBoard`, the departure fade and screen switch, `SaveManager`. Each is the `Func<int>` or the event handler the caller passes to `HubUiController.Bind`.
 - DialogBubble typewriter reveal, `Show(line)` with world anchor and the bubble tail. They belong to the tutorial dialogue slice (`DialogueOverlay`, `DialogueManager`).
 - Category icons for categories other than Casing, Projectile and Propellant would crop `BulletComponentSpriteSheet.png`, which is not imported, so those icons stay hidden.
-- `CameraWorldToScreen` is checked only against `MirroredCamera` at the headless test camera size. Real scene cameras, non-16:9 windows and a camera rect that is not full screen are unverified, and the tooltip clamp assumes a 1920x1080 canvas.
+- `CameraWorldToScreen` is checked only against `MirroredCamera` at the headless test camera size. Real scene cameras, non-16:9 windows and a camera rect that is not full screen are unverified, and the tooltip clamp now uses the real canvas size (see Facts found).
 - Not consumed yet: no scene contains `HubUiController`. Player spawning, the world-space hub view, the in-game HUD, post-level screens and the join screen belong to other slices.
 - Everything in this slice is unverified visually (no Editor GUI): fonts, nine-slice edges, text wrapping, tooltip placement over stations, panel scaling on non-16:9 windows.
