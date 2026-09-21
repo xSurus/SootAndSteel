@@ -68,6 +68,18 @@ namespace Gamelab.Tests.EditMode.UI
         }
 
         [Test]
+        public void MainMenu_stops_after_a_pickup_opens_options()
+        {
+            var vm = Menu(() => options.Open());
+            p0.Pickup = true;
+            p1.Down = true;
+            nav.TickMainMenu(vm, options);
+            Assert.IsTrue(options.IsOpen);
+            Assert.AreEqual(0, vm.PlayerSelections.ContainsKey(1) ? vm.PlayerSelections[1] : 0);
+            Assert.AreEqual(1, sounds);
+        }
+
+        [Test]
         public void MainMenu_options_entry_opens_and_next_tick_handles_options()
         {
             var vm = Menu(() => options.Open());

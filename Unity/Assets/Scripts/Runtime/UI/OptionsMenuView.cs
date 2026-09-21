@@ -10,11 +10,13 @@ namespace Gamelab.UI.Runtime
     [RequireComponent(typeof(UIDocument))]
     public class OptionsMenuView : MonoBehaviour
     {
+        // Mirror OptionsMenu.uss (.om-track width 120, .om-thumb width 5). The USS is the source of truth.
         private const float TrackWidth = 120f;
         private const float ThumbWidth = 5f;
         private static readonly string[] RowLabels = { "Master", "Ambient", "Effects" };
 
         private OptionsViewModel vm;
+        private PanelSettings panel;
         private readonly List<VisualElement> rows = new List<VisualElement>();
         private readonly List<VisualElement> thumbs = new List<VisualElement>();
         private readonly List<Label> percents = new List<Label>();
@@ -28,11 +30,18 @@ namespace Gamelab.UI.Runtime
         public void Bind(OptionsViewModel model, PanelSettings panel)
         {
             Unsubscribe();
-            var doc = GetComponent<UIDocument>();
-            doc.panelSettings = panel;
-            doc.visualTreeAsset = UiResources.LoadTree("OptionsMenu");
+            GetComponent<UIDocument>().panelSettings = panel;
+            this.panel = panel;
             vm = model;
-            var docRoot = doc.rootVisualElement;
+            Rebuild();
+        }
+
+        // UIDocument recreates rootVisualElement on disable/enable, so the tree is rebuilt on every enable.
+        private void Rebuild()
+        {
+            Unsubscribe();
+            var docRoot = GetComponent<UIDocument>().rootVisualElement;
+            if (vm == null || docRoot == null) return;
             docRoot.Clear();
             docRoot.styleSheets.Add(UiResources.LoadStyle("Common"));
             docRoot.styleSheets.Add(UiResources.LoadStyle("OptionsMenu"));
@@ -98,7 +107,7 @@ namespace Gamelab.UI.Runtime
             vm.OnVolumeChanged -= OnVolume;
         }
 
-        private void OnEnable() { if (vm != null) { Unsubscribe(); Subscribe(); Refresh(); } }
+        private void OnEnable() => Rebuild();
         private void OnDisable() => Unsubscribe();
         private void OnDestroy() => Unsubscribe();
     }

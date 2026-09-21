@@ -161,6 +161,75 @@ namespace Gamelab.Tests.UI
         }
 
         [UnityTest]
+        public IEnumerator PauseView_SurvivesGameObjectReenable()
+        {
+            var vm = new PauseMenuModel(new OptionsViewModel(new FakeVolume()));
+            var view = Make<PauseMenuView>();
+            view.Bind(vm, Panel());
+            yield return Frames();
+            Assert.AreEqual(DisplayStyle.None, view.Root.style.display.value);
+            view.gameObject.SetActive(false);
+            yield return null;
+            view.gameObject.SetActive(true);
+            yield return Frames();
+            Assert.AreEqual(4, view.Rows.Count);
+            Assert.AreEqual(DisplayStyle.None, view.Root.style.display.value, "still hidden while not paused");
+            Assert.IsNotNull(view.Root.panel, "root is in the live tree");
+            vm.Toggle();
+            yield return null;
+            Assert.AreEqual(DisplayStyle.Flex, view.Root.style.display.value);
+            vm.MoveDown();
+            yield return null;
+            Assert.IsTrue(Selected(view.Rows[1], "pm-row--selected"));
+            Assert.IsNotNull(view.Rows[1].panel);
+            vm.Toggle();
+        }
+
+        [UnityTest]
+        public IEnumerator OptionsView_SurvivesGameObjectReenable()
+        {
+            var vol = new FakeVolume();
+            var vm = new OptionsViewModel(vol);
+            var view = Make<OptionsMenuView>();
+            view.Bind(vm, Panel());
+            yield return Frames();
+            Assert.AreEqual(DisplayStyle.None, view.Root.style.display.value);
+            view.gameObject.SetActive(false);
+            yield return null;
+            view.gameObject.SetActive(true);
+            yield return Frames();
+            Assert.AreEqual(3, view.Rows.Count);
+            Assert.AreEqual(3, view.Thumbs.Count);
+            Assert.AreEqual(DisplayStyle.None, view.Root.style.display.value, "still hidden while closed");
+            vm.Open();
+            vm.IncreaseSelected();
+            yield return null;
+            Assert.AreEqual(DisplayStyle.Flex, view.Root.style.display.value);
+            Assert.IsNotNull(view.Thumbs[0].panel, "thumb is in the live tree");
+            Assert.AreEqual("25 %", view.Percents[0].text);
+        }
+
+        [UnityTest]
+        public IEnumerator MainMenuView_SurvivesGameObjectReenable()
+        {
+            var vm = Menu(false);
+            var view = Make<MainMenuView>();
+            view.Bind(vm, Panel());
+            yield return Frames();
+            view.gameObject.SetActive(false);
+            yield return null;
+            view.gameObject.SetActive(true);
+            yield return Frames();
+            Assert.AreEqual(3, view.Rows.Count);
+            Assert.IsNotNull(view.Rows[0].panel);
+            vm.EnsurePlayer(0);
+            vm.SetSelection(0, 2);
+            yield return null;
+            Assert.IsTrue(Selected(view.Rows[2], "mm-row--selected"));
+            Assert.AreEqual("P1", ((Label)view.Rows[2][0]).text);
+        }
+
+        [UnityTest]
         public IEnumerator MainMenu_ControllerHighlightsFirstRowForNewPlayerWithoutInput()
         {
             var input = new FakeInputActions();

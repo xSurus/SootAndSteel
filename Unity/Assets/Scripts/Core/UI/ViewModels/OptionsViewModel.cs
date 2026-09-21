@@ -95,17 +95,6 @@ namespace Gamelab.UI.ViewModels
             }
         }
 
-        public static string LabelOf(Row row)
-        {
-            switch (row)
-            {
-                case Row.Master: return "Master Volume";
-                case Row.Music: return "Ambient / Music";
-                case Row.Sfx: return "Sound Effects";
-                default: return string.Empty;
-            }
-        }
-
         private void AdjustSelected(float delta)
         {
             Row row = SelectedRow;

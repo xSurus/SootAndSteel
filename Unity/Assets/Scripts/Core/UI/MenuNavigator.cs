@@ -45,6 +45,7 @@ namespace Gamelab.UI
                 {
                     playSelect();
                     vm.Confirm(i);
+                    if (options.IsOpen) return;
                 }
             }
         }

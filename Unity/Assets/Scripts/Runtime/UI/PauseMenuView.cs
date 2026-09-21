@@ -12,6 +12,7 @@ namespace Gamelab.UI.Runtime
         private static readonly string[] RowLabels = { "Continue", "Options", "Controls", "Exit" };
 
         private PauseMenuModel model;
+        private PanelSettings panel;
         private readonly List<VisualElement> rows = new List<VisualElement>();
 
         public IReadOnlyList<VisualElement> Rows => rows;
@@ -22,11 +23,18 @@ namespace Gamelab.UI.Runtime
         public void Bind(PauseMenuModel pause, PanelSettings panel)
         {
             Unsubscribe();
-            var doc = GetComponent<UIDocument>();
-            doc.panelSettings = panel;
-            doc.visualTreeAsset = UiResources.LoadTree("PauseMenu");
+            GetComponent<UIDocument>().panelSettings = panel;
+            this.panel = panel;
             model = pause;
-            var docRoot = doc.rootVisualElement;
+            Rebuild();
+        }
+
+        // UIDocument recreates rootVisualElement on disable/enable, so the tree is rebuilt on every enable.
+        private void Rebuild()
+        {
+            Unsubscribe();
+            var docRoot = GetComponent<UIDocument>().rootVisualElement;
+            if (model == null || docRoot == null) return;
             docRoot.Clear();
             docRoot.styleSheets.Add(UiResources.LoadStyle("Common"));
             docRoot.styleSheets.Add(UiResources.LoadStyle("PauseMenu"));
@@ -68,7 +76,7 @@ namespace Gamelab.UI.Runtime
             if (model != null) model.Changed -= Refresh;
         }
 
-        private void OnEnable() { if (model != null) { Unsubscribe(); model.Changed += Refresh; Refresh(); } }
+        private void OnEnable() => Rebuild();
         private void OnDisable() => Unsubscribe();
         private void OnDestroy() => Unsubscribe();
     }

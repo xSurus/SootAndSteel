@@ -33,11 +33,10 @@ namespace Gamelab.Tests.UI
         [Test]
         public void PanelSettingsValues()
         {
-            var ps = UiPanel.Create(7f);
+            var ps = UiPanel.Create();
             Assert.AreEqual(PanelScaleMode.ScaleWithScreenSize, ps.scaleMode);
             Assert.AreEqual(new Vector2Int(1920, 1080), ps.referenceResolution);
             Assert.AreEqual(PanelScreenMatchMode.Shrink, ps.screenMatchMode);
-            Assert.AreEqual(7f, ps.sortingOrder);
             Assert.NotNull(ps.themeStyleSheet);
             UnityEngine.Object.Destroy(ps);
         }

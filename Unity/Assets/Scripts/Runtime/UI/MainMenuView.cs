@@ -10,6 +10,7 @@ namespace Gamelab.UI.Runtime
     public class MainMenuView : MonoBehaviour
     {
         private MainMenuViewModel vm;
+        private PanelSettings panel;
         private readonly List<VisualElement> rows = new List<VisualElement>();
         private readonly List<Label> tags = new List<Label>();
 
@@ -20,16 +21,18 @@ namespace Gamelab.UI.Runtime
         public void Bind(MainMenuViewModel model, PanelSettings panel)
         {
             Unsubscribe();
-            var doc = GetComponent<UIDocument>();
-            doc.panelSettings = panel;
-            doc.visualTreeAsset = UiResources.LoadTree("MainMenu");
+            GetComponent<UIDocument>().panelSettings = panel;
+            this.panel = panel;
             vm = model;
-            Build(doc.rootVisualElement);
-            vm.OnSelectionChanged += OnSelectionChanged;
+            Rebuild();
         }
 
-        private void Build(VisualElement docRoot)
+        // UIDocument recreates rootVisualElement on disable/enable, so the tree is rebuilt on every enable.
+        private void Rebuild()
         {
+            Unsubscribe();
+            var docRoot = GetComponent<UIDocument>().rootVisualElement;
+            if (vm == null || docRoot == null) return;
             docRoot.Clear();
             docRoot.styleSheets.Add(UiResources.LoadStyle("Common"));
             docRoot.styleSheets.Add(UiResources.LoadStyle("MainMenu"));
@@ -54,11 +57,13 @@ namespace Gamelab.UI.Runtime
                 rows.Add(row);
                 tags.Add(tag);
             }
+            vm.OnSelectionChanged += OnSelectionChanged;
             Refresh();
         }
 
         public void Refresh()
         {
+            if (vm == null) return;
             for (int i = 0; i < rows.Count; i++)
             {
                 rows[i].EnableInClassList("mm-row--selected", vm.IsEntrySelectedByAnyone(i));
@@ -79,6 +84,6 @@ namespace Gamelab.UI.Runtime
 
         private void OnDisable() => Unsubscribe();
         private void OnDestroy() => Unsubscribe();
-        private void OnEnable() { if (vm != null) { Unsubscribe(); vm.OnSelectionChanged += OnSelectionChanged; } }
+        private void OnEnable() => Rebuild();
     }
 }

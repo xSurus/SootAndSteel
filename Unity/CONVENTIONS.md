@@ -310,6 +310,7 @@ Plan: `docs/superpowers/plans/2026-09-21-b2-1-menus-plan.md`. Slice: main menu, 
 - Options row container is centred at 50% of the paper. Gum has 21.35%, which would put a 340 px row about 89 px off the paper.
 - Gum's extra 1 degree rotation on the options row container is dropped.
 - Libre Bodoni for Bodoni MT (above).
+- Src places the P1 and P2 tags left of the label and the P3 and P4 tags right at different offsets, the port puts all tags in one label left of the row.
 
 ### Deferred (exact seam and reason)
 

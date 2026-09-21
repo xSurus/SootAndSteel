@@ -11,13 +11,12 @@ namespace Gamelab.UI.Runtime
     {
         public static readonly Vector2Int ReferenceResolution = new Vector2Int(1920, 1080);
 
-        public static PanelSettings Create(float sortingOrder = 0f)
+        public static PanelSettings Create()
         {
             var ps = ScriptableObject.CreateInstance<PanelSettings>();
             ps.scaleMode = PanelScaleMode.ScaleWithScreenSize;
             ps.referenceResolution = ReferenceResolution;
             ps.screenMatchMode = PanelScreenMatchMode.Shrink;
-            ps.sortingOrder = sortingOrder;
             ps.themeStyleSheet = Resources.Load<ThemeStyleSheet>("UI/RuntimeTheme");
             return ps;
         }
