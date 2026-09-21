@@ -63,5 +63,30 @@ namespace Gamelab.Tests.Input
             yield return null;
             Assert.Less(handler.GetMovement().Y, 0f);
         }
+
+        [UnityTest]
+        public IEnumerator HeldDirection_RepeatsWhileTimeScaleIsZero()
+        {
+            float saved = Time.timeScale;
+            Time.timeScale = 0f;
+            try
+            {
+                Press(keyboard.sKey);
+                yield return null;
+                Assert.IsTrue(handler.IsDownJustPressed(), "initial press");
+                int presses = 0;
+                float end = Time.realtimeSinceStartup + 0.6f;
+                while (Time.realtimeSinceStartup < end)
+                {
+                    yield return null;
+                    if (handler.IsDownJustPressed()) presses++;
+                }
+                Assert.GreaterOrEqual(presses, 1, "repeat after the 0.3 s delay must fire with timeScale 0");
+            }
+            finally
+            {
+                Time.timeScale = saved;
+            }
+        }
     }
 }

@@ -57,7 +57,7 @@ namespace Gamelab.Input.Runtime
         private void Update()
         {
             if (move == null) return;
-            directionalRepeater.Tick(GetMovement(), Time.deltaTime);
+            directionalRepeater.Tick(GetMovement(), Time.unscaledDeltaTime);
         }
 
         public System.Numerics.Vector2 GetMovement()

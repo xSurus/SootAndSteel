@@ -281,3 +281,43 @@ Art lives in `Assets/Resources/Map/` (loaded by `MapSprites.Get`). `Assets/Edito
 - HUD data: `TrainStateRuntime.State` (`Temperature`, `MaxTemperature`, `DistanceTraveled`, `CurrentSpeed`), `LevelRuntime.Definition.LevelDistance` and `DistanceTraveled`, `ShootHoleWallRuntime.Health` and events.
 - `LevelRuntime.SpawnDue` is where the enemy manager hooks in. `LevelRuntime` does not tick the train state because `TrainStateRuntime` ticks itself in `Update`. Set `TrainStateRuntime.SelfTick = false` if B2 wants to drive `Tick(dt)` itself (for example on pause).
 - Screen-space UI is not mirrored. World-space text is.
+
+## B2.1 menus: what is ported, what is deferred
+
+Plan: `docs/superpowers/plans/2026-09-21-b2-1-menus-plan.md`. Slice: main menu, pause overlay, options menu, controls overlay, in UI Toolkit, screen space only (the mirrored world camera does not affect it).
+
+### Ported
+
+- View models (Core, namespace `Gamelab.UI.ViewModels`, folder `Core/UI/ViewModels`): `MainMenuViewModel` (per-player selection, entries built by the owner), `OptionsViewModel`, `PauseMenuModel` (items Continue, Options, Controls, Exit; `IsPaused`, `ControlsOpen`, `Changed`, `ExitRequested`). `EnsurePlayer` on the main menu model now raises `OnSelectionChanged` when it registers a player (Src does not), so a view can show the first player without waiting for a move.
+- `ISoundService` lives in Runtime (FMOD types), so `OptionsViewModel` takes the Core interface `IVolumeSettings`. `Gamelab.UI.Runtime.SoundVolumeSettings` adapts an `ISoundService`. Volume step default is 0.05 (`gameplay.json` `menuVolumeStep`).
+- `MenuNavigator` (Core, `Gamelab.UI`) holds the Src input semantics and is tested with fake `IInputActions`: `TickMainMenu`, `TickOptions`, `TickPause`. It takes `Func<IReadOnlyList<IInputActions>>` and an `Action playSelect`. Up and Down move with the menu sound, Pickup confirms with the sound, Left and Right adjust volume without sound, Pause or Pickup closes options, Pause or Pickup closes controls (with sound). Pause flow follows `GameplayScreen.UpdatePauseMenu`: toggle check first (blocked while options are open), then options, then controls, then root.
+- Views (Runtime, `Gamelab.UI.Runtime`): `MainMenuView`, `OptionsMenuView`, `PauseMenuView`, `ControlsOverlayView`, each a MonoBehaviour on a `UIDocument`. Controllers: `MainMenuController` and `PauseMenuController` own the models, views, one shared `PanelSettings` (`UiPanel.Create`: scale with screen size, 1920x1080, shrink, the same uniform scale as Gum) and tick the navigator in `Update`. Both have a `Configure(...)` with injected volume, players and sound, and a convenience overload that reads `SoundServiceRunner.Instance` and the `PlayerJoinManager` roster.
+- UXML and USS are in `Assets/Resources/UI/` (`MainMenu`, `OptionsMenu`, `PauseMenu`, `ControlsOverlay`, shared `Common.uss`, `RuntimeTheme.tss`) and load through `UiResources`. Layout numbers come from the Gum project files (`Src/Content/GumProject`), not from the `.Generated.cs` files, which hold no layout. Gum unit codes used: dimension 0 absolute, 1 percent of parent, 3 percent of source file, 4 relative to children; position 0 from left, 1 from top, 2 percent width, 3 percent height, 4 from right, 6 from center X, 7 from center Y.
+- Pause sets `Time.timeScale = 0` from `PauseMenuModel.Changed`, restores the value it saw when the pause began on unpause, disable and destroy, and re-applies it on re-enable while paused. The `TrainStateRuntime.SelfTick = false` fallback was not needed. `PlayerInputHandler` now ticks its directional repeater with `Time.unscaledDeltaTime`, because `deltaTime` is 0 while paused and hold-to-repeat would stop. Only the repeater uses it. A test proves the repeat under timeScale 0.
+- Art in `Assets/Resources/UI/Art/` (Title, FmodLogo, pause paper, controller image, chevron), imported by `Assets/Editor/UiSpriteImportSettings.cs` (Sprite, Point, uncompressed, no mipmaps, PPU = pixel width, max 8192). `UiSpriteImportTests` checks every importer.
+
+### Facts found
+
+- Gum text fonts are pre-rendered BMFont caches of system fonts (Ubuntu Mono, Special Elite, Bodoni MT). No TTF was in the repo. Ubuntu Mono (UFL) and Special Elite (Apache 2.0, under `apache/specialelite` in google/fonts, not `ofl/`) were downloaded into `Assets/Resources/UI/Fonts/` with their licences. Bodoni MT is a commercial Monotype font, so Libre Bodoni (OFL, variable font, default weight instance) stands in. Font glyphs were never looked at.
+- Gum rotation is counter-clockwise and UI Toolkit `rotate` is clockwise, so the 1 degree paper tilt is `-1deg`. Not verified visually.
+- Headless layout snaps to physical pixels in a window smaller than 1920x1080 (the 380 px paper measures 378), so layout tests use tolerances of 1.5 to 3 units. `translate` is not part of layout rects, tests add the resolved translate.
+- `UnityEngine.UIElements.ParameterBinding` collides with the audio `ParameterBinding` type in files that import both, use an alias.
+- Src `MainMenuScreen` lets only the lowest player index drive the menu, while `MainMenuPanel` lets every player navigate. The port follows the panel (all players, per-player selection, small P1 to P4 tags next to the row).
+- In Src a Pause press while the controls overlay is open unpauses the whole menu (the toggle check runs before the controls branch). Kept.
+
+### Deviations from the Gum layout
+
+- Options row container is centred at 50% of the paper. Gum has 21.35%, which would put a 340 px row about 89 px off the paper.
+- Gum's extra 1 degree rotation on the options row container is dropped.
+- Libre Bodoni for Bodoni MT (above).
+- Src places the P1 and P2 tags left of the label and the P3 and P4 tags right at different offsets, the port puts all tags in one label left of the row.
+
+### Deferred (exact seam and reason)
+
+- Xbox glyphs: Src sets the Close button icon from `XboxButtonAtlas` / `XboxButtonGlyphs` (`xbox_buttons_spritesheet.png`, 32 px cells, `Face.A` is column 0). The port shows a text label "A" next to "Close". The controller picture itself is a baked image with its labels, so nothing else needs glyphs. Seam: replace the `A` label in `ControlsOverlay.uxml` with an image cropped from the sheet.
+- Menu input before any player has joined: nothing creates a player before the join screen, so `MainMenuController` needs at least one `IInputActions` in its player list, or nobody can drive the menu. Src always has a keyboard config. Seam: the `Func<IReadOnlyList<IInputActions>>` argument of `Configure`. A default keyboard and gamepad source is not built.
+- Main menu wiring in a scene: no scene contains `MainMenuController`, `PauseMenuController` or a `SoundServiceRunner` yet. The convenience `Configure` overloads (`SoundServiceRunner.Instance`, `FindFirstObjectByType<PlayerJoinManager>`) have no test.
+- Not ported from Src `MainMenuScreen`: the Shift+R shortcut to `ShootingRangeScreen`, the snowstorm particles, the battle theme start and stop, `SaveManager.HasSave`. `hasSave` is a plain parameter. The screen switches (`StartNewGame`, `ContinueGame`, `Game.Exit`) are the callbacks the caller passes in.
+- `MainMenuPanel` also lists a "Shooting Range" entry that the live Gum screen does not show. Not ported.
+- Row pitch on the main menu: Gum `MainMenuButton` height is unit 5 with value 20, meaning unclear. The port uses 5 px margins top and bottom. Compare against the MonoGame build.
+- Everything in this slice is unverified visually (no Editor GUI): fonts, paper tilt, row spacing, the vignette, background stretch, panel scaling on non-16:9 windows.
