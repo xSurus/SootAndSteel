@@ -1,0 +1,10 @@
+/* Gum ButtonWithIcon: width is 50 + text width (icon at x 10, text at x 50), height is the 32 px icon. */
+.bwi { flex-direction: row; height: 32px; align-items: center; }
+.bwi-icon { width: 32px; height: 32px; margin-left: 10px; margin-right: 8px; flex-shrink: 0; }
+.bwi-icon--coin { background-image: url("/Assets/Resources/UI/Art/spr_coin_32.png"); }
+.bwi-icon--select { background-image: url("/Assets/Resources/UI/Art/spr_xbox_select_32.png"); }
+/* Gum text sits at the top of the button (Y is not set), not centred on the icon. */
+.bwi-text { font-size: 20px; color: rgb(255, 255, 255); align-self: flex-start; white-space: nowrap; -unity-text-align: upper-left; }
+/* WorldUiManager and DialogueOverlay set the font size to 17. */
+.bwi--compact .bwi-text { font-size: 17px; }
+.bwi--cant-afford .bwi-text { color: rgb(253, 82, 82); }

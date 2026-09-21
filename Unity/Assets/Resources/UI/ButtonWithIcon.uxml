@@ -1,0 +1,6 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:VisualElement name="Button" class="bwi">
+        <ui:VisualElement name="Icon" class="bwi-icon" />
+        <ui:Label name="Text" class="hub-text bwi-text font-serif" />
+    </ui:VisualElement>
+</ui:UXML>

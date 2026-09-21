@@ -221,7 +221,7 @@ Deferred (needs wave B). Each line is exactly what is missing and why:
 - Enemy manager hook: Src `AbstractEnemy.TryShoot` is virtual and called by `EnemyManager`. `RifleEnemyRuntime.TryShoot` is a plain method; wave B should add a virtual on `EnemyRuntime`. `Configure` must run after `Initialize`.
 - Train state: `ITrainState` (`VictoryLapActive`, `IsCoalOvenBurning`, `CurrentSpeed`, `SlowDownIfRunning`) and `SpeedLeverRuntime.Speeds` (the `TrainSpeedSetting.Set` shared with the train) come from wave B's `TrainState`.
 - Bullet emission from a held item: `IBulletItemSpawner` (`CatalogBulletSpawner` is the default implementation, it needs a `BulletComponentCatalogAsset`). Src `InitialShooter is CannonStation or CannonSlot` is replaced by `BulletFaction.Player`. The cannon `Fired` event replaces `Events.FireCannonFired`.
-- Shop and tooltips: `CategoryName`, `FunctionalityName`, `IconSourceRect`, `DispensedItemType`, `ShopItemIconAtlas`. Needs the shop and item icon systems. Also here: `BuyableStationWrapper` (shop offer wrapper around a station, `Src/PhysicalEntities/Stations/BuyableStationWrapper.cs`) and `StationConfig` (JSON station config declared in `Src/PhysicalEntities/Configurable/StationRegistry.cs`, behind `GetTitle`/`GetDescription`; `StationDefinition` already carries the catalog subset). Both are live in Src. The two `Compile Remove` entries for them in `Src/Gamelab.csproj` are stale no-op paths and prove nothing.
+- Shop and tooltips: ported in B2.2 (see "B2.2 hub and shop"). `BuyableStationWrapper` is now `BuyableOffer` plus `HubShopModel`; the station objects and their highlight stay with the world wave.
 - Player-driven pieces: `OnPickup` / grab / highlight / snap-to-cell on stations; workbench sparks, light and the `isCrafting` flag driven by highlight. Need the player and UI.
 - `BulletStats.Color` and the `BulletItem` colour: draw-only. The render wave derives it from the recipe.
 - Sound, VFX, animation for all of the above (horse sound, neck bleed, blood, muzzle flash, conveyor belt animation, aim line).
@@ -271,7 +271,7 @@ Art lives in `Assets/Resources/Map/` (loaded by `MapSprites.Get`). `Assets/Edito
 - Wall interaction: `OnPickup`, `OnInteractHeld` (repair driven by a player), highlight, wall sound, smoke VFX, screen shake on breach, `DrawLightBatch`. Seam: `ShootHoleWallRuntime.Repair(dt)` and the `Breached` and `Repaired` events. Door: `OnInteract` sound and highlight; `Toggle()` is the seam. Door damage sprites are not used by Src walls either.
 - Train visuals not drawn: wheels and their animation, the shadow rectangle, side wall strips and corner, patch and furnace lights, the depth function `RenderUtility.CalculateDepth` (replaced by Y-based sorting order).
 - `TrainState` freeze sound and the temperature FMOD parameter. Seam: `Temperature / MaxTemperature`.
-- Hub: shop offers (`RestockHubDragOffers`, `BuyableStationWrapper`, `IShopService`). Seam: `HubMapModel.SelectOfferIndices`, `OfferPositions`, `RestockSeed` are ported; the shop wave spawns the wrappers. `Hub.png` is only read for its size (the village rect); `Village_Enter` is unreferenced in Src. Both are imported for the render wave.
+- Hub: shop offers. Data, restock and purchase rules are ported in B2.2 (`HubShopModel`, `BuyableOffer`, `ShopManager`). Still deferred: the world wave spawns the real stations from `HubShopModel.Offers` and listens to `Purchased`. `Hub.png` is only read for its size (the village rect); `Village_Enter` is unreferenced in Src. Both are imported for the render wave.
 - `TutorialLevelProvider` (`Src/Tutorial`), `EnemyManager`, `CameraDirector`, player spawning glue (`GetFreeSpawnTile` exists in `TrainLayout`).
 - `IInteractable` default interface methods on the wall and door runtimes are not needed until the player exists.
 
@@ -314,10 +314,52 @@ Plan: `docs/superpowers/plans/2026-09-21-b2-1-menus-plan.md`. Slice: main menu, 
 
 ### Deferred (exact seam and reason)
 
-- Xbox glyphs: Src sets the Close button icon from `XboxButtonAtlas` / `XboxButtonGlyphs` (`xbox_buttons_spritesheet.png`, 32 px cells, `Face.A` is column 0). The port shows a text label "A" next to "Close". The controller picture itself is a baked image with its labels, so nothing else needs glyphs. Seam: replace the `A` label in `ControlsOverlay.uxml` with an image cropped from the sheet.
+- Xbox glyphs: resolved in B2.2. `UiSpriteCrop.Glyph` crops the sheet and the controls overlay Close button shows the real A glyph.
 - Menu input before any player has joined: nothing creates a player before the join screen, so `MainMenuController` needs at least one `IInputActions` in its player list, or nobody can drive the menu. Src always has a keyboard config. Seam: the `Func<IReadOnlyList<IInputActions>>` argument of `Configure`. A default keyboard and gamepad source is not built.
 - Main menu wiring in a scene: no scene contains `MainMenuController`, `PauseMenuController` or a `SoundServiceRunner` yet. The convenience `Configure` overloads (`SoundServiceRunner.Instance`, `FindFirstObjectByType<PlayerJoinManager>`) have no test.
 - Not ported from Src `MainMenuScreen`: the Shift+R shortcut to `ShootingRangeScreen`, the snowstorm particles, the battle theme start and stop, `SaveManager.HasSave`. `hasSave` is a plain parameter. The screen switches (`StartNewGame`, `ContinueGame`, `Game.Exit`) are the callbacks the caller passes in.
 - `MainMenuPanel` also lists a "Shooting Range" entry that the live Gum screen does not show. Not ported.
 - Row pitch on the main menu: Gum `MainMenuButton` height is unit 5 with value 20, meaning unclear. The port uses 5 px margins top and bottom. Compare against the MonoGame build.
 - Everything in this slice is unverified visually (no Editor GUI): fonts, paper tilt, row spacing, the vignette, background stretch, panel scaling on non-16:9 windows.
+
+## B2.2 hub and shop: what is ported, what is deferred
+
+Plan: `docs/superpowers/plans/2026-09-21-b2-2-hub-shop-plan.md`. Slice: the hub overlay, crafting help, departure hint and decision bubble, the shop tooltip, and the shop domain behind them, in UI Toolkit, screen space only. Src has no shop screen: the shop is world objects (`BuyableStationWrapper`) that show a `ToolTip` above them.
+
+### Ported
+
+- Shop data (Core, engine-free): `EItemType`, `StationConfig` and `ComponentConfig` (shop and text subset) with tables transcribed from `StationConfig.json` and `ComponentConfig.json` in JSON order, `CatalogItem`, `IShopService` and `ShopManager` (catalog order matters, `HubMapModel.SelectOfferIndices` indexes into it), `RunCredits` (credits, upgrade counter, crafting help flag), `StationTooltipInfo` (category, functionality and icon rect per station id), `ShopItemIconAtlas`, `XboxButtonAtlas`. A test pins ids, prices and order.
+- Offers: `BuyableOffer` is the data shape of `BuyableStationWrapper` and implements `ITooltipable`. `HubShopModel` restocks with `HubMapModel.RestockSeed`, `SelectOfferIndices` and `OfferPositions` and runs the purchase rule (spend, count the upgrade, raise `Purchased`, remove the offer).
+- Hub state: `HubDepartureModel` (ready set pruned to joined players, all ready, pending off-board items, 0.75 s depart hold, 5 s hint delay and 8 s hide, decision after all ready with pending items, 0.2 s input block), `DialogBubbleModel`, `CraftingHelpModel`, `HubInput` (Back toggles crafting help, Interact allows depart, Grab un-readies, Grab wins when both are pressed). The plan's `HubOverlayModel` was dropped as a pass-through: the overlay reads `RunCredits` and `HubDepartureModel` directly.
+- Tooltip: `TooltipModel`, `TooltipInteractions` (the `ConfigureInteractionButtons` switch) and `TooltipLayout` (ideal placement, overlap separation, clamp) in 1920x1080 canvas units.
+- Views (Runtime, `Gamelab.UI.Runtime`): `HubOverlayView`, `CraftingHelpView`, `DialogBubbleView` (passive hint, two-button decision, hide), `ToolTipView`, with UXML and USS under `Assets/Resources/UI/` (`ButtonWithIcon` is cloned into the button slots). `HubUiController` owns them, ticks `HubInput` and the tooltips from `Update`, and passes `DepartRequested` through. Every dependency is injected in `Bind`. `TooltipLayer.Set(id, ITooltipable, TooltipKind)` places a tooltip through `IWorldToScreen`.
+- `UiSpriteCrop` cuts source rects out of a sheet (Src top-left origin, Y flipped for Unity) and caches them. The Xbox glyphs on the controls overlay and on the tooltip and bubble buttons come from `xbox_buttons_spritesheet.png` this way. This resolves the B2.1 Xbox glyph deferral.
+- Art added under `Assets/Resources/UI/Art/`: coin, tooltip base, badge, category icons (`BasicCasing`, `BasicProjectile`, `BasicPropellant`, copied from `Src/Content/Items`), `IdleA0` to `IdleA3`, bubble parts, the Xbox sheet and the select glyph.
+
+### Facts found
+
+- `Resources.Load<StyleSheet>("UI/Name")` can return the StyleSheet named `inlineStyle` that a UXML of the same name exposes, instead of the USS. Which one comes back depends on import order, and it flipped once the art folder held twelve or more files, silently dropping a whole USS (three B2.1 tests failed). `UiResources.LoadStyle` now uses `LoadAll` and matches by name. Keep USS and UXML names identical per view and load styles only through it.
+- In the 640x480 headless panel the canvas scale is 0.44, so one screen pixel is 2.25 canvas units and layout values snap accordingly. Layout tests use a tolerance of 3. 0.44 is the max rule: Shrink with ScaleWithScreenSize resolves to the larger of the two axis scales, max(w/1920, h/1080), and the root is 1440 wide there. The B2.1 comment "min, same as Gum" was wrong. Gum letterboxes with the smaller scale, so on non-16:9 windows UI Toolkit shows less of the canvas than Gum. Left as is, unverified against Gum. `UiPanel.CanvasScale` returns the real value and `TooltipLayer` clamps to the real canvas size (screen / scale).
+- Category icons: Src picks `Content/Items/Basic*.png` when the file exists and only otherwise crops the atlas, so the three categories always use the files. The atlas rect stays in Core for `IconSourceRect` parity.
+- `spr_xbtn_32.png` is a Gum design-time value that Src overrides with a glyph from the Xbox sheet at runtime, so it is not imported.
+- The plan's `HubUiController` takes `Func<IReadOnlyList<PlayerSlot>>` (the API `HubInput` already had) and a caller-supplied `Func<int>` for the pending off-board count, which needs the map.
+
+### Deviations from the Gum layout
+
+- Fonts: Bahnschrift Light (tooltip and crafting help descriptions) becomes Ubuntu Mono 18, Bernard MT Condensed (tooltip name) Ubuntu Mono 22, Berlin Sans FB (category badge) Ubuntu Mono 16, Bodoni MT (button text) Libre Bodoni. Mono is wider, so long names and descriptions may wrap or overflow their fixed boxes. Unverified visually.
+- Nine-slice borders are equal thirds of each texture (64 tooltip, 16 bubble, 16 and 7 name bar, 21 and 8 badge). Gum's blend mode on the name bar tint is applied as a plain tint colour.
+- The decision bubble spaces its two buttons 40 px apart. Gum sizes the interaction box as the widest button plus 105, so the gap differs by a few pixels.
+- ButtonWithIcon text stays at the top of the button, as Gum leaves Y unset.
+- The CraftingHelp text is hard-coded in the view (static text in Gum).
+- `HubDepartureModel.ToggleReady` is also blocked while Departing. Src blocks it only while the decision is open. Harmless, since the screen is leaving.
+
+### Deferred (exact seam and reason)
+
+- Station objects, their highlight, the lever `OnInteractOverride`, spawning the real station on purchase, the buy VFX and `Sounds.Purchase`. Seam: the world wave reads `HubShopModel.Offers` and listens to `Purchased`, and calls `TooltipLayer.Set` for the highlighted offer.
+- `CountPendingShopItemsOffBoard`, the departure fade and screen switch, `SaveManager`. Each is the `Func<int>` or the event handler the caller passes to `HubUiController.Bind`.
+- DialogBubble typewriter reveal, `Show(line)` with world anchor and the bubble tail. They belong to the tutorial dialogue slice (`DialogueOverlay`, `DialogueManager`).
+- Category icons for categories other than Casing, Projectile and Propellant would crop `BulletComponentSpriteSheet.png`, which is not imported, so those icons stay hidden.
+- `CameraWorldToScreen` is checked only against `MirroredCamera` at the headless test camera size. Real scene cameras, non-16:9 windows and a camera rect that is not full screen are unverified, and the tooltip clamp now uses the real canvas size (see Facts found).
+- Not consumed yet: no scene contains `HubUiController`. Player spawning, the world-space hub view, the in-game HUD, post-level screens and the join screen belong to other slices.
+- Everything in this slice is unverified visually (no Editor GUI): fonts, nine-slice edges, text wrapping, tooltip placement over stations, panel scaling on non-16:9 windows.
+- The controller is stopped while paused, so the caller must hide tooltips with `Tooltips.SetAllVisible(false)` then and call `Tooltips.ClearAll` on departure.

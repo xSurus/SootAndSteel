@@ -1,3 +1,4 @@
+using Gamelab.UI;
 using Gamelab.UI.ViewModels;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -37,6 +38,7 @@ namespace Gamelab.UI.Runtime
             Root = docRoot.Q("Root");
             Paper = docRoot.Q("Paper");
             Image = docRoot.Q("Image");
+            docRoot.Q("CloseKey").style.backgroundImage = new StyleBackground(UiSpriteCrop.Glyph(XboxButtonAtlas.Face.A));
             model.Changed += Refresh;
             Refresh();
         }

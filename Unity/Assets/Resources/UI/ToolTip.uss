@@ -1,0 +1,21 @@
+/* Gum ToolTip: background 370x266, wrapper 96% x 90% centred. Root is placed by the caller (left and top). */
+.tt-root { position: absolute; left: 0; top: 0; width: 370px; height: 266px; }
+.tt-bg { position: absolute; left: 0; top: 0; width: 100%; height: 100%;
+    background-image: url("/Assets/Resources/UI/Art/tooltip_base_9slice_192x192.png");
+    -unity-slice-left: 64; -unity-slice-top: 64; -unity-slice-right: 64; -unity-slice-bottom: 64; }
+.tt-sep1 { position: absolute; left: 50%; margin-left: -169.5px; top: 91px; width: 339px; height: 1px; background-color: rgb(104, 86, 61); }
+.tt-sep2 { position: absolute; left: 50%; margin-left: -175px; top: 204px; width: 350px; height: 1px; background-color: rgb(63, 52, 37); }
+.tt-wrapper { position: absolute; left: 2%; top: 5%; width: 96%; height: 90%; }
+.tt-function { position: absolute; left: 50%; margin-left: -75px; top: 1%; width: 150px; font-size: 15px; color: rgb(255, 255, 255); -unity-text-align: upper-center; }
+/* Text grows upwards from a bottom edge 176 px above the wrapper bottom. */
+.tt-name { position: absolute; left: 16px; bottom: 176px; width: 165px; font-size: 22px; color: rgb(255, 255, 255); white-space: normal; }
+.tt-category { position: absolute; right: 15px; top: 30px; width: 140px; height: 40px;
+    background-image: url("/Assets/Resources/UI/Art/spr_badge_9slice_64x24.png");
+    -unity-slice-left: 21; -unity-slice-top: 8; -unity-slice-right: 21; -unity-slice-bottom: 8; }
+.tt-category-icon { position: absolute; left: 10px; top: 4px; width: 32px; height: 32px; }
+.tt-category-text { position: absolute; left: 40px; top: 0; width: 84px; height: 40px; font-size: 16px; color: rgb(255, 255, 255); -unity-text-align: middle-left; white-space: nowrap; }
+/* Text box 323x83, centred on the wrapper centre plus 16.5. */
+.tt-description { position: absolute; left: 20px; top: 94.7px; width: 323px; height: 83px; font-size: 18px; color: rgb(255, 255, 255); white-space: normal; }
+.tt-interactions { position: absolute; left: 0; bottom: 0; width: 100%; height: 20%; }
+.tt-left { position: absolute; left: 0; top: 0; }
+.tt-right { position: absolute; right: 0; top: 0; }
