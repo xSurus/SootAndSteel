@@ -12,7 +12,7 @@ namespace Gamelab.Tests.UI
         public void EveryUiPngHasSpriteSettings()
         {
             var files = Directory.GetFiles(Root, "*.png");
-            Assert.AreEqual(19, files.Length);
+            Assert.AreEqual(27, files.Length);
             foreach (var f in files)
             {
                 var path = f.Replace('\\', '/');
