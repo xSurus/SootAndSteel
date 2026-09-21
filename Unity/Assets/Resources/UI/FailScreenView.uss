@@ -1,0 +1,32 @@
+/* Gum PostDeathOverlay. Src FailScreen clears to Color(20,0,0), the Vignette rectangle is black at alpha 199. */
+.fsv-root { background-color: rgb(20, 0, 0); align-items: center; justify-content: center; }
+/* Paper: 600 wide, height from the content, centred both ways. Nine-slice borders assumed as thirds of 256x192. */
+.fsv-paper { width: 600px; }
+.fsv-background { background-image: url("/Assets/Resources/UI/Art/spr_incident_paper.png");
+    -unity-slice-left: 85; -unity-slice-top: 64; -unity-slice-right: 85; -unity-slice-bottom: 64; -unity-slice-type: tiled; }
+.fsv-content { width: 100%; }
+/* Title is 115 high. Gum anchors the three lines by their vertical centre, 57, 25 and 0 up from the bottom (a 1 px box, text centred on its bottom edge). */
+.fsv-title { width: 100%; height: 115px; }
+.fsv-office { position: absolute; left: 0; right: 0; top: 48px; height: 20px; font-size: 14px; color: rgb(0, 0, 0); -unity-text-align: middle-center; white-space: nowrap; }
+.fsv-heading { position: absolute; left: 0; right: 0; top: 60px; height: 60px; font-size: 40px; color: rgb(17, 17, 9); -unity-text-align: middle-center; white-space: nowrap; }
+.fsv-incident { position: absolute; left: 0; right: 0; top: 105px; height: 20px; font-size: 13px; color: rgba(90, 62, 32, 0.776); -unity-text-align: middle-center; white-space: nowrap; }
+.fsv-mainbox { width: 100%; }
+.fsv-separator-title { width: 500px; height: 20px; align-self: center; justify-content: center; }
+.fsv-separator-line { width: 100%; height: 1px; background-color: rgb(0, 0, 0); }
+/* Stats: 83.47 percent wide at x 49.6, 48 high, two columns with 10 px between rows. */
+.fsv-stats { width: 83.47%; margin-left: 49.6px; height: 48px; flex-direction: row; }
+.fsv-column { width: 50%; height: 100%; }
+.fsv-line { flex-direction: row; height: 19px; width: 100%; flex-shrink: 0; }
+.fsv-line--first { margin-bottom: 10px; }
+.fsv-stat-label { width: 65%; height: 18px; font-size: 13px; color: rgba(90, 62, 32, 0.776); -unity-text-align: upper-left; white-space: nowrap; }
+/* PostDeathStatItem: the value and the dots both start at the box left, the dots 1 px right and 4 px down. Dots have no Gum font (default, size 17). */
+.fsv-stat-item { width: 35%; height: 18px; }
+.fsv-stat { position: absolute; left: 0; top: 0; font-size: 14px; color: rgb(26, 20, 16); white-space: nowrap; }
+.fsv-dots { position: absolute; left: 1px; top: 4px; font-size: 17px; color: rgb(26, 20, 16); white-space: nowrap; }
+.fsv-dashes { width: 100%; height: 20px; font-size: 13px; color: rgb(0, 0, 0); -unity-text-align: upper-center; white-space: nowrap; }
+.fsv-cause-title { width: 500px; align-self: center; margin-bottom: 10px; font-size: 16px; color: rgb(120, 22, 22); white-space: nowrap; }
+.fsv-cause { width: 500px; align-self: center; font-size: 16px; color: rgba(0, 0, 0, 0.627); white-space: normal; }
+.fsv-button { align-self: flex-end; }
+.fsv-button .bwi-text { color: rgb(10, 8, 5); }
+.fsv-hole { position: absolute; top: 13px; width: 50px; height: 50px; background-image: url("/Assets/Resources/UI/Art/spr_waybill_punch.png"); background-size: 100% 100%; }
+.fsv-stamp { position: absolute; left: 480px; top: 39px; width: 50px; height: 50px; background-image: url("/Assets/Resources/UI/Art/spr_filed_closed_stamp.png"); background-size: 100% 100%; }

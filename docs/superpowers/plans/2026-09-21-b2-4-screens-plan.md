@@ -1,0 +1,46 @@
+# B2.4 screens port plan (last B2 slice)
+
+Branch `port/ui-screens` (from main f4f39eb). `Src/` is read-only. Follow `Unity/CONVENTIONS.md` and the handoff testing rules (C# 9, netstandard2.1, never `-quit` with `-runTests`, one Unity process at a time, `git add Unity/Assets`, commit per task).
+Slice: `PostLevelStatsScreen` (waybill with reward breakdown), `FailScreen` (incident report), `JoinScreen`, and the `SkipTutorial` element, with the components behind them (`PostStatsScreenOverlay`, `PostStatsDisplay`, `StatsListItem`, `PostDeathOverlay`, `PostDeathDisplay`, `PostDeathStatItem`, `JoinPlayerComponent`), plus `StampRevealAnimator` and `LevelRewardBreakdown`. Screen space only.
+
+## What the Src screens really are
+
+Read from the `.cs` files and the Gum project files (`Src/Content/GumProject/Components/*.gucx`, `Screens/JoinScreen.gusx`). A dump script that prints the non-default Gum variables per instance is at `/private/tmp/claude-501/-Users-alexanderschlieper-Development/5896018c-b203-4f0b-80db-f27586ac234f/scratchpad/gum.py` (usage: `python3 gum.py <file>...`). Gum unit codes are in the B2.1 section of CONVENTIONS.
+
+- `PostLevelStatsScreen(actualTime, referenceTime)`: builds a `LevelRewardBreakdown` from the two times, shows a waybill paper with two lines (delivery reward, time bonus or penalty), a divider, a summary that counts up to the total, a Paid stamp, and a Continue button. Phases: IntroReveal, ContinueStamp, FadeOutToHub. Any player pressing Pickup or Start during the intro reveals everything, grants the credits once, and starts the stamp. After 0.25 + 0.90 s it fades to white over 1 s, then switches to the hub. It also starts on a white fade-out of 1 s and plays sound cues at each reveal.
+- `FailScreen(reason, stats)`: shows an incident paper with four stats, a cause-of-failure text that types out at 55 characters per second with a pickup tick every 0.1 s, an incident line (`N. 01 / F`, filed date, time), and a Return button. A confirm press completes the text, plays `MenuSelect`, triggers the "file closed" stamp, and after 0.20 + 0.90 s switches to the main menu.
+- `StampRevealAnimator`: on trigger the sprite shows at `popScale` times its size and rotated by `popRotationOffset`, then eases (smooth step) to base size and rotation over the duration. `Sounds.Stamp` plays once when the eased value passes 0.5.
+- `JoinScreen`: four `JoinPlayerComponent` slots (silhouette or a player head, a Join button that shows the A glyph and "Join" or the Start glyph and "Joined") and a title that reads "Enter the train" until someone has joined, then "Press start to advance". Joining (A on a pad, Space on keyboard) and "any joined player presses Start" already live in `PlayerJoinManager` and `JoinFlowController`.
+- `SkipTutorial`: a small element bottom right with the Select glyph, the text "Hold to skip tutorial" and a progress bar. `TutorialDirector.UpdateSkipProgress` fills the bar at +2.0 per second while any player holds Back, drains at 5.0 per second, and caps at 1.5, and the bar width is `progress / 1.5`.
+- `PlayersReady` is the players-ready row of the hub overlay. B2.2 ported it inside `HubOverlayView`, so this slice adds nothing for it. `PostDeathDisplay` is an empty container in Gum and needs no port.
+- Not in the Gum layout but in the screens: the snowstorm particles (`IVfxService`), the `GraphicsDevice.Clear` background colours, and the sound cues. Particles are deferred, background colours are USS, sound cues are model events.
+
+## Design
+
+Core (engine-free, EditMode tests, goldens from evaluating the Src expressions with a script):
+- `Gamelab.Utils.Easing`: `SmoothStep`, `SmoothStepClamped`.
+- `Gamelab.Screens`: `StageNaming.GetStageTitle`, `LevelRewardBreakdown` (Src formula, with `baseReward` 25 and `referenceBonus` 20 as parameters that default to the `GameplayConfig` defaults, since the Unity port has no `GameplayConfig`), `FailureReason`, `FailureReasonText`, `PostDeathStatsSnapshot`, `PostDeathStatsText` (the four value strings and the incident line, with the date and time passed in).
+- `Gamelab.UI.FadeTransition` (port of Src `FilterTransition` opacity math), `StampRevealTimer` (progress, scale factor, rotation offset, sound-due flag), `PostLevelStatsModel` (phases, reveal clock, line visibility, count-up value, cue events as `Sounds` ids, credit grant once via a callback, stamp timer, fade, `ContinueRequested`), `FailScreenModel` (typewriter, tick sounds, stamp phase, return delay, `ReturnRequested`), `SkipTutorialModel` (progress rules), `JoinScreenModel` (title text, per-slot figure and button state derived from a joined-count function).
+- Each model takes `dt` in `Update(float dt, bool confirm)`. None has a clock, so the caller decides which time to feed it.
+
+Runtime (`Gamelab.UI.Runtime`, PlayMode tests):
+- Views on a `UIDocument` each, cloned from UXML with USS, built through `UiResources`, rebuilt on enable like the B2.2 views: `PostLevelStatsView`, `FailScreenView`, `JoinScreenView`, `SkipTutorialView`, and a small `StampView` helper that applies a `StampRevealTimer` to a `VisualElement` (scale and rotate through style, unscaled by anything).
+- Controllers own model, view and one `UiPanel.Create()` panel: `PostLevelStatsController` and `FailScreenController` (inject `Func<IReadOnlyList<IInputActions>>`, `Action<string> playSound`, and the seam callbacks), `JoinScreenController` (binds to `JoinFlowController`), and `SkipTutorialView.SetProgress` is driven by the caller with the model.
+- Seams (values the caller passes, recorded in CONVENTIONS): `PostLevelStatsController.Configure(actualTime, referenceTime, stageNumber, grantCredits, onContinue, ...)` where `grantCredits(int)` is `RunSession.AddCredits` and `onContinue` switches to the hub. `FailScreenController.Configure(reason, stats, levelNumber, now, onReturn, ...)`. Save system, run session, screen switching and scene loading stay outside.
+
+Time and pause. The post-level and fail screens replace gameplay, so nothing is paused when they run, but a pause menu leaves `Time.timeScale` at 0 if the scene switch does not restore it. Both controllers therefore feed their models `Time.unscaledDeltaTime`: the intro reveal clock, count-up, stamp pop, typewriter, fade and return delay. Each is stated in the controller. The join screen has no animation. `SkipTutorialView` has no clock, it shows what `SkipTutorialModel` holds, and the caller feeds the model with the gameplay `dt`, which is zero while paused, so the bar holds still.
+
+Fonts and art: Src names Courier New and Special Elite, Ubuntu Mono and Bodoni MT. B2.1 fonts are reused (Ubuntu Mono for Courier New, Special Elite, Libre Bodoni). Art copied into `Assets/Resources/UI/Art/`: `spr_waybill_paper`, `spr_waybill_punch`, `spr_waybill_paid_stamp`, `spr_incident_paper`, `spr_filed_closed_stamp`, `Silhouette` (the `IdleA0` to `IdleA3` heads exist already).
+
+## Tasks (TDD, tests, commit, then task review)
+
+1. Core data: `Easing`, `StageNaming`, `LevelRewardBreakdown`, `FailureReason` with texts, `PostDeathStatsSnapshot`, `PostDeathStatsText`, `FadeTransition`. EditMode goldens from Src expressions (reward breakdown for several time pairs including the clamp at 0.1 s and the zero-adjustment case, stage titles, formatted signed amounts, distance rounding, incident line, fade curve).
+2. Core timelines: `StampRevealTimer`, `PostLevelStatsModel`, `FailScreenModel`. Tests: cue order and times (0.6, 1.05, 1.5, 1.88, 2.16), count-up curve and tick rule, confirm skips the reveal and grants credits once, stamp then 1.15 s then fade then continue, typewriter characters and tick cadence, confirm completes text and starts the stamp, return delay 1.1 s.
+3. Core join and skip: `SkipTutorialModel`, `JoinScreenModel`. Tests: progress rates and cap, bar ratio, hold reaches the cap and raises `SkipRequested` once, join title switch, slot states, button text and glyph face per joined state, figure ids per slot.
+4. Art and fonts: copy the six art files, extend `UiSpriteImportTests` and a PlayMode load test.
+5. Views: `Common`-based USS and UXML for the waybill, incident report, join screen and skip element, `StampView`, and the four view classes. PlayMode tests: layout numbers from `resolvedStyle` (tolerance 3), texts follow models, stamp scale and rotation follow the timer, silhouette versus head per slot.
+6. Controllers: `PostLevelStatsController` and `FailScreenController` with fake inputs, fake sound, injected clock. PlayMode tests: full flow to the callbacks, credits granted once, works with `Time.timeScale = 0`.
+7. `JoinScreenController` bound to `JoinFlowController` and a `PlayerJoinManager` with fake pads, forward `OnReadyToAdvance`. PlayMode tests: slot visuals change when a player joins, title switch, advance event. `SkipTutorialView` test with the model.
+8. CONVENTIONS section "B2.4 screens: what is ported, what is deferred", stale deferred lines fixed, "Wave B2 complete: what remains for wave C". Then the lead runs both suites.
+
+Final: whole-branch review (most capable model), one fix wave, one scoped re-review. Verify EditMode and PlayMode, `git diff f4f39eb -- Src/` empty, `dotnet build Src/Gamelab.csproj`, no stray `.meta`.

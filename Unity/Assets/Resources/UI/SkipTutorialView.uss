@@ -1,0 +1,12 @@
+/* Gum SkipTutorial. The element sits 50 from the right and 40 from the bottom. Its Gum size comes from its children: 240 wide (text ends at 232, plus 8), 50 high (bar bottom). */
+.stv-root { position: absolute; right: 50px; bottom: 40px; width: 240px; height: 50px; }
+/* Select glyph: 32 px, centred at x 26 and at the vertical centre. */
+.stv-icon { position: absolute; left: 10px; top: 9px; width: 32px; height: 32px; background-image: url("/Assets/Resources/UI/Art/spr_xbox_select_32.png"); }
+/* Text: x 50, width 182, black, vertically centred in its own (one line) box. */
+.stv-text { position: absolute; left: 50px; top: 0; width: 182px; height: 24px; font-size: 20px; color: rgb(0, 0, 0); -unity-text-align: middle-left; white-space: nowrap; }
+/* Bar container 217 x 5 at y 45, centred on the element. Src SetProgress resizes this container, so it shrinks about its centre, background and fill with it. */
+.stv-barrow { position: absolute; left: 0; right: 0; top: 45px; height: 5px; flex-direction: row; justify-content: center; }
+.stv-bar { width: 217px; height: 5px; }
+.stv-bar-bg { position: absolute; left: 0; top: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.549); }
+/* Fill: 3 smaller than the container in both directions, centred, white (Gum default colour). */
+.stv-bar-fill { position: absolute; left: 1.5px; top: 1.5px; right: 1.5px; bottom: 1.5px; background-color: rgb(255, 255, 255); }

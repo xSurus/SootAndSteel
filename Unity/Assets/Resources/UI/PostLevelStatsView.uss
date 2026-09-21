@@ -1,0 +1,29 @@
+/* Gum PostStatsDisplay. The Gum root is offset (-13,-65), and the 600x400 waybill is centred on it, so the paper sits at 50% minus 300 and 13, 50% minus 200 and 65. */
+.plv-root { background-color: rgb(255, 255, 255); }
+/* Gum NineSlice tiles the middle sections. Borders were assumed as thirds of the 96 px texture. */
+.plv-paper { position: absolute; left: 50%; top: 50%; margin-left: -313px; margin-top: -265px; width: 600px; height: 400px;
+    background-image: url("/Assets/Resources/UI/Art/spr_waybill_paper.png");
+    -unity-slice-left: 32; -unity-slice-top: 32; -unity-slice-right: 32; -unity-slice-bottom: 32; -unity-slice-type: tiled; }
+.plv-detail { position: absolute; left: 0; top: 91px; right: 0; height: 16px; font-size: 13px; color: rgba(90, 62, 32, 0.776); -unity-text-align: upper-center; white-space: nowrap; }
+/* Gum X is 2 from the centre. */
+.plv-separator { position: absolute; left: 4px; top: 114px; right: 0; height: 16px; font-size: 13px; color: rgb(112, 81, 46); -unity-text-align: upper-center; white-space: nowrap; }
+.plv-stage { position: absolute; left: 0; top: 47px; right: 0; height: 50px; font-size: 40px; color: rgb(17, 17, 9); -unity-text-align: upper-center; white-space: nowrap; }
+/* StatsListItem: 500x50, centred, so left 50. Index at 0 (40 wide), label at 50 (Y 2), amount 50 wide at the right edge. */
+.plv-row { position: absolute; left: 50px; width: 500px; height: 50px; }
+.plv-index { position: absolute; left: 0; top: 0; width: 40px; height: 50px; font-size: 17px; color: rgb(90, 62, 32); -unity-text-align: middle-left; }
+.plv-label-box { position: absolute; left: 50px; top: 2px; height: 50px; flex-direction: row; align-items: center; }
+.plv-label { font-size: 22px; color: rgb(0, 0, 0); white-space: nowrap; }
+/* The description has no font in Gum (default size 18) and sits 7 px after the label. */
+.plv-description { margin-left: 7px; font-size: 18px; color: rgb(90, 62, 32); white-space: nowrap; }
+.plv-amount { position: absolute; left: 450px; top: 0; width: 50px; height: 50px; font-size: 18px; color: rgb(0, 0, 0); -unity-text-align: middle-right; white-space: nowrap; }
+/* SummaryMoney: 500x60 centred, Y 263. Description on the left, amount on the right, both centred vertically. */
+.plv-summary { position: absolute; left: 50px; top: 263px; width: 500px; height: 60px; }
+.plv-summary-text { position: absolute; left: 0; top: 0; height: 60px; font-size: 30px; color: rgb(0, 0, 0); -unity-text-align: middle-left; white-space: nowrap; }
+.plv-summary-amount { left: auto; right: 0; -unity-text-align: middle-right; }
+.plv-punches { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+.plv-punch { position: absolute; left: 7px; width: 50px; height: 50px; background-image: url("/Assets/Resources/UI/Art/spr_waybill_punch.png"); background-size: 100% 100%; }
+.plv-stamp { position: absolute; left: 422px; top: 30px; width: 50px; height: 50px; background-image: url("/Assets/Resources/UI/Art/spr_waybill_paid_stamp.png"); background-size: 100% 100%; }
+/* Gum button (1081,691) minus the paper origin at (660,340) in the offset root. */
+.plv-button { position: absolute; left: 421px; top: 351px; }
+.plv-button .bwi-text { color: rgb(10, 8, 5); }
+.plv-fade { background-color: rgb(255, 255, 255); }

@@ -1,0 +1,62 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:VisualElement name="Root" class="fsv-root hub-fill" picking-mode="Ignore">
+        <ui:VisualElement name="Vignette" class="hub-fill vignette" picking-mode="Ignore" />
+        <ui:VisualElement name="Paper" class="fsv-paper">
+            <ui:VisualElement name="Background" class="hub-fill fsv-background" picking-mode="Ignore" />
+            <ui:VisualElement name="Content" class="fsv-content">
+                <ui:VisualElement name="Title" class="fsv-title">
+                    <ui:Label name="Office" class="hub-text fsv-office font-mono" text="· OFFICE OF THE STATIONMASTER ·" />
+                    <ui:Label name="TitleText" class="hub-text fsv-heading font-typewriter" text="Incident Report" />
+                    <ui:Label name="IncidentLine" class="hub-text fsv-incident font-mono" />
+                </ui:VisualElement>
+                <ui:VisualElement name="MainBox" class="fsv-mainbox">
+                    <ui:VisualElement name="SeparatorTitle" class="fsv-separator-title">
+                        <ui:VisualElement class="fsv-separator-line" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="Stats" class="fsv-stats">
+                        <ui:VisualElement name="Column1" class="fsv-column">
+                            <ui:VisualElement name="EnemiesLine" class="fsv-line fsv-line--first">
+                                <ui:Label class="hub-text fsv-stat-label font-mono" text="Thieves neutralized" />
+                                <ui:VisualElement class="fsv-stat-item">
+                                    <ui:Label name="EnemiesStat" class="hub-text fsv-stat font-mono" />
+                                    <ui:Label class="hub-text fsv-dots" text="................." />
+                                </ui:VisualElement>
+                            </ui:VisualElement>
+                            <ui:VisualElement name="DistanceLine" class="fsv-line">
+                                <ui:Label class="hub-text fsv-stat-label font-mono" text="Distance travelled" />
+                                <ui:VisualElement class="fsv-stat-item">
+                                    <ui:Label name="DistanceStat" class="hub-text fsv-stat font-mono" />
+                                    <ui:Label class="hub-text fsv-dots" text="................." />
+                                </ui:VisualElement>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                        <ui:VisualElement name="Column2" class="fsv-column">
+                            <ui:VisualElement name="StagesLine" class="fsv-line fsv-line--first">
+                                <ui:Label class="hub-text fsv-stat-label font-mono" text="Stages defeated" />
+                                <ui:VisualElement class="fsv-stat-item">
+                                    <ui:Label name="StagesStat" class="hub-text fsv-stat font-mono" />
+                                    <ui:Label class="hub-text fsv-dots" text="................." />
+                                </ui:VisualElement>
+                            </ui:VisualElement>
+                            <ui:VisualElement name="UpgradesLine" class="fsv-line">
+                                <ui:Label class="hub-text fsv-stat-label font-mono" text="Upgrades bought" />
+                                <ui:VisualElement class="fsv-stat-item">
+                                    <ui:Label name="UpgradesStat" class="hub-text fsv-stat font-mono" />
+                                    <ui:Label class="hub-text fsv-dots" text="................." />
+                                </ui:VisualElement>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                    <ui:Label name="SeparatorTop" class="hub-text fsv-dashes font-mono" text="------------------------------------------------------------" />
+                    <ui:Label name="CauseTitle" class="hub-text fsv-cause-title font-mono" text="CAUSE OF FAILURE:" />
+                    <ui:Label name="CauseText" class="hub-text fsv-cause font-mono" />
+                    <ui:Label name="SeparatorBottom" class="hub-text fsv-dashes font-mono" text="------------------------------------------------------------" />
+                    <ui:VisualElement name="ReturnButton" class="fsv-button" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="Hole1" class="fsv-hole" style="left: 175px;" picking-mode="Ignore" />
+            <ui:VisualElement name="Hole2" class="fsv-hole" style="left: 375px;" picking-mode="Ignore" />
+            <ui:VisualElement name="Stamp" class="fsv-stamp" picking-mode="Ignore" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

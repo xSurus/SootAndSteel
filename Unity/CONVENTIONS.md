@@ -315,7 +315,7 @@ Plan: `docs/superpowers/plans/2026-09-21-b2-1-menus-plan.md`. Slice: main menu, 
 ### Deferred (exact seam and reason)
 
 - Xbox glyphs: resolved in B2.2. `UiSpriteCrop.Glyph` crops the sheet and the controls overlay Close button shows the real A glyph.
-- Menu input before any player has joined: nothing creates a player before the join screen, so `MainMenuController` needs at least one `IInputActions` in its player list, or nobody can drive the menu. Src always has a keyboard config. Seam: the `Func<IReadOnlyList<IInputActions>>` argument of `Configure`. A default keyboard and gamepad source is not built.
+- Menu input before any player has joined: the join screen (B2.4, `JoinScreenController`) is where players join, but no scene shows it yet, so `MainMenuController` needs at least one `IInputActions` in its player list, or nobody can drive the menu. Src always has a keyboard config. Seam: the `Func<IReadOnlyList<IInputActions>>` argument of `Configure`. A default keyboard and gamepad source is not built.
 - Main menu wiring in a scene: no scene contains `MainMenuController`, `PauseMenuController` or a `SoundServiceRunner` yet. The convenience `Configure` overloads (`SoundServiceRunner.Instance`, `FindFirstObjectByType<PlayerJoinManager>`) have no test.
 - Not ported from Src `MainMenuScreen`: the Shift+R shortcut to `ShootingRangeScreen`, the snowstorm particles, the battle theme start and stop, `SaveManager.HasSave`. `hasSave` is a plain parameter. The screen switches (`StartNewGame`, `ContinueGame`, `Game.Exit`) are the callbacks the caller passes in.
 - `MainMenuPanel` also lists a "Shooting Range" entry that the live Gum screen does not show. Not ported.
@@ -360,7 +360,7 @@ Plan: `docs/superpowers/plans/2026-09-21-b2-2-hub-shop-plan.md`. Slice: the hub 
 - DialogBubble typewriter reveal, `Show(line)` with world anchor and the bubble tail. They belong to the tutorial dialogue slice (`DialogueOverlay`, `DialogueManager`).
 - Category icons for categories other than Casing, Projectile and Propellant would crop `BulletComponentSpriteSheet.png`, which is not imported, so those icons stay hidden.
 - `CameraWorldToScreen` is checked only against `MirroredCamera` at the headless test camera size. Real scene cameras, non-16:9 windows and a camera rect that is not full screen are unverified, and the tooltip clamp now uses the real canvas size (see Facts found).
-- Not consumed yet: no scene contains `HubUiController`. Player spawning, the world-space hub view, post-level screens and the join screen belong to other slices. The in-game HUD is B2.3.
+- Not consumed yet: no scene contains `HubUiController`. Player spawning and the world-space hub view belong to other slices. The in-game HUD is B2.3 and the post-level, fail and join screens are B2.4.
 - Everything in this slice is unverified visually (no Editor GUI): fonts, nine-slice edges, text wrapping, tooltip placement over stations, panel scaling on non-16:9 windows.
 - The controller is stopped while paused, so the caller must hide tooltips with `Tooltips.SetAllVisible(false)` then and call `Tooltips.ClearAll` on departure.
 
@@ -399,5 +399,67 @@ Plan: `docs/superpowers/plans/2026-09-21-b2-3-hud-plan.md`. Slice: `GameplayHud`
 - Nothing in a scene contains `HudController`. Seam: a gameplay scene calls `Bind(trainStateRuntime, levelRuntime)` and `SetLevel` when the next level starts.
 - `HudController` does not follow `LevelRuntime.Definition` changes on its own (review ruling). The caller calls `SetLevel`, and `Bind` before `LevelRuntime.Initialize` sees a null definition.
 - The runtime `Bind` overload throws a plain `NullReferenceException` on null arguments (review ruling).
-- Post-level and fail screens, the join screen, player spawning, the cannon seat: other slices.
+- Player spawning and the cannon seat: other slices. The post-level and fail screens, the join screen and the skip element are B2.4.
 - Everything is unverified visually (no Editor GUI): the layout numbers are asserted only at a 640x480 test panel with a tolerance of 3, and the needle pivot, frost draw order, sorting order against other UI and scaling on non-16:9 windows were not seen.
+
+## B2.4 screens: what is ported, what is deferred
+
+Plan: `docs/superpowers/plans/2026-09-21-b2-4-screens-plan.md`. Slice: the post-level waybill (`PostLevelStatsScreen`), the fail incident report (`FailScreen`), the join screen (`JoinScreen`) and the `SkipTutorial` element, with their Gum components, `StampRevealAnimator` and `LevelRewardBreakdown`, in UI Toolkit, screen space only. This closes wave B2.
+
+### Ported
+
+- Core data (`Core/Screens`, `Core/Utils`): `Easing`, `StageNaming.GetStageTitle`, `LevelRewardBreakdown` (the Src formula, banker's rounding kept, with `baseReward` 25 and `referenceBonus` 20 as parameters because the Unity port has no `GameplayConfig`), `FailureReason` with `FailureReasonText` (the exact Src strings, including the missing spaces), `PostDeathStatsSnapshot` and `PostDeathStatsText` (stat strings and the incident line). Goldens come from scripts that evaluate the Src expressions in float32.
+- Core timelines (`Gamelab.UI`, `Core/UI`): `FadeTransition` (the `FilterTransition` opacity math without the colour), `StampRevealTimer`, `PostLevelStatsModel` (phases, cue times, count-up, credit grant once, stamp, fade, `ContinueRequested`), `FailScreenModel` (typewriter, stamp, `ReturnRequested`), `SkipTutorialModel` (+2.0 and -5.0 per second, cap 1.5, `SkipRequested` latches until `ConsumeRequest`, as Src `pendingHubOutroRequest`), `JoinScreenModel` (title, per-slot figure, button text and glyph from a joined-count function). Models have no clock. Sounds leave through a `Cue` event carrying a `Sounds` id.
+- Views (Runtime, `Gamelab.UI.Runtime`): `PostLevelStatsView`, `FailScreenView`, `JoinScreenView`, `SkipTutorialView`, and `StampView.Apply` (scale and rotation from a `StampRevealTimer`). UXML and USS of the same name are in `Assets/Resources/UI/` and load through `UiResources`. The Continue, Return and Join buttons reuse `ButtonWithIconElement` and `UiSpriteCrop.Glyph`.
+- Controllers: `PostLevelStatsController.Configure(actualTime, referenceTime, stageNumber, grantCredits, onContinue, players, playSound)`, `FailScreenController.Configure(reason, stats, levelNumber, now, onReturn, players, playSound)` and `JoinScreenController.Bind(JoinFlowController, onAdvance)`. Each configures or binds once. `players` is the same `Func<IReadOnlyList<IInputActions>>` the menu controllers take, and confirm is Pickup or Start on any player (`AnyPressedMenuConfirm`). `SkipTutorialView` has no controller: the caller feeds `SkipTutorialModel.Update(dt, anyPlayerHoldsBack)` and calls `Refresh()`.
+- Join seam: `JoinScreenController` reads `JoinFlowController.IsSlotJoined(0..3)` and forwards `OnReadyToAdvance`. `JoinFlowController` and `PlayerJoinManager` were not changed. Joining itself (A on a pad, Space on the keyboard) stays in `PlayerJoinManager`.
+- `PlayersReady` was already ported inside `HubOverlayView` (B2.2). `PostDeathDisplay` is an empty Gum container and has no port.
+- Art added under `Assets/Resources/UI/Art/`: `spr_waybill_paper`, `spr_waybill_punch`, `spr_waybill_paid_stamp`, `spr_incident_paper`, `spr_filed_closed_stamp`, `Silhouette`.
+
+### Time and pause, per animation
+
+- Post-level screen (reveal clock, line reveals, count-up, credit tick cooldown, stamp pop, the 1.15 s stamp phase, both fades) and fail screen (typewriter, tick cadence, stamp pop, the 1.10 s return delay): `Time.unscaledDeltaTime`. Both screens replace gameplay, but a pause menu that left `Time.timeScale` at 0 must not freeze them. Tests run both under `timeScale` 0.
+- Join screen: no animation and no clock. `SkipTutorialView`: no clock, it shows what `SkipTutorialModel` holds. The gameplay caller feeds that model with the gameplay `dt`, which is 0 while paused, so the bar holds still, as in Src.
+
+### Facts found
+
+- `LevelRewardBreakdown` in Src uses `MathF.Round` and the distance text uses `Math.Round`, both banker's rounding. A 22.5 bonus rounds to 22. Kept and pinned by a test.
+- Src calls `SwitchToScreen` every frame once its timer or fade is done. The models raise `ContinueRequested` and `ReturnRequested` once.
+- `FailScreenModel` runs the typewriter before the phase switch with the same `dt`, so a pickup tick can fire on the confirm frame before `MenuSelect`. Src does the same. `RevealAll` on the post-level screen fires no cues.
+- Src never sets `IncidentTitleDetail` on the waybill, so the static Gum string stays.
+- Join figure order is not slot order: joined1 to joined4 use `IdleA0`, `IdleA3`, `IdleA1`, `IdleA2`, an empty slot uses `Silhouette`. `JoinScreenModel` raises no `Changed` for the initial empty state, so the view renders on bind.
+- Gum title X=54 on the join screen is absolute and looks like a typo for 5 percent. Kept.
+- `PlayerJoinManager.ResetJoins()` exists. Src `JoinScreen` resets the roster on init and `JoinScreenController` does not, so a caller that wants the Src behaviour calls it before showing the screen.
+
+### Deviations from the Gum layout and Src
+
+- `StampView.Apply` sets display, scale and rotation from a `StampRevealTimer`. Gum resizes the sprite from its top-left origin, the view scales with `transform-origin: 0 0`, which gives the same picture. Rotation is negated (Gum counter-clockwise, USS clockwise).
+- `PostLevelStatsView` and `FailScreenView` (UXML and USS of the same name). `Refresh()` is meant to be called every frame by the controller. `PostLevelStatsModel.Rewards` was added for the row texts.
+- Nine-slice art uses `-unity-slice-type: tiled` (Gum tiles the middle sections). Borders are assumed thirds: waybill 32 on all sides, incident paper 85 and 64. Not looked at visually.
+- Waybill: the Gum root offset (-13,-65) is folded into the paper margin. The Continue button at Gum (1081,691) is paper-relative (421,351). The incident detail text is the static Gum string, Src never sets it.
+- Fail report: MainBox order follows the gucx instance order (title separator line, stats, dash separator, cause title, cause text, dash separator, button). Title lines are placed by their vertical centre (Gum uses 1 px high boxes anchored from the bottom). The paper height follows the content and grows while the cause text types, as in Gum.
+- Fonts: Gum sets Font=Ubuntu Mono on the amount text and no size; the row descriptions and the dots have no font set. The views use size 18 and 17 for these with the theme default font, and Ubuntu Mono for the amounts. All layout and glyph rendering is unverified visually.
+- `JoinScreenView` and `SkipTutorialView` (5b). Both use px in the 1920x1080 canvas, so at 16:9 they equal the Gum layout and at other aspect ratios they are anchored top-left (join) or bottom-right (skip) instead of letterboxed. The join screen background is black (Src has none, `GamelabGame` clears black). Gum title X=54 is absolute and looks like a typo for 5 percent, kept. Slots are 432 px squares (25 percent of 1728, a height of 100 percent of width), the figure fills an 80 percent Player square, the Join button is centred at 55 percent of it and 110 percent down. `JoinScreenView` refreshes on Bind and rebuild and on `model.Changed`, the owner calls `model.Refresh()` each frame.
+- `SkipTutorialView`: Src `SetProgress` resizes the whole ProgressBar container (background and fill), which is centred, so the bar shrinks about its centre. The view does the same. The element size (240 x 50) is derived from Gum "relative to children" (text ends at 232, plus 8, bar bottom at 50) and the text box height (24) is a guess. The caller sets the document sorting order and feeds the model.
+- Silhouette and `IdleA0` are 410x400, `IdleA1` to `IdleA3` are 400x390, and Gum's source rect is 410x400 for all four. The port stretches every texture to the Player square. Unverified.
+- Snowstorm particles (`IVfxService`) on both screens are not ported. Background colours are USS (white waybill screen, dark red fail screen under the vignette, black join screen).
+- Fonts follow B2.1: Courier New is Ubuntu Mono, Special Elite is kept, Bodoni MT is Libre Bodoni.
+
+### Deferred (exact seam and reason)
+
+- Nothing in a scene contains `PostLevelStatsController`, `FailScreenController`, `JoinScreenController` or a `SkipTutorialView`. Seams: `grantCredits` is `RunSession.AddCredits`, `onContinue` switches to the hub, `onReturn` switches to the main menu, `onAdvance` switches to the main menu, `playSound` is `ISoundService.PlayOnce`, `players` is the roster's input list.
+- The caller does what Src does in the screens' load step: `soundService.ResetGlobalParameters()` for the post-level screen, `LoadSound` for the sounds used, the screen switch and the `Game.CurrentRun` reads (stage number, level number, stats snapshot).
+- `SkipTutorialModel.SkipRequested` is consumed by the tutorial caller, which also does what Src `ConsumePendingHubOutroRequest` does (clear guidance, mark the tutorial completed, save the run). No `TutorialDirector` exists in the port.
+- Everything is unverified visually (no Editor GUI): the waybill and incident paper nine-slice tiling (borders assumed thirds), fonts and text fit, stamp pop, the fail report title line overlap, vignette, the skip element size, join slot layout on non-16:9 windows (px anchored top-left instead of Gum's letterbox), and the panel scale finding from B2.2.
+
+## Wave B2 complete: what remains for wave C
+
+Every UI seam that no scene consumes yet, and what the scene or caller has to pass:
+
+- `MainMenuController`, `PauseMenuController`: a scene, a `SoundServiceRunner`, at least one `IInputActions` source, `StartNewGame`, `ContinueGame` and exit callbacks, `hasSave`.
+- `HubUiController`: `RunCredits`, `HubDepartureModel`, `CraftingHelpModel`, the player list, the pending off-board count, an `IWorldToScreen` (`CameraWorldToScreen` is checked only headless), `DepartRequested`. The world wave also consumes `HubShopModel.Offers` and `Purchased`, and calls `TooltipLayer.Set`.
+- `HudController`: `Bind(trainStateRuntime, levelRuntime)` and `SetLevel` per level.
+- `PostLevelStatsController`, `FailScreenController`, `JoinScreenController`, `SkipTutorialView` (this section).
+- Still not built: the dialogue overlay (typewriter, world anchored bubble), the tutorial director, player spawning, the cannon seat, snowstorm and other particles, the save system and run session, screen switching.
+- Scene wiring that touches several of these together: how pause and scene switching interact (`Time.timeScale` restored on scene switch, `TrainStateRuntime.SelfTick`), the sorting orders (HUD -10, hub views 0 to 2, menus above), and the shared `PanelSettings` per screen.
+- Visual check of every screen against the MonoGame build, on 16:9 and on other aspect ratios. Nobody has looked at any B2 screen.

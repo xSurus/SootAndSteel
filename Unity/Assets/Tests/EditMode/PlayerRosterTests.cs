@@ -82,6 +82,15 @@ namespace Gamelab.Tests.Players
         }
 
         [Test]
+        public void AnyPressedMenuConfirm_EnumerableOverload()
+        {
+            Assert.IsTrue(new[] { new StubInputActions { PickupJustPressed = true } }.AnyPressedMenuConfirm());
+            Assert.IsTrue(new[] { new StubInputActions { StartJustPressed = true } }.AnyPressedMenuConfirm());
+            Assert.IsFalse(new[] { new StubInputActions() }.AnyPressedMenuConfirm());
+            Assert.IsFalse(new StubInputActions[0].AnyPressedMenuConfirm());
+        }
+
+        [Test]
         public void AnyPressedMenuConfirm_FalseWhenNobodyPressedAnything()
         {
             var roster = new PlayerRoster();

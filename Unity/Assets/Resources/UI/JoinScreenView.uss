@@ -1,0 +1,17 @@
+/* Gum JoinScreen in 1920x1080 canvas units. Src has no background, the game clears to black. */
+.jsv-root { background-color: rgb(0, 0, 0); }
+/* Gum X is 54 in absolute units (it looks like a typo for 5 percent, kept). 90 percent wide, y 10 percent, 60 high text, centred. */
+.jsv-title { position: absolute; left: 54px; top: 108px; width: 1728px; height: 108px; font-size: 60px; color: rgb(255, 255, 255);
+    -unity-text-align: upper-center; white-space: nowrap; }
+/* PlayerFigureContainer: 90 percent wide at 5 percent, y at 35 percent, four slots of 25 percent. A slot is as high as it is wide. */
+.jsv-figures { position: absolute; left: 96px; top: 378px; width: 1728px; height: 432px; }
+.jsv-slot { position: absolute; top: 0; width: 432px; height: 432px; }
+#Slot0 { left: 0; }
+#Slot1 { left: 25%; }
+#Slot2 { left: 50%; }
+#Slot3 { left: 75%; }
+/* Player: 80 percent square at x 5 percent of the slot width. The figure fills it (Silhouette and IdleA0 are 410x400, IdleA1 to IdleA3 are 400x390, Gum's source rect is 410x400 for all, the port stretches every texture to the square, unverified). */
+.jsv-player { position: absolute; left: 21.6px; top: 0; width: 345.6px; height: 345.6px; }
+.jsv-figure { position: absolute; left: 0; top: 0; right: 0; bottom: 0; -unity-background-scale-mode: stretch-to-fill; }
+/* Join button: centred on 55 percent of the Player width, top at 110 percent of its height. */
+.jsv-join { position: absolute; left: 55%; top: 110%; translate: -50% 0; }
