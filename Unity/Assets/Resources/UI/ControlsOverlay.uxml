@@ -3,7 +3,7 @@
         <ui:VisualElement name="Paper" class="co-paper paper">
             <ui:VisualElement name="Image" class="co-image" />
             <ui:VisualElement name="Close" class="co-close">
-                <ui:Label name="CloseKey" text="A" class="co-close-text font-serif" />
+                <ui:VisualElement name="CloseKey" class="co-close-key" />
                 <ui:Label name="CloseText" text="Close" class="co-close-text font-serif" />
             </ui:VisualElement>
         </ui:VisualElement>

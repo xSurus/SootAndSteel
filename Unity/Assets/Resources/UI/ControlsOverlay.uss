@@ -3,4 +3,5 @@
 .co-image { position: absolute; left: 71px; top: 41px; width: 677px; height: 470px;
     background-image: url("/Assets/Resources/UI/Art/spr_controls.png"); background-size: 100% 100%; }
 .co-close { position: absolute; left: 611px; top: 493px; flex-direction: row; align-items: center; }
+.co-close-key { width: 32px; height: 32px; margin-right: 8px; }
 .co-close-text { font-size: 20px; color: var(--ink); margin-right: 8px; }

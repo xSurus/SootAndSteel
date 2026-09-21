@@ -444,6 +444,11 @@ namespace Gamelab.Tests.UI
             var close = controls.Root.Q("Close");
             Assert.AreEqual(611f, close.layout.x, 3f);
             Assert.AreEqual(493f, close.layout.y, 3f);
+            var key = controls.Root.Q("CloseKey");
+            // The test panel is 640x480 (scale 0.44), so one screen pixel is 2.25 canvas units.
+            Assert.AreEqual(32f, key.resolvedStyle.width, 3f);
+            Assert.AreEqual(32f, key.resolvedStyle.height, 3f);
+            Assert.NotNull(key.resolvedStyle.backgroundImage.sprite);
             Assert.AreEqual(773f, controls.Paper.resolvedStyle.width, 3f);
             Assert.AreEqual(568f, controls.Paper.resolvedStyle.height, 3f);
             Assert.AreEqual(677f, controls.Image.resolvedStyle.width, 3f);
