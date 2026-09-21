@@ -1,0 +1,6 @@
+.co-root { position: absolute; left: 0; top: 0; right: 0; bottom: 0; align-items: center; justify-content: center; }
+.co-paper { width: 773px; height: 568px; rotate: -1deg; background-size: 100% 100%; }
+.co-image { position: absolute; left: 71px; top: 41px; width: 677px; height: 470px;
+    background-image: url("/Assets/Resources/UI/Art/spr_controls.png"); background-size: 100% 100%; }
+.co-close { position: absolute; left: 611px; top: 493px; flex-direction: row; align-items: center; }
+.co-close-text { font-size: 20px; color: var(--ink); margin-right: 8px; }

@@ -1,0 +1,10 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:VisualElement name="Root" class="pm-root vignette">
+        <ui:VisualElement name="Paper" class="pm-paper paper">
+            <ui:Label name="Title" text="Paused" class="pm-title font-typewriter" />
+            <ui:Label name="Hint" text="- ALL STOP -" class="pm-hint font-mono" />
+            <ui:Label name="Dashes" text="-----------------------" class="pm-dashes font-mono" />
+            <ui:VisualElement name="Menu" class="pm-menu" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

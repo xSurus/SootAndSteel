@@ -50,9 +50,19 @@ namespace Gamelab.Tests.UI
 
         private readonly List<UnityEngine.Object> cleanup = new List<UnityEngine.Object>();
 
+        private float savedTimeScale;
+
+        [SetUp]
+        public void SetUp()
+        {
+            savedTimeScale = Time.timeScale;
+            Time.timeScale = 1f;
+        }
+
         [TearDown]
         public void TearDown()
         {
+            Time.timeScale = savedTimeScale;
             foreach (var o in cleanup) if (o != null) UnityEngine.Object.Destroy(o);
             cleanup.Clear();
         }
@@ -267,6 +277,166 @@ namespace Gamelab.Tests.UI
             input.Pause = true; yield return null; input.Clear(); yield return null;
             Assert.IsFalse(c.Options.IsOpen);
             Assert.AreEqual(DisplayStyle.None, c.OptionsView.Root.resolvedStyle.display);
+        }
+
+        private static bool Shown(VisualElement root) => root.resolvedStyle.display == DisplayStyle.Flex;
+
+        private PauseMenuController MakePause(FakeInputActions input, Action<int> counter, FakeSound sound, Action exit)
+        {
+            var go = new GameObject("pause");
+            cleanup.Add(go);
+            var c = go.AddComponent<PauseMenuController>();
+            c.Configure(new FakeVolume(), 0.05f, () => new List<IInputActions> { input }, () => sound.Count++, exit);
+            return c;
+        }
+
+        class FakeSound { public int Count; }
+
+        private static IEnumerator Tap(FakeInputActions input, Action press)
+        {
+            press();
+            yield return null;
+            input.Clear();
+            yield return null;
+        }
+
+        [UnityTest]
+        public IEnumerator Pause_VisibilityPerState()
+        {
+            var vm = new PauseMenuModel(new OptionsViewModel(new FakeVolume()));
+            var pause = Make<PauseMenuView>();
+            pause.Bind(vm, Panel());
+            var controls = Make<ControlsOverlayView>();
+            controls.Bind(vm, Panel());
+            yield return Frames();
+            Assert.IsFalse(Shown(pause.Root));
+            Assert.IsFalse(Shown(controls.Root));
+            vm.Toggle();
+            yield return Frames();
+            Assert.IsTrue(Shown(pause.Root));
+            Assert.IsFalse(Shown(controls.Root));
+            vm.Options.Open();
+            yield return Frames();
+            Assert.IsFalse(Shown(pause.Root), "options open hides the pause paper");
+            vm.Options.Close();
+            vm.MoveDown(); vm.MoveDown(); vm.Confirm();
+            yield return Frames();
+            Assert.IsFalse(Shown(pause.Root));
+            Assert.IsTrue(Shown(controls.Root));
+            vm.Toggle();
+            yield return Frames();
+            Assert.IsFalse(Shown(pause.Root));
+            Assert.IsFalse(Shown(controls.Root));
+        }
+
+        [UnityTest]
+        public IEnumerator Pause_RowsAndSelectionFollowModel()
+        {
+            var vm = new PauseMenuModel(new OptionsViewModel(new FakeVolume()));
+            var view = Make<PauseMenuView>();
+            view.Bind(vm, Panel());
+            vm.Toggle();
+            yield return Frames();
+            Assert.AreEqual(4, view.Rows.Count);
+            Assert.AreEqual("Controls", LabelOf(view.Rows[2]));
+            Assert.IsTrue(Selected(view.Rows[0], "pm-row--selected"));
+            Assert.AreEqual(DisplayStyle.Flex, view.Rows[0][0].resolvedStyle.display);
+            vm.MoveUp();
+            yield return Frames();
+            Assert.IsTrue(Selected(view.Rows[3], "pm-row--selected"));
+            Assert.IsFalse(Selected(view.Rows[0], "pm-row--selected"));
+            Assert.AreEqual(DisplayStyle.None, view.Rows[0][0].resolvedStyle.display);
+        }
+
+        [UnityTest]
+        public IEnumerator Pause_LayoutNumbers()
+        {
+            var vm = new PauseMenuModel(new OptionsViewModel(new FakeVolume()));
+            var pause = Make<PauseMenuView>();
+            pause.Bind(vm, Panel());
+            var controls = Make<ControlsOverlayView>();
+            controls.Bind(vm, Panel());
+            vm.Toggle();
+            yield return Frames(4);
+            Assert.AreEqual(380f, pause.Paper.resolvedStyle.width, 3f);
+            Assert.AreEqual(353f, pause.Paper.resolvedStyle.height, 3f);
+            var paper = pause.Paper.layout;
+            var menu = pause.Menu.layout;
+            Vector3 shift = pause.Menu.resolvedStyle.translate; // translate is not part of layout
+            Assert.AreEqual(0.4852f * paper.width, menu.center.x + shift.x, 4f);
+            Assert.AreEqual(0.6537f * paper.height, menu.center.y + shift.y, 4f);
+            vm.MoveDown(); vm.MoveDown(); vm.Confirm();
+            yield return Frames(4);
+            Assert.AreEqual(773f, controls.Paper.resolvedStyle.width, 3f);
+            Assert.AreEqual(568f, controls.Paper.resolvedStyle.height, 3f);
+            Assert.AreEqual(677f, controls.Image.resolvedStyle.width, 3f);
+            Assert.AreEqual(470f, controls.Image.resolvedStyle.height, 3f);
+            LogAssert.NoUnexpectedReceived();
+        }
+
+        [UnityTest]
+        public IEnumerator PauseController_FullFlow()
+        {
+            Time.timeScale = 0.5f;
+            var input = new FakeInputActions();
+            var sound = new FakeSound();
+            int exits = 0;
+            var c = MakePause(input, null, sound, () => exits++);
+            yield return Frames();
+            Assert.IsFalse(Shown(c.PauseView.Root));
+            Assert.AreEqual(0.5f, Time.timeScale);
+
+            yield return Tap(input, () => input.Pause = true);
+            Assert.IsTrue(c.Model.IsPaused);
+            Assert.AreEqual(0f, Time.timeScale);
+            Assert.IsTrue(Shown(c.PauseView.Root));
+
+            yield return Tap(input, () => input.Down = true);
+            yield return Tap(input, () => input.Down = true);
+            Assert.AreEqual(2, c.Model.SelectionIndex);
+            Assert.AreEqual(2, sound.Count);
+            yield return Tap(input, () => input.Pickup = true);
+            Assert.IsTrue(c.Model.ControlsOpen);
+            Assert.IsTrue(Shown(c.ControlsView.Root));
+            Assert.IsFalse(Shown(c.PauseView.Root));
+            yield return Tap(input, () => input.Pickup = true);
+            Assert.IsFalse(c.Model.ControlsOpen);
+            Assert.IsTrue(Shown(c.PauseView.Root));
+
+            yield return Tap(input, () => input.Up = true);
+            yield return Tap(input, () => input.Pickup = true);
+            Assert.IsTrue(c.Model.Options.IsOpen);
+            Assert.IsTrue(Shown(c.OptionsView.Root));
+            Assert.IsFalse(Shown(c.PauseView.Root));
+            Assert.Greater(c.OptionsView.GetComponent<UIDocument>().sortingOrder, c.PauseView.GetComponent<UIDocument>().sortingOrder);
+            yield return Tap(input, () => input.Pause = true);
+            Assert.IsFalse(c.Model.Options.IsOpen);
+            Assert.IsTrue(c.Model.IsPaused);
+            Assert.AreEqual(0f, Time.timeScale);
+            Assert.IsTrue(Shown(c.PauseView.Root));
+
+            yield return Tap(input, () => input.Down = true);
+            yield return Tap(input, () => input.Down = true);
+            yield return Tap(input, () => input.Pickup = true);
+            Assert.AreEqual(1, exits);
+
+            yield return Tap(input, () => input.Pause = true);
+            Assert.IsFalse(c.Model.IsPaused);
+            Assert.AreEqual(0.5f, Time.timeScale);
+            Assert.IsFalse(Shown(c.PauseView.Root));
+        }
+
+        [UnityTest]
+        public IEnumerator PauseController_RestoresTimeScaleOnDestroy()
+        {
+            var input = new FakeInputActions();
+            var c = MakePause(input, null, new FakeSound(), null);
+            yield return Frames();
+            yield return Tap(input, () => input.Pause = true);
+            Assert.AreEqual(0f, Time.timeScale);
+            UnityEngine.Object.Destroy(c.gameObject);
+            yield return null;
+            Assert.AreEqual(1f, Time.timeScale);
         }
     }
 }

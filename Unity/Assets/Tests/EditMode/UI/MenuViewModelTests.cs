@@ -217,5 +217,34 @@ namespace Gamelab.Tests.EditMode.UI
             m.Confirm();
             Assert.IsFalse(m.IsPaused);
         }
+
+        [Test]
+        public void Changed_is_raised_for_every_visible_change()
+        {
+            var m = Make();
+            int n = 0;
+            m.Changed += () => n++;
+            m.Toggle(); Assert.AreEqual(1, n);
+            m.MoveDown(); Assert.AreEqual(2, n);
+            m.MoveUp(); Assert.AreEqual(3, n);
+            m.MoveDown(); m.MoveDown(); n = 0;
+            m.Confirm(); Assert.AreEqual(1, n, "controls opened");
+            m.CloseControls(); Assert.AreEqual(2, n);
+            m.MoveUp(); n = 0;
+            m.Confirm(); Assert.AreEqual(1, n, "options opened");
+            m.Options.Close(); Assert.AreEqual(2, n, "options closed");
+        }
+
+        [Test]
+        public void Changed_listener_sees_final_state_when_unpausing()
+        {
+            var m = Make();
+            m.Toggle();
+            m.MoveDown(); m.Confirm();
+            bool sawStale = false;
+            m.Changed += () => sawStale |= m.IsPaused == false && m.ControlsOpen;
+            m.Toggle();
+            Assert.IsFalse(sawStale);
+        }
     }
 }

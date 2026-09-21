@@ -18,6 +18,8 @@ namespace Gamelab.UI.ViewModels
         public PauseMenuModel(OptionsViewModel options)
         {
             Options = options;
+            Options.OnOpened += RaiseChanged;
+            Options.OnClosed += RaiseChanged;
         }
 
         public OptionsViewModel Options { get; }
@@ -28,9 +30,22 @@ namespace Gamelab.UI.ViewModels
 
         public event Action ExitRequested;
 
-        public void MoveUp() => SelectionIndex = (SelectionIndex - 1 + ItemList.Length) % ItemList.Length;
+        /// <summary>Raised whenever anything the pause views show changes.</summary>
+        public event Action Changed;
 
-        public void MoveDown() => SelectionIndex = (SelectionIndex + 1) % ItemList.Length;
+        private void RaiseChanged() => Changed?.Invoke();
+
+        public void MoveUp()
+        {
+            SelectionIndex = (SelectionIndex - 1 + ItemList.Length) % ItemList.Length;
+            RaiseChanged();
+        }
+
+        public void MoveDown()
+        {
+            SelectionIndex = (SelectionIndex + 1) % ItemList.Length;
+            RaiseChanged();
+        }
 
         public void Toggle()
         {
@@ -38,9 +53,10 @@ namespace Gamelab.UI.ViewModels
             SelectionIndex = 0;
             if (!IsPaused)
             {
-                Options.Close();
                 ControlsOpen = false;
+                Options.Close();
             }
+            RaiseChanged();
         }
 
         /// <summary>A pause press toggles unless the options menu is open (it uses pause to close itself).</summary>
@@ -52,11 +68,15 @@ namespace Gamelab.UI.ViewModels
             {
                 case PauseItem.Continue: Toggle(); break;
                 case PauseItem.Options: Options.Open(); break;
-                case PauseItem.Controls: ControlsOpen = true; break;
+                case PauseItem.Controls: ControlsOpen = true; RaiseChanged(); break;
                 case PauseItem.Exit: ExitRequested?.Invoke(); break;
             }
         }
 
-        public void CloseControls() => ControlsOpen = false;
+        public void CloseControls()
+        {
+            ControlsOpen = false;
+            RaiseChanged();
+        }
     }
 }
