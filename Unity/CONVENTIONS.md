@@ -320,7 +320,6 @@ Plan: `docs/superpowers/plans/2026-09-21-b2-1-menus-plan.md`. Slice: main menu, 
 - Not ported from Src `MainMenuScreen`: the Shift+R shortcut to `ShootingRangeScreen`, the snowstorm particles, the battle theme start and stop, `SaveManager.HasSave`. `hasSave` is a plain parameter. The screen switches (`StartNewGame`, `ContinueGame`, `Game.Exit`) are the callbacks the caller passes in.
 - `MainMenuPanel` also lists a "Shooting Range" entry that the live Gum screen does not show. Not ported.
 - Row pitch on the main menu: Gum `MainMenuButton` height is unit 5 with value 20, meaning unclear. The port uses 5 px margins top and bottom. Compare against the MonoGame build.
-- The controller is stopped while paused, so the caller must hide tooltips with `Tooltips.SetAllVisible(false)` then and call `Tooltips.ClearAll` on departure.
 - Everything in this slice is unverified visually (no Editor GUI): fonts, paper tilt, row spacing, the vignette, background stretch, panel scaling on non-16:9 windows.
 
 ## B2.2 hub and shop: what is ported, what is deferred
@@ -363,3 +362,4 @@ Plan: `docs/superpowers/plans/2026-09-21-b2-2-hub-shop-plan.md`. Slice: the hub 
 - `CameraWorldToScreen` is checked only against `MirroredCamera` at the headless test camera size. Real scene cameras, non-16:9 windows and a camera rect that is not full screen are unverified, and the tooltip clamp now uses the real canvas size (see Facts found).
 - Not consumed yet: no scene contains `HubUiController`. Player spawning, the world-space hub view, the in-game HUD, post-level screens and the join screen belong to other slices.
 - Everything in this slice is unverified visually (no Editor GUI): fonts, nine-slice edges, text wrapping, tooltip placement over stations, panel scaling on non-16:9 windows.
+- The controller is stopped while paused, so the caller must hide tooltips with `Tooltips.SetAllVisible(false)` then and call `Tooltips.ClearAll` on departure.
